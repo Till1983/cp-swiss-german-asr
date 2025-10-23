@@ -1,0 +1,15 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.git
+.gitignore
+.env
+data/
+checkpoints/
+*.ipynb_checkpoints
+*.tar
+*.tgz
+*.zip
+*.log
+.DS_Store
