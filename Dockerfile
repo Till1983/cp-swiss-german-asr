@@ -41,7 +41,7 @@ EXPOSE 8501
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=3s \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f http://localhost:${API_PORT:-8000}/health || exit 1
 
 # Command to run the FastAPI backend
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
