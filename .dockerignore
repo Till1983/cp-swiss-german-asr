@@ -13,3 +13,7 @@ checkpoints/
 *.zip
 *.log
 .DS_Store
+README.md
+LICENSE
+*.md
+.git
