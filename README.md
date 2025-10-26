@@ -31,8 +31,8 @@ Comparative ASR for Swiss‑German dialects: reproducible Docker pipeline, basel
 ## Data Pipeline
 
 ### Download Dataset
-1. Download Common Voice Swiss German dataset
-2. Extract to `data/raw/common-voice-swiss-german-corpus/`
+1. Download FHNW's All Swiss German Dialects Test Corpus from [here](https://cs.technik.fhnw.ch/i4ds-datasets).
+2. Extract to `data/raw/fhnw-swiss-german-corpus/`
 
 ### Prepare Data Splits
 ```bash
