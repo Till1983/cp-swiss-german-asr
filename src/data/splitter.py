@@ -6,7 +6,7 @@ def create_splits(tsv_path, output_dir):
     df = pd.read_csv(tsv_path, sep='\t')
 
     # Add full audio path
-    df['audio_path'] = df['path'].apply(lambda x: f"data/raw/common-voice-swiss-german-corpus/clips/{x}")
+    df['audio_path'] = df['path'].apply(lambda x: f"data/raw/fhnw-swiss-german-corpus/clips/{x}")
 
     # Split vy dialect to assure representation
     # 70% train, 15% val, 15% test

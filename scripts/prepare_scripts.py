@@ -10,7 +10,7 @@ from src.data.splitter import create_splits
 if __name__ == "__main__":
     print("Creating train/val/test splits...")
     create_splits(
-        tsv_path="data/raw/common-voice-swiss-german-corpus/public.tsv",
+        tsv_path="data/raw/fhnw-swiss-german-corpus/public.tsv",
         output_dir="data/metadata"
     )
     print("✓ Data pipeline complete!")
