@@ -8,9 +8,10 @@ Comparative ASR for Swiss‑German dialects: reproducible Docker pipeline, basel
     - Git to clone the repository
 
 2. **Quick Start**
-```bash
+    ```bash
     docker compose up
-```
+    ```
+
     This will:
     - Build the Python 3.11 environment
     - Install required dependencies (PyTorch, Whisper, FastAPI)
@@ -31,7 +32,7 @@ Comparative ASR for Swiss‑German dialects: reproducible Docker pipeline, basel
 ## Data Pipeline
 
 ### Download Dataset
-1. Download FHNW's All Swiss German Dialects Test Corpus from [here](https://cs.technik.fhnw.ch/i4ds-datasets).
+1. Download FHNW's All Swiss German Dialects Test Corpus [here](https://cs.technik.fhnw.ch/i4ds-datasets).
 2. Extract to `data/raw/fhnw-swiss-german-corpus/`
 
 ### Prepare Data Splits
