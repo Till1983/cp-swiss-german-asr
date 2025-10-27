@@ -4,7 +4,7 @@ import numpy as np
 
 def load_swiss_german_metadata(filepath: str) -> pd.DataFrame:
     """Load metadata from TSV file containing Swiss German speech data."""
-    df = pd.read_csv(filepath)
+    df = pd.read_csv(filepath, sep='\t')
     return df
 
 def load_audio(audio_path: str, sample_rate: int = 16000) -> np.ndarray:
