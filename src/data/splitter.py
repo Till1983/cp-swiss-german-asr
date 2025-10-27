@@ -8,7 +8,7 @@ def create_splits(tsv_path, output_dir):
     # Add full audio path
     df['audio_path'] = df['path'].apply(lambda x: f"data/raw/fhnw-swiss-german-corpus/clips/{x}")
 
-    # Split vy dialect to assure representation
+    # Split by dialect to assure representation
     # 70% train, 15% val, 15% test
     train, temp = train_test_split(df, test_size=0.3, stratify=df['accent'])
     val, test = train_test_split(temp, test_size=0.5, stratify=temp['accent'])
