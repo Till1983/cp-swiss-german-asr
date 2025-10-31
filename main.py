@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 import whisper
 import torch
 import logging
+from src.backend import endpoints
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -35,3 +36,5 @@ async def load_model():
     except Exception as e:
         logger.error(f"Error loading model: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to load model: {str(e)}")
+
+app.include_router(endpoints.router, prefix="/api", tags=["evaluation"])
