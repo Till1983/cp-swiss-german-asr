@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException, status
-from evaluation.evaluator import ASREvaluator
-from .models import EvaluateRequest, EvaluateResponse
+from fastapi import APIRouter, HTTPException
+from src.backend.models import EvaluateRequest, EvaluateResponse
+from src.evaluation.evaluator import ASREvaluator
 
 router = APIRouter()
 

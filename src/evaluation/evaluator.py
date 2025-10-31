@@ -2,8 +2,8 @@ import whisper
 import torch
 import pandas as pd
 from pathlib import Path
-from typing import Dict, List
-from . import metrics
+from typing import Dict
+from src.evaluation.metrics import calculate_wer, batch_wer, calculate_cer, calculate_bleu_score
 
 
 class ASREvaluator:
