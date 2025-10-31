@@ -4,9 +4,9 @@ streamlit==1.24.0
 plotly==5.14.1
 numpy==1.25.2
 torch==2.1.1
-transformers==4.32.2
+transformers==4.54.1
 librosa==0.10.1
 pydub==0.25.1
-openai-whisper==1.1.2
-jiwer==2.4.1
+openai-whisper==20250625
+jiwer>=3.0.0
 sacrebleu==2.2.1
