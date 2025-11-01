@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, status
 from src.backend.models import EvaluateRequest, EvaluateResponse
 from src.evaluation.evaluator import ASREvaluator
 
@@ -10,7 +10,7 @@ async def evaluate_model(request: EvaluateRequest):
     Evaluate a speech recognition model on the test dataset.
     
     Args:
-        request: EvaluateRequest containing model_name and optional limit
+        request: EvaluateRequest containing model and optional limit
         
     Returns:
         EvaluateResponse with evaluation metrics
@@ -19,20 +19,20 @@ async def evaluate_model(request: EvaluateRequest):
         test_set_path = "data/metadata/test.tsv"
         
         # Create evaluator instance with requested model
-        evaluator = ASREvaluator(model_name=request.model_name)
+        evaluator = ASREvaluator(model_name=request.model)
         
         # Load the model
         evaluator.load_model()
         
-        # Evaluate the dataset with optional limit
+        # Evaluate the dataset
         results = evaluator.evaluate_dataset(
-            dataset_path=test_set_path,
+            metadata_path=test_set_path,
             limit=request.limit
         )
         
         # Return evaluation response
         return EvaluateResponse(
-            model_name=request.model_name,
+            model=request.model,
             total_samples=results["total_samples"],
             overall_wer=results["overall_wer"],
             per_dialect_wer=results["per_dialect_wer"]

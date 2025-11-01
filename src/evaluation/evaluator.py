@@ -3,7 +3,7 @@ import torch
 import pandas as pd
 from pathlib import Path
 from typing import Dict
-from src.evaluation.metrics import calculate_wer, batch_wer, calculate_cer, calculate_bleu_score
+from src.evaluation import metrics
 
 
 class ASREvaluator:
@@ -31,12 +31,14 @@ class ASREvaluator:
         self.model = whisper.load_model(self.model_name, device=self.device)
         print("Model loaded successfully.")
         
-    def evaluate_dataset(self, metadata_path: str) -> Dict:
+    def evaluate_dataset(self, metadata_path: str, audio_base_path: str = "data/raw/fhnw-swiss-german-corpus/clips", limit: int = None) -> Dict:
         """
         Evaluate the model on a dataset defined by a TSV metadata file.
         
         Args:
-            metadata_path: Path to TSV file with columns: audio_path, sentence, accent
+            metadata_path: Path to TSV file with columns: path, sentence, accent
+            audio_base_path: Base directory where audio files are stored
+            limit: Optional limit on number of samples to process
             
         Returns:
             Dictionary containing:
@@ -52,6 +54,8 @@ class ASREvaluator:
         if not metadata_path.exists():
             raise FileNotFoundError(f"Metadata file not found: {metadata_path}")
         
+        audio_base_path = Path(audio_base_path)
+        
         # Read metadata
         try:
             df = pd.read_csv(metadata_path, sep='\t')
@@ -62,13 +66,20 @@ class ASREvaluator:
         if not required_columns.issubset(df.columns):
             raise ValueError(f"Metadata file must contain columns: {required_columns}")
         
+        # Apply limit if specified
+        if limit is not None and limit > 0:
+            df = df.head(limit)
+        
         results = []
         failed_samples = 0
         
         print(f"Processing {len(df)} samples...")
         
         for idx, row in df.iterrows():
-            audio_path = Path(row['path'])
+            # Construct full audio path by combining base path with filename
+            audio_filename = Path(row['path']).name  # Extract just the filename
+            audio_path = audio_base_path / audio_filename
+            
             reference = row['sentence']
             accent = row['accent']
             

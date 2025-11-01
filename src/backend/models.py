@@ -10,7 +10,7 @@ class EvaluateRequest(BaseModel):
         limit: Optional limit on number of samples to process for testing purposes
     """
     model: str = "whisper-base"
-    audio_files: List[str]
+    #audio_files: List[str]
     limit: Optional[int] = None
 
 
