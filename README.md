@@ -54,3 +54,27 @@ train = pd.read_csv('/app/data/metadata/train.tsv', sep='\t')
 print(f'Loaded {len(train)} training samples')
 print(train.head())"
 ```
+
+## Evaluation API
+
+Run ASR model evaluation on Swiss German test set.
+
+### Example Request
+```bash
+curl -X POST http://localhost:8000/api/evaluate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "openai/whisper-medium",
+    "limit": 100
+  }'
+```
+
+### Response Fields
+- `model`: Name of the evaluated ASR model
+- `total_samples`: Number of audio samples processed
+- `overall_wer`: Word Error Rate across all dialects (percentage, 0-100)
+- `per_dialect_wer`: Dictionary mapping each dialect/canton to its WER (percentage, 0-100)
+
+**Note:** WER is returned as percentage (0-100), where lower values indicate better accuracy.
+
+**Tip:** Use the `limit` parameter for quick testing with a subset of the test set.
