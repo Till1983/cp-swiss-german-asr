@@ -17,10 +17,10 @@ class ASREvaluator:
         
         Args:
             model_name: Whisper model size (tiny, base, small, medium, large)
-            device: Device to run on ("cuda" or "cpu"). Auto-detected if None.
+            device: Device to run on ("cuda", "mps", or "cpu"). Auto-detected if None.
         """
         self.model_name = model_name
-        self.device = device if device else ("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = device if device else ("cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu"))
         self.model = None
         
     def load_model(self):

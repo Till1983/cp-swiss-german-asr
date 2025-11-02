@@ -22,7 +22,7 @@ async def health_check():
 async def load_model():
     try:
         logger.info("Starting model loading process...")
-        device = "cuda" if torch.cuda.is_available() else "cpu"
+        device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
         logger.info(f"Using device: {device}")
         
         model = whisper.load_model("base").to(device)
