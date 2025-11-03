@@ -73,8 +73,13 @@ curl -X POST http://localhost:8000/api/evaluate \
 - `model`: Name of the evaluated ASR model
 - `total_samples`: Number of audio samples processed
 - `overall_wer`: Word Error Rate across all dialects (percentage, 0-100)
+- `overall_cer`: Character Error Rate across all dialects (percentage, 0-100)
+- `overall_bleu`: BLEU score across all dialects (0-100, higher is better)
 - `per_dialect_wer`: Dictionary mapping each dialect/canton to its WER (percentage, 0-100)
+- `per_dialect_cer`: Dictionary mapping each dialect/canton to its CER (percentage, 0-100)
+- `per_dialect_bleu`: Dictionary mapping each dialect/canton to its BLEU score (0-100, higher is better)
 
+**Note:** WER and CER are returned as percentages (0-100), where lower values indicate better accuracy. BLEU is also scaled to 0-100, where higher values indicate better translation quality.
 **Note:** WER is returned as percentage (0-100), where lower values indicate better accuracy.
 
 **Tip:** Use the `limit` parameter for quick testing with a subset of the test set.
