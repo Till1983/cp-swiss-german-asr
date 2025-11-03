@@ -133,9 +133,42 @@ class ASREvaluator:
             accent_results = results_df[results_df['accent'] == accent]
             per_dialect_wer[accent] = accent_results['wer'].mean()
         
+        # Calculate overall CER
+        references = [r['reference'] for r in results]
+        hypotheses = [r['hypothesis'] for r in results]
+        cer_result = metrics.batch_cer(references, hypotheses)
+        overall_cer = cer_result['overall_cer']
+        
+        # Calculate overall BLEU
+        bleu_result = metrics.batch_bleu(references, hypotheses)
+        overall_bleu = bleu_result['overall_bleu']
+        
+        # Calculate per-dialect CER
+        per_dialect_cer = {}
+        for accent in results_df['accent'].unique():
+            accent_results = results_df[results_df['accent'] == accent]
+            accent_refs = accent_results['reference'].tolist()
+            accent_hyps = accent_results['hypothesis'].tolist()
+            accent_cer = metrics.batch_cer(accent_refs, accent_hyps)
+            per_dialect_cer[accent] = accent_cer['overall_cer']
+        
+        # Calculate per-dialect BLEU
+        per_dialect_bleu = {}
+        for accent in results_df['accent'].unique():
+            accent_results = results_df[results_df['accent'] == accent]
+            accent_refs = accent_results['reference'].tolist()
+            accent_hyps = accent_results['hypothesis'].tolist()
+            accent_bleu = metrics.batch_bleu(accent_refs, accent_hyps)
+            per_dialect_bleu[accent] = accent_bleu['overall_bleu']
+        
         return {
             'overall_wer': overall_wer,
+            'overall_cer': overall_cer,
+            'overall_bleu': overall_bleu,
             'per_dialect_wer': per_dialect_wer,
+            'per_dialect_cer': per_dialect_cer,
+            'per_dialect_bleu': per_dialect_bleu,
             'total_samples': len(results),
             'failed_samples': failed_samples
         }
+    

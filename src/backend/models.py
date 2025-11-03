@@ -26,5 +26,10 @@ class EvaluateResponse(BaseModel):
     """
     model: str
     total_samples: int
+    failed_samples: int
     overall_wer: float
+    overall_cer: float
+    overall_bleu: float
     per_dialect_wer: Dict[str, float]
+    per_dialect_cer: Dict[str, float]
+    per_dialect_bleu: Dict[str, float]

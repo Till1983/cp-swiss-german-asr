@@ -34,8 +34,13 @@ async def evaluate_model(request: EvaluateRequest):
         return EvaluateResponse(
             model=request.model,
             total_samples=results["total_samples"],
+            failed_samples=results["failed_samples"],
             overall_wer=results["overall_wer"],
-            per_dialect_wer=results["per_dialect_wer"]
+            overall_cer=results["overall_cer"],
+            overall_bleu=results["overall_bleu"],
+            per_dialect_wer=results["per_dialect_wer"],
+            per_dialect_cer=results["per_dialect_cer"],
+            per_dialect_bleu=results["per_dialect_bleu"]
         )
         
     except Exception as e:
