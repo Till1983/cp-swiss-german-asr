@@ -60,11 +60,25 @@ print(train.head())"
 Run ASR model evaluation on Swiss German test set.
 
 ### Example Request
+
+For Whisper small model evaluation on 10 samples:
 ```bash
 curl -X POST http://localhost:8000/api/evaluate \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "openai/whisper-medium",
+    "model_type": "whisper", 
+    "model": "small",                                
+    "limit": 10
+  }'
+```
+
+For wav2vec2 model evaluation on full test set:
+```bash
+curl -X POST http://localhost:8000/api/evaluate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model_type": "wav2vec2",
+    "model": "facebook/wav2vec2-large-xlsr-53-german",
     "limit": 100
   }'
 ```
