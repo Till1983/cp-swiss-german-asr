@@ -10,7 +10,7 @@ async def evaluate_model(request: EvaluateRequest):
     Evaluate a speech recognition model on the test dataset.
     
     Args:
-        request: EvaluateRequest containing model and optional limit
+        request: EvaluateRequest containing model_type, model, and optional limit
         
     Returns:
         EvaluateResponse with evaluation metrics
@@ -18,8 +18,11 @@ async def evaluate_model(request: EvaluateRequest):
     try:
         test_set_path = "data/metadata/test.tsv"
         
-        # Create evaluator instance with requested model
-        evaluator = ASREvaluator(model_name=request.model)
+        # Create evaluator instance with requested model type and name
+        evaluator = ASREvaluator(
+            model_type=request.model_type,
+            model_name=request.model
+        )
         
         # Load the model
         evaluator.load_model()
