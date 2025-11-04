@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Dict, Optional, List
+from typing import Optional, Dict
 
 class EvaluateRequest(BaseModel):
     """
@@ -9,8 +9,8 @@ class EvaluateRequest(BaseModel):
         model: Name of the Whisper model to evaluate (e.g., 'whisper-base', 'whisper-small')
         limit: Optional limit on number of samples to process for testing purposes
     """
-    model: str = "whisper-base"
-    #audio_files: List[str]
+    model: str
+    model_type: str = "whisper"  # Default to whisper for backward compatibility
     limit: Optional[int] = None
 
 
