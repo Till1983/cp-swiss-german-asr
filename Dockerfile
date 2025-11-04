@@ -23,8 +23,9 @@ RUN apt-get update && \
 
 # Install Python dependencies as root
 COPY requirements.txt .
+ENV PIP_DEFAULT_TIMEOUT=1000
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir --resume-retries 20 -r requirements.txt
 
 # Copy the application code
 COPY . .
