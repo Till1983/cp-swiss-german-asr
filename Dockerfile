@@ -33,6 +33,10 @@ COPY . .
 # Set ownership
 RUN chown -R appuser:appuser /app
 
+# Pre-create cache directories with correct ownership
+RUN mkdir -p /home/appuser/.cache/huggingface /home/appuser/.cache/whisper && \
+    chown -R appuser:appuser /home/appuser/.cache
+
 # Switch to non-root user
 USER appuser
 

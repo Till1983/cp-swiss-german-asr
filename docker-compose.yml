@@ -7,3 +7,9 @@ services:
       - ./data:/app/data
       - ./src:/app/src
       - ./scripts:/app/scripts
+      - ./results:/app/results
+      - ./logs:/app/logs
+      - huggingface-cache:/home/appuser/.cache/huggingface
+
+volumes:
+  huggingface-cache:
