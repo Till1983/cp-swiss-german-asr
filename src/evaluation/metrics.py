@@ -21,7 +21,7 @@ def _normalize_text(text: str) -> str:
     Returns:
         Normalized text string
     """
-    return text.lower().strip()
+    return " ".join(text.lower().split())
 
 
 def calculate_wer(reference: str, hypothesis: str) -> float:
