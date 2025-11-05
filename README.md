@@ -97,3 +97,116 @@ curl -X POST http://localhost:8000/api/evaluate \
 **Note:** WER is returned as percentage (0-100), where lower values indicate better accuracy.
 
 **Tip:** Use the `limit` parameter for quick testing with a subset of the test set.
+
+## Running Model Evaluation
+
+Batch evaluation script for comparing multiple ASR models on the Swiss German test set.
+
+### Usage
+
+**Evaluate multiple models (default: whisper-base and wav2vec2-german):**
+```bash
+docker compose run --rm api python scripts/evaluate_models.py
+```
+
+**Evaluate a single model:**
+```bash
+docker compose run --rm api python scripts/evaluate_models.py --models whisper-base
+```
+
+**Evaluate specific models:**
+```bash
+docker compose run --rm api python scripts/evaluate_models.py --models whisper-small whisper-medium wav2vec2-german
+```
+
+**Quick test with sample limit:**
+```bash
+docker compose run --rm api python scripts/evaluate_models.py --limit 10
+```
+
+### Available Models
+
+- **Whisper:** `whisper-tiny`, `whisper-base`, `whisper-small`, `whisper-medium`, `whisper-large`, `whisper-large-v2`, `whisper-large-v3`
+- **Wav2Vec2:** `wav2vec2-german`, `wav2vec2-base`, `wav2vec2-large`
+
+### Output
+
+Results are saved to `results/metrics/YYYYMMDD_HHMMSS/` with:
+- `{model}_results.json` - Full metrics including per-sample predictions
+- `{model}_results.csv` - Summary metrics table
+
+Example output structure:
+```
+results/metrics/20251105_110723/
+├── whisper-medium_results.json
+├── whisper-medium_results.csv
+├── wav2vec2-german_results.json
+└── wav2vec2-german_results.csv
+```
+
+The script prints a summary table comparing WER, CER, BLEU scores, and sample counts across all evaluated models.
+
+## Testing
+
+Run the test suite to verify metrics calculations (WER, CER, BLEU) and evaluation logic.
+
+### Running All Tests
+
+```bash
+docker compose run --rm api python -m pytest tests/ -v
+```
+
+### Running Specific Test Classes
+
+**Test WER calculations:**
+```bash
+docker compose run --rm api python -m pytest tests/test_evaluation.py::TestCalculateWER -v
+```
+
+**Test CER calculations:**
+```bash
+docker compose run --rm api python -m pytest tests/test_evaluation.py::TestCalculateCER -v
+```
+
+**Test batch metrics:**
+```bash
+docker compose run --rm api python -m pytest tests/test_evaluation.py::TestBatchWER -v
+```
+
+### Running Individual Tests
+
+```bash
+docker compose run --rm api python -m pytest tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_exact_match -v
+```
+
+### Coverage Report
+
+Generate a test coverage report:
+```bash
+docker compose run --rm api python -m pytest tests/ --cov=src/evaluation --cov-report=term-missing
+```
+
+### What Is Tested
+
+The test suite validates:
+- **WER (Word Error Rate):** Exact matches, partial matches, empty strings, case sensitivity
+- **CER (Character Error Rate):** Character-level edit distance calculations
+- **BLEU Score:** Translation quality metrics for ASR outputs
+- **Batch Processing:** Aggregated metrics across multiple samples
+- **Edge Cases:** Empty inputs, mismatched lengths, complete mismatches
+
+### Expected Output
+
+All tests should pass:
+```
+======================== test session starts ========================
+collected 25 items
+
+tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_exact_match PASSED
+tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_complete_mismatch PASSED
+tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_partial_match PASSED
+...
+tests/test_evaluation.py::TestBatchBLEU::test_batch_bleu_exact_match PASSED
+
+======================== 25 passed in 0.45s ========================
+```
