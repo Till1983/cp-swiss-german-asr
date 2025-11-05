@@ -1,6 +1,6 @@
 from typing import List, Dict
 import jiwer
-from sacrebleu import corpus_bleu
+from sacrebleu import corpus_bleu, sentence_bleu
 
 """
 ASR Evaluation Metrics Module
@@ -83,8 +83,9 @@ def calculate_bleu_score(reference: str, hypothesis: str) -> float:
     if not reference or not hypothesis:
         return 0.0
     
-    bleu = corpus_bleu([hypothesis], [[reference]])
-    return bleu.score
+    # Use sentence_bleu for single samples instead of corpus_bleu
+    bleu = sentence_bleu(hypothesis, [reference])
+    return round(bleu.score, 2)  # Round to avoid floating-point precision errors
 
 
 def batch_wer(references: List[str], hypotheses: List[str]) -> Dict:
@@ -188,17 +189,18 @@ def batch_bleu(references: List[str], hypotheses: List[str]) -> Dict:
     norm_references = [_normalize_text(ref) for ref in references]
     norm_hypotheses = [_normalize_text(hyp) for hyp in hypotheses]
     
-    # Calculate per-sample BLEU
+    # Calculate per-sample BLEU using sentence_bleu
     per_sample_bleu = []
     for ref, hyp in zip(norm_references, norm_hypotheses):
         if not ref or not hyp:
             bleu_score = 0.0
         else:
-            bleu_score = corpus_bleu([hyp], [[ref]]).score
+            bleu_score = round(sentence_bleu(hyp, [ref]).score, 2)
         per_sample_bleu.append(bleu_score)
     
-    # Calculate overall BLEU
-    overall_bleu = corpus_bleu(norm_hypotheses, [norm_references]).score
+    # Calculate overall BLEU as average of per-sample scores
+    # This avoids corpus_bleu's tokenization issues with small batches
+    overall_bleu = round(sum(per_sample_bleu) / len(per_sample_bleu), 2) if per_sample_bleu else 0.0
     
     return {
         "overall_bleu": overall_bleu,
