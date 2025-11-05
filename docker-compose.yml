@@ -9,6 +9,7 @@ services:
       - ./scripts:/app/scripts
       - ./results:/app/results
       - ./logs:/app/logs
+      - ./tests:/app/tests
       - huggingface-cache:/home/appuser/.cache/huggingface
 
 volumes:

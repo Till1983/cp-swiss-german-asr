@@ -30,6 +30,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy the application code
 COPY . .
 
+# Run tests to validate the build
+RUN python -m pytest tests/ -v --tb=short || (echo "Tests failed during build" && exit 1)
+
 # Set ownership
 RUN chown -R appuser:appuser /app
 
