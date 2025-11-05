@@ -21,7 +21,10 @@ class Wav2Vec2Model:
         
         print(f"Loading Wav2Vec2 model '{self.model_name}' on {self.device}...")
         self.processor = Wav2Vec2Processor.from_pretrained(model_name)
-        self.model = Wav2Vec2ForCTC.from_pretrained(model_name)
+        self.model = Wav2Vec2ForCTC.from_pretrained(
+            model_name,
+            use_safetensors=True  # Prefer SafeTensors format to avoid double download
+        )
         self.model.to(self.device)
         self.model.eval()
         print("Model loaded successfully.")
