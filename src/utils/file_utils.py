@@ -34,7 +34,7 @@ def save_results_json(results: Dict, output_path: str, model_name: str) -> None:
         print(f"✓ JSON results saved to {output_path}")
         
     except Exception as e:
-        raise IOError(f"Failed to save results to JSON: {e}")
+        raise IOError(f"Failed to save results to JSON: {e}") from e
 
 
 def save_results_csv(results: Dict, output_path: str) -> None:
@@ -85,7 +85,7 @@ def save_results_csv(results: Dict, output_path: str) -> None:
         print(f"✓ CSV results saved to {output_path}")
         
     except Exception as e:
-        raise IOError(f"Failed to save results to CSV: {e}")
+        raise IOError(f"Failed to save results to CSV: {e}") from e
 
 
 def ensure_log_directory(log_path: str) -> None:
