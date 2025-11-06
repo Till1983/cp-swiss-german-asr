@@ -59,7 +59,7 @@ class Wav2Vec2Model:
             # Load audio
             waveform, sample_rate = torchaudio.load(str(audio_path))
         except Exception as e:
-            raise ValueError(f"Failed to load audio file {audio_path}: {str(e)}")
+            raise ValueError(f"Failed to load audio file {audio_path}: {str(e)}") from e
         
         # Check if audio is empty
         if waveform.numel() == 0:
