@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, validator
 from typing import Optional, Dict, Literal
 
 class EvaluateRequest(BaseModel):
@@ -13,7 +13,7 @@ class EvaluateRequest(BaseModel):
     model_type: Literal["whisper", "wav2vec2"] = "whisper"  # Default to whisper for backward compatibility
     limit: Optional[int] = None
 
-    @field_validator("limit")
+    @validator("limit")
     def validate_limit(cls, value):
         if value is not None and value <= 0:
             raise ValueError("Limit must be a positive integer")
