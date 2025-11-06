@@ -154,7 +154,8 @@ class TestBatchBLEU:
         references = ["hello world"]
         hypotheses = ["hello world"]
         result = batch_bleu(references, hypotheses)
-        assert result["overall_bleu"] == 100.0
+        # Use pytest.approx due to rounding from unrounded intermediates
+        assert result["overall_bleu"] == pytest.approx(100.0, abs=0.01)
         assert result["per_sample_bleu"][0] == 100.0
 
 

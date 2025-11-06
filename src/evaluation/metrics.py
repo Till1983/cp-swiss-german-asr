@@ -189,18 +189,20 @@ def batch_bleu(references: List[str], hypotheses: List[str]) -> Dict:
     norm_references = [_normalize_text(ref) for ref in references]
     norm_hypotheses = [_normalize_text(hyp) for hyp in hypotheses]
     
-    # Calculate per-sample BLEU using sentence_bleu
-    per_sample_bleu = []
+    # Calculate per-sample BLEU using sentence_bleu (don't round yet)
+    per_sample_bleu_raw = []
     for ref, hyp in zip(norm_references, norm_hypotheses):
         if not ref or not hyp:
             bleu_score = 0.0
         else:
-            bleu_score = round(sentence_bleu(hyp, [ref]).score, 2)
-        per_sample_bleu.append(bleu_score)
+            bleu_score = sentence_bleu(hyp, [ref]).score
+        per_sample_bleu_raw.append(bleu_score)
     
-    # Calculate overall BLEU as average of per-sample scores
-    # This avoids corpus_bleu's tokenization issues with small batches
-    overall_bleu = round(sum(per_sample_bleu) / len(per_sample_bleu), 2) if per_sample_bleu else 0.0
+    # Round per-sample scores for output
+    per_sample_bleu = [round(score, 2) for score in per_sample_bleu_raw]
+    
+    # Calculate overall BLEU from unrounded values, then round once
+    overall_bleu = round(sum(per_sample_bleu_raw) / len(per_sample_bleu_raw), 2) if per_sample_bleu_raw else 0.0
     
     return {
         "overall_bleu": overall_bleu,
