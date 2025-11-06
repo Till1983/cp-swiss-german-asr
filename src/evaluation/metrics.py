@@ -1,6 +1,6 @@
 from typing import List, Dict
 import jiwer
-from sacrebleu import corpus_bleu, sentence_bleu
+from sacrebleu import sentence_bleu
 
 """
 ASR Evaluation Metrics Module
@@ -85,7 +85,7 @@ def calculate_bleu_score(reference: str, hypothesis: str) -> float:
     
     # Use sentence_bleu for single samples instead of corpus_bleu
     bleu = sentence_bleu(hypothesis, [reference])
-    return round(bleu.score, 2)  # Round to avoid floating-point precision errors
+    return round(bleu.score, 2)  # Round to 2 decimal places for consistency with display formatting
 
 
 def batch_wer(references: List[str], hypotheses: List[str]) -> Dict:
