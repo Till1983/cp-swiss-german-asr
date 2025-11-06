@@ -1,5 +1,4 @@
 import pytest
-from src.evaluation.evaluator import ASREvaluator
 from src.evaluation.metrics import (
     calculate_wer, 
     calculate_cer, 

@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict
 from datetime import datetime
 
 def save_results_json(results: Dict, output_path: str, model_name: str) -> None:
