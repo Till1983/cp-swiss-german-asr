@@ -200,13 +200,13 @@ The test suite validates:
 All tests should pass:
 ```
 ======================== test session starts ========================
-collected 25 items
+collected 64 items
 
 tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_exact_match PASSED
 tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_complete_mismatch PASSED
 tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_partial_match PASSED
 ...
-tests/test_evaluation.py::TestBatchBLEU::test_batch_bleu_exact_match PASSED
+tests/test_evaluation.py::TestSwissGermanRealistic::test_bleu_partial_swiss_german_match PASSED
 
-======================== 25 passed in 0.45s ========================
+======================== 64 passed in 4.42s ========================
 ```
