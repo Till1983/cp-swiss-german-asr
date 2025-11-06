@@ -46,14 +46,23 @@ def save_results_csv(results: Dict, output_path: str) -> None:
         output_path: Path where CSV file should be saved
         
     Raises:
-        ValueError: If results don't contain required per-dialect metrics
+        ValueError: If results don't contain required metrics
         IOError: If file cannot be written
     """
     try:
-        # Validate required keys
-        required_keys = {'per_dialect_wer', 'per_dialect_cer', 'per_dialect_bleu'}
-        if not required_keys.issubset(results.keys()):
-            raise ValueError(f"Results dictionary must contain keys: {required_keys}")
+        # Validate all required keys
+        required_per_dialect_keys = {'per_dialect_wer', 'per_dialect_cer', 'per_dialect_bleu'}
+        required_overall_keys = {'overall_wer', 'overall_cer', 'overall_bleu'}
+        
+        missing_per_dialect = required_per_dialect_keys - set(results.keys())
+        missing_overall = required_overall_keys - set(results.keys())
+        
+        if missing_per_dialect or missing_overall:
+            missing = missing_per_dialect | missing_overall
+            raise ValueError(
+                f"Results dictionary must contain keys: {required_per_dialect_keys | required_overall_keys}. "
+                f"Missing: {missing}"
+            )
         
         output_path = Path(output_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
