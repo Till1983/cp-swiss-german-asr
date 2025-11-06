@@ -51,8 +51,7 @@ class ASREvaluator:
                 print("Model loaded successfully.")
             except Exception as e:
                 raise ValueError(f"Failed to load Wav2Vec2 model '{self.model_name}': {str(e)}")
-        else:
-            raise ValueError(f"Unknown model_type: {self.model_type}. Must be 'whisper' or 'wav2vec2'.")
+       
     
     def _get_transcription(self, audio_path: Path) -> str:
         """
