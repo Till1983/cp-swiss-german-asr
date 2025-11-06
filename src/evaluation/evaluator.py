@@ -50,8 +50,7 @@ class ASREvaluator:
                 self.model = Wav2Vec2Model(model_name=self.model_name, device=self.device)
                 print("Model loaded successfully.")
             except Exception as e:
-                raise ValueError(f"Failed to load Wav2Vec2 model '{self.model_name}': {str(e)}")
-       
+                raise ValueError(f"Failed to load Wav2Vec2 model '{self.model_name}': {str(e)}") from e
     
     def _get_transcription(self, audio_path: Path) -> str:
         """
@@ -104,7 +103,7 @@ class ASREvaluator:
         try:
             df = pd.read_csv(metadata_path, sep='\t')
         except Exception as e:
-            raise ValueError(f"Failed to read metadata file: {e}")
+            raise ValueError(f"Failed to read metadata file: {e}") from e
         
         required_columns = {'path', 'sentence', 'accent'}
         if not required_columns.issubset(df.columns):
