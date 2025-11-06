@@ -6,7 +6,7 @@ class EvaluateRequest(BaseModel):
     Request schema for model evaluation endpoint.
     
     Attributes:
-        model: Name of the Whisper model to evaluate (e.g., 'whisper-base', 'whisper-small')
+        model: Name of the ASR model to evaluate (e.g., 'base' for Whisper, 'facebook/wav2vec2-large-xlsr-53-german' for Wav2Vec2)
         limit: Optional limit on number of samples to process for testing purposes
     """
     model: str
