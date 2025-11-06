@@ -7,3 +7,21 @@ services:
       - ./data:/app/data
       - ./src:/app/src
       - ./scripts:/app/scripts
+      - ./results:/app/results
+      - ./logs:/app/logs
+      - ./tests:/app/tests
+      - huggingface-cache:/home/appuser/.cache/huggingface
+
+  test:
+    build: .
+    command: ["python", "-m", "pytest", "tests/"]
+    volumes:
+      - ./data:/app/data            
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - huggingface-cache:/home/appuser/.cache/huggingface
+    environment:
+      - PYTHONPATH=/app
+
+volumes:
+  huggingface-cache:
