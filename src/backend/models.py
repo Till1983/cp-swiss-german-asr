@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-from typing import Optional, Dict
+from pydantic import BaseModel, field_validator
+from typing import Optional, Dict, Literal
 
 class EvaluateRequest(BaseModel):
     """
@@ -10,8 +10,14 @@ class EvaluateRequest(BaseModel):
         limit: Optional limit on number of samples to process for testing purposes
     """
     model: str
-    model_type: str = "whisper"  # Default to whisper for backward compatibility
+    model_type: Literal["whisper", "wav2vec2"] = "whisper"  # Default to whisper for backward compatibility
     limit: Optional[int] = None
+
+    @field_validator("limit")
+    def validate_limit(cls, value):
+        if value is not None and value <= 0:
+            raise ValueError("Limit must be a positive integer")
+        return value
 
 
 class EvaluateResponse(BaseModel):
