@@ -23,12 +23,8 @@ using metrics like WER (Word Error Rate), CER (Character Error Rate), and BLEU s
 
 # Load data
 results_dir = Path("results/metrics")
-#if not results_dir.exists():
-#    st.error(f"Results directory not found: {results_dir}")
-#    st.stop()
 
 # Get available models
-
 available_models = get_available_results(str(results_dir))
 
 if not available_models:
