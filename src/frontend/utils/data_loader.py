@@ -43,17 +43,17 @@ def load_data(csv_path: str) -> pd.DataFrame:
         raise IOError(f"Failed to load CSV file: {e}") from e
 
 
-def get_available_results(results_base_path: str = "results/metrics") -> List[Dict[str, str]]:
+def get_available_results(results_base_path: str = "results/metrics") -> Dict[str, List[Dict[str, str]]]:
     """
-    Get list of all available result files in the results directory.
+    Get list of all available result files in the results directory, grouped by model.
     
     Args:
         results_base_path: Base path to results directory
         
     Returns:
-        List of dictionaries with 'model_name', 'csv_path', 'json_path', 'timestamp'
+        Dictionary mapping model names to list of result file info dicts
     """
-    results = []
+    results = {}
     results_path = Path(results_base_path)
     
     if not results_path.exists():
@@ -74,18 +74,23 @@ def get_available_results(results_base_path: str = "results/metrics") -> List[Di
                 # Check for corresponding JSON file
                 json_file = csv_file.with_suffix(".json")
                 
-                results.append({
+                result_info = {
                     'model_name': model_name,
                     'csv_path': str(csv_file),
                     'json_path': str(json_file) if json_file.exists() else None,
                     'timestamp': timestamp_dir.name
-                })
+                }
+                
+                # Group by model name
+                if model_name not in results:
+                    results[model_name] = []
+                results[model_name].append(result_info)
         
         return results
         
     except Exception as e:
         st.error(f"Error scanning results directory: {e}")
-        return []
+        return {}
 
 
 def combine_model_results(result_files: List[Dict[str, str]]) -> pd.DataFrame:
