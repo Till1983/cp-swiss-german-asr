@@ -1,6 +1,6 @@
 import streamlit as st
 from pathlib import Path
-#from utils.data_loader import load_data
+from utils.data_loader import load_data
 
 # Page configuration
 st.set_page_config(
@@ -16,16 +16,16 @@ This application demonstrates automatic speech recognition for Swiss German dial
 """)
 
 # Load data
-#data = load_data()
+data = load_data()
 
 # Placeholder for tab structure
-tab1, tab2, tab3 = st.tabs(["Upload Audio", "Record Audio", "Model Information"])
+tab1, tab2, tab3 = st.tabs(["Functionality one", "Functionality two", "Model Information"])
 
 with tab1:
-    st.write("Upload audio functionality will be implemented here")
+    st.write("Functionality one will be implemented here")
 
 with tab2:
-    st.write("Record audio functionality will be implemented here")
+    st.write("Functionality two will be implemented here")
 
 with tab3:
     st.write("Model information will be displayed here")
