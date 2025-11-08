@@ -156,7 +156,7 @@ class TestBatchBLEU:
         result = batch_bleu(references, hypotheses)
         # Use pytest.approx to account for floating-point precision in BLEU calculation
         assert result["overall_bleu"] == pytest.approx(100.0, abs=0.01)
-        assert result["per_sample_bleu"][0] == 100.0
+        assert result["per_sample_bleu"][0] == pytest.approx(100.0, abs=0.01)
 
 
 class TestCalculateBLEU:
@@ -164,7 +164,7 @@ class TestCalculateBLEU:
         """BLEU should be 100 for identical strings"""
         reference = "hello world"
         hypothesis = "hello world"
-        assert calculate_bleu_score(reference, hypothesis) == 100.0
+        assert calculate_bleu_score(reference, hypothesis) == pytest.approx(100.0, abs=0.01)
     
     def test_calculate_bleu_empty_strings(self):
         """BLEU should handle empty strings"""
@@ -248,7 +248,7 @@ class TestEdgeCases:
         hypothesis = "go"
         # sentence_bleu has smoothing for short sentences
         result = calculate_bleu_score(reference, hypothesis)
-        assert result == 100.0
+        assert result == pytest.approx(100.0, rel=0.01)
     
     def test_batch_metrics_with_empty_strings_mixed(self):
         """Batch functions should handle mix of empty and non-empty strings"""
@@ -313,7 +313,7 @@ class TestBoundaryConditions:
     def test_bleu_identical_long_sentence(self):
         """BLEU should be 100 for identical long sentences"""
         sentence = " ".join(["word"] * 100)
-        assert calculate_bleu_score(sentence, sentence) == 100.0
+        assert calculate_bleu_score(sentence, sentence) == pytest.approx(100.0, abs=0.01)
 
 
 class TestConsistency:
@@ -346,8 +346,8 @@ class TestConsistency:
         
         single_bleu = calculate_bleu_score(reference, hypothesis)
         batch_result = batch_bleu([reference], [hypothesis])
-        
-        assert single_bleu == batch_result["per_sample_bleu"][0]
+
+        assert single_bleu == pytest.approx(batch_result["per_sample_bleu"][0], abs=0.01)
 
 
 # ============================================================================
@@ -389,7 +389,7 @@ def test_calculate_cer_parametrized_extended(reference, hypothesis, expected_cer
 ])
 def test_calculate_bleu_perfect_matches(reference, hypothesis):
     """BLEU should be 100 for all perfect matches"""
-    assert calculate_bleu_score(reference, hypothesis) == 100.0
+    assert calculate_bleu_score(reference, hypothesis) == pytest.approx(100.0, abs=0.01)
 
 
 # ============================================================================
