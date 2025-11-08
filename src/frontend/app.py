@@ -7,6 +7,7 @@ from utils.data_loader import get_available_results
 from utils.data_loader import combine_model_results
 from components.sidebar import render_sidebar
 from components.model_comparison import compare_models, _get_performance_category
+from components.dialect_breakdown import create_dialect_comparison, create_aggregate_comparison
 
 # Page configuration
 st.set_page_config(
@@ -68,6 +69,14 @@ tab1, tab2, tab3, tab4 = st.tabs([
 with tab1:
     st.header("Overview")
     
+    # Display overall metrics using aggregate comparison
+    if 'model' in filtered_df.columns:
+        fig_agg = create_aggregate_comparison(
+            filtered_df,
+            selected_metric=selected_metric
+        )
+        st.plotly_chart(fig_agg, use_container_width=True)
+    
     # Display overall metrics
     col1, col2, col3 = st.columns(3)
     
@@ -102,9 +111,15 @@ with tab2:
         has_model_column = 'model' in filtered_df.columns
         multiple_models = has_model_column and filtered_df['model'].nunique() > 1
         
-        # Show comparison table if we have model data to compare
+        # Use dialect comparison chart if we have model data
         if has_model_column and (multiple_models or len(model_files) > 1):
             st.subheader("Model Comparison Across Dialects")
+            fig_dialect = create_dialect_comparison(
+                filtered_df,
+                selected_metric=selected_metric
+            )
+            st.plotly_chart(fig_dialect, use_container_width=True)
+            
             st.markdown("""
             **Quality Scale:** 
             🟢 Excellent | 🟡 Good | 🔴 Poor
