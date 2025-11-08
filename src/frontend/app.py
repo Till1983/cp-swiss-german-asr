@@ -69,8 +69,9 @@ tab1, tab2, tab3, tab4 = st.tabs([
 with tab1:
     st.header("Overview")
     
-    # Display overall metrics using aggregate comparison
-    if 'model' in filtered_df.columns:
+    # Display aggregate comparison only when comparing multiple models
+    if 'model' in filtered_df.columns and filtered_df['model'].nunique() > 1:
+        st.subheader("Model Comparison")
         fig_agg = create_aggregate_comparison(
             filtered_df,
             selected_metric=selected_metric
