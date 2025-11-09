@@ -7,16 +7,16 @@ def display_data_table(
     title: str = "Results Table",
     show_pagination: bool = True,
     rows_per_page: int = 50,
-    height: int = 400
+    height: int = 600
 ) -> None:
     """
-    Display a formatted and filterable DataFrame with pagination.
+    Display a formatted and filterable DataFrame using Streamlit's native scrolling.
     
     Args:
         df: DataFrame to display
         title: Title for the table
-        show_pagination: Whether to enable pagination
-        rows_per_page: Number of rows per page (default: 50)
+        show_pagination: Kept for API compatibility (not used - Streamlit handles pagination natively)
+        rows_per_page: Kept for API compatibility (not used - Streamlit handles pagination natively)
         height: Height of the dataframe in pixels
     """
     if df.empty:
@@ -28,27 +28,6 @@ def display_data_table(
     # Display row count
     total_rows = len(df)
     st.caption(f"Total records: **{total_rows}**")
-    
-    # Pagination
-    if show_pagination and total_rows > rows_per_page:
-        # Calculate page range
-        max_start = max(0, total_rows - rows_per_page)
-        
-        start_idx = st.slider(
-            "Select row range",
-            min_value=0,
-            max_value=max_start,
-            value=0,
-            step=rows_per_page,
-            help="Use the slider to navigate through pages of results"
-        )
-        
-        end_idx = min(start_idx + rows_per_page, total_rows)
-        df_display = df.iloc[start_idx:end_idx]
-        
-        st.caption(f"Showing rows {start_idx + 1} to {end_idx} of {total_rows}")
-    else:
-        df_display = df
     
     # Column configuration
     column_config = {
@@ -82,19 +61,20 @@ def display_data_table(
         )
     }
     
-    # Display dataframe with formatting
+    # Display dataframe with native Streamlit scrolling
+    # Streamlit automatically handles large datasets efficiently
     st.dataframe(
-        df_display,
+        df,
         column_config=column_config,
         hide_index=True,
         use_container_width=True,
-        height=height
+        height=height  # Creates a scrollable container
     )
     
     # Sorting instructions
     st.info(
         "💡 **Tip:** Click on column headers to sort the table. "
-        "Click again to reverse sort order."
+        "Scroll within the table to view more rows."
     )
 
 
@@ -131,6 +111,7 @@ def display_summary_statistics(df: pd.DataFrame) -> None:
         column_config=column_config,
         use_container_width=True
     )
+
 
 def download_filtered_data(df: pd.DataFrame, filename_prefix: str = "filtered_data") -> None:
     """
