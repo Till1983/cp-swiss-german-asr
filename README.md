@@ -1,6 +1,15 @@
 # cp-swiss-german-asr
 Comparative ASR for Swiss‑German dialects: reproducible Docker pipeline, baseline Whisper inference, fine‑tuned Whisper‑medium & wav2vec2 models, per‑canton error analysis, Streamlit dashboard, and scripts for data preparation, training, and evaluation. Ready for replication on modest hardware.
 
+## Table of Contents
+
+- [Setup with Docker](#setup-with-docker)
+- [Data Pipeline](#data-pipeline)
+- [Evaluation API](#evaluation-api)
+- [Running Model Evaluation](#running-model-evaluation)
+- [Testing](#testing)
+- [Dashboard](#dashboard)
+
 ## Setup with Docker
 
 1. **Prerequisites**
@@ -210,3 +219,23 @@ tests/test_evaluation.py::TestSwissGermanRealistic::test_bleu_partial_swiss_germ
 
 ======================== 64 passed in 4.42s ========================
 ```
+
+## Dashboard
+
+For detailed dashboard documentation, see [DASHBOARD.md](docs/DASHBOARD.md).
+
+### Quick Start
+
+```bash
+docker compose run --rm -p 8501:8501 dashboard
+```
+
+Access the dashboard at `http://localhost:8501`
+
+### Features
+
+- **Model Performance Comparison:** Compare WER, CER, and BLEU scores across different ASR models
+- **Dialect Breakdown:** Analyze performance by Swiss German canton/dialect
+- **Interactive Visualizations:** Explore metrics with dynamic charts and filters
+- **Data Table View:** Browse detailed evaluation results in tabular format
+- **Filtering:** Filter by model, dialect, or custom date ranges

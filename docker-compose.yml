@@ -12,6 +12,19 @@ services:
       - ./tests:/app/tests
       - huggingface-cache:/home/appuser/.cache/huggingface
 
+  dashboard:
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+      - ./results:/app/results
+      - huggingface-cache:/home/appuser/.cache/huggingface
+    command: ["streamlit", "run", "src/frontend/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    depends_on:
+      - api
+
   test:
     build: .
     command: ["python", "-m", "pytest", "tests/"]

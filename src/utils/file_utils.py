@@ -89,7 +89,7 @@ def save_results_csv(results: Dict, output_path: str) -> None:
         })
         
         df = pd.DataFrame(data)
-        df.to_csv(output_path, index=False, float_format='%.4f')
+        df.to_csv(output_path, index=False)
         
         print(f"✓ CSV results saved to {output_path}")
         
