@@ -9,7 +9,7 @@ The Swiss German ASR Dashboard is a Streamlit-based web application for visualiz
 - [Overview](#overview)
 - [Installation](#installation)
     - [Requirements](#requirements)
-    - [Running the Dashboard](#running-the-dashboard)
+    - [Quick Start](#quick-start)
 - [Screenshots](#screenshots)
     - [Main Dashboard View](#main-dashboard-view)
     - [Model Comparison](#model-comparison)
@@ -35,27 +35,36 @@ The Swiss German ASR Dashboard is a Streamlit-based web application for visualiz
 - Docker
 - Docker Compose
 
-### Running the Dashboard
+### Quick Start
 
 1. Navigate to the project root directory:
 ```bash
 cd /path/to/cp-swiss-german-asr
 ```
 
-2. Start the dashboard using Docker Compose:
+2. Start the dashboard:
 ```bash
-docker compose run --rm -p 8501:8501 dashboard
+docker compose up dashboard
 ```
-You can also use:
-```bash
-docker compose up
-```
-to start all services defined in the `docker-compose.yml`.
 
-3. Access the dashboard in your browser at `http://localhost:8501`
+   **Alternative:** To run as an isolated service with manual port mapping:
+   ```bash
+   docker compose run --rm -p 8501:8501 dashboard
+   ```
 
-4. To stop the dashboard:
-- Press `CTRL + C` in the terminal where the dashboard is running
+3. Open your browser and navigate to `http://localhost:8501`
+
+4. **Explore the dashboard:**
+   - Select a model from the sidebar dropdown (e.g., "whisper-small")
+   - Use filters to narrow results:
+     - **Models:** Compare multiple models
+     - **Dialects:** Focus on specific Swiss German variants
+     - **Metric:** Switch between WER, CER, or BLEU
+   - Navigate tabs:
+     - **Overview:** Aggregate metrics and summary statistics
+     - **Dialect Analysis:** Per-canton performance breakdown
+
+5. To stop the dashboard, press `CTRL + C` in the terminal
 
 ## Screenshots
 
