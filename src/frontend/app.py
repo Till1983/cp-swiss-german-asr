@@ -8,6 +8,8 @@ from utils.data_loader import combine_model_results
 from components.sidebar import render_sidebar
 from components.model_comparison import compare_models, _get_performance_category
 from components.dialect_breakdown import create_dialect_comparison, create_aggregate_comparison
+from components.data_table import display_data_table, display_summary_statistics, download_filtered_data
+from components.statistics_panel import render_metrics_definitions
 
 # Page configuration
 st.set_page_config(
@@ -66,8 +68,11 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "🔍 Sample Predictions"
 ])
 
-with tab1:
+with tab1:  # Overview
     st.header("Overview")
+    
+    # Render metrics definitions contextually
+    render_metrics_definitions()  # Keep context-aware
     
     # Display aggregate comparison only when comparing multiple models
     if 'model' in filtered_df.columns and filtered_df['model'].nunique() > 1:
@@ -93,12 +98,20 @@ with tab1:
         with col3:
             st.metric("Average BLEU", f"{filtered_df['bleu'].mean():.2f}")
     
-    # Display filtered data
-    st.subheader("Filtered Data")
-    st.dataframe(
+    # Add summary statistics
+    st.divider()
+    display_summary_statistics(filtered_df)
+    
+    # Add download button
+    download_filtered_data(filtered_df, filename_prefix=f"{selected_model}_overview")
+    
+    st.divider()
+    st.subheader("Full Results Table")
+    display_data_table(
         filtered_df,
-        use_container_width=True,
-        hide_index=True
+        title="Filtered Results",
+        show_pagination=True,
+        rows_per_page=20
     )
 
 with tab2:
@@ -225,22 +238,23 @@ with tab2:
     else:
         st.warning("No data available with current filters.")
 
-with tab3:
+with tab3:  # Detailed Metrics
     st.header("Detailed Metrics")
-    # TODO: Add colour coded quality scale for WER, CER, BLEU across dialects
-    if not filtered_df.empty:
-        # Show all metrics side by side
-        st.subheader("All Metrics Comparison")
-        
-        metrics_cols = ['wer', 'cer', 'bleu']
-        available_metrics = [m for m in metrics_cols if m in filtered_df.columns]
-        
-        for metric in available_metrics:
-            st.subheader(f"{metric.upper()} Scores")
-            metric_data = filtered_df.groupby('dialect')[metric].mean()
-            st.bar_chart(metric_data)
-    else:
-        st.warning("No data available with current filters.")
+    
+    # Your existing visualizations...
+    
+    st.divider()
+    
+    # Add the detailed data table here
+    display_data_table(
+        filtered_df,
+        title="Complete Metrics Breakdown",
+        show_pagination=True,
+        rows_per_page=50
+    )
+    
+    # Add download
+    download_filtered_data(filtered_df, filename_prefix=f"{selected_model}_detailed")
 
 with tab4:
     st.info("Sample Predictions tab - Coming soon")
