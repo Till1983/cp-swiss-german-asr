@@ -4,6 +4,30 @@
 
 The Swiss German ASR Dashboard is a Streamlit-based web application for visualizing and analyzing Swiss German Automatic Speech Recognition model performance data.
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+    - [Requirements](#requirements)
+    - [Running the Dashboard](#running-the-dashboard)
+- [Screenshots](#screenshots)
+    - [Main Dashboard View](#main-dashboard-view)
+    - [Model Comparison](#model-comparison)
+    - [Dialect Breakdown](#dialect-breakdown)
+    - [Data Table](#data-table)
+- [Usage Guide](#usage-guide)
+    - [Navigation](#navigation)
+    - [Using Filters](#using-filters)
+    - [Interpreting Charts](#interpreting-charts)
+- [Components](#components)
+- [Known Limitations](#known-limitations)
+- [Troubleshooting](#troubleshooting)
+    - [Dashboard won't start](#dashboard-wont-start)
+    - [Data not loading](#data-not-loading)
+    - [Performance issues](#performance-issues)
+    - [Port conflicts](#port-conflicts)
+    - [Browser compatibility](#browser-compatibility)
+
 ## Installation
 
 ### Requirements
