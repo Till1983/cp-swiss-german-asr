@@ -1,6 +1,6 @@
 import streamlit as st
 from pathlib import Path
-from typing  import Dict, List
+from typing import Dict, List
 import pandas as pd
 
 @st.cache_data
