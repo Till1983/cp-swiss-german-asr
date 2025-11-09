@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 
 def display_data_table(
     df: pd.DataFrame,
@@ -129,4 +130,33 @@ def display_summary_statistics(df: pd.DataFrame) -> None:
         stats_df,
         column_config=column_config,
         use_container_width=True
+    )
+
+def download_filtered_data(df: pd.DataFrame, filename_prefix: str = "filtered_data") -> None:
+    """
+    Provide a download button for the filtered DataFrame as CSV.
+    
+    Args:
+        df: DataFrame to download
+        filename_prefix: Prefix for the downloaded filename
+    """
+    
+    if df.empty:
+        st.warning("No data available to download")
+        return
+    
+    # Generate timestamp for filename
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"{filename_prefix}_{timestamp}.csv"
+    
+    # Convert DataFrame to CSV bytes
+    csv_bytes = df.to_csv(index=False).encode('utf-8')
+    
+    # Display download button
+    st.download_button(
+        label="📥 Download CSV",
+        data=csv_bytes,
+        file_name=filename,
+        mime="text/csv",
+        help="Download the current view as a CSV file"
     )
