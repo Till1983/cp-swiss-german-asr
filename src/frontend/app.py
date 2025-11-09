@@ -1,7 +1,6 @@
 import streamlit as st
 from pathlib import Path
 import plotly.graph_objects as go
-import pandas as pd
 from utils.data_loader import load_data
 from utils.data_loader import get_available_results
 from utils.data_loader import combine_model_results
@@ -111,7 +110,8 @@ with tab1:  # Overview
         filtered_df,
         title="Filtered Results",
         show_pagination=True,
-        rows_per_page=20
+        rows_per_page=20,
+        height=400
     )
 
 with tab2:
