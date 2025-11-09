@@ -131,7 +131,7 @@ The dashboard is built with modular components:
 **Solution**:
 - Ensure Docker is running: `docker --version`
 - Check if port 8501 is already in use: `lsof -i :8501`
-- Review logs: `docker compose logs frontend`
+- Review logs: `docker compose logs dashboard`
 
 ### Data not loading
 
@@ -148,7 +148,7 @@ The dashboard is built with modular components:
 
 **Solution**:
 - Reduce the date range or filter dataset size
-- Restart the container: `docker compose restart frontend`
+- Restart the container: `docker compose restart dashboard`
 - Increase Docker memory allocation in Docker settings
 
 ### Port conflicts
@@ -158,7 +158,7 @@ The dashboard is built with modular components:
 **Solution**:
 - Modify the port mapping in `docker-compose.yml`
 - Stop other services using the port
-- Use an alternative port: `docker compose up frontend -p 8502:8501`
+- Use an alternative port: `docker compose run --rm -p 8502:8501 dashboard`
 
 ### Browser compatibility
 
