@@ -32,9 +32,6 @@ to start all services defined in the `docker-compose.yml`.
 
 4. To stop the dashboard:
 - Press `CTRL + C` in the terminal where the dashboard is running
-```bash
-docker compose down
-```
 
 ## Screenshots
 
