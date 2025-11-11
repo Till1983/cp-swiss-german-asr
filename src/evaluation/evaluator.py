@@ -5,11 +5,12 @@ from pathlib import Path
 from typing import Dict
 from src.evaluation import metrics
 from src.models.wav2vec2_model import Wav2Vec2Model
+from src.models.mms_model import MMSModel
 
 
 class ASREvaluator:
     """
-    ASR Evaluator for Whisper and Wav2Vec2 models on Swiss German audio datasets.
+    ASR Evaluator for Whisper, Wav2Vec2, and MMS models on Swiss German audio datasets.
     """
     
     def __init__(self, model_type: str = "whisper", model_name: str = "base", device: str = None):
@@ -17,13 +18,15 @@ class ASREvaluator:
         Initialize the ASR Evaluator.
         
         Args:
-            model_type: Type of model ('whisper' or 'wav2vec2')
-            model_name: Model identifier (Whisper: tiny/base/small/medium/large, 
-                       Wav2Vec2: HuggingFace model name)
+            model_type: Type of model ('whisper', 'wav2vec2', or 'mms')
+            model_name: Model identifier 
+                       - Whisper: tiny/base/small/medium/large
+                       - Wav2Vec2: HuggingFace model name
+                       - MMS: HuggingFace model name
             device: Device to run on ("cuda", "mps", or "cpu"). Auto-detected if None.
         """
-        if model_type not in ["whisper", "wav2vec2"]:
-            raise ValueError(f"model_type must be 'whisper' or 'wav2vec2', got: {model_type}")
+        if model_type not in ["whisper", "wav2vec2", "mms"]:
+            raise ValueError(f"model_type must be 'whisper', 'wav2vec2', or 'mms', got: {model_type}")
         
         self.model_type = model_type
         self.model_name = model_name
@@ -44,13 +47,24 @@ class ASREvaluator:
                 print("Model loaded successfully.")
             except Exception as e:
                 raise ValueError(f"Failed to load Whisper model '{self.model_name}': {str(e)}")
+                
         elif self.model_type == "wav2vec2":
-            print(f"Loading Wav2Vec2 model '{self.model_name}' on {self.device}...")
             try:
                 self.model = Wav2Vec2Model(model_name=self.model_name, device=self.device)
-                print("Model loaded successfully.")
             except Exception as e:
                 raise ValueError(f"Failed to load Wav2Vec2 model '{self.model_name}': {str(e)}") from e
+                
+        elif self.model_type == "mms":
+            try:
+                self.model = MMSModel(model_name=self.model_name, device=self.device)
+            except Exception as e:
+                # Only wrap once, with clear message
+                raise ValueError(
+                    f"Failed to load MMS model '{self.model_name}'. "
+                    f"Ensure you're using an ASR model (e.g., facebook/mms-1b-all), "
+                    f"not a TTS model (e.g., facebook/mms-tts). "
+                    f"Error: {str(e)}"
+                ) from e
     
     def _get_transcription(self, audio_path: Path) -> str:
         """
@@ -66,8 +80,14 @@ class ASREvaluator:
             audio = whisper.load_audio(str(audio_path))
             result = self.model.transcribe(audio, language="de")
             return result['text']
+            
         elif self.model_type == "wav2vec2":
             result = self.model.transcribe(audio_path, language="de")
+            return result['text']
+            
+        elif self.model_type == "mms":
+            # Use "deu" (ISO 639-3) for German
+            result = self.model.transcribe(audio_path, language="deu")
             return result['text']
         
     def evaluate_dataset(self, metadata_path: str, audio_base_path: str = "data/raw/fhnw-swiss-german-corpus/clips", limit: int = None) -> Dict:
