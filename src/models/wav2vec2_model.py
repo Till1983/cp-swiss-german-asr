@@ -10,8 +10,11 @@ class Wav2Vec2Model:
         Initialize Wav2Vec2 model for ASR.
         
         Args:
-            model_name: Hugging Face model name
+            model_name: Hugging Face model name (must be a fine-tuned model with vocabulary)
             device: Device to run on ("cuda", "mps", or "cpu"). Auto-detected if None.
+        
+        Raises:
+            ValueError: If model doesn't have a vocabulary file (not fine-tuned)
         """
         self.model_name = model_name
         self.device = device if device else (
@@ -20,7 +23,17 @@ class Wav2Vec2Model:
         )
         
         print(f"Loading Wav2Vec2 model '{self.model_name}' on {self.device}...")
-        self.processor = Wav2Vec2Processor.from_pretrained(model_name)
+        
+        try:
+            self.processor = Wav2Vec2Processor.from_pretrained(model_name)
+        except (TypeError, OSError) as e:
+            raise ValueError(
+                f"Failed to load Wav2Vec2 processor for '{model_name}'. "
+                f"This model may not be fine-tuned (missing vocabulary file). "
+                f"Only fine-tuned models can be used for transcription. "
+                f"Error: {str(e)}"
+            ) from e
+        
         self.model = Wav2Vec2ForCTC.from_pretrained(
             model_name,
             use_safetensors=True  # Prefer SafeTensors format to avoid double download
@@ -35,7 +48,7 @@ class Wav2Vec2Model:
         
         Args:
             audio_path: Path to audio file
-            language: Language parameter (not used for Wav2Vec2, kept for compatibility)
+            language: Language parameter (not used for Wav2Vec2, kept for compatibility with Whisper API)
             
         Returns:
             Dictionary with 'text' key containing transcription
