@@ -22,11 +22,13 @@ MODEL_REGISTRY = {
     "whisper-large": {"type": "whisper", "name": "large"},
     "whisper-large-v2": {"type": "whisper", "name": "large-v2"},
     "whisper-large-v3": {"type": "whisper", "name": "large-v3"},
+    "whisper-large-v3-turbo": {"type": "whisper", "name": "large-v3-turbo"},
     
     # Wav2Vec2 German models
     "wav2vec2-german": {"type": "wav2vec2", "name": "facebook/wav2vec2-large-xlsr-53-german"},
     
     # Wav2Vec2 multilingual models
+    # Note: Didn't work because of missing vocabulary files - not fine-tuned
     "wav2vec2-r-2b": {"type": "wav2vec2", "name": "facebook/wav2vec2-xls-r-2b"},
     "wav2vec2-large-53": {"type": "wav2vec2", "name": "facebook/wav2vec2-large-xlsr-53"},
 
