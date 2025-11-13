@@ -156,14 +156,19 @@ class ASREvaluator:
                 # Get transcription using appropriate model
                 hypothesis = self._get_transcription(audio_path)
                 
-                # Calculate WER
+                # Calculate metrics for this sample
                 wer = metrics.calculate_wer(reference, hypothesis)
+                cer = metrics.calculate_cer(reference, hypothesis)
+                bleu = metrics.calculate_bleu_score(reference, hypothesis)
                 
                 results.append({
-                    'accent': accent,
-                    'wer': wer,
+                    'audio_file': str(audio_path.name),
+                    'dialect': accent,
                     'reference': reference,
-                    'hypothesis': hypothesis
+                    'hypothesis': hypothesis,
+                    'wer': wer,
+                    'cer': cer,
+                    'bleu': bleu
                 })
                 
             except Exception as e:
@@ -184,7 +189,8 @@ class ASREvaluator:
                 'per_dialect_cer': {},
                 'per_dialect_bleu': {},
                 'total_samples': 0,
-                'failed_samples': failed_samples
+                'failed_samples': failed_samples,
+                'samples': []
             }
         
         overall_wer = sum(r['wer'] for r in results) / len(results)
@@ -192,8 +198,8 @@ class ASREvaluator:
         # Calculate per-dialect WER
         per_dialect_wer = {}
         results_df = pd.DataFrame(results)
-        for accent in results_df['accent'].unique():
-            accent_results = results_df[results_df['accent'] == accent]
+        for accent in results_df['dialect'].unique():  # ← CHANGE 'accent' to 'dialect'
+            accent_results = results_df[results_df['dialect'] == accent]
             per_dialect_wer[accent] = accent_results['wer'].mean()
         
         # Calculate overall CER
@@ -208,8 +214,8 @@ class ASREvaluator:
         
         # Calculate per-dialect CER
         per_dialect_cer = {}
-        for accent in results_df['accent'].unique():
-            accent_results = results_df[results_df['accent'] == accent]
+        for accent in results_df['dialect'].unique():  # ← CHANGE 'accent' to 'dialect'
+            accent_results = results_df[results_df['dialect'] == accent]
             accent_refs = accent_results['reference'].tolist()
             accent_hyps = accent_results['hypothesis'].tolist()
             accent_cer = metrics.batch_cer(accent_refs, accent_hyps)
@@ -217,8 +223,8 @@ class ASREvaluator:
         
         # Calculate per-dialect BLEU
         per_dialect_bleu = {}
-        for accent in results_df['accent'].unique():
-            accent_results = results_df[results_df['accent'] == accent]
+        for accent in results_df['dialect'].unique():  # ← CHANGE 'accent' to 'dialect'
+            accent_results = results_df[results_df['dialect'] == accent]
             accent_refs = accent_results['reference'].tolist()
             accent_hyps = accent_results['hypothesis'].tolist()
             accent_bleu = metrics.batch_bleu(accent_refs, accent_hyps)
@@ -232,6 +238,7 @@ class ASREvaluator:
             'per_dialect_cer': per_dialect_cer,
             'per_dialect_bleu': per_dialect_bleu,
             'total_samples': len(results),
-            'failed_samples': failed_samples
+            'failed_samples': failed_samples,
+            'samples': results[:5]  # Return only the first 5 samples for inspection. Limit file size.
         }
 
