@@ -211,3 +211,6 @@ __marimo__/
 
 # Personal notes
 personal-notes/
+
+# Early experiments, moved from results/metrics to keep results clean
+early-experiments/
