@@ -1,0 +1,15 @@
+{
+  "timestamp": "20251113_170838",
+  "model_name": "distil-whisper-large-v3",
+  "results": {
+    "overall_wer": 0.0,
+    "overall_cer": 0.0,
+    "overall_bleu": 0.0,
+    "per_dialect_wer": {},
+    "per_dialect_cer": {},
+    "per_dialect_bleu": {},
+    "total_samples": 0,
+    "failed_samples": 10,
+    "samples": []
+  }
+}

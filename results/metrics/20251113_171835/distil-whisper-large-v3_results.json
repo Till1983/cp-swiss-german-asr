@@ -1,0 +1,117 @@
+{
+  "timestamp": "20251113_172021",
+  "model_name": "distil-whisper-large-v3",
+  "results": {
+    "overall_wer": 108.77272727272728,
+    "overall_cer": 49.411764705882355,
+    "overall_bleu": 5.682404684807649,
+    "per_dialect_wer": {
+      "BE": 130.83333333333331,
+      "ZH": 100.0,
+      "ZG": 72.72727272727273,
+      "AG": 100.0,
+      "SG": 91.66666666666666,
+      "TG": 100.0
+    },
+    "per_dialect_cer": {
+      "BE": 55.972696245733786,
+      "ZH": 53.75,
+      "ZG": 40.476190476190474,
+      "AG": 44.44444444444444,
+      "SG": 39.0,
+      "TG": 45.97701149425287
+    },
+    "per_dialect_bleu": {
+      "BE": 2.955030845077168,
+      "ZH": 6.718955581880222,
+      "ZG": 14.458924666162856,
+      "AG": 10.682175159905848,
+      "SG": 3.7052472057637615,
+      "TG": 2.719665272174911
+    },
+    "total_samples": 10,
+    "failed_samples": 0,
+    "samples": [
+      {
+        "audio_file": "3a0cb41b-31c1-4a11-bc9f-5b6836cf4c50.flac",
+        "dialect": "BE",
+        "reference": "Den Weg dazu sieht er im Dialog über die Glaubensinhalte.",
+        "hypothesis": " In the way to do you see, he in dialogue about the global insinhold.",
+        "wer": 140.0,
+        "cer": 64.91228070175438
+      },
+      {
+        "audio_file": "d5c16201-7d8a-4a42-97f0-8ff2981007b3.flac",
+        "dialect": "ZH",
+        "reference": "Hier debütierte er in der Ekstraklasa.",
+        "hypothesis": " Here debilersed he in the extra class.",
+        "wer": 100.0,
+        "cer": 44.73684210526316
+      },
+      {
+        "audio_file": "08e6c960-942b-4294-9655-bd5142cfaf45.flac",
+        "dialect": "BE",
+        "reference": "Ebenfalls wird der Quellcode zur Anpassung an andere Computersysteme bereitgestellt.",
+        "hypothesis": " Also, the quell code to the an appassing to another computer system be readgestled.",
+        "wer": 130.0,
+        "cer": 46.42857142857143
+      },
+      {
+        "audio_file": "f28b4689-83ab-4816-90de-0b4fe24a7edb.flac",
+        "dialect": "ZG",
+        "reference": "Fritz Holthoff ist der Großvater des zeitgenössischen deutschen Malers Jan Holthoff.",
+        "hypothesis": " Fritz Holthoff is the grandfather of the Zeidgenusian German painter Jan Holthoff.",
+        "wer": 72.72727272727273,
+        "cer": 40.476190476190474
+      },
+      {
+        "audio_file": "9726619a-c734-4ca7-929f-e3f4c9300dd6.flac",
+        "dialect": "AG",
+        "reference": "Asylbewerber sind keine Kriminellen.",
+        "hypothesis": " Asulbeverers are no criminals.",
+        "wer": 100.0,
+        "cer": 44.44444444444444
+      },
+      {
+        "audio_file": "9f37d732-2692-4ffd-b8e4-ce591f33efe7.flac",
+        "dialect": "BE",
+        "reference": "Die Produktion konnte jedoch nach kurzer Zeit wieder aufgenommen werden.",
+        "hypothesis": " The production had yet after a short time again off-gown could be.",
+        "wer": 120.0,
+        "cer": 68.05555555555556
+      },
+      {
+        "audio_file": "736f67c4-1ff7-4815-acff-a6284921ad6b.flac",
+        "dialect": "SG",
+        "reference": "Sie sind noch in spanischer Sprache verfasst und von alt-testamentarischen Begebenheiten inspiriert.",
+        "hypothesis": " They are now in Spanish-Spronged word and from Old-Testmentarish Begebenheit inspired.",
+        "wer": 91.66666666666666,
+        "cer": 39.0
+      },
+      {
+        "audio_file": "2cafce17-520e-4f87-bdf7-53f26f166040.flac",
+        "dialect": "BE",
+        "reference": "Die \"Sprache\" der ständigen Wohnbevölkerung in Privathaushalten ist Französisch.",
+        "hypothesis": " The speech of a stentine of a Woonbevolker in private household is French.",
+        "wer": 133.33333333333331,
+        "cer": 48.75
+      },
+      {
+        "audio_file": "735b5786-ab7d-4e24-9845-894762745b4e.flac",
+        "dialect": "TG",
+        "reference": "Im Westen schließen sich Eidelstedt und Schnelsen, im Süden Stellingen und Lokstedt an.",
+        "hypothesis": " In the West, Schlesen, Eidlstead and Schnellsend, in the southern Stelling and Loughstead.",
+        "wer": 100.0,
+        "cer": 45.97701149425287
+      },
+      {
+        "audio_file": "1a30ca05-6d56-4afc-b166-551fdc05c5e8.flac",
+        "dialect": "ZH",
+        "reference": "Schließlich meldet sich der mysteriöse Mr.",
+        "hypothesis": " Sleaselich, the mysterious meister.",
+        "wer": 100.0,
+        "cer": 61.904761904761905
+      }
+    ]
+  }
+}

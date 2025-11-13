@@ -1,0 +1,117 @@
+{
+  "timestamp": "20251113_170919",
+  "model_name": "mms-1b-all",
+  "results": {
+    "overall_wer": 83.8912198912199,
+    "overall_cer": 30.14705882352941,
+    "overall_bleu": 7.7116170475102965,
+    "per_dialect_wer": {
+      "BE": 94.72222222222223,
+      "ZH": 66.66666666666666,
+      "ZG": 81.81818181818183,
+      "AG": 125.0,
+      "SG": 58.333333333333336,
+      "TG": 61.53846153846154
+    },
+    "per_dialect_cer": {
+      "BE": 39.249146757679185,
+      "ZH": 25.0,
+      "ZG": 26.190476190476193,
+      "AG": 36.11111111111111,
+      "SG": 20.0,
+      "TG": 17.24137931034483
+    },
+    "per_dialect_bleu": {
+      "BE": 3.256734321706026,
+      "ZH": 21.50625425656632,
+      "ZG": 4.085507150363302,
+      "AG": 0.0,
+      "SG": 10.04916995660316,
+      "TG": 6.942047568179753
+    },
+    "total_samples": 10,
+    "failed_samples": 0,
+    "samples": [
+      {
+        "audio_file": "3a0cb41b-31c1-4a11-bc9f-5b6836cf4c50.flac",
+        "dialect": "BE",
+        "reference": "Den Weg dazu sieht er im Dialog über die Glaubensinhalte.",
+        "hypothesis": "derwerkterzueksetter im dialog überglouben sen haut",
+        "wer": 80.0,
+        "cer": 42.10526315789473
+      },
+      {
+        "audio_file": "d5c16201-7d8a-4a42-97f0-8ff2981007b3.flac",
+        "dialect": "ZH",
+        "reference": "Hier debütierte er in der Ekstraklasa.",
+        "hypothesis": "da debuteert hir iede ekstra klas",
+        "wer": 100.0,
+        "cer": 39.473684210526315
+      },
+      {
+        "audio_file": "08e6c960-942b-4294-9655-bd5142cfaf45.flac",
+        "dialect": "BE",
+        "reference": "Ebenfalls wird der Quellcode zur Anpassung an andere Computersysteme bereitgestellt.",
+        "hypothesis": "appelfowse wiert de crowcort zu  arbassiger angene computersystem bereitgestout",
+        "wer": 100.0,
+        "cer": 39.285714285714285
+      },
+      {
+        "audio_file": "f28b4689-83ab-4816-90de-0b4fe24a7edb.flac",
+        "dialect": "ZG",
+        "reference": "Fritz Holthoff ist der Großvater des zeitgenössischen deutschen Malers Jan Holthoff.",
+        "hypothesis": "fritz holdhofw is der grosvater von zietgenössische tütchemal rjan holdhof",
+        "wer": 81.81818181818183,
+        "cer": 26.190476190476193
+      },
+      {
+        "audio_file": "9726619a-c734-4ca7-929f-e3f4c9300dd6.flac",
+        "dialect": "AG",
+        "reference": "Asylbewerber sind keine Kriminellen.",
+        "hypothesis": "assul beverber sin crei criminelli",
+        "wer": 125.0,
+        "cer": 36.11111111111111
+      },
+      {
+        "audio_file": "9f37d732-2692-4ffd-b8e4-ce591f33efe7.flac",
+        "dialect": "BE",
+        "reference": "Die Produktion konnte jedoch nach kurzer Zeit wieder aufgenommen werden.",
+        "hypothesis": "de productioon het je toch na gootertiet wietroefknog in de waarte",
+        "wer": 110.00000000000001,
+        "cer": 51.388888888888886
+      },
+      {
+        "audio_file": "736f67c4-1ff7-4815-acff-a6284921ad6b.flac",
+        "dialect": "SG",
+        "reference": "Sie sind noch in spanischer Sprache verfasst und von alt-testamentarischen Begebenheiten inspiriert.",
+        "hypothesis": "sie sind ne in spanischer sprauch verfasst worde und vu alttestamentarische begeiberheit inspiriert",
+        "wer": 58.333333333333336,
+        "cer": 20.0
+      },
+      {
+        "audio_file": "2cafce17-520e-4f87-bdf7-53f26f166040.flac",
+        "dialect": "BE",
+        "reference": "Die \"Sprache\" der ständigen Wohnbevölkerung in Privathaushalten ist Französisch.",
+        "hypothesis": "sprachvolrständige wohnbevölkeri gi privathuoshaute ist französisch",
+        "wer": 88.88888888888889,
+        "cer": 26.25
+      },
+      {
+        "audio_file": "735b5786-ab7d-4e24-9845-894762745b4e.flac",
+        "dialect": "TG",
+        "reference": "Im Westen schließen sich Eidelstedt und Schnelsen, im Süden Stellingen und Lokstedt an.",
+        "hypothesis": "im weshte schlößet sich eidelstädt und schnelsen im süde stellinge und lockstädt",
+        "wer": 61.53846153846154,
+        "cer": 17.24137931034483
+      },
+      {
+        "audio_file": "1a30ca05-6d56-4afc-b166-551fdc05c5e8.flac",
+        "dialect": "ZH",
+        "reference": "Schließlich meldet sich der mysteriöse Mr.",
+        "hypothesis": "schließlich meldet sich der mysteriösi myter",
+        "wer": 33.33333333333333,
+        "cer": 11.904761904761903
+      }
+    ]
+  }
+}
