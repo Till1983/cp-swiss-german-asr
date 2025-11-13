@@ -28,9 +28,7 @@ MODEL_REGISTRY = {
     "wav2vec2-german": {"type": "wav2vec2", "name": "facebook/wav2vec2-large-xlsr-53-german"},
     
     # Wav2Vec2 multilingual models
-    # Note: Didn't work because of missing vocabulary files - not fine-tuned
-    "wav2vec2-r-2b": {"type": "wav2vec2", "name": "facebook/wav2vec2-xls-r-2b"},
-    "wav2vec2-large-53": {"type": "wav2vec2", "name": "facebook/wav2vec2-large-xlsr-53"},
+    "wav2vec2-xlsr-multi": {"type": "wav2vec2", "name": "voidful/wav2vec2-xlsr-multilingual-56"},
 
     # MMS models
     "mms-1b-all": {"type": "mms", "name": "facebook/mms-1b-all"},  # 1000+ languages
