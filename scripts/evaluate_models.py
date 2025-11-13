@@ -24,11 +24,11 @@ MODEL_REGISTRY = {
     "whisper-large-v3": {"type": "whisper", "name": "large-v3"},
     "whisper-large-v3-turbo": {"type": "whisper", "name": "large-v3-turbo"},
     
-    # Wav2Vec2 German models
+    # Wav2Vec2 models
+    ## German model
     "wav2vec2-german": {"type": "wav2vec2", "name": "facebook/wav2vec2-large-xlsr-53-german"},
-    
-    # Wav2Vec2 multilingual models
-    "wav2vec2-xlsr-multi": {"type": "wav2vec2", "name": "voidful/wav2vec2-xlsr-multilingual-56"},
+    ## Multilingual model
+    "wav2vec2-multi-56": {"type": "wav2vec2", "name": "voidful/wav2vec2-xlsr-multilingual-56"},
 
     # MMS models
     "mms-1b-all": {"type": "mms", "name": "facebook/mms-1b-all"},  # 1000+ languages
