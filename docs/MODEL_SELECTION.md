@@ -2,7 +2,7 @@
    
    ## Final Model Suite
    
-   1. **whisper-large** (1550M parameters)
+   1. **whisper-large-v3** (1550M parameters)
       - Zero-shot baseline
       - Best accuracy: WER 30.40%
       - Role: State-of-the-art reference

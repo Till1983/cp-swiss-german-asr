@@ -14,14 +14,13 @@ from src.utils.logging_config import setup_logger
 
 # Model Registry - Maps shorthand names to model configurations
 MODEL_REGISTRY = {
-    # Whisper models
+    # Whisper models (version-pinned for reproducibility)
     "whisper-tiny": {"type": "whisper", "name": "tiny"},
     "whisper-base": {"type": "whisper", "name": "base"},
     "whisper-small": {"type": "whisper", "name": "small"},
     "whisper-medium": {"type": "whisper", "name": "medium"},
-    "whisper-large": {"type": "whisper", "name": "large"},
     "whisper-large-v2": {"type": "whisper", "name": "large-v2"},
-    "whisper-large-v3": {"type": "whisper", "name": "large-v3"},
+    "whisper-large-v3": {"type": "whisper", "name": "large-v3"},  # Current best, pinned version
     "whisper-large-v3-turbo": {"type": "whisper", "name": "large-v3-turbo"},
     
     # Wav2Vec2 models

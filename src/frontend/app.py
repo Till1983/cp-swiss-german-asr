@@ -71,7 +71,7 @@ with tab1:  # Overview
     st.header("Overview")
     
     # Render metrics definitions contextually
-    render_metrics_definitions()  # Keep context-aware
+    render_metrics_definitions()
     
     # Display aggregate comparison only when comparing multiple models
     if 'model' in filtered_df.columns and filtered_df['model'].nunique() > 1:
@@ -82,24 +82,29 @@ with tab1:  # Overview
         )
         st.plotly_chart(fig_agg, use_container_width=True)
     
-    # Display overall metrics
+    # Display overall metrics from OVERALL row
+    overall_df = filtered_df[filtered_df['dialect'] == 'OVERALL']
+    
     col1, col2, col3 = st.columns(3)
     
-    if 'wer' in filtered_df.columns:
+    if 'wer' in overall_df.columns and not overall_df.empty:
         with col1:
-            st.metric("Average WER", f"{filtered_df['wer'].mean():.2f}%")
+            st.metric("Average WER", f"{overall_df['wer'].mean():.2f}%")
     
-    if 'cer' in filtered_df.columns:
+    if 'cer' in overall_df.columns and not overall_df.empty:
         with col2:
-            st.metric("Average CER", f"{filtered_df['cer'].mean():.2f}%")
+            st.metric("Average CER", f"{overall_df['cer'].mean():.2f}%")
     
-    if 'bleu' in filtered_df.columns:
+    if 'bleu' in overall_df.columns and not overall_df.empty:
         with col3:
-            st.metric("Average BLEU", f"{filtered_df['bleu'].mean():.2f}")
+            st.metric("Average BLEU", f"{overall_df['bleu'].mean():.2f}")
     
     # Add summary statistics
     st.divider()
-    display_summary_statistics(filtered_df)
+    
+    # For summary statistics, exclude OVERALL row to show per-dialect distribution
+    dialect_only_df = filtered_df[filtered_df['dialect'] != 'OVERALL'] # Earlier calculation mistakenly included OVERALL, skewed results
+    display_summary_statistics(dialect_only_df)
     
     # Add download button
     download_filtered_data(filtered_df, filename_prefix=f"{selected_model}_overview")
