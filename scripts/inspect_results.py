@@ -4,7 +4,7 @@ Script to inspect and compare model transcription results.
 import json
 import sys
 from pathlib import Path
-from typing import List, Dict
+from typing import Dict
 
 
 def load_results(results_path: Path) -> Dict:
