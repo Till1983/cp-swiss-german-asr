@@ -10,7 +10,7 @@ class EvaluateRequest(BaseModel):
         limit: Optional limit on number of samples to process for testing purposes
     """
     model: str
-    model_type: Literal["whisper", "wav2vec2"] = "whisper"  # Default to whisper for backward compatibility
+    model_type: Literal["whisper", "wav2vec2", "mms"] = "whisper"  # Default to whisper for backward compatibility
     limit: Optional[int] = None
 
     @validator("limit")

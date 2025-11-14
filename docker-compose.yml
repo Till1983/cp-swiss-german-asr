@@ -11,6 +11,8 @@ services:
       - ./logs:/app/logs
       - ./tests:/app/tests
       - huggingface-cache:/home/appuser/.cache/huggingface
+    environment:
+      - HF_TOKEN=${HF_TOKEN}
 
   dashboard:
     build: .
@@ -24,6 +26,8 @@ services:
     command: ["streamlit", "run", "src/frontend/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
     depends_on:
       - api
+    environment:
+      - HF_TOKEN=${HF_TOKEN}
 
   test:
     build: .
@@ -35,6 +39,7 @@ services:
       - huggingface-cache:/home/appuser/.cache/huggingface
     environment:
       - PYTHONPATH=/app
+      - HF_TOKEN=${HF_TOKEN}
 
 volumes:
   huggingface-cache:

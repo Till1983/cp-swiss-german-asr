@@ -5,11 +5,12 @@ from pathlib import Path
 from typing import Dict
 from src.evaluation import metrics
 from src.models.wav2vec2_model import Wav2Vec2Model
+from src.models.mms_model import MMSModel
 
 
 class ASREvaluator:
     """
-    ASR Evaluator for Whisper and Wav2Vec2 models on Swiss German audio datasets.
+    ASR Evaluator for Whisper, Wav2Vec2, and MMS models on Swiss German audio datasets.
     """
     
     def __init__(self, model_type: str = "whisper", model_name: str = "base", device: str = None):
@@ -17,13 +18,15 @@ class ASREvaluator:
         Initialize the ASR Evaluator.
         
         Args:
-            model_type: Type of model ('whisper' or 'wav2vec2')
-            model_name: Model identifier (Whisper: tiny/base/small/medium/large, 
-                       Wav2Vec2: HuggingFace model name)
+            model_type: Type of model ('whisper', 'wav2vec2', or 'mms')
+            model_name: Model identifier 
+                       - Whisper: tiny/base/small/medium/large
+                       - Wav2Vec2: HuggingFace model name
+                       - MMS: HuggingFace model name
             device: Device to run on ("cuda", "mps", or "cpu"). Auto-detected if None.
         """
-        if model_type not in ["whisper", "wav2vec2"]:
-            raise ValueError(f"model_type must be 'whisper' or 'wav2vec2', got: {model_type}")
+        if model_type not in ["whisper", "wav2vec2", "mms"]:
+            raise ValueError(f"model_type must be 'whisper', 'wav2vec2', or 'mms', got: {model_type}")
         
         self.model_type = model_type
         self.model_name = model_name
@@ -44,13 +47,24 @@ class ASREvaluator:
                 print("Model loaded successfully.")
             except Exception as e:
                 raise ValueError(f"Failed to load Whisper model '{self.model_name}': {str(e)}")
+                
         elif self.model_type == "wav2vec2":
-            print(f"Loading Wav2Vec2 model '{self.model_name}' on {self.device}...")
             try:
                 self.model = Wav2Vec2Model(model_name=self.model_name, device=self.device)
-                print("Model loaded successfully.")
             except Exception as e:
                 raise ValueError(f"Failed to load Wav2Vec2 model '{self.model_name}': {str(e)}") from e
+                
+        elif self.model_type == "mms":
+            try:
+                self.model = MMSModel(model_name=self.model_name, device=self.device)
+            except Exception as e:
+                # Only wrap once, with clear message
+                raise ValueError(
+                    f"Failed to load MMS model '{self.model_name}'. "
+                    f"Ensure you're using an ASR model (e.g., facebook/mms-1b-all), "
+                    f"not a TTS model (e.g., facebook/mms-tts). "
+                    f"Error: {str(e)}"
+                ) from e
     
     def _get_transcription(self, audio_path: Path) -> str:
         """
@@ -66,8 +80,14 @@ class ASREvaluator:
             audio = whisper.load_audio(str(audio_path))
             result = self.model.transcribe(audio, language="de")
             return result['text']
+            
         elif self.model_type == "wav2vec2":
             result = self.model.transcribe(audio_path, language="de")
+            return result['text']
+            
+        elif self.model_type == "mms":
+            # Use "deu" (ISO 639-3) for German
+            result = self.model.transcribe(audio_path, language="deu")
             return result['text']
         
     def evaluate_dataset(self, metadata_path: str, audio_base_path: str = "data/raw/fhnw-swiss-german-corpus/clips", limit: int = None) -> Dict:
@@ -136,14 +156,19 @@ class ASREvaluator:
                 # Get transcription using appropriate model
                 hypothesis = self._get_transcription(audio_path)
                 
-                # Calculate WER
+                # Calculate metrics for this sample
                 wer = metrics.calculate_wer(reference, hypothesis)
+                cer = metrics.calculate_cer(reference, hypothesis)
+                bleu = metrics.calculate_bleu_score(reference, hypothesis)
                 
                 results.append({
-                    'accent': accent,
-                    'wer': wer,
+                    'audio_file': str(audio_path.name),
+                    'dialect': accent,
                     'reference': reference,
-                    'hypothesis': hypothesis
+                    'hypothesis': hypothesis,
+                    'wer': wer,
+                    'cer': cer,
+                    'bleu': bleu
                 })
                 
             except Exception as e:
@@ -164,7 +189,8 @@ class ASREvaluator:
                 'per_dialect_cer': {},
                 'per_dialect_bleu': {},
                 'total_samples': 0,
-                'failed_samples': failed_samples
+                'failed_samples': failed_samples,
+                'samples': []
             }
         
         overall_wer = sum(r['wer'] for r in results) / len(results)
@@ -172,8 +198,8 @@ class ASREvaluator:
         # Calculate per-dialect WER
         per_dialect_wer = {}
         results_df = pd.DataFrame(results)
-        for accent in results_df['accent'].unique():
-            accent_results = results_df[results_df['accent'] == accent]
+        for accent in results_df['dialect'].unique():  # ← CHANGE 'accent' to 'dialect'
+            accent_results = results_df[results_df['dialect'] == accent]
             per_dialect_wer[accent] = accent_results['wer'].mean()
         
         # Calculate overall CER
@@ -188,8 +214,8 @@ class ASREvaluator:
         
         # Calculate per-dialect CER
         per_dialect_cer = {}
-        for accent in results_df['accent'].unique():
-            accent_results = results_df[results_df['accent'] == accent]
+        for accent in results_df['dialect'].unique():  # ← CHANGE 'accent' to 'dialect'
+            accent_results = results_df[results_df['dialect'] == accent]
             accent_refs = accent_results['reference'].tolist()
             accent_hyps = accent_results['hypothesis'].tolist()
             accent_cer = metrics.batch_cer(accent_refs, accent_hyps)
@@ -197,8 +223,8 @@ class ASREvaluator:
         
         # Calculate per-dialect BLEU
         per_dialect_bleu = {}
-        for accent in results_df['accent'].unique():
-            accent_results = results_df[results_df['accent'] == accent]
+        for accent in results_df['dialect'].unique():  # ← CHANGE 'accent' to 'dialect'
+            accent_results = results_df[results_df['dialect'] == accent]
             accent_refs = accent_results['reference'].tolist()
             accent_hyps = accent_results['hypothesis'].tolist()
             accent_bleu = metrics.batch_bleu(accent_refs, accent_hyps)
@@ -212,6 +238,7 @@ class ASREvaluator:
             'per_dialect_cer': per_dialect_cer,
             'per_dialect_bleu': per_dialect_bleu,
             'total_samples': len(results),
-            'failed_samples': failed_samples
+            'failed_samples': failed_samples,
+            'samples': results[:5]  # Return only the first 5 samples for inspection. Limit file size.
         }
 

@@ -22,11 +22,17 @@ MODEL_REGISTRY = {
     "whisper-large": {"type": "whisper", "name": "large"},
     "whisper-large-v2": {"type": "whisper", "name": "large-v2"},
     "whisper-large-v3": {"type": "whisper", "name": "large-v3"},
+    "whisper-large-v3-turbo": {"type": "whisper", "name": "large-v3-turbo"},
     
     # Wav2Vec2 models
+    ## German model
     "wav2vec2-german": {"type": "wav2vec2", "name": "facebook/wav2vec2-large-xlsr-53-german"},
-    "wav2vec2-base": {"type": "wav2vec2", "name": "facebook/wav2vec2-base"},
-    "wav2vec2-large": {"type": "wav2vec2", "name": "facebook/wav2vec2-large"},
+    ## Multilingual model
+    "wav2vec2-multi-56": {"type": "wav2vec2", "name": "voidful/wav2vec2-xlsr-multilingual-56"},
+
+    # MMS models
+    "mms-1b-all": {"type": "mms", "name": "facebook/mms-1b-all"},  # 1000+ languages
+    "mms-1b-l1107": {"type": "mms", "name": "facebook/mms-1b-l1107"},  # 1107 languages
 }
 
 def main():

@@ -1,0 +1,106 @@
+{
+  "timestamp": "20251113_215157",
+  "model_name": "wav2vec2-multi-56",
+  "results": {
+    "overall_wer": 84.23111888111889,
+    "overall_cer": 35.574589578872235,
+    "overall_bleu": 6.397204367936491,
+    "per_dialect_wer": {
+      "BE": 89.2088245088245,
+      "ZH": 82.51712573141144,
+      "ZG": 85.9090909090909,
+      "AG": 86.1068931068931,
+      "SG": 75.75208125208125,
+      "TG": 71.43467643467643,
+      "GL": 64.28571428571429,
+      "LU": 78.63247863247862,
+      "SO": 85.54112554112555,
+      "BL": 88.66973304473305,
+      "NW": 100.0,
+      "VS": 87.5,
+      "GR": 88.46153846153847,
+      "UR": 88.19444444444444
+    },
+    "per_dialect_cer": {
+      "BE": 36.37709772951629,
+      "ZH": 34.13793103448276,
+      "ZG": 27.762803234501348,
+      "AG": 38.77790834312573,
+      "SG": 30.05698005698006,
+      "TG": 31.03448275862069,
+      "GL": 20.689655172413794,
+      "LU": 29.38496583143508,
+      "SO": 42.91845493562232,
+      "BL": 44.59691252144082,
+      "NW": 49.42528735632184,
+      "VS": 29.268292682926827,
+      "GR": 43.80165289256198,
+      "UR": 42.96296296296296
+    },
+    "per_dialect_bleu": {
+      "BE": 4.285347679488171,
+      "ZH": 6.098853668917565,
+      "ZG": 5.2381676425218355,
+      "AG": 8.821076780633854,
+      "SG": 9.96332484069296,
+      "TG": 9.744565153686706,
+      "GL": 22.11862500885864,
+      "LU": 6.9796132293932045,
+      "SO": 3.330999305899789,
+      "BL": 4.205866243188731,
+      "NW": 0.0,
+      "VS": 5.162903789757797,
+      "GR": 1.7158174139981897,
+      "UR": 4.60074476724664
+    },
+    "total_samples": 100,
+    "failed_samples": 0,
+    "samples": [
+      {
+        "audio_file": "3a0cb41b-31c1-4a11-bc9f-5b6836cf4c50.flac",
+        "dialect": "BE",
+        "reference": "Den Weg dazu sieht er im Dialog über die Glaubensinhalte.",
+        "hypothesis": "drvegte zuekse drim dialog überglobensen haut",
+        "wer": 90.0,
+        "cer": 45.614035087719294,
+        "bleu": 3.5275023606301383
+      },
+      {
+        "audio_file": "d5c16201-7d8a-4a42-97f0-8ff2981007b3.flac",
+        "dialect": "ZH",
+        "reference": "Hier debütierte er in der Ekstraklasa.",
+        "hypothesis": "da debetiert er ie der extrocloss",
+        "wer": 66.66666666666666,
+        "cer": 36.84210526315789,
+        "bleu": 8.170609724417774
+      },
+      {
+        "audio_file": "08e6c960-942b-4294-9655-bd5142cfaf45.flac",
+        "dialect": "BE",
+        "reference": "Ebenfalls wird der Quellcode zur Anpassung an andere Computersysteme bereitgestellt.",
+        "hypothesis": "aberfals wirde quegot zur abbassiger angene komputesystem bereit gestellt",
+        "wer": 90.0,
+        "cer": 29.761904761904763,
+        "bleu": 3.817681337429047
+      },
+      {
+        "audio_file": "f28b4689-83ab-4816-90de-0b4fe24a7edb.flac",
+        "dialect": "ZG",
+        "reference": "Fritz Holthoff ist der Großvater des zeitgenössischen deutschen Malers Jan Holthoff.",
+        "hypothesis": "fritz holtof ist der großvader von zitgenössische ditschemalerjanholdhof",
+        "wer": 72.72727272727273,
+        "cer": 21.428571428571427,
+        "bleu": 7.413670083653376
+      },
+      {
+        "audio_file": "9726619a-c734-4ca7-929f-e3f4c9300dd6.flac",
+        "dialect": "AG",
+        "reference": "Asylbewerber sind keine Kriminellen.",
+        "hypothesis": "asülbe verbra sen crai criminelli",
+        "wer": 125.0,
+        "cer": 44.44444444444444,
+        "bleu": 0.0
+      }
+    ]
+  }
+}

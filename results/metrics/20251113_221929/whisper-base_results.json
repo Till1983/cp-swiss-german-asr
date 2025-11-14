@@ -1,0 +1,106 @@
+{
+  "timestamp": "20251113_222827",
+  "model_name": "whisper-base",
+  "results": {
+    "overall_wer": 73.00914918414918,
+    "overall_cer": 32.07708779443254,
+    "overall_bleu": 17.74914220355604,
+    "per_dialect_wer": {
+      "BE": 79.21117771117771,
+      "ZH": 54.008848294562576,
+      "ZG": 113.08080808080808,
+      "AG": 73.8938838938839,
+      "SG": 63.48751248751248,
+      "TG": 62.59869759869759,
+      "GL": 78.57142857142857,
+      "LU": 60.65527065527066,
+      "SO": 58.05194805194805,
+      "BL": 71.78210678210678,
+      "NW": 110.00000000000001,
+      "VS": 93.75,
+      "GR": 100.76923076923077,
+      "UR": 95.13888888888889
+    },
+    "per_dialect_cer": {
+      "BE": 32.03356367226061,
+      "ZH": 26.091954022988507,
+      "ZG": 43.93530997304582,
+      "AG": 31.609870740305524,
+      "SG": 28.205128205128204,
+      "TG": 26.25994694960212,
+      "GL": 24.137931034482758,
+      "LU": 23.006833712984054,
+      "SO": 28.75536480686695,
+      "BL": 46.99828473413379,
+      "NW": 40.229885057471265,
+      "VS": 35.77235772357724,
+      "GR": 42.97520661157025,
+      "UR": 35.55555555555556
+    },
+    "per_dialect_bleu": {
+      "BE": 17.227704170221692,
+      "ZH": 23.616759977080182,
+      "ZG": 8.49313624166234,
+      "AG": 17.34931272766308,
+      "SG": 16.76678104586169,
+      "TG": 18.84646160660627,
+      "GL": 10.56964613041054,
+      "LU": 19.460267620108887,
+      "SO": 26.248516008192706,
+      "BL": 18.016148109950354,
+      "NW": 6.150343144231885,
+      "VS": 7.875484430257204,
+      "GR": 20.467682974312595,
+      "UR": 8.54618074540521
+    },
+    "total_samples": 100,
+    "failed_samples": 0,
+    "samples": [
+      {
+        "audio_file": "3a0cb41b-31c1-4a11-bc9f-5b6836cf4c50.flac",
+        "dialect": "BE",
+        "reference": "Den Weg dazu sieht er im Dialog über die Glaubensinhalte.",
+        "hypothesis": " Der Werk der Zuhöchseiterem Dialog übergloben sind halt.",
+        "wer": 90.0,
+        "cer": 45.614035087719294,
+        "bleu": 4.540013809283726
+      },
+      {
+        "audio_file": "d5c16201-7d8a-4a42-97f0-8ff2981007b3.flac",
+        "dialect": "ZH",
+        "reference": "Hier debütierte er in der Ekstraklasa.",
+        "hypothesis": " Da deputiert er in der Extra-Klasse.",
+        "wer": 50.0,
+        "cer": 31.57894736842105,
+        "bleu": 26.269098944241588
+      },
+      {
+        "audio_file": "08e6c960-942b-4294-9655-bd5142cfaf45.flac",
+        "dialect": "BE",
+        "reference": "Ebenfalls wird der Quellcode zur Anpassung an andere Computersysteme bereitgestellt.",
+        "hypothesis": " Aber falls wieder die Queue geht zur abpassiger anderen Computersystem bereitgestellt.",
+        "wer": 100.0,
+        "cer": 27.380952380952383,
+        "bleu": 7.495553473355845
+      },
+      {
+        "audio_file": "f28b4689-83ab-4816-90de-0b4fe24a7edb.flac",
+        "dialect": "ZG",
+        "reference": "Fritz Holthoff ist der Großvater des zeitgenössischen deutschen Malers Jan Holthoff.",
+        "hypothesis": " Fritz Halthoff ist der Brossvater vom Zeitgenössischen Digital Maller Jan Halthoff.",
+        "wer": 54.54545454545454,
+        "cer": 21.428571428571427,
+        "bleu": 8.91376552139813
+      },
+      {
+        "audio_file": "9726619a-c734-4ca7-929f-e3f4c9300dd6.flac",
+        "dialect": "AG",
+        "reference": "Asylbewerber sind keine Kriminellen.",
+        "hypothesis": " Als Übelwerber sind keine Kriminelle.",
+        "wer": 75.0,
+        "cer": 13.88888888888889,
+        "bleu": 17.965205598154213
+      }
+    ]
+  }
+}

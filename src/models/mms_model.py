@@ -1,20 +1,22 @@
 import torch
-from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
+from transformers import Wav2Vec2ForCTC, AutoProcessor
 from pathlib import Path
 from typing import Optional, Dict
 import torchaudio
 
-class Wav2Vec2Model:
-    def __init__(self, model_name: str = "facebook/wav2vec2-large-xlsr-53-german", device: str = None):
+class MMSModel:
+    """
+    Meta's Massively Multilingual Speech (MMS) model for ASR.
+    Supports 1000+ languages.
+    """
+    
+    def __init__(self, model_name: str = "facebook/mms-1b-all", device: str = None):
         """
-        Initialize Wav2Vec2 model for ASR.
+        Initialize MMS model for ASR.
         
         Args:
-            model_name: Hugging Face model name (must be a fine-tuned model with vocabulary)
+            model_name: Hugging Face model name (e.g., facebook/mms-1b-all)
             device: Device to run on ("cuda", "mps", or "cpu"). Auto-detected if None.
-        
-        Raises:
-            ValueError: If model doesn't have a vocabulary file (not fine-tuned)
         """
         self.model_name = model_name
         self.device = device if device else (
@@ -22,59 +24,41 @@ class Wav2Vec2Model:
             else ("mps" if torch.backends.mps.is_available() else "cpu")
         )
         
-        print(f"Loading Wav2Vec2 model '{self.model_name}' on {self.device}...")
+        print(f"Loading MMS model '{self.model_name}' on {self.device}...")
         
-        try:
-            self.processor = Wav2Vec2Processor.from_pretrained(model_name)
-        except (TypeError, OSError) as e:
-            raise ValueError(
-                f"Failed to load Wav2Vec2 processor for '{model_name}'. "
-                f"This model may not be fine-tuned (missing vocabulary file). "
-                f"Only fine-tuned models can be used for transcription. "
-                f"Error: {str(e)}"
-            ) from e
-        
+        self.processor = AutoProcessor.from_pretrained(model_name)
         self.model = Wav2Vec2ForCTC.from_pretrained(
             model_name,
-            use_safetensors=True  # Prefer SafeTensors format to avoid double download
+            use_safetensors=True
         )
         self.model.to(self.device)
         self.model.eval()
         print("Model loaded successfully.")
 
-    def transcribe(self, audio_path: Path, language: Optional[str] = None) -> Dict[str, str]:
+    def transcribe(self, audio_path: Path, language: Optional[str] = "deu") -> Dict[str, str]:
         """
         Transcribe audio file.
         
         Args:
             audio_path: Path to audio file
-            language: Language parameter (not used for Wav2Vec2, kept for compatibility with Whisper API)
+            language: ISO 639-3 language code (e.g., "deu" for German, "eng" for English)
             
         Returns:
             Dictionary with 'text' key containing transcription
-            
-        Raises:
-            FileNotFoundError: If audio file doesn't exist
-            ValueError: If audio file is invalid or empty
         """
-        # Convert to Path object if string
         audio_path = Path(audio_path)
         
-        # Check if file exists
         if not audio_path.exists():
             raise FileNotFoundError(f"Audio file not found: {audio_path}")
         
-        # Check if it's a file (not a directory)
         if not audio_path.is_file():
             raise ValueError(f"Path is not a file: {audio_path}")
         
         try:
-            # Load audio
             waveform, sample_rate = torchaudio.load(str(audio_path))
         except Exception as e:
             raise ValueError(f"Failed to load audio file {audio_path}: {str(e)}") from e
         
-        # Check if audio is empty
         if waveform.numel() == 0:
             raise ValueError(f"Audio file is empty: {audio_path}")
         
@@ -86,6 +70,11 @@ class Wav2Vec2Model:
         # Convert to mono if stereo
         if waveform.shape[0] > 1:
             waveform = torch.mean(waveform, dim=0, keepdim=True)
+        
+        # Set target language if specified
+        if language:
+            self.processor.tokenizer.set_target_lang(language)
+            self.model.load_adapter(language)
         
         # Process audio
         audio_input = self.processor(
