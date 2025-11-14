@@ -82,7 +82,7 @@ with tab1:  # Overview
         )
         st.plotly_chart(fig_agg, use_container_width=True)
     
-    # Display overall metrics (exclude OVERALL row from calculation)
+    # Display overall metrics from OVERALL row
     overall_df = filtered_df[filtered_df['dialect'] == 'OVERALL']
     
     col1, col2, col3 = st.columns(3)
@@ -103,7 +103,7 @@ with tab1:  # Overview
     st.divider()
     
     # For summary statistics, exclude OVERALL row to show per-dialect distribution
-    dialect_only_df = filtered_df[filtered_df['dialect'] != 'OVERALL']
+    dialect_only_df = filtered_df[filtered_df['dialect'] != 'OVERALL'] # Earlier calculation mistakenly included OVERALL, skewed results
     display_summary_statistics(dialect_only_df)
     
     # Add download button
