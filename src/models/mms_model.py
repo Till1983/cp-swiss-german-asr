@@ -26,7 +26,6 @@ class MMSModel:
         
         print(f"Loading MMS model '{self.model_name}' on {self.device}...")
         
-        # Let exceptions propagate without wrapping - evaluator will handle them
         self.processor = AutoProcessor.from_pretrained(model_name)
         self.model = Wav2Vec2ForCTC.from_pretrained(
             model_name,
