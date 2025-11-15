@@ -8,18 +8,33 @@ if [ -f .env ]; then
     export $(grep -v '^#' .env | xargs)
 fi
 
-# Use environment variables with fallbacks
-REMOTE_USER="${REMOTE_USER:-root}"
-REMOTE_HOST="${REMOTE_HOST}"
-REMOTE_PORT="${REMOTE_PORT:-22}"
-REMOTE_DIR="${REMOTE_DIR:-/workspace/data}"
+# Validate required environment variables
+REQUIRED_VARS=("REMOTE_USER" "REMOTE_HOST")
+MISSING_VARS=()
 
-# Validate required variables
-if [ -z "$REMOTE_HOST" ]; then
-    echo "❌ Error: REMOTE_HOST not set. Please add it to your .env file"
-    echo "   Example: REMOTE_HOST=abc123-xyz789.runpod.io"
+for var in "${REQUIRED_VARS[@]}"; do
+    if [ -z "${!var}" ]; then
+        MISSING_VARS+=("$var")
+    fi
+done
+
+if [ ${#MISSING_VARS[@]} -ne 0 ]; then
+    echo "❌ Error: Missing required environment variables in .env file:"
+    for var in "${MISSING_VARS[@]}"; do
+        echo "   - $var"
+    done
+    echo ""
+    echo "Please add these to your .env file:"
+    echo "   REMOTE_USER=root"
+    echo "   REMOTE_HOST=your-pod-id.runpod.io"
+    echo "   REMOTE_PORT=22"
+    echo "   REMOTE_DIR=/workspace/data"
     exit 1
 fi
+
+# Set defaults for optional variables
+REMOTE_PORT="${REMOTE_PORT:-22}"
+REMOTE_DIR="${REMOTE_DIR:-/workspace/data}"
 
 echo "📦 Uploading to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}..."
 echo "   Using port: ${REMOTE_PORT}"
