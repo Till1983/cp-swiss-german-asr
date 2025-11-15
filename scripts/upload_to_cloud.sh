@@ -17,25 +17,26 @@ REMOTE_DIR="${REMOTE_DIR:-/workspace/data}"
 # Validate required variables
 if [ -z "$REMOTE_HOST" ]; then
     echo "❌ Error: REMOTE_HOST not set. Please add it to your .env file"
-    echo "   Example: REMOTE_HOST=your-pod-id.runpod.io"
+    echo "   Example: REMOTE_HOST=abc123-xyz789.runpod.io"
     exit 1
 fi
 
 echo "📦 Uploading to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}..."
+echo "   Using port: ${REMOTE_PORT}"
 
 echo "📦 Uploading Swiss German dataset..."
-rsync -avz --progress \
+rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
     data/raw/fhnw-swiss-german-corpus/ \
     ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/raw/fhnw-swiss-german-corpus/
 
 echo "📦 Uploading Dutch Common Voice..."
-rsync -avz --progress \
-    data/raw/common-voice-dutch/ \
-    ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/raw/common-voice-dutch/
+rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
+    data/raw/cv-corpus-23.0-2025-09-05/ \
+    ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/raw/cv-corpus-23.0-2025-09-05/
 
 echo "📦 Uploading German Common Voice..."
-rsync -avz --progress \
-    data/raw/common-voice-german/ \
-    ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/raw/common-voice-german/
+rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
+    data/raw/cv-corpus-22.0-2025-06-20/ \
+    ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/raw/cv-corpus-22.0-2025-06-20/
 
 echo "✅ Upload complete!"
