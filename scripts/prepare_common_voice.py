@@ -8,7 +8,7 @@ import argparse
 def prepare_common_voice(
     cv_root: Path,
     output_dir: Path,
-    locale: str = "nl"  # Dutch locale
+    locale: str = "nl"  # Language locale (default: 'nl' for Dutch)
 ):
     """
     Convert Common Voice TSV to project format.
