@@ -3,9 +3,19 @@
 
 set -e  # Exit on error
 
-# Load environment variables from .env file
+# Load environment variables from .env file (improved method)
 if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
+    # Use set -a to auto-export, then source the file
+    set -a
+    source <(grep -E '^[A-Z_]+=.*' .env)  # Only lines that look like VAR=value
+    set +a
+elif [ -f ../.env ]; then
+    # Try parent directory
+    set -a
+    source <(grep -E '^[A-Z_]+=.*' ../.env)
+    set +a
+else
+    echo "⚠️  Warning: .env file not found"
 fi
 
 # Validate required environment variables
@@ -29,6 +39,10 @@ if [ ${#MISSING_VARS[@]} -ne 0 ]; then
     echo "   REMOTE_HOST=your-pod-id.runpod.io"
     echo "   REMOTE_PORT=22"
     echo "   REMOTE_DIR=/workspace/data"
+    echo ""
+    echo "Debug info:"
+    echo "  .env exists: $([ -f .env ] && echo 'yes' || echo 'no')"
+    echo "  Current directory: $(pwd)"
     exit 1
 fi
 
