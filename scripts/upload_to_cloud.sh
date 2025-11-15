@@ -35,8 +35,8 @@ if [ ${#MISSING_VARS[@]} -ne 0 ]; then
     done
     echo ""
     echo "Please add these to your .env file:"
-    echo "   REMOTE_USER=root"
-    echo "   REMOTE_HOST=your-pod-id.runpod.io"
+    echo "   REMOTE_USER=your-runpod-user-id"
+    echo "   REMOTE_HOST=ssh.runpod.io"
     echo "   REMOTE_PORT=22"
     echo "   REMOTE_DIR=/workspace/data"
     echo ""
