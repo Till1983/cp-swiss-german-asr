@@ -11,6 +11,7 @@ fi
 # Use environment variables with fallbacks
 REMOTE_USER="${REMOTE_USER:-root}"
 REMOTE_HOST="${REMOTE_HOST}"
+REMOTE_PORT="${REMOTE_PORT:-22}"
 REMOTE_DIR="${REMOTE_DIR:-/workspace/data}"
 
 # Validate required variables
