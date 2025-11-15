@@ -53,7 +53,7 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << 'ENDSSH'
     
     # Run training
     python scripts/train_wav2vec2_model.py \
-        --model wav2vec2-german \
+        --model facebook/wav2vec2-large-xlsr-53-german \
         --pretrain-data /workspace/data/metadata/dutch/train.tsv \
         --finetune-data /workspace/data/metadata/german/train.tsv \
         --target-data /workspace/data/metadata/train.tsv \
