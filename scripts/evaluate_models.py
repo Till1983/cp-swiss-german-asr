@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import argparse
 from datetime import datetime
+from src.config import FHNW_SWISS_GERMAN_ROOT, MODELS_DIR
 
 # Add project root to path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

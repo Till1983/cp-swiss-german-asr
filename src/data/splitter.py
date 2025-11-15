@@ -1,9 +1,13 @@
+from pathlib import Path
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-def create_splits(tsv_path, output_dir, data_root="data/raw/fhnw-swiss-german-corpus"):
+def create_splits(tsv_path, output_dir, data_root=None):
     """Create train/val/test splits stratified by dialect"""
     df = pd.read_csv(tsv_path, sep='\t')
+
+    if data_root is None:
+        data_root = Path(tsv_path).parent
 
     # Add full audio path (now configurable!)
     df['audio_path'] = df['path'].apply(

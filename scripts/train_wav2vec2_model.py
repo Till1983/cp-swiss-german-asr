@@ -1,0 +1,1 @@
+# TODO for Week 4: Create wav2vec2 training script that uses config.py paths. Uses Hugging Face Trainer API.
