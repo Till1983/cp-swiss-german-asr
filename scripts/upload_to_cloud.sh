@@ -5,7 +5,7 @@ set -e  # Exit on error
 cd "$(dirname "$0")/.."
 
 ###############################################################################
-# Robust .env loader (searches up to 3 parent directories, strips CRLF, exports)
+# Robust .env loader
 ###############################################################################
 
 ENV_FILE=""
@@ -19,18 +19,17 @@ for p in "${SEARCH_PATHS[@]}"; do
 done
 
 if [[ -z "$ENV_FILE" ]]; then
-    echo "⚠️  Error: .env file not found in expected locations (searched: ${SEARCH_PATHS[*]})"
-    echo "Current directory: $(pwd)"
+    echo "⚠️  Error: .env file not found"
     exit 1
 fi
 
 echo "🔎 Using env file: ${ENV_FILE}"
 
-# Create a temp file with CRLF removed to avoid parsing issues
+# Create temp file with CRLF removed
 TMP_ENV="$(mktemp)"
 tr -d '\r' < "$ENV_FILE" > "$TMP_ENV"
 
-# Safely export each uppercase VAR=value line
+# Export each uppercase VAR=value line
 while IFS='=' read -r name value; do
     if [[ "$name" =~ ^[A-Z_]+$ ]]; then
         export "$name"="$value"
@@ -38,7 +37,6 @@ while IFS='=' read -r name value; do
 done < <(grep -E '^[A-Z_]+=.*' "$TMP_ENV" || true)
 
 rm -f "$TMP_ENV"
-
 
 ###############################################################################
 # Validate required environment variables
@@ -60,17 +58,12 @@ if [ ${#MISSING_VARS[@]} -ne 0 ]; then
     done
     echo ""
     echo "Please add these to your .env file:"
-    echo "   REMOTE_USER=your-runpod-user-id"
-    echo "   REMOTE_HOST=ssh.runpod.io"
-    echo "   REMOTE_PORT=22"
+    echo "   REMOTE_USER=root"
+    echo "   REMOTE_HOST=your-pod-ip"
+    echo "   REMOTE_PORT=port"
     echo "   REMOTE_DIR=/workspace/data"
-    echo ""
-    echo "Debug info:"
-    echo "  .env exists: $([ -f .env ] && echo 'yes' || echo 'no')"
-    echo "  Current directory: $(pwd)"
     exit 1
 fi
-
 
 ###############################################################################
 # Defaults for optional variables
@@ -79,27 +72,45 @@ fi
 REMOTE_PORT="${REMOTE_PORT:-22}"
 REMOTE_DIR="${REMOTE_DIR:-/workspace/data}"
 
+###############################################################################
+# Create remote directory structure first
+###############################################################################
+
+echo "📁 Ensuring remote directory structure exists..."
+ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} \
+    "mkdir -p ${REMOTE_DIR}/raw/fhnw-swiss-german-corpus ${REMOTE_DIR}/raw/cv-corpus-23.0-2025-09-05/nl ${REMOTE_DIR}/raw/cv-corpus-22.0-2025-06-20/de ${REMOTE_DIR}/metadata"
 
 ###############################################################################
-# Upload logic (unchanged)
+# Upload datasets
 ###############################################################################
 
 echo "📦 Uploading to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}..."
 echo "   Using port: ${REMOTE_PORT}"
+echo ""
 
 echo "📦 Uploading Swiss German dataset..."
-rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
+rsync -avz --progress --no-owner --no-group -e "ssh -p ${REMOTE_PORT}" \
     data/raw/fhnw-swiss-german-corpus/ \
     ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/raw/fhnw-swiss-german-corpus/
 
+echo ""
 echo "📦 Uploading Dutch Common Voice..."
-rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
+rsync -avz --progress --no-owner --no-group -e "ssh -p ${REMOTE_PORT}" \
     data/raw/cv-corpus-23.0-2025-09-05/nl/ \
     ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/raw/cv-corpus-23.0-2025-09-05/nl/
 
+echo ""
 echo "📦 Uploading German Common Voice..."
-rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
+rsync -avz --progress --no-owner --no-group -e "ssh -p ${REMOTE_PORT}" \
     data/raw/cv-corpus-22.0-2025-06-20/de/ \
     ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/raw/cv-corpus-22.0-2025-06-20/de/
 
+echo ""
 echo "✅ Upload complete!"
+echo ""
+echo "📊 Verifying upload..."
+ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << 'VERIFY'
+echo "Swiss German files: $(ls /workspace/data/raw/fhnw-swiss-german-corpus/clips/ 2>/dev/null | wc -l)"
+echo "Dutch files: $(ls /workspace/data/raw/cv-corpus-23.0-2025-09-05/nl/clips/ 2>/dev/null | wc -l)"
+echo "German files: $(ls /workspace/data/raw/cv-corpus-22.0-2025-06-20/de/clips/ 2>/dev/null | wc -l)"
+VERIFY
