@@ -2,23 +2,48 @@
 # Upload datasets to RunPod persistent volume
 
 set -e  # Exit on error
+cd "$(dirname "$0")/.."
 
-# Load environment variables from .env file (improved method)
-if [ -f .env ]; then
-    # Use set -a to auto-export, then source the file
-    set -a
-    source <(grep -E '^[A-Z_]+=.*' .env)  # Only lines that look like VAR=value
-    set +a
-elif [ -f ../.env ]; then
-    # Try parent directory
-    set -a
-    source <(grep -E '^[A-Z_]+=.*' ../.env)
-    set +a
-else
-    echo "⚠️  Warning: .env file not found"
+###############################################################################
+# Robust .env loader (searches up to 3 parent directories, strips CRLF, exports)
+###############################################################################
+
+ENV_FILE=""
+SEARCH_PATHS=(".env" "../.env" "../../.env" "../../../.env")
+
+for p in "${SEARCH_PATHS[@]}"; do
+    if [ -f "$p" ]; then
+        ENV_FILE="$p"
+        break
+    fi
+done
+
+if [[ -z "$ENV_FILE" ]]; then
+    echo "⚠️  Error: .env file not found in expected locations (searched: ${SEARCH_PATHS[*]})"
+    echo "Current directory: $(pwd)"
+    exit 1
 fi
 
+echo "🔎 Using env file: ${ENV_FILE}"
+
+# Create a temp file with CRLF removed to avoid parsing issues
+TMP_ENV="$(mktemp)"
+tr -d '\r' < "$ENV_FILE" > "$TMP_ENV"
+
+# Safely export each uppercase VAR=value line
+while IFS='=' read -r name value; do
+    if [[ "$name" =~ ^[A-Z_]+$ ]]; then
+        export "$name"="$value"
+    fi
+done < <(grep -E '^[A-Z_]+=.*' "$TMP_ENV" || true)
+
+rm -f "$TMP_ENV"
+
+
+###############################################################################
 # Validate required environment variables
+###############################################################################
+
 REQUIRED_VARS=("REMOTE_USER" "REMOTE_HOST")
 MISSING_VARS=()
 
@@ -46,9 +71,18 @@ if [ ${#MISSING_VARS[@]} -ne 0 ]; then
     exit 1
 fi
 
-# Set defaults for optional variables
+
+###############################################################################
+# Defaults for optional variables
+###############################################################################
+
 REMOTE_PORT="${REMOTE_PORT:-22}"
 REMOTE_DIR="${REMOTE_DIR:-/workspace/data}"
+
+
+###############################################################################
+# Upload logic (unchanged)
+###############################################################################
 
 echo "📦 Uploading to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}..."
 echo "   Using port: ${REMOTE_PORT}"
