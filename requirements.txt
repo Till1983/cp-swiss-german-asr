@@ -1,14 +1,32 @@
-fastapi==0.99.1
-uvicorn==0.23.1
-streamlit==1.24.0
-plotly==5.14.1
-numpy==1.25.2
+# Core API
+fastapi==0.115.0
+uvicorn==0.32.0
+
+# Frontend
+streamlit==1.40.0
+plotly==5.24.0
+
+# Data & ML - Python 3.12 + PyTorch 2.6 compatible
+numpy>=1.26.0,<2.0.0  # Critical: Prevent NumPy 2.0 to maintain PyTorch/librosa compatibility
+pandas>=2.0.0
 torch==2.6.0
 torchaudio==2.6.0
 transformers==4.54.1
-librosa==0.10.1
+
+# Audio processing
+librosa==0.10.1  # Requires numpy<2.0
 pydub==0.25.1
+soundfile>=0.12.1
+
+# ASR models
 openai-whisper==20250625
+
+# Evaluation metrics
 jiwer>=3.0.0
 sacrebleu==2.2.1
-pytest==7.4.0
+
+# Testing
+pytest==8.0.0
+
+# Utilities
+python-dotenv>=1.0.0
