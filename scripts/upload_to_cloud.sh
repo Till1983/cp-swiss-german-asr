@@ -94,12 +94,12 @@ rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
 
 echo "📦 Uploading Dutch Common Voice..."
 rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
-    data/raw/cv-corpus-23.0-2025-09-05/ \
-    ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/raw/cv-corpus-23.0-2025-09-05/
+    data/raw/cv-corpus-23.0-2025-09-05/nl/ \
+    ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/raw/cv-corpus-23.0-2025-09-05/nl/
 
 echo "📦 Uploading German Common Voice..."
 rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
-    data/raw/cv-corpus-22.0-2025-06-20/ \
-    ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/raw/cv-corpus-22.0-2025-06-20/
+    data/raw/cv-corpus-22.0-2025-06-20/de/ \
+    ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/raw/cv-corpus-22.0-2025-06-20/de/
 
 echo "✅ Upload complete!"
