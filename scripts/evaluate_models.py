@@ -1,14 +1,15 @@
 import sys
 import os
-from pathlib import Path
 import argparse
+from pathlib import Path
 from datetime import datetime
-from src.config import FHNW_SWISS_GERMAN_ROOT, MODELS_DIR
 
-# Add project root to path
+# Add project root to path FIRST (before importing from src)
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_root)
 
+# NOW import from src (after path is fixed)
+from src.config import FHNW_SWISS_GERMAN_ROOT, MODELS_DIR, DATA_DIR, RESULTS_DIR
 from src.evaluation.evaluator import ASREvaluator
 from src.utils.file_utils import save_results_json, save_results_csv
 from src.utils.logging_config import setup_logger
