@@ -41,15 +41,18 @@ echo "   Connecting to: ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PORT}"
 echo ""
 
 # Run training ON RUNPOD via SSH
-ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << 'ENDSSH'
+ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
     # Everything in this block runs on RunPod
     cd /workspace/cp-swiss-german-asr
     
-    # Set environment for cloud
-    export PROJECT_ROOT="/workspace"
-    export DATA_DIR="/workspace/data"
-    export MODELS_DIR="/workspace/models"
-    export RESULTS_DIR="/workspace/results"
+    # 🆕 Set environment explicitly (recommended over auto-detection)
+    export ENVIRONMENT=runpod
+    
+    # 🆕 OPTIONAL: Explicit path overrides (if not using config.py defaults)
+    # export PROJECT_ROOT="/workspace/cp-swiss-german-asr"
+    # export DATA_DIR="/workspace/data"
+    # export MODELS_DIR="/workspace/models"
+    # export RESULTS_DIR="/workspace/results"
     
     # Run training
     python scripts/train_wav2vec2_model.py \

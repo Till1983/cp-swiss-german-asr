@@ -1,14 +1,15 @@
 import sys
 import os
-from pathlib import Path
 import argparse
+from pathlib import Path
 from datetime import datetime
 
-# Add project root to path
+# Add project root to path FIRST (before importing from src)
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_root)
 
-from src.config import FHNW_SWISS_GERMAN_ROOT, MODELS_DIR
+# NOW import from src (after path is fixed)
+from src.config import FHNW_SWISS_GERMAN_ROOT, MODELS_DIR, DATA_DIR, RESULTS_DIR
 from src.evaluation.evaluator import ASREvaluator
 from src.utils.file_utils import save_results_json, save_results_csv
 from src.utils.logging_config import setup_logger
@@ -49,13 +50,13 @@ def main():
     parser.add_argument(
         "--test-path",
         type=str,
-        default="data/metadata/test.tsv",
+        default=str(DATA_DIR / "metadata" / "test.tsv"),  # ✅ Use config path
         help="Path to test metadata TSV file"
     )
     parser.add_argument(
         "--output-dir",
         type=str,
-        default="results/metrics",
+        default=str(RESULTS_DIR / "metrics"),  # ✅ Use config path
         help="Directory to save evaluation results"
     )
     parser.add_argument(
@@ -85,6 +86,7 @@ def main():
     if not test_path.exists():
         logger.error(f"Test file not found: {test_path}")
         print(f"❌ Error: Test file not found at {test_path}")
+        print(f"💡 Expected location based on ENVIRONMENT: {DATA_DIR / 'metadata' / 'test.tsv'}")
         sys.exit(1)
     
     # Store results for summary table
