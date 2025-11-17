@@ -97,7 +97,7 @@ class ASREvaluator:
         Args:
             metadata_path: Path to TSV file with columns: path, sentence, accent
             audio_base_path: Base directory where audio files are stored.
-                           If None, uses FHNW_SWISS_GERMAN_ROOT/clips from config.
+                             If None, defaults to FHNW_SWISS_GERMAN_ROOT/clips from config.
             limit: Optional limit on number of samples to process
 
         Returns:
@@ -149,11 +149,26 @@ class ASREvaluator:
             
             # PRIORITY 1: Use audio_path column if available (full absolute path)
             if 'audio_path' in df.columns and pd.notna(row.get('audio_path')) and row.get('audio_path'):
-                audio_path = Path(row['audio_path'])
+                audio_path = Path(row['audio_path']).resolve()
+                # Validate the path is within expected boundaries
+                try:
+                    # This will raise ValueError if audio_path is not relative to audio_base_path
+                    audio_path.relative_to(audio_base_path.resolve())
+                except ValueError:
+                    print(f"Warning: Audio path outside base directory: {audio_path}")
+                    failed_samples += 1
+                    continue
             else:
                 # PRIORITY 2: Construct from base_path + filename
                 audio_filename = Path(row['path']).name  # Extract just the filename
-                audio_path = audio_base_path / audio_filename
+                audio_path = (audio_base_path / audio_filename).resolve()
+                # Validate constructed path is within expected boundaries
+                try:
+                    audio_path.relative_to(audio_base_path.resolve())
+                except ValueError:
+                    print(f"Warning: Constructed audio path outside base directory: {audio_path}")
+                    failed_samples += 1
+                    continue
 
             try:
                 # Check if audio file exists
