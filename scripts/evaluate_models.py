@@ -50,13 +50,13 @@ def main():
     parser.add_argument(
         "--test-path",
         type=str,
-        default="data/metadata/test.tsv",
+        default=str(DATA_DIR / "metadata" / "test.tsv"),  # ✅ Use config path
         help="Path to test metadata TSV file"
     )
     parser.add_argument(
         "--output-dir",
         type=str,
-        default="results/metrics",
+        default=str(RESULTS_DIR / "metrics"),  # ✅ Use config path
         help="Directory to save evaluation results"
     )
     parser.add_argument(
@@ -86,6 +86,7 @@ def main():
     if not test_path.exists():
         logger.error(f"Test file not found: {test_path}")
         print(f"❌ Error: Test file not found at {test_path}")
+        print(f"💡 Expected location based on ENVIRONMENT: {DATA_DIR / 'metadata' / 'test.tsv'}")
         sys.exit(1)
     
     # Store results for summary table
