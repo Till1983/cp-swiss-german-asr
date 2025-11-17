@@ -77,8 +77,16 @@ REMOTE_DIR="${REMOTE_DIR:-/workspace/data}"
 ###############################################################################
 
 echo "📁 Ensuring remote directory structure exists..."
-ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} \
-    "mkdir -p ${REMOTE_DIR}/raw/fhnw-swiss-german-corpus ${REMOTE_DIR}/raw/cv-corpus-23.0-2025-09-05/nl ${REMOTE_DIR}/raw/cv-corpus-22.0-2025-06-20/de ${REMOTE_DIR}/metadata"
+ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << 'ENDSSH'
+    # Set environment on RunPod
+    export ENVIRONMENT=runpod
+    
+    # Create directory structure
+    mkdir -p ${REMOTE_DIR}/raw/fhnw-swiss-german-corpus \
+             ${REMOTE_DIR}/raw/cv-corpus-23.0-2025-09-05/nl \
+             ${REMOTE_DIR}/raw/cv-corpus-22.0-2025-06-20/de \
+             ${REMOTE_DIR}/metadata
+ENDSSH
 
 ###############################################################################
 # Upload datasets
