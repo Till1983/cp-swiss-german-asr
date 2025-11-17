@@ -77,7 +77,7 @@ REMOTE_DIR="${REMOTE_DIR:-/workspace/data}"
 ###############################################################################
 
 echo "📁 Ensuring remote directory structure exists..."
-ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << 'ENDSSH'
+ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
     # Set environment on RunPod
     export ENVIRONMENT=runpod
     

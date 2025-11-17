@@ -41,7 +41,7 @@ echo "   Connecting to: ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PORT}"
 echo ""
 
 # Run training ON RUNPOD via SSH
-ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << 'ENDSSH'
+ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
     # Everything in this block runs on RunPod
     cd /workspace/cp-swiss-german-asr
     
