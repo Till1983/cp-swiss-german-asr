@@ -8,6 +8,7 @@ from src.models.wav2vec2_model import Wav2Vec2Model
 from src.models.mms_model import MMSModel
 from src.config import FHNW_SWISS_GERMAN_ROOT
 
+
 class ASREvaluator:
     """
     ASR Evaluator for Whisper, Wav2Vec2, and MMS models on Swiss German audio datasets.
@@ -85,6 +86,7 @@ class ASREvaluator:
             return result['text']
 
         elif self.model_type == "mms":
+            # Use "deu" (ISO 639-3) for German
             result = self.model.transcribe(audio_path, language="deu")
             return result['text']
 
@@ -116,7 +118,7 @@ class ASREvaluator:
         if not metadata_path.exists():
             raise FileNotFoundError(f"Metadata file not found: {metadata_path}")
 
-        # ✅ Use config path if not specified
+        # Use config path if not specified
         if audio_base_path is None:
             audio_base_path = FHNW_SWISS_GERMAN_ROOT / "clips"
         else:
@@ -145,11 +147,11 @@ class ASREvaluator:
             reference = row['sentence']
             accent = row['accent']
             
-            # ✅ PRIORITY 1: Use audio_path column if available (full absolute path)
+            # PRIORITY 1: Use audio_path column if available (full absolute path)
             if 'audio_path' in df.columns and pd.notna(row.get('audio_path')) and row.get('audio_path'):
                 audio_path = Path(row['audio_path'])
             else:
-                # ✅ PRIORITY 2: Construct from base_path + filename
+                # PRIORITY 2: Construct from base_path + filename
                 audio_filename = Path(row['path']).name  # Extract just the filename
                 audio_path = audio_base_path / audio_filename
 
@@ -185,3 +187,67 @@ class ASREvaluator:
 
             if (idx + 1) % 10 == 0:
                 print(f"Processed {idx + 1}/{len(df)} samples...")
+
+        # Calculate overall metrics
+        if not results:
+            return {
+                'overall_wer': 0.0,
+                'overall_cer': 0.0,
+                'overall_bleu': 0.0,
+                'per_dialect_wer': {},
+                'per_dialect_cer': {},
+                'per_dialect_bleu': {},
+                'total_samples': 0,
+                'failed_samples': failed_samples,
+                'samples': []
+            }
+
+        # Calculate overall WER
+        overall_wer = sum(r['wer'] for r in results) / len(results)
+
+        # Calculate per-dialect WER
+        per_dialect_wer = {}
+        results_df = pd.DataFrame(results)
+        for accent in results_df['dialect'].unique():
+            accent_results = results_df[results_df['dialect'] == accent]
+            per_dialect_wer[accent] = accent_results['wer'].mean()
+
+        # Calculate overall CER
+        references = [r['reference'] for r in results]
+        hypotheses = [r['hypothesis'] for r in results]
+        cer_result = metrics.batch_cer(references, hypotheses)
+        overall_cer = cer_result['overall_cer']
+
+        # Calculate overall BLEU
+        bleu_result = metrics.batch_bleu(references, hypotheses)
+        overall_bleu = bleu_result['overall_bleu']
+
+        # Calculate per-dialect CER
+        per_dialect_cer = {}
+        for accent in results_df['dialect'].unique():
+            accent_results = results_df[results_df['dialect'] == accent]
+            accent_refs = accent_results['reference'].tolist()
+            accent_hyps = accent_results['hypothesis'].tolist()
+            accent_cer = metrics.batch_cer(accent_refs, accent_hyps)
+            per_dialect_cer[accent] = accent_cer['overall_cer']
+
+        # Calculate per-dialect BLEU
+        per_dialect_bleu = {}
+        for accent in results_df['dialect'].unique():
+            accent_results = results_df[results_df['dialect'] == accent]
+            accent_refs = accent_results['reference'].tolist()
+            accent_hyps = accent_results['hypothesis'].tolist()
+            accent_bleu = metrics.batch_bleu(accent_refs, accent_hyps)
+            per_dialect_bleu[accent] = accent_bleu['overall_bleu']
+
+        return {
+            'overall_wer': overall_wer,
+            'overall_cer': overall_cer,
+            'overall_bleu': overall_bleu,
+            'per_dialect_wer': per_dialect_wer,
+            'per_dialect_cer': per_dialect_cer,
+            'per_dialect_bleu': per_dialect_bleu,
+            'total_samples': len(results),
+            'failed_samples': failed_samples,
+            'samples': results[:5]  # Return only first 5 samples for inspection
+        }
