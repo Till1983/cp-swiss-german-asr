@@ -3,12 +3,12 @@ import os
 from pathlib import Path
 import argparse
 from datetime import datetime
-from src.config import FHNW_SWISS_GERMAN_ROOT, MODELS_DIR
 
 # Add project root to path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_root)
 
+from src.config import FHNW_SWISS_GERMAN_ROOT, MODELS_DIR
 from src.evaluation.evaluator import ASREvaluator
 from src.utils.file_utils import save_results_json, save_results_csv
 from src.utils.logging_config import setup_logger
