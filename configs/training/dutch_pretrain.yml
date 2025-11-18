@@ -44,7 +44,7 @@ training:
   layerdrop: 0.1
 
 checkpointing:
-  output_dir: "models/pretrained/wav2vec2-dutch"
+  output_dir: "models/pretrained/wav2vec2-dutch" # placeholder for Dutch pre-trained model path
   save_strategy: "steps"
   save_steps: 1000
   save_total_limit: 2  # Keep only 2 best checkpoints
