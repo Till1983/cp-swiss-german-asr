@@ -1,0 +1,76 @@
+# Dutch Pre-training Configuration
+# Pre-training phase for Wav2Vec2 model on Dutch Common Voice data
+# This helps the model adapt to a similar low-resource language before Swiss German fine-tuning
+
+model:
+  name: "facebook/wav2vec2-large-xlsr-53-german"
+  freeze_feature_encoder: true  # Freeze CNN layers for faster training
+
+data:
+  train_metadata: "data/metadata/dutch/train.tsv"
+  sampling_rate: 16000
+  max_duration_seconds: 20  # Maximum audio length to prevent OOM
+  num_workers: 4  # Data loading workers
+
+training:
+  # Optimizer settings
+  learning_rate: 3e-5
+  weight_decay: 0.01
+  adam_beta1: 0.9
+  adam_beta2: 0.999
+  adam_epsilon: 1e-8
+  
+  # Training schedule
+  num_epochs: 10
+  warmup_steps: 500
+  max_steps: -1  # -1 means train for full epochs
+  
+  # Batch settings
+  per_device_train_batch_size: 16
+  gradient_accumulation_steps: 2  # Effective batch size: 16 * 2 = 32
+  
+  # Mixed precision
+  fp16: true  # Enable on GPU
+  fp16_opt_level: "O1"
+  
+  # Gradient clipping
+  max_grad_norm: 1.0
+  
+  # Regularization
+  dropout: 0.1
+  attention_dropout: 0.1
+  activation_dropout: 0.0
+  feat_proj_dropout: 0.1
+  layerdrop: 0.1
+
+checkpointing:
+  output_dir: "models/pretrained/wav2vec2-dutch"
+  save_strategy: "steps"
+  save_steps: 1000
+  save_total_limit: 2  # Keep only 2 best checkpoints
+  load_best_model_at_end: false
+
+logging:
+  logging_strategy: "steps"
+  logging_steps: 100
+  report_to: ["tensorboard"]
+  logging_dir: "results/logs/tensorboard/dutch_pretrain"
+
+evaluation:
+  evaluation_strategy: "steps"
+  eval_steps: 500
+  metric_for_best_model: "loss"
+  greater_is_better: false
+
+environment:
+  seed: 42
+  dataloader_num_workers: 4
+  group_by_length: true  # Group similar length samples for efficiency
+  length_column_name: "input_length"
+  
+# RunPod specific settings (applied when ENVIRONMENT=runpod)
+runpod:
+  per_device_train_batch_size: 32  # Larger batch on cloud GPU
+  gradient_accumulation_steps: 1
+  fp16: true
+  dataloader_num_workers: 8
