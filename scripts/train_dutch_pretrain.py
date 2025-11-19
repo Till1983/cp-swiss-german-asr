@@ -63,7 +63,7 @@ TRAIN_ARGS = {
     "logging_dir": str(OUTPUT_DIR / "logs"),
     "logging_steps": 10,
     "save_total_limit": 3,
-    "fp16": torch.cuda.is_available(),
+    "fp16": True if torch.cuda.is_available() or torch.backends.mps.is_available() else False,
     "load_best_model_at_end": True,
     "metric_for_best_model": "loss",
     "greater_is_better": False,

@@ -504,7 +504,7 @@ def train_german_adaptation(
             gradient_accumulation_steps=gradient_accumulation_steps,
             evaluation_strategy="steps" if val_dataset else "no",
             num_train_epochs=epochs,
-            fp16=fp16 and torch.cuda.is_available(),
+            fp16=True if torch.cuda.is_available() or torch.backends.mps.is_available() else False,
             save_steps=save_steps,
             eval_steps=eval_steps if val_dataset else None,
             logging_steps=logging_steps,
