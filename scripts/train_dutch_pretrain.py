@@ -44,7 +44,7 @@ logger = logging.getLogger("train_dutch_pretrain")
 # -----------------------------------------------------------------------------
 # Configuration
 # -----------------------------------------------------------------------------
-MODEL_NAME = "facebook/wav2vec2-large-xlsr-53-german" # Use German model as base
+MODEL_NAME = "facebook/wav2vec2-large-xlsr-53-german" # Use German
 METADATA_FILE = DUTCH_CV_ROOT / "validated.tsv"
 AUDIO_DIR = DUTCH_CV_ROOT / "clips"
 OUTPUT_DIR = MODELS_DIR / "pretrained" / "wav2vec2-dutch-cv"
@@ -63,7 +63,7 @@ TRAIN_ARGS = {
     "logging_dir": str(OUTPUT_DIR / "logs"),
     "logging_steps": 10,
     "save_total_limit": 3,
-    "fp16": True if torch.cuda.is_available() or torch.backends.mps.is_available() else False,
+    "fp16": torch.cuda.is_available(),
     "load_best_model_at_end": True,
     "metric_for_best_model": "loss",
     "greater_is_better": False,
