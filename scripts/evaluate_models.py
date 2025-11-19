@@ -65,18 +65,29 @@ def main():
         default=None,
         help="Optional limit on number of samples to evaluate"
     )
+    parser.add_argument(
+        "--experiment-type",
+        type=str,
+        choices=["zero-shot", "fine-tuned", "standard"],
+        default="standard",
+        help="Type of experiment (e.g., zero-shot, fine-tuned, standard)"
+    )
     
     args = parser.parse_args()
     
     # Setup logger
     logger = setup_logger("evaluate_models", "logs/evaluation.log")
     
-    # Create timestamp-based subdirectory
+    # Create timestamp-based subdirectory, optionally include experiment type
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_dir = Path(args.output_dir) / timestamp
+    if args.experiment_type and args.experiment_type != "standard":
+        output_dir = Path(args.output_dir) / f"{args.experiment_type}_{timestamp}"
+    else:
+        output_dir = Path(args.output_dir) / timestamp
     output_dir.mkdir(parents=True, exist_ok=True)
     
     logger.info(f"Starting evaluation run: {timestamp}")
+    logger.info(f"Experiment type: {args.experiment_type}")
     logger.info(f"Models to evaluate: {args.models}")
     logger.info(f"Test set: {args.test_path}")
     logger.info(f"Output directory: {output_dir}")
