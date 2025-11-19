@@ -218,8 +218,7 @@ cp-swiss-german-asr/
 │   ├── prepare_scripts.py
 │   ├── train_dutch_pretrain.py
 │   ├── train_german_adaptation.py
-│   ├── train_on_cloud.sh
-│   ├── train_wav2vec2_model.py
+│   ├── train_on_cloud.sh 
 │   └── upload_to_cloud.sh
 ├── src/
 │   ├── __init.py__
