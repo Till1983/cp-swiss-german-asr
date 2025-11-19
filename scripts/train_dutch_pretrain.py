@@ -7,6 +7,7 @@ from datasets import Dataset, load_metric
 from src.data.loader import load_swiss_german_metadata, load_audio
 from src.models.wav2vec2_model import Wav2Vec2Model
 from src.config import DUTCH_CV_ROOT, MODELS_DIR, RESULTS_DIR
+import yaml
 
 """
 Dutch ASR Pre-training Script
@@ -51,23 +52,30 @@ OUTPUT_DIR = MODELS_DIR / "pretrained" / "wav2vec2-dutch-cv"
 CHECKPOINT_DIR = OUTPUT_DIR / "checkpoints"
 RESULTS_LOG = RESULTS_DIR / "metrics" / "dutch_pretrain.log"
 
-# Training hyperparameters
-TRAIN_ARGS = {
-    "output_dir": str(OUTPUT_DIR),
-    "per_device_train_batch_size": 8,
-    "gradient_accumulation_steps": 2,
-    "evaluation_strategy": "epoch",
-    "save_strategy": "epoch",
-    "num_train_epochs": 5,
-    "learning_rate": 3e-4,
-    "logging_dir": str(OUTPUT_DIR / "logs"),
-    "logging_steps": 10,
-    "save_total_limit": 3,
-    "fp16": torch.cuda.is_available(),
-    "load_best_model_at_end": True,
-    "metric_for_best_model": "loss",
-    "greater_is_better": False,
-}
+# Load config
+with open("configs/training/dutch_pretrain.yml", "r") as f:
+    config = yaml.safe_load(f)
+
+# Replace hardcoded TRAIN_ARGS with:
+TRAIN_ARGS = config["training"]
+TRAIN_ARGS["output_dir"] = str(OUTPUT_DIR)
+TRAIN_ARGS["logging_dir"] = str(OUTPUT_DIR / "logs")
+
+# -----------------------------------------------------------------------------
+# Device and fp16 setup
+# -----------------------------------------------------------------------------
+if torch.cuda.is_available():
+    device = "cuda"
+elif torch.backends.mps.is_available() and torch.backends.mps.is_built():
+    device = "mps"
+else:
+    device = "cpu"
+logger.info(f"Using device: {device}")
+
+# Override fp16 if not supported
+if (device != "cuda") and TRAIN_ARGS.get("fp16", False):
+    logger.warning(f"{device.upper()} does not support fp16 (mixed precision). Disabling fp16 for training.")
+    TRAIN_ARGS["fp16"] = False
 
 # -----------------------------------------------------------------------------
 # Utility Functions
@@ -143,7 +151,7 @@ def main():
     # Load model and processor
     try:
         model_wrapper = Wav2Vec2Model(model_name=MODEL_NAME)
-        model = model_wrapper.model
+        model = model_wrapper.model.to(device)  # Move model to correct device
         processor = model_wrapper.processor
     except Exception as e:
         logger.error(f"Model loading failed: {e}")

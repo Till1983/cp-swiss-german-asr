@@ -9,6 +9,7 @@ from src.models.wav2vec2_model import Wav2Vec2Model
 from src.config import GERMAN_CV_ROOT, MODELS_DIR, RESULTS_DIR
 import numpy as np
 from torch.utils.data import DataLoader
+import yaml
 
 """
 German ASR Adaptation Script
@@ -51,22 +52,29 @@ OUTPUT_DIR = MODELS_DIR / "adapted" / "wav2vec2-german-cv"
 CHECKPOINT_DIR = OUTPUT_DIR / "checkpoints"
 RESULTS_LOG = RESULTS_DIR / "metrics" / "german_adaptation.log"
 
-TRAIN_ARGS = {
-    "output_dir": str(OUTPUT_DIR),
-    "per_device_train_batch_size": 8,
-    "gradient_accumulation_steps": 2,
-    "evaluation_strategy": "epoch",
-    "save_strategy": "epoch",
-    "num_train_epochs": 5,
-    "learning_rate": 3e-4,
-    "logging_dir": str(OUTPUT_DIR / "logs"),
-    "logging_steps": 10,
-    "save_total_limit": 3,
-    "fp16": torch.cuda.is_available(),
-    "load_best_model_at_end": True,
-    "metric_for_best_model": "loss",
-    "greater_is_better": False,
-}
+# Load config from YAML
+with open("configs/training/german_adaptation.yml", "r") as f:
+    config = yaml.safe_load(f)
+
+TRAIN_ARGS = config["training"]
+TRAIN_ARGS["output_dir"] = str(OUTPUT_DIR)
+TRAIN_ARGS["logging_dir"] = str(OUTPUT_DIR / "logs")
+
+# -----------------------------------------------------------------------------
+# Device and fp16 setup
+# -----------------------------------------------------------------------------
+if torch.cuda.is_available():
+    device = "cuda"
+elif torch.backends.mps.is_available() and torch.backends.mps.is_built():
+    device = "mps"
+else:
+    device = "cpu"
+logger.info(f"Using device: {device}")
+
+# Override fp16 if not supported
+if (device != "cuda") and TRAIN_ARGS.get("fp16", False):
+    logger.warning(f"{device.upper()} does not support fp16 (mixed precision). Disabling fp16 for training.")
+    TRAIN_ARGS["fp16"] = False
 
 # -----------------------------------------------------------------------------
 # Elastic Weight Consolidation (EWC) Implementation
