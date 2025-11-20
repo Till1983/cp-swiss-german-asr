@@ -1,9 +1,12 @@
 import os
 import sys
 import logging
+
 from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent / "src"))
+
 import torch
-from datasets import Dataset, load_metric
+from datasets import Dataset, load
 from src.data.loader import load_swiss_german_metadata, load_audio
 from src.models.wav2vec2_model import Wav2Vec2Model
 from src.config import GERMAN_CV_ROOT, MODELS_DIR, RESULTS_DIR
@@ -11,6 +14,7 @@ import numpy as np
 from torch.utils.data import DataLoader
 import yaml
 from transformers import Wav2Vec2ForCTC
+from src.data.collator import AudioDataCollatorCTC
 
 """
 German ASR Adaptation Script
@@ -28,9 +32,25 @@ Environment/configuration is managed via src/config.py.
 from transformers import (
     Trainer,
     TrainingArguments,
-    EarlyStoppingCallback,
-    DataCollatorCTCTokenizer,
+    EarlyStoppingCallback
 )
+# --- Compatibility shim for accelerate / transformers version mismatch ---
+try:
+    from accelerate import Accelerator
+    import inspect
+    _sig = inspect.signature(Accelerator.unwrap_model)
+    if "keep_torch_compile" not in _sig.parameters:
+        _orig_unwrap = Accelerator.unwrap_model
+
+        def _compat_unwrap(self, model, *args, keep_torch_compile=False, **kwargs):
+            return _orig_unwrap(self, model, *args, **kwargs)
+
+        Accelerator.unwrap_model = _compat_unwrap
+        logging.getLogger("train_german_adaptation").info(
+            "Patched accelerate.Accelerator.unwrap_model to accept keep_torch_compile for compatibility."
+        )
+except Exception:
+    pass
 
 # -----------------------------------------------------------------------------
 # Logging setup
@@ -226,6 +246,38 @@ def main():
         logger.error(f"Model loading failed: {e}")
         sys.exit(1)
 
+    # Simple tokenizer sanity check (avoid per-character checks which are incorrect for many tokenizers)
+    try:
+        sample_count = 5
+        for row in train_dataset.select(range(min(sample_count, len(train_dataset)))):
+            sent = row.get("sentence", "")
+            toks = processor.tokenizer(sent, add_special_tokens=False)
+            if not getattr(toks, "input_ids", toks.get("input_ids", None)):
+                logger.warning("Tokenizer produced no tokens for a sample sentence (possible tokenizer mismatch).")
+    except Exception as e:
+        logger.warning(f"Tokenizer sanity check skipped: {e}")
+
+    # Preprocess train_dataset -> add 'input_values' and 'labels' expected by Trainer
+    sampling_rate = config.get("data", {}).get("sampling_rate", 16000)
+
+    def prepare_examples(batch):
+        audio_list = []
+        for a in batch["audio"]:
+            if isinstance(a, dict) and "array" in a:
+                audio_list.append(a["array"])
+            else:
+                audio_list.append(a)
+
+        inputs = processor(audio_list, sampling_rate=sampling_rate, padding=True, return_attention_mask=False)
+        batch["input_values"] = inputs["input_values"]
+
+        tokenized = processor.tokenizer(batch["sentence"], add_special_tokens=False)
+        batch["labels"] = tokenized["input_ids"]
+        return batch
+
+    train_dataset = train_dataset.map(prepare_examples, batched=True, batch_size=4)
+    logger.info("Train dataset columns after preprocessing: %s", train_dataset.column_names)
+
     # Ensure model is in training mode for Fisher estimation and training
     model.train()
 
@@ -240,10 +292,10 @@ def main():
     model.train()  # Ensure gradients are enabled
 
     # Data collator for CTC
-    data_collator = DataCollatorCTCTokenizer(processor=processor, padding=True)
+    data_collator = AudioDataCollatorCTC(processor=processor, padding=True)
 
     # Metric for evaluation
-    wer_metric = load_metric("wer")
+    wer_metric = load("wer")
 
     def compute_metrics(pred):
         pred_ids = pred.predictions.argmax(-1)
@@ -259,7 +311,9 @@ def main():
         dutch_audio_dir = MODELS_DIR / "pretrained" / "wav2vec2-dutch-cv" / "clips"
         if dutch_metadata.exists() and dutch_audio_dir.exists():
             # Prepare Dutch dataset for Fisher Information estimation
-            dutch_dataset = prepare_dataset(dutch_metadata, dutch_audio_dir, limit=1000)  # Increased from 100 to 1000
+            dutch_dataset = prepare_dataset(dutch_metadata, dutch_audio_dir, limit=1000)
+            # Preprocess dutch_dataset same way (input_values / labels) so DataLoader yields tensors collatable by data_collator
+            dutch_dataset = dutch_dataset.map(prepare_examples, batched=True, batch_size=8)
             # Convert to PyTorch DataLoader
             dutch_loader = DataLoader(dutch_dataset, batch_size=8, collate_fn=data_collator)
             # Compute Fisher Information Matrix for EWC
@@ -275,21 +329,64 @@ def main():
         old_params = None
 
     # Training arguments
+    # --- Sanitize TRAIN_ARGS types (same approach as pretrain script) ---
+    int_keys = {
+        "num_train_epochs",
+        "warmup_steps",
+        "max_steps",
+        "per_device_train_batch_size",
+        "gradient_accumulation_steps",
+    }
+    float_keys = {
+        "learning_rate",
+        "weight_decay",
+        "adam_beta1",
+        "adam_beta2",
+        "adam_epsilon",
+        "max_grad_norm",
+    }
+    bool_keys = {"fp16"}
+
+    for k in int_keys:
+        if k in TRAIN_ARGS and isinstance(TRAIN_ARGS[k], str):
+            try:
+                TRAIN_ARGS[k] = int(TRAIN_ARGS[k])
+                logger.info(f"Coerced TRAIN_ARGS['{k}'] from str -> int ({TRAIN_ARGS[k]})")
+            except Exception:
+                logger.warning(f"Failed to coerce TRAIN_ARGS['{k}']='{TRAIN_ARGS[k]}' to int; leaving as-is")
+    for k in float_keys:
+        if k in TRAIN_ARGS and isinstance(TRAIN_ARGS[k], str):
+            try:
+                TRAIN_ARGS[k] = float(TRAIN_ARGS[k])
+                logger.info(f"Coerced TRAIN_ARGS['{k}'] from str -> float ({TRAIN_ARGS[k]})")
+            except Exception:
+                logger.warning(f"Failed to coerce TRAIN_ARGS['{k}']='{TRAIN_ARGS[k]}' to float; leaving as-is")
+    for k in bool_keys:
+        if k in TRAIN_ARGS and isinstance(TRAIN_ARGS[k], str):
+            TRAIN_ARGS[k] = TRAIN_ARGS[k].strip().lower() in ("1", "true", "yes", "y")
+            logger.info(f"Coerced TRAIN_ARGS['{k}'] from str -> bool ({TRAIN_ARGS[k]})")
+
+    logger.debug("TRAIN_ARGS after sanitization: %s", TRAIN_ARGS)
     training_args = TrainingArguments(**TRAIN_ARGS)
 
     # Trainer setup (with EWC if available)
     try:
+        eval_dataset = None
+        callbacks = []
+        if eval_dataset is not None:
+            callbacks.append(EarlyStoppingCallback(early_stopping_patience=2))
+
         if fisher_dict is not None and old_params is not None:
             logger.info("Using EWCTrainer for adaptation.")
             trainer = EWCTrainer(
                 model=model,
                 args=training_args,
                 train_dataset=train_dataset,
-                eval_dataset=None,
+                eval_dataset=eval_dataset,
                 data_collator=data_collator,
                 tokenizer=processor.feature_extractor,
                 compute_metrics=compute_metrics,
-                callbacks=[EarlyStoppingCallback(early_stopping_patience=2)],
+                callbacks=callbacks,
                 ewc_lambda=0.4,
                 fisher_dict=fisher_dict,
                 old_params=old_params,
@@ -300,11 +397,11 @@ def main():
                 model=model,
                 args=training_args,
                 train_dataset=train_dataset,
-                eval_dataset=None,
+                eval_dataset=eval_dataset,
                 data_collator=data_collator,
                 tokenizer=processor.feature_extractor,
                 compute_metrics=compute_metrics,
-                callbacks=[EarlyStoppingCallback(early_stopping_patience=2)],
+                callbacks=callbacks,
             )
     except Exception as e:
         logger.error(f"Trainer setup failed: {e}")
