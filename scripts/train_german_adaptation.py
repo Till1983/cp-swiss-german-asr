@@ -10,6 +10,7 @@ from src.config import GERMAN_CV_ROOT, MODELS_DIR, RESULTS_DIR
 import numpy as np
 from torch.utils.data import DataLoader
 import yaml
+from transformers import Wav2Vec2ForCTC
 
 """
 German ASR Adaptation Script
@@ -55,6 +56,10 @@ RESULTS_LOG = RESULTS_DIR / "metrics" / "german_adaptation.log"
 # Load config from YAML
 with open("configs/training/german_adaptation.yml", "r") as f:
     config = yaml.safe_load(f)
+
+# Use checkpoint path from config
+PRETRAINED_CHECKPOINT = Path(config["model"]["dutch_checkpoint"])
+MODEL_NAME = str(PRETRAINED_CHECKPOINT)
 
 TRAIN_ARGS = config["training"]
 TRAIN_ARGS["output_dir"] = str(OUTPUT_DIR)
@@ -124,7 +129,10 @@ def compute_fisher_information(model, dataloader, device):
     model.eval()
     for name, param in model.named_parameters():
         fisher_dict[name] = torch.zeros_like(param)
-    for batch in dataloader:
+    num_samples = 1000  # or use one full epoch
+    for i, batch in enumerate(dataloader):
+        if i >= num_samples:
+            break
         inputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in batch.items() if k != "audio_path"}
         model.zero_grad()
         outputs = model(**inputs)
@@ -218,6 +226,19 @@ def main():
         logger.error(f"Model loading failed: {e}")
         sys.exit(1)
 
+    # Ensure model is in training mode for Fisher estimation and training
+    model.train()
+
+    # Vocabulary check BEFORE training
+    tokenizer_vocab = set(processor.get_vocab().keys())
+    with open(METADATA_FILE) as f:
+        for line in f:
+            text = line.strip().split('\t')[1]  # Adjust index if needed
+            for char in set(text):
+                if char not in tokenizer_vocab:
+                    logger.warning(f"Missing character in vocab: {char}")
+    model.train()  # Ensure gradients are enabled
+
     # Data collator for CTC
     data_collator = DataCollatorCTCTokenizer(processor=processor, padding=True)
 
@@ -237,12 +258,12 @@ def main():
         dutch_metadata = MODELS_DIR / "pretrained" / "wav2vec2-dutch-cv" / "validated.tsv"
         dutch_audio_dir = MODELS_DIR / "pretrained" / "wav2vec2-dutch-cv" / "clips"
         if dutch_metadata.exists() and dutch_audio_dir.exists():
-            dutch_dataset = prepare_dataset(dutch_metadata, dutch_audio_dir, limit=100)
+            # Prepare Dutch dataset for Fisher Information estimation
+            dutch_dataset = prepare_dataset(dutch_metadata, dutch_audio_dir, limit=1000)  # Increased from 100 to 1000
             # Convert to PyTorch DataLoader
-            def collate_fn(batch):
-                return {k: torch.tensor([b[k] for b in batch]) if isinstance(batch[0][k], np.ndarray) else [b[k] for b in batch] for k in batch[0]}
-            dutch_loader = DataLoader(dutch_dataset, batch_size=8, collate_fn=collate_fn)
-            fisher_dict = compute_fisher_information(model, dutch_loader, device=torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+            dutch_loader = DataLoader(dutch_dataset, batch_size=8, collate_fn=data_collator)
+            # Compute Fisher Information Matrix for EWC
+            fisher_dict = compute_fisher_information(model, dutch_loader, device=device)
             old_params = get_model_params(model)
         else:
             logger.warning("Dutch reference data not found for EWC. Proceeding without EWC.")
