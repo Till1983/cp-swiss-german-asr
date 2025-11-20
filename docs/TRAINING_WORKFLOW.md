@@ -26,6 +26,28 @@ This guide describes the full pipeline for fine-tuning Wav2Vec2 models for Swiss
 
 **Warning:** The full Dutch pre-training is resource-intensive. For local testing, use the test command below. Only test the full training on a capable cloud instance. Local testing should be done with a limited dataset as shown in the Important note. Even then, ensure your machine has sufficient resources.
 
+Add these lines to your `docker-compose.yml` under services to create a test service:
+
+```yaml
+  dutch-pretrain-test:
+    build: .
+    command: ["python", "scripts/train_dutch_pretrain.py"]
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+      - ./scripts:/app/scripts
+      - ./results:/app/results
+      - ./configs:/app/configs
+      - huggingface-cache:/home/appuser/.cache/huggingface
+    environment:
+      - HF_TOKEN=${HF_TOKEN}
+      - PYTHONPATH=/app
+    working_dir: /app
+```
+
+Then run the test with:
+
+
 ```bash
 docker compose run --rm dutch-pretrain-test
 ```
@@ -56,6 +78,8 @@ python scripts/train_dutch_pretrain.py
 
 ## 3. German Adaptation (with EWC)
 
+**warning:** The same resource considerations as Dutch pre-training apply here. Test locally with a limited dataset first. Here as well, ensure your machine has sufficient resources.
+
 ### Step-by-Step
 
 1. **Prepare Data**: Ensure German Common Voice audio and metadata are available.
@@ -63,6 +87,27 @@ python scripts/train_dutch_pretrain.py
 3. **Run Adaptation**: Execute the adaptation script.
 
 ### Command Examples
+
+Create a test service in your `docker-compose.yml`:
+
+```yaml
+  german-adapt-test:
+    build: .
+    command: ["python", "scripts/train_german_adaptation.py"]
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+      - ./scripts:/app/scripts
+      - ./results:/app/results
+      - ./configs:/app/configs
+      - huggingface-cache:/home/appuser/.cache/huggingface
+    environment:
+      - HF_TOKEN=${HF_TOKEN}
+      - PYTHONPATH=/app
+    working_dir: /app
+```
+
+Then run the test with:
 
 **Local Execution with Docker Compose**
 ```bash
