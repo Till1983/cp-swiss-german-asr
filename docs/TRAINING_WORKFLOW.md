@@ -23,6 +23,9 @@ This guide describes the full pipeline for fine-tuning Wav2Vec2 models for Swiss
 ### Command Examples
 
 **Local Execution with Docker Compose**
+
+**Warning:** The full Dutch pre-training is resource-intensive. For local testing, use the test command below. Only test the full training on a capable cloud instance. Local testing should be done with a limited dataset as shown in the Important note. Even then, ensure your machine has sufficient resources.
+
 ```bash
 docker compose run --rm dutch-pretrain-test
 ```
