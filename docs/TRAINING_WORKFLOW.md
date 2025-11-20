@@ -22,10 +22,18 @@ This guide describes the full pipeline for fine-tuning Wav2Vec2 models for Swiss
 
 ### Command Examples
 
-**Local Execution**
+**Local Execution with Docker Compose**
 ```bash
-docker compose run --rm training python scripts/train_dutch_pretrain.py
+docker compose run --rm dutch-pretrain-test
 ```
+
+**Important!** For local testing, go into `train_dutch_pretrain.py` and set a small limit (e.g., `limit=10`) when preparing the dataset to ensure quick runs. Example:
+
+```python
+train_dataset = prepare_dataset(METADATA_FILE, AUDIO_DIR, limit=10)  # Limit to 10 samples for a fast test
+```
+
+Once verified, revert the limit change for full training.
 
 **Cloud/RunPod Example**
 ```bash
@@ -53,9 +61,9 @@ python scripts/train_dutch_pretrain.py
 
 ### Command Examples
 
-**Local Execution**
+**Local Execution with Docker Compose**
 ```bash
-python scripts/train_german_adaptation.py
+docker compose run --rm german-adapt-test
 ```
 
 **Cloud/RunPod Example**
