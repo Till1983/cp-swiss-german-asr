@@ -13,6 +13,7 @@ services:
       - huggingface-cache:/home/appuser/.cache/huggingface
     environment:
       - HF_TOKEN=${HF_TOKEN}
+    working_dir: /app
 
   dashboard:
     build: .
@@ -28,6 +29,7 @@ services:
       - api
     environment:
       - HF_TOKEN=${HF_TOKEN}
+    working_dir: /app
 
   test:
     build: .
@@ -40,6 +42,36 @@ services:
     environment:
       - PYTHONPATH=/app
       - HF_TOKEN=${HF_TOKEN}
+    working_dir: /app
+
+  dutch-pretrain-test:
+    build: .
+    command: ["python", "scripts/train_dutch_pretrain.py"]
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+      - ./scripts:/app/scripts
+      - ./results:/app/results
+      - ./configs:/app/configs
+      - huggingface-cache:/home/appuser/.cache/huggingface
+    environment:
+      - HF_TOKEN=${HF_TOKEN}
+      - PYTHONPATH=/app
+    working_dir: /app
+
+  german-adapt-test:
+    build: .
+    command: ["python", "scripts/train_german_adaptation.py"]
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+      - ./scripts:/app/scripts
+      - ./results:/app/results
+      - huggingface-cache:/home/appuser/.cache/huggingface
+    environment:
+      - HF_TOKEN=${HF_TOKEN}
+      - PYTHONPATH=/app
+    working_dir: /app
 
 volumes:
   huggingface-cache:
