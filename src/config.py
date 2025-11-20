@@ -106,9 +106,8 @@ RESULTS_DIR = Path(os.getenv("RESULTS_DIR", defaults["RESULTS_DIR"]))
 
 # Dataset paths (relative to DATA_DIR)
 FHNW_SWISS_GERMAN_ROOT = DATA_DIR / "raw" / "fhnw-swiss-german-corpus"
-DUTCH_CV_ROOT = DATA_DIR / "raw" / "common-voice-dutch"
-GERMAN_CV_ROOT = DATA_DIR / "raw" / "common-voice-german"
-
+DUTCH_CV_ROOT = DATA_DIR / "raw" / "cv-corpus-23.0-2025-09-05" / "nl"
+GERMAN_CV_ROOT = DATA_DIR / "raw" / "cv-corpus-22.0-2025-06-20" / "de"
 # Model cache
 CACHE_DIR = MODELS_DIR / "cache"
 
