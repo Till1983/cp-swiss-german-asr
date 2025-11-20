@@ -3,7 +3,7 @@
 
 model:
   dutch_checkpoint: "models/pretrained/wav2vec2-dutch"
-  freeze_feature_encoder: false
+  freeze_feature_encoder: true
 
 data:
   train_metadata: "data/metadata/german/train.tsv"
@@ -13,7 +13,7 @@ data:
   num_workers: 4
 
 training:
-  learning_rate: 1e-4  # Lower than Dutch pre-training
+  learning_rate: 1e-5  # Lower than Dutch pre-training
   weight_decay: 0.01
   adam_beta1: 0.9
   adam_beta2: 0.999
