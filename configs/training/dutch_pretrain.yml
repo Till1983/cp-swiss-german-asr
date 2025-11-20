@@ -1,6 +1,11 @@
 model:
   name: "facebook/wav2vec2-large-xlsr-53-german"
   freeze_feature_encoder: true
+  dropout: 0.1
+  attention_dropout: 0.1
+  activation_dropout: 0.0
+  feat_proj_dropout: 0.1
+  layerdrop: 0.1
 
 data:
   train_metadata: "data/metadata/dutch/train.tsv"
@@ -14,7 +19,7 @@ training:
   adam_beta1: 0.9
   adam_beta2: 0.999
   adam_epsilon: 1e-8
-  num_epochs: 10
+  num_train_epochs: 10
   warmup_steps: 500
   max_steps: -1
   per_device_train_batch_size: 16
@@ -22,11 +27,6 @@ training:
   fp16: true
   fp16_opt_level: "O1"
   max_grad_norm: 1.0
-  dropout: 0.1
-  attention_dropout: 0.1
-  activation_dropout: 0.0
-  feat_proj_dropout: 0.1
-  layerdrop: 0.1
 
 checkpointing:
   output_dir: "models/pretrained/wav2vec2-dutch"
