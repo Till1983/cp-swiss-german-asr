@@ -148,14 +148,26 @@ def main():
         logger.error(f"Dataset preparation failed: {e}")
         sys.exit(1)
 
-    # Load model and processor
+    # Load model and processor ONCE
     try:
         model_wrapper = Wav2Vec2Model(model_name=MODEL_NAME)
-        model = model_wrapper.model.to(device)  # Move model to correct device
+        model = model_wrapper.model.to(device)
         processor = model_wrapper.processor
     except Exception as e:
         logger.error(f"Model loading failed: {e}")
         sys.exit(1)
+
+    # Perform vocab check using the loaded processor
+    tokenizer_vocab = set(processor.get_vocab().keys())
+    with open(METADATA_FILE) as f:  # <-- Use METADATA_FILE for consistency
+        for line in f:
+            text = line.strip().split('\t')[1]  # Adjust index as needed
+            for char in set(text):
+                if char not in tokenizer_vocab:
+                    logger.warning(f"Missing character in vocab: {char}")
+
+    # Ensure training mode
+    model.train()
 
     # Data collator for CTC
     data_collator = DataCollatorCTCTokenizer(processor=processor, padding=True)
