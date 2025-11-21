@@ -22,14 +22,14 @@ cd /workspace/cp-swiss-german-asr
 
 # Prepare Dutch metadata
 python scripts/prepare_common_voice.py \
-    --cv-root /workspace/data/raw/cv-corpus-23.0-2025-09-05 \
-    --language-code nl \
+    --cv-root /workspace/data/raw/cv-corpus-23.0-2025-09-05/nl \
+    --locale nl \
     --output-dir /workspace/data/metadata/dutch
 
 # Prepare German metadata
 python scripts/prepare_common_voice.py \
-    --cv-root /workspace/data/raw/cv-corpus-22.0-2025-06-20 \
-    --language-code de \
+    --cv-root /workspace/data/raw/cv-corpus-22.0-2025-06-20/de \
+    --locale de \
     --output-dir /workspace/data/metadata/german
 
 # Prepare Swiss German splits
