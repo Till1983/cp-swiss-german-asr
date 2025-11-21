@@ -29,7 +29,7 @@ def prepare_common_voice(
             continue
         
         print(f"Processing {split}.tsv...")
-        df = pd.read_csv(input_file, sep='\t')
+        df = pd.read_csv(input_file, sep='\t', low_memory=False)
         
         # Add audio_path column
         df['audio_path'] = df['path'].apply(
