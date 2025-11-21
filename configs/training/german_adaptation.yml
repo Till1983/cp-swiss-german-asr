@@ -12,7 +12,7 @@ model:
 
 data:
   train_metadata: "data/metadata/german/train.tsv"
-  val_metadata: "data/metadata/german/validation.tsv"
+  val_metadata: "data/metadata/german/val.tsv"
   sampling_rate: 16000
   max_duration_seconds: 20
   num_workers: 4

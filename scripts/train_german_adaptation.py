@@ -67,7 +67,7 @@ logger = logging.getLogger("train_german_adaptation")
 # -----------------------------------------------------------------------------
 PRETRAINED_CHECKPOINT = MODELS_DIR / "pretrained" / "wav2vec2-dutch-cv"
 MODEL_NAME = str(PRETRAINED_CHECKPOINT)
-METADATA_FILE = GERMAN_CV_ROOT / "validated.tsv"
+METADATA_FILE = GERMAN_CV_ROOT / "train.tsv"
 AUDIO_DIR = GERMAN_CV_ROOT / "clips"
 OUTPUT_DIR = MODELS_DIR / "adapted" / "wav2vec2-german-cv"
 CHECKPOINT_DIR = OUTPUT_DIR / "checkpoints"
