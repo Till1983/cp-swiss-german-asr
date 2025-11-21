@@ -33,8 +33,8 @@ python scripts/prepare_common_voice.py \
     --output-dir /workspace/data/metadata/german
 
 # Prepare Swiss German splits
-python scripts/splitter.py \
-    /workspace/data/raw/fhnw-swiss-german-corpus/metadata.tsv \
+python scripts/prepare_scripts.py \
+    /workspace/data/raw/fhnw-swiss-german-corpus/public.tsv \
     /workspace/data/metadata \
     /workspace/data/raw/fhnw-swiss-german-corpus
 ```
