@@ -28,6 +28,8 @@ MODEL_REGISTRY = {
     # Wav2Vec2 models
     ## German model
     "wav2vec2-german": {"type": "wav2vec2", "name": "facebook/wav2vec2-large-xlsr-53-german"},
+    # Dutch model
+    "wav2vec2-dutch": {"type": "wav2vec2", "name": "facebook/wav2vec2-large-xlsr-53-dutch"},
     ## Multilingual model
     "wav2vec2-multi-56": {"type": "wav2vec2", "name": "voidful/wav2vec2-xlsr-multilingual-56"},
 
