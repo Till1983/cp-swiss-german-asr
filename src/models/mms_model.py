@@ -37,13 +37,20 @@ class MMSModel:
         # Initialize decoder only if LM is provided (Lazy init in transcribe to handle language switching)
         self.decoder = None
         
+        # ✅ Initialize decoder immediately if LM provided
+        if self.lm_path and _HAS_PYCTCDECODE:
+            if Path(self.lm_path).exists():
+                self._init_decoder()
+            else:
+                print(f"⚠️ Warning: LM file not found at {self.lm_path}")
+
         print("Model loaded successfully.")
 
     def _init_decoder(self):
         """Builds the pyctcdecode Beam Search Decoder."""
-        if not self.lm_path or not _HAS_PYCTCDECODE:
+        if not _HAS_PYCTCDECODE:
             return
-
+        
         print(f"Initializing KenLM decoder for MMS with {self.lm_path}...")
         vocab = self.processor.tokenizer.get_vocab()
         sorted_vocab = [k for k, v in sorted(vocab.items(), key=lambda item: item[1])]
@@ -56,7 +63,8 @@ class MMSModel:
             print("✅ MMS Beam Search Decoder initialized.")
         except Exception as e:
             print(f"❌ Failed to init decoder: {e}")
-            self.decoder = None
+            print(f"⚠️ Falling back to greedy decoding (LM will not be used)")
+            self.decoder = None  # ✅ SAFE: Fall back gracefully
 
     def transcribe(self, audio_path: Path, language: Optional[str] = "deu") -> Dict[str, str]:
         audio_path = Path(audio_path)

@@ -58,10 +58,9 @@ class Wav2Vec2Model:
 
     def _init_decoder(self):
         """Builds the pyctcdecode Beam Search Decoder."""
-        # Get vocab from tokenizer
         vocab = self.processor.tokenizer.get_vocab()
-        # Sort vocab by index to get character list
-        sorted_vocab = [k.lower() for k, v in sorted(vocab.items(), key=lambda item: item[1])]
+        # ✅ DON'T lowercase - keep as-is from vocab
+        sorted_vocab = [k for k, v in sorted(vocab.items(), key=lambda item: item[1])]
         
         try:
             self.decoder = build_ctcdecoder(
@@ -71,7 +70,8 @@ class Wav2Vec2Model:
             print("✅ Beam Search Decoder initialized.")
         except Exception as e:
             print(f"❌ Failed to initialize decoder: {e}")
-            self.decoder = None
+            print(f"⚠️ Falling back to greedy decoding (LM will not be used)")
+            self.decoder = None  # ✅ SAFE: Fall back gracefully
 
     def transcribe(self, audio_path: Path, language: Optional[str] = None) -> Dict[str, str]:
         audio_path = Path(audio_path)

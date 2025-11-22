@@ -27,15 +27,21 @@ MODEL_REGISTRY = {
     
     # Wav2Vec2 models
     ## German model
-    "wav2vec2-german": {"type": "wav2vec2", "name": "facebook/wav2vec2-large-xlsr-53-german"},
+    "wav2vec2-german": {"type": "wav2vec2", "name": "jonatasgrosman/wav2vec2-large-xlsr-53-german"},
+    # ✅ Added LM support here
+    "wav2vec2-german-with-lm": {
+        "type": "wav2vec2", 
+        "name": "aware-ai/wav2vec2-large-xlsr-53-german-with-lm", 
+        "lm_path": str(MODELS_DIR / "lm" / "kenLM.arpa") 
+    },
     # Dutch model
     "wav2vec2-dutch": {"type": "wav2vec2", "name": "facebook/wav2vec2-large-xlsr-53-dutch"},
     ## Multilingual model
     "wav2vec2-multi-56": {"type": "wav2vec2", "name": "voidful/wav2vec2-xlsr-multilingual-56"},
 
     # MMS models
-    "mms-1b-all": {"type": "mms", "name": "facebook/mms-1b-all"},  # 1000+ languages
-    "mms-1b-l1107": {"type": "mms", "name": "facebook/mms-1b-l1107"},  # 1107 languages
+    "mms-1b-all": {"type": "mms", "name": "facebook/mms-1b-all"}, # 1000+ languages
+    "mms-1b-l1107": {"type": "mms", "name": "facebook/mms-1b-l1107"}, # 1107 languages
 }
 
 def main():
@@ -52,13 +58,13 @@ def main():
     parser.add_argument(
         "--test-path",
         type=str,
-        default=str(DATA_DIR / "metadata" / "test.tsv"),  # ✅ Use config path
+        default=str(DATA_DIR / "metadata" / "test.tsv"),
         help="Path to test metadata TSV file"
     )
     parser.add_argument(
         "--output-dir",
         type=str,
-        default=str(RESULTS_DIR / "metrics"),  # ✅ Use config path
+        default=str(RESULTS_DIR / "metrics"),
         help="Directory to save evaluation results"
     )
     parser.add_argument(
@@ -74,13 +80,20 @@ def main():
         default="standard",
         help="Type of experiment (e.g., zero-shot, fine-tuned, standard)"
     )
+    # ✅ New CLI argument for LM override
+    parser.add_argument(
+        "--lm-path",
+        type=str,
+        default=None,
+        help="Optional path to KenLM file (overrides registry)"
+    )
     
     args = parser.parse_args()
     
     # Setup logger
     logger = setup_logger("evaluate_models", "logs/evaluation.log")
     
-    # Create timestamp-based subdirectory, optionally include experiment type
+    # Create timestamp-based subdirectory
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     if args.experiment_type and args.experiment_type != "standard":
         output_dir = Path(args.output_dir) / f"{args.experiment_type}_{timestamp}"
@@ -91,7 +104,7 @@ def main():
     logger.info(f"Starting evaluation run: {timestamp}")
     logger.info(f"Experiment type: {args.experiment_type}")
     logger.info(f"Models to evaluate: {args.models}")
-    logger.info(f"Test set: {args.test_path}")
+    logger.info(f"LM Path override: {args.lm_path}")
     logger.info(f"Output directory: {output_dir}")
     
     # Validate test set exists
@@ -99,7 +112,6 @@ def main():
     if not test_path.exists():
         logger.error(f"Test file not found: {test_path}")
         print(f"❌ Error: Test file not found at {test_path}")
-        print(f"💡 Expected location based on ENVIRONMENT: {DATA_DIR / 'metadata' / 'test.tsv'}")
         sys.exit(1)
     
     # Store results for summary table
@@ -120,16 +132,21 @@ def main():
                 config = MODEL_REGISTRY[model_spec]
                 model_type = config["type"]
                 model_name = config["name"]
+                
+                # ✅ RESOLVE LM PATH: Prioritize CLI arg > Registry arg > None
+                registry_lm_path = config.get("lm_path")
+                final_lm_path = args.lm_path if args.lm_path else registry_lm_path
+                
             else:
-                logger.warning(f"Unknown model: {model_spec}. Available models: {', '.join(MODEL_REGISTRY.keys())}")
+                logger.warning(f"Unknown model: {model_spec}")
                 print(f"⚠️  Warning: Unknown model: {model_spec}, skipping...")
-                print(f"   Available models: {', '.join(MODEL_REGISTRY.keys())}")
                 continue
             
-            # Create evaluator
+            # Create evaluator with LM path
             evaluator = ASREvaluator(
                 model_type=model_type,
-                model_name=model_name
+                model_name=model_name,
+                lm_path=final_lm_path  # ✅ Pass resolved path
             )
             
             # Load model
@@ -156,8 +173,6 @@ def main():
             logger.info(f"  Overall WER: {results['overall_wer']:.4f}")
             logger.info(f"  Overall CER: {results['overall_cer']:.4f}")
             logger.info(f"  Overall BLEU: {results['overall_bleu']:.4f}")
-            logger.info(f"  Samples processed: {results['total_samples']}")
-            logger.info(f"  Failed samples: {results['failed_samples']}")
             
             print(f"✓ Model {model_spec} evaluation complete")
             print(f"  Overall WER: {results['overall_wer']:.4f}")
@@ -187,20 +202,9 @@ def main():
         
         print(f"{'='*80}")
         print(f"\nResults saved to: {output_dir}")
-        
-        logger.info("\n" + "="*80)
-        logger.info("EVALUATION SUMMARY")
-        logger.info("="*80)
-        for model_spec, results in all_results.items():
-            logger.info(f"{model_spec}: WER={results['overall_wer']:.4f}, "
-                       f"CER={results['overall_cer']:.4f}, "
-                       f"BLEU={results['overall_bleu']:.4f}, "
-                       f"Samples={results['total_samples']}")
     else:
         print("❌ No models were successfully evaluated")
-        logger.error("No models were successfully evaluated")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()
