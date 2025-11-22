@@ -40,8 +40,12 @@ MODEL_REGISTRY = {
     "wav2vec2-multi-56": {"type": "wav2vec2", "name": "voidful/wav2vec2-xlsr-multilingual-56"},
 
     # MMS models
-    "mms-1b-all": {"type": "mms", "name": "facebook/mms-1b-all"}, # 1000+ languages
-    "mms-1b-l1107": {"type": "mms", "name": "facebook/mms-1b-l1107"}, # 1107 languages
+    "mms-1b-all": {"type": "mms", "name": "facebook/mms-1b-all"},
+    # ⚠️ REMOVED: MMS models have vocab mismatch with KenLM decoders
+    # "mms-1b-all-lm": {"type": "mms", "name": "facebook/mms-1b-all", "lm_path": str(MODELS_DIR / "lm" / "kenLM.arpa")},
+    "mms-1b-l1107": {"type": "mms", "name": "facebook/mms-1b-l1107"},
+    # ⚠️ REMOVED: MMS models have vocab mismatch with KenLM decoders
+    # "mms-1b-l1107-lm": {"type": "mms", "name": "facebook/mms-1b-l1107", "lm_path": str(MODELS_DIR / "lm" / "kenLM.arpa")}
 }
 
 def main():
