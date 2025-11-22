@@ -217,3 +217,8 @@ early-experiments/
 
 # project structure file (temporary)
 #PROJECT-STRUCTURE.md
+
+# ARPA language model files
+*.arpa
+*.bin
+*.gz
