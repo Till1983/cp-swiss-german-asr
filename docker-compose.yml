@@ -11,6 +11,9 @@ services:
       - ./logs:/app/logs
       - ./tests:/app/tests
       - huggingface-cache:/home/appuser/.cache/huggingface
+      # Mount LM file to expected location inside container
+      - ./src/models/lm/kenLM.arpa:/app/models/lm/kenLM.arpa
+      - ./src/models/lm/kenLM_lower.arpa:/app/models/lm/kenLM_lower.arpa
     environment:
       - HF_TOKEN=${HF_TOKEN}
 
@@ -23,6 +26,9 @@ services:
       - ./src:/app/src
       - ./results:/app/results
       - huggingface-cache:/home/appuser/.cache/huggingface
+      # Mount LM file for dashboard if needed
+      - ./src/models/lm/kenLM.arpa:/app/models/lm/kenLM.arpa
+      - ./src/models/lm/kenLM_lower.arpa:/app/models/lm/kenLM_lower.arpa
     command: ["streamlit", "run", "src/frontend/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
     depends_on:
       - api
@@ -37,6 +43,9 @@ services:
       - ./src:/app/src
       - ./tests:/app/tests
       - huggingface-cache:/home/appuser/.cache/huggingface
+      # Mount LM file for tests if needed
+      - ./src/models/lm/kenLM.arpa:/app/models/lm/kenLM.arpa
+      - ./src/models/lm/kenLM_lower.arpa:/app/models/lm/kenLM_lower.arpa
     environment:
       - PYTHONPATH=/app
       - HF_TOKEN=${HF_TOKEN}
