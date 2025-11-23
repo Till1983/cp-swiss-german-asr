@@ -13,7 +13,7 @@ except ImportError:
     _HAS_PYCTCDECODE = False
 
 class Wav2Vec2Model:
-    def __init__(self, model_name: str = "facebook/wav2vec2-large-xlsr-53-german", device: str = None, lm_path: str = None):
+    def __init__(self, model_name: str = "aware-ai/wav2vec2-large-xlsr-53-german-with-lm", device: str = None, lm_path: str = None):
         """
         Initialize Wav2Vec2 model for ASR.
         
