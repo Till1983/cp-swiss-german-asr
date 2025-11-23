@@ -36,6 +36,19 @@ python scripts/prepare_common_voice.py \
 python scripts/prepare_scripts.py
 ```
 
+## Downloading the KenLM ARPA Model on RunPod
+
+To download the KenLM ARPA file from HuggingFace directly in your RunPod environment, run the following command in the RunPod console:
+
+```bash
+python scripts/download_lm.py
+```
+
+This will create the `kenLM.arpa` file in `src/models/lm/` within your project directory.
+
+**Tip:**  
+Ensure Python dependencies are installed (`pip install -r requirements.txt`) before running the script for the first time.
+
 ## Run Training
 ```bash
 # On your laptop (triggers remote training)
