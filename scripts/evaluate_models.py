@@ -35,7 +35,7 @@ MODEL_REGISTRY = {
         "lm_path": str(MODELS_DIR / "lm" / "kenLM.arpa") 
     },
     # Dutch model
-    "wav2vec2-dutch": {"type": "wav2vec2", "name": "facebook/wav2vec2-large-xlsr-53-dutch"},
+    "wav2vec2-dutch-pretrained": {"type": "wav2vec2", "name": "facebook/wav2vec2-large-xlsr-53-dutch"},
     ## Multilingual model
     "wav2vec2-multi-56": {"type": "wav2vec2", "name": "voidful/wav2vec2-xlsr-multilingual-56"},
 

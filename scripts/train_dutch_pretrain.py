@@ -73,7 +73,7 @@ logger = logging.getLogger("train_dutch_pretrain")
 MODEL_NAME = "aware-ai/wav2vec2-large-xlsr-53-german-with-lm" # Use German
 METADATA_FILE = DUTCH_CV_ROOT / "train.tsv"
 AUDIO_DIR = DUTCH_CV_ROOT / "clips"
-OUTPUT_DIR = MODELS_DIR / "pretrained" / "wav2vec2-dutch-cv"
+OUTPUT_DIR = MODELS_DIR / "pretrained" / "wav2vec2-dutch-pretrained"
 CHECKPOINT_DIR = OUTPUT_DIR / "checkpoints"
 RESULTS_LOG = RESULTS_DIR / "metrics" / "dutch_pretrain.log"
 

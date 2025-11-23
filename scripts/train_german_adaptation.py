@@ -65,7 +65,7 @@ logger = logging.getLogger("train_german_adaptation")
 # -----------------------------------------------------------------------------
 # Configuration
 # -----------------------------------------------------------------------------
-PRETRAINED_CHECKPOINT = MODELS_DIR / "pretrained" / "wav2vec2-dutch-cv"
+PRETRAINED_CHECKPOINT = MODELS_DIR / "pretrained" / "wav2vec2-dutch-pretrained"
 MODEL_NAME = str(PRETRAINED_CHECKPOINT)
 METADATA_FILE = GERMAN_CV_ROOT / "train.tsv"
 AUDIO_DIR = GERMAN_CV_ROOT / "clips"
@@ -307,8 +307,8 @@ def main():
     # Estimate Fisher information for EWC using a small subset of Dutch data
     try:
         logger.info("Loading Dutch dataset for EWC reference...")
-        dutch_metadata = MODELS_DIR / "pretrained" / "wav2vec2-dutch-cv" / "validated.tsv"
-        dutch_audio_dir = MODELS_DIR / "pretrained" / "wav2vec2-dutch-cv" / "clips"
+        dutch_metadata = MODELS_DIR / "pretrained" / "wav2vec2-dutch-pretrained" / "validated.tsv"
+        dutch_audio_dir = MODELS_DIR / "pretrained" / "wav2vec2-dutch-pretrained" / "clips"
         if dutch_metadata.exists() and dutch_audio_dir.exists():
             # Prepare Dutch dataset for Fisher Information estimation
             dutch_dataset = prepare_dataset(dutch_metadata, dutch_audio_dir, limit=1000)
