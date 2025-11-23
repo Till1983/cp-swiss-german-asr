@@ -1,5 +1,5 @@
 model:
-  name: "facebook/wav2vec2-large-xlsr-53-german"
+  name: "aware-ai/wav2vec2-large-xlsr-53-german-with-lm"
   freeze_feature_encoder: true
   dropout: 0.1
   attention_dropout: 0.1

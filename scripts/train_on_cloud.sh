@@ -55,8 +55,8 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
     # export RESULTS_DIR="/workspace/results"
     
     # Run training
-    python scripts/train_wav2vec2_model.py \
-        --model facebook/wav2vec2-large-xlsr-53-german \
+    python scripts/train_dutch_pretrain.py \
+        --model aware-ai/wav2vec2-large-xlsr-53-german-with-lm \
         --pretrain-data /workspace/data/metadata/dutch/train.tsv \
         --finetune-data /workspace/data/metadata/german/train.tsv \
         --target-data /workspace/data/metadata/train.tsv \

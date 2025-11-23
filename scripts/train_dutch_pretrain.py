@@ -70,7 +70,7 @@ logger = logging.getLogger("train_dutch_pretrain")
 # -----------------------------------------------------------------------------
 # Configuration
 # -----------------------------------------------------------------------------
-MODEL_NAME = "facebook/wav2vec2-large-xlsr-53-german" # Use German
+MODEL_NAME = "aware-ai/wav2vec2-large-xlsr-53-german-with-lm" # Use German
 METADATA_FILE = DUTCH_CV_ROOT / "train.tsv"
 AUDIO_DIR = DUTCH_CV_ROOT / "clips"
 OUTPUT_DIR = MODELS_DIR / "pretrained" / "wav2vec2-dutch-cv"
