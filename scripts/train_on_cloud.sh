@@ -63,7 +63,7 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
         --pretrain-data /workspace/data/metadata/dutch/train.tsv \
         --finetune-data /workspace/data/metadata/german/train.tsv \
         --target-data /workspace/data/metadata/train.tsv \
-        --output-dir /workspace/models/fine_tuned/wav2vec2-swiss \
+        --output-dir /workspace/models/pretrained/wav2vec2-dutch-pretrained \
         --epochs 10 \
         --batch-size 16 \
         --learning-rate 3e-5
@@ -75,8 +75,8 @@ ENDSSH
 echo ""
 echo "📥 Downloading model checkpoints to local machine..."
 rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
-    ${REMOTE_USER}@${REMOTE_HOST}:/workspace/models/fine_tuned/ \
-    models/fine_tuned/
+    ${REMOTE_USER}@${REMOTE_HOST}:/workspace/models/pretrained/ \
+    models/pretrained/
 
 echo ""
 echo "📥 Downloading training results to local machine..."
@@ -86,5 +86,5 @@ rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
 
 echo ""
 echo "🎉 All done! Results saved to:"
-echo "   - models/fine_tuned/"
+echo "   - models/pretrained/"
 echo "   - results/"
