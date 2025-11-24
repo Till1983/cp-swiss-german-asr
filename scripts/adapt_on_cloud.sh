@@ -1,4 +1,3 @@
-# filepath: /Users/tillermold/Desktop/CODE/Synthesis Semester/Capstone_Project/cp-swiss-german-asr/scripts/adapt_on_cloud.sh
 #!/bin/bash
 # Remote adaptation orchestration script
 # Orchestrates the German adaptation phase (EWC) on RunPod
