@@ -176,7 +176,7 @@ def get_model_params(model):
 # -----------------------------------------------------------------------------
 # Utility Functions
 # -----------------------------------------------------------------------------
-def prepare_dataset(metadata_path, audio_dir, limit=None):
+def prepare_dataset(metadata_path, audio_dir, limit=None, random_sample=False):
     """
     Prepare German Common Voice dataset for ASR training.
 
@@ -200,7 +200,10 @@ def prepare_dataset(metadata_path, audio_dir, limit=None):
         raise ValueError("Invalid metadata file format.")
 
     if limit:
-        df = df.head(limit)
+        if random_sample:
+            df = df.sample(n=limit, random_state=42)
+        else:
+            df = df.head(limit)
 
     df['audio_path'] = df['path'].apply(lambda x: str(audio_dir / x))
     df = df[df['audio_path'].apply(lambda p: Path(p).exists())]
@@ -232,7 +235,7 @@ def main():
 
     # Load German dataset
     try:
-        train_dataset = prepare_dataset(METADATA_FILE, AUDIO_DIR)
+        train_dataset = prepare_dataset(METADATA_FILE, AUDIO_DIR, limit=18000, random_sample=True)
     except Exception as e:
         logger.error(f"Dataset preparation failed: {e}")
         sys.exit(1)
