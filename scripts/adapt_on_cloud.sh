@@ -46,11 +46,6 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
     cd /workspace/cp-swiss-german-asr
     export ENVIRONMENT=runpod
 
-    # Upgrade pip and install requirements
-    echo "📦 Upgrading pip and installing requirements..."
-    pip install --upgrade pip
-    pip install -r requirements.txt
-
     echo "🔍 Checking for Dutch pretrained model..."
     if [ ! -d "/workspace/models/pretrained/wav2vec2-dutch-pretrained" ]; then
         echo "⚠️  WARNING: Could not find Dutch pretrained model at /workspace/models/pretrained/wav2vec2-dutch-pretrained"
