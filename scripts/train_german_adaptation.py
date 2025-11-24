@@ -69,7 +69,7 @@ PRETRAINED_CHECKPOINT = MODELS_DIR / "pretrained" / "wav2vec2-dutch-pretrained"
 MODEL_NAME = str(PRETRAINED_CHECKPOINT)
 METADATA_FILE = GERMAN_CV_ROOT / "train.tsv"
 AUDIO_DIR = GERMAN_CV_ROOT / "clips"
-OUTPUT_DIR = MODELS_DIR / "adapted" / "wav2vec2-german-cv"
+OUTPUT_DIR = MODELS_DIR / "adapted" / "wav2vec2-german-adapted"
 CHECKPOINT_DIR = OUTPUT_DIR / "checkpoints"
 RESULTS_LOG = RESULTS_DIR / "metrics" / "german_adaptation.log"
 

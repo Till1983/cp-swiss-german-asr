@@ -41,7 +41,7 @@ ewc:
   compute_fisher: true
 
 checkpointing:
-  output_dir: "models/pretrained/wav2vec2-german-adapted"
+  output_dir: "models/adapted/wav2vec2-german-adapted"
   save_strategy: "steps"
   save_steps: 1000
   save_total_limit: 3
