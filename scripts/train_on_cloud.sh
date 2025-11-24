@@ -54,6 +54,9 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
     # export MODELS_DIR="/workspace/models"
     # export RESULTS_DIR="/workspace/results"
     
+    # Ensure Python finds the src package
+    export PYTHONPATH="/workspace/cp-swiss-german-asr
+
     # Run training
     python scripts/train_dutch_pretrain.py \
         --model aware-ai/wav2vec2-large-xlsr-53-german-with-lm \
