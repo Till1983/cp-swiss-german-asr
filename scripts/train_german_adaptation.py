@@ -3,7 +3,7 @@ import sys
 import logging
 
 from pathlib import Path
-sys.path.append(str(Path(__file__).resolve().parent.parent / "src"))
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 import torch
 from datasets import Dataset, load
