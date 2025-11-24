@@ -55,7 +55,7 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
     # export RESULTS_DIR="/workspace/results"
     
     # Ensure Python finds the src package
-    export PYTHONPATH="/workspace/cp-swiss-german-asr
+    export PYTHONPATH="/workspace/cp-swiss-german-asr"
 
     # Run training
     python scripts/train_dutch_pretrain.py \
