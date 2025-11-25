@@ -285,7 +285,7 @@ def main():
     model.train()
 
     # Vocabulary check BEFORE training
-    tokenizer_vocab = set(processor.get_vocab().keys())
+    tokenizer_vocab = set(processor.tokenizer.get_vocab().keys())
     with open(METADATA_FILE) as f:
         for line in f:
             text = line.strip().split('\t')[1]  # Adjust index if needed
