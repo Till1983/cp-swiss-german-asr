@@ -341,6 +341,8 @@ def main():
         logger.info("Training completed.")
         trainer.save_model(str(OUTPUT_DIR))
         trainer.save_state()
+        # Save processor (tokenizer, feature extractor, etc.)
+        processor.save_pretrained(str(OUTPUT_DIR))
     except Exception as e:
         logger.error(f"Training failed: {e}")
         sys.exit(1)

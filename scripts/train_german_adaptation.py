@@ -437,3 +437,17 @@ if __name__ == "__main__":
     except Exception as e:
         logger.critical(f"Fatal error: {e}")
         sys.exit(1)
+
+
+MODEL_DIR = MODELS_DIR / "pretrained" / "wav2vec2-dutch-pretrained"
+required_files = [
+    "config.json",
+    "model.safetensors",
+    "preprocessor_config.json",
+    "tokenizer_config.json",
+    "vocab.json",
+    "special_tokens_map.json"
+]
+missing = [f for f in required_files if not (MODEL_DIR / f).exists()]
+if missing:
+    raise FileNotFoundError(f"Missing required model files: {missing}")
