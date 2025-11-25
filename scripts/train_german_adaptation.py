@@ -10,7 +10,7 @@ from datasets import Dataset
 import evaluate
 from src.data.loader import load_swiss_german_metadata, load_audio
 from src.models.wav2vec2_model import Wav2Vec2Model
-from src.config import GERMAN_CV_ROOT, MODELS_DIR, RESULTS_DIR
+from src.config import DUTCH_CV_ROOT, GERMAN_CV_ROOT, MODELS_DIR, RESULTS_DIR
 import numpy as np
 from torch.utils.data import DataLoader
 import yaml
@@ -311,8 +311,8 @@ def main():
     # Estimate Fisher information for EWC using a small subset of Dutch data
     try:
         logger.info("Loading Dutch dataset for EWC reference...")
-        dutch_metadata = MODELS_DIR / "pretrained" / "wav2vec2-dutch-pretrained" / "validated.tsv"
-        dutch_audio_dir = MODELS_DIR / "pretrained" / "wav2vec2-dutch-pretrained" / "clips"
+        dutch_metadata = DUTCH_CV_ROOT / "validated.tsv"
+        dutch_audio_dir = DUTCH_CV_ROOT / "clips"
         if dutch_metadata.exists() and dutch_audio_dir.exists():
             # Prepare Dutch dataset for Fisher Information estimation
             dutch_dataset = prepare_dataset(dutch_metadata, dutch_audio_dir, limit=1000)
