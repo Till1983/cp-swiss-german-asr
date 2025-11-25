@@ -235,7 +235,7 @@ def main():
 
     # Load German dataset
     try:
-        train_dataset = prepare_dataset(METADATA_FILE, AUDIO_DIR)
+        train_dataset = prepare_dataset(METADATA_FILE, AUDIO_DIR, limit=50000, random_sample=True)
     except Exception as e:
         logger.error(f"Dataset preparation failed: {e}")
         sys.exit(1)
