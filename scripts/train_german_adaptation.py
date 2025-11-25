@@ -298,8 +298,7 @@ def main():
     data_collator = AudioDataCollatorCTC(processor=processor, padding=True)
 
     # Metric for evaluation
-    from evaluate import load
-    wer_metric = load("wer")
+    wer_metric = load_metric("wer")
 
     def compute_metrics(pred):
         pred_ids = pred.predictions.argmax(-1)
