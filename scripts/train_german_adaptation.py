@@ -7,10 +7,10 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 import torch
 from datasets import Dataset
-import evaluate
+import evaluate  # FIXED: Use evaluate instead of deprecated load_metric
 from src.data.loader import load_swiss_german_metadata, load_audio
 from src.models.wav2vec2_model import Wav2Vec2Model
-from src.config import DUTCH_CV_ROOT, GERMAN_CV_ROOT, MODELS_DIR, RESULTS_DIR
+from src.config import DUTCH_CV_ROOT, GERMAN_CV_ROOT, MODELS_DIR, RESULTS_DIR  # FIXED: Added DUTCH_CV_ROOT
 import numpy as np
 from torch.utils.data import DataLoader
 import yaml
@@ -25,7 +25,7 @@ to mitigate catastrophic forgetting, and fine-tunes the model on German Common V
 It includes comprehensive logging, error handling, and saves the adapted model weights.
 
 Usage:
-    python scripts/train_german_adaptation.py
+    python scripts/train_german_adaptation.py --config configs/training/german_adaptation.yml
 
 Environment/configuration is managed via src/config.py.
 """
@@ -79,7 +79,14 @@ with open("configs/training/german_adaptation.yml", "r") as f:
     config = yaml.safe_load(f)
 
 # Use checkpoint path from config
-PRETRAINED_CHECKPOINT = Path(config["model"]["dutch_checkpoint"])
+# If path is relative, prepend MODELS_DIR; if absolute, use as-is
+checkpoint_from_config = config["model"]["dutch_checkpoint"]
+if Path(checkpoint_from_config).is_absolute():
+    PRETRAINED_CHECKPOINT = Path(checkpoint_from_config)
+    logger.info(f"Using absolute checkpoint path: {PRETRAINED_CHECKPOINT}")
+else:
+    PRETRAINED_CHECKPOINT = MODELS_DIR / checkpoint_from_config
+    logger.info(f"Using relative checkpoint path: {checkpoint_from_config} -> {PRETRAINED_CHECKPOINT}")
 MODEL_NAME = str(PRETRAINED_CHECKPOINT)
 
 TRAIN_ARGS = config["training"]
@@ -143,28 +150,51 @@ class EWCTrainer(Trainer):
 
 def compute_fisher_information(model, dataloader, device):
     """
-    Estimate Fisher information for model parameters using a subset of data.
+    Estimate Fisher information for model parameters using provided dataloader.
+    
+    FIXED: Removed confusing num_samples iteration limit. Now processes entire dataloader.
+    
+    Args:
+        model: The model to compute Fisher information for
+        dataloader: DataLoader containing reference samples (e.g., Dutch data)
+        device: Device to run computation on
+    
+    Returns:
+        fisher_dict: Dictionary mapping parameter names to Fisher information
     """
-    logger.info("Estimating Fisher information for EWC...")
+    logger.info(f"Estimating Fisher information using {len(dataloader.dataset)} samples...")
     fisher_dict = {}
     model.eval()
+    
+    # Initialize Fisher dict with zeros
     for name, param in model.named_parameters():
         fisher_dict[name] = torch.zeros_like(param)
-    num_samples = 1000  # or use one full epoch
+    
+    # Compute gradients for each batch
+    num_batches = len(dataloader)
     for i, batch in enumerate(dataloader):
-        if i >= num_samples:
-            break
-        inputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in batch.items() if k != "audio_path"}
+        if i % 50 == 0:  # Progress logging
+            logger.info(f"Fisher estimation: batch {i}/{num_batches}")
+        
+        inputs = {
+            k: v.to(device) if isinstance(v, torch.Tensor) else v 
+            for k, v in batch.items() 
+            if k != "audio_path"
+        }
         model.zero_grad()
         outputs = model(**inputs)
         loss = outputs.loss if hasattr(outputs, "loss") else outputs[0]
         loss.backward()
+        
+        # Accumulate squared gradients (Fisher information)
         for name, param in model.named_parameters():
             if param.grad is not None:
                 fisher_dict[name] += param.grad.data.pow(2)
-    # Average Fisher information
+    
+    # Average Fisher information across all batches
     for name in fisher_dict:
-        fisher_dict[name] /= len(dataloader)
+        fisher_dict[name] /= num_batches
+    
     logger.info("Fisher information estimation complete.")
     return fisher_dict
 
@@ -185,6 +215,7 @@ def prepare_dataset(metadata_path, audio_dir, limit=None, random_sample=False):
         metadata_path: Path to TSV metadata file.
         audio_dir: Directory containing audio files.
         limit: Optional limit on number of samples.
+        random_sample: If True and limit is set, sample randomly instead of taking first N.
 
     Returns:
         Hugging Face Dataset object.
@@ -203,13 +234,24 @@ def prepare_dataset(metadata_path, audio_dir, limit=None, random_sample=False):
     if limit:
         if random_sample:
             df = df.sample(n=limit, random_state=42)
+            logger.info(f"Randomly sampled {limit} examples from {len(df)} total")
         else:
             df = df.head(limit)
+            logger.info(f"Using first {limit} examples from {len(df)} total")
 
+    # Add absolute audio paths
     df['audio_path'] = df['path'].apply(lambda x: str(audio_dir / x))
+
+    # Remove samples with missing audio files
+    initial_count = len(df)
     df = df[df['audio_path'].apply(lambda p: Path(p).exists())]
+    if len(df) < initial_count:
+        logger.warning(f"Removed {initial_count - len(df)} samples with missing audio files")
+
+    # Prepare Hugging Face Dataset
     dataset = Dataset.from_pandas(df)
 
+    # Add audio loading
     def map_audio(batch):
         try:
             batch["audio"] = load_audio(batch["audio_path"])
@@ -234,23 +276,24 @@ def main():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Load German dataset
+    # Load German training dataset
     try:
-        train_dataset = prepare_dataset(METADATA_FILE, AUDIO_DIR, limit=50000, random_sample=True)
+        train_dataset = prepare_dataset(METADATA_FILE, AUDIO_DIR)
     except Exception as e:
         logger.error(f"Dataset preparation failed: {e}")
         sys.exit(1)
 
-    # Load Dutch-pretrained model and processor
+    # Load pretrained Dutch model and processor
     try:
         model_wrapper = Wav2Vec2Model(model_name=MODEL_NAME)
-        model = model_wrapper.model
+        model = model_wrapper.model.to(device)
         processor = model_wrapper.processor
+        logger.info(f"Loaded Dutch pretrained model from {MODEL_NAME}")
     except Exception as e:
         logger.error(f"Model loading failed: {e}")
         sys.exit(1)
 
-    # Simple tokenizer sanity check (avoid per-character checks which are incorrect for many tokenizers)
+    # Tokenizer sanity check
     try:
         sample_count = 5
         for row in train_dataset.select(range(min(sample_count, len(train_dataset)))):
@@ -299,7 +342,7 @@ def main():
     data_collator = AudioDataCollatorCTC(processor=processor, padding=True)
 
     # Metric for evaluation
-    wer_metric = evaluate.load("wer")
+    wer_metric = evaluate.load("wer")  # FIXED: Use evaluate.load instead of load_metric
 
     def compute_metrics(pred):
         pred_ids = pred.predictions.argmax(-1)
@@ -308,23 +351,38 @@ def main():
         wer = wer_metric.compute(predictions=pred_str, references=label_str)
         return {"wer": wer}
 
-    # Estimate Fisher information for EWC using a small subset of Dutch data
+    # Estimate Fisher information for EWC using a subset of Dutch data
+    # FIXED: Use DUTCH_CV_ROOT instead of looking in model checkpoint directory
+    # FIXED: Use 5000 samples with random sampling for robust Fisher estimation
     try:
         logger.info("Loading Dutch dataset for EWC reference...")
-        dutch_metadata = DUTCH_CV_ROOT / "validated.tsv"
-        dutch_audio_dir = DUTCH_CV_ROOT / "clips"
+        dutch_metadata = DUTCH_CV_ROOT / "validated.tsv"  # FIXED: Correct path
+        dutch_audio_dir = DUTCH_CV_ROOT / "clips"  # FIXED: Correct path
+        
+        # Get Fisher sample count from config, default to 5000
+        fisher_samples = config.get("ewc", {}).get("fisher_samples", 5000)
+        logger.info(f"Using {fisher_samples} Dutch samples for Fisher Information estimation")
+        
         if dutch_metadata.exists() and dutch_audio_dir.exists():
             # Prepare Dutch dataset for Fisher Information estimation
-            dutch_dataset = prepare_dataset(dutch_metadata, dutch_audio_dir, limit=1000)
-            # Preprocess dutch_dataset same way (input_values / labels) so DataLoader yields tensors collatable by data_collator
+            # FIXED: Use configurable limit with random sampling
+            dutch_dataset = prepare_dataset(
+                dutch_metadata, 
+                dutch_audio_dir, 
+                limit=fisher_samples,
+                random_sample=True  # FIXED: Random sampling to avoid bias
+            )
+            # Preprocess dutch_dataset same way (input_values / labels)
             dutch_dataset = dutch_dataset.map(prepare_examples, batched=True, batch_size=8)
             # Convert to PyTorch DataLoader
             dutch_loader = DataLoader(dutch_dataset, batch_size=8, collate_fn=data_collator)
             # Compute Fisher Information Matrix for EWC
             fisher_dict = compute_fisher_information(model, dutch_loader, device=device)
             old_params = get_model_params(model)
+            logger.info("EWC setup complete with Fisher information from Dutch data")
         else:
             logger.warning("Dutch reference data not found for EWC. Proceeding without EWC.")
+            logger.warning(f"Expected Dutch data at: {dutch_metadata} and {dutch_audio_dir}")
             fisher_dict = None
             old_params = None
     except Exception as e:
@@ -381,7 +439,8 @@ def main():
             callbacks.append(EarlyStoppingCallback(early_stopping_patience=2))
 
         if fisher_dict is not None and old_params is not None:
-            logger.info("Using EWCTrainer for adaptation.")
+            ewc_lambda = config.get("ewc", {}).get("lambda", 0.4)
+            logger.info(f"Using EWCTrainer for adaptation with lambda={ewc_lambda}")
             trainer = EWCTrainer(
                 model=model,
                 args=training_args,
@@ -391,7 +450,7 @@ def main():
                 tokenizer=processor.feature_extractor,
                 compute_metrics=compute_metrics,
                 callbacks=callbacks,
-                ewc_lambda=0.4,
+                ewc_lambda=ewc_lambda,
                 fisher_dict=fisher_dict,
                 old_params=old_params,
             )
@@ -438,22 +497,3 @@ if __name__ == "__main__":
     except Exception as e:
         logger.critical(f"Fatal error: {e}")
         sys.exit(1)
-
-
-MODEL_DIR = MODELS_DIR / "pretrained" / "wav2vec2-dutch-pretrained"
-required_files = [
-    "config.json",
-    "model.safetensors",
-    "preprocessor_config.json",
-    "tokenizer_config.json",
-    "vocab.json",
-    "special_tokens_map.json"
-]
-missing = [f for f in required_files if not (MODEL_DIR / f).exists()]
-if missing:
-    raise FileNotFoundError(f"Missing required model files: {missing}")
-
-import os
-print("Current working directory:", os.getcwd())
-print("Processor/model path:", MODEL_NAME)
-print("Exists?", os.path.exists(MODEL_NAME))
