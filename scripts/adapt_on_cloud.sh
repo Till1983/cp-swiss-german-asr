@@ -63,7 +63,17 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
 
     # Download tokenizer files from Hugging Face
     echo "🌐 Downloading tokenizer files from HuggingFace..."
+    mkdir -p /workspace/models/adapted/wav2vec2-german-adapted/language_model
 
+    wget -O /workspace/models/adapted/wav2vec2-german-adapted/language_model/attrs.json \
+        https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/blob/main/language_model/attrs.json
+
+    wget -O /workspace/models/adapted/wav2vec2-german-adapted/language_model/KenLM.arpa \
+        https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/blob/main/language_model/kenLM.arpa
+
+    wget -O /workspace/models/adapted/wav2vec2-german-adapted/language_model/unigrams.txt \
+        https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/blob/main/language_model/unigrams.txt
+        
     wget -O /workspace/models/adapted/wav2vec2-german-adapted/vocab.json \
         https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/resolve/main/vocab.json
 
