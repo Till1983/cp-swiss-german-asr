@@ -6,7 +6,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 import torch
-from datasets import Dataset, load
+from datasets import Dataset, load_metric
 from src.data.loader import load_swiss_german_metadata, load_audio
 from src.models.wav2vec2_model import Wav2Vec2Model
 from src.config import GERMAN_CV_ROOT, MODELS_DIR, RESULTS_DIR
@@ -298,7 +298,7 @@ def main():
     data_collator = AudioDataCollatorCTC(processor=processor, padding=True)
 
     # Metric for evaluation
-    wer_metric = load("wer")
+    wer_metric = load_metric("wer")
 
     def compute_metrics(pred):
         pred_ids = pred.predictions.argmax(-1)
