@@ -8,7 +8,8 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 import torch
 from datasets import Dataset
 import evaluate
-from src.data.loader import load_swiss_german_metadata, load_audio
+import pandas as pd  # For direct TSV reading
+from src.data.loader import load_audio  # Only need load_audio now
 from src.models.wav2vec2_model import Wav2Vec2Model
 from src.config import DUTCH_CV_ROOT, GERMAN_CV_ROOT, MODELS_DIR, RESULTS_DIR
 import numpy as np
@@ -248,10 +249,19 @@ def prepare_dataset(metadata_path, audio_dir, limit=None, random_sample=False, s
     logger.info(f"Validation: {'Skipped' if skip_validation else 'Enabled'}")
     logger.info(f"=" * 70)
     
-    # Load metadata
+    # Load metadata with proper handling for large TSV files
     logger.info("Loading metadata from TSV...")
     try:
-        df = load_swiss_german_metadata(str(metadata_path))
+        # Use low_memory=False to avoid dtype warnings and ensure proper parsing
+        df = pd.read_csv(
+            str(metadata_path), 
+            sep='\t',
+            low_memory=False,
+            na_values=['', 'NA', 'nan', 'NaN'],
+            keep_default_na=True,
+            encoding='utf-8',
+            quoting=3  # QUOTE_NONE - don't interpret quotes
+        )
         logger.info(f"✅ Loaded {len(df):,} rows from metadata")
     except Exception as e:
         logger.error(f"❌ Failed to load metadata: {e}")
@@ -274,10 +284,51 @@ def prepare_dataset(metadata_path, audio_dir, limit=None, random_sample=False, s
             df = df.head(limit)
         logger.info(f"✅ Dataset size after sampling: {len(df):,} samples")
 
-    # Add absolute audio paths
+    # Add absolute audio paths with robust path cleaning
     logger.info("Adding audio file paths...")
-    df['audio_path'] = df['path'].apply(lambda x: str(audio_dir / x))
+    def construct_audio_path(path_value):
+        """Construct audio path, handling both relative and absolute paths."""
+        # Clean the path value aggressively
+        path_value = str(path_value).strip()  # Remove leading/trailing whitespace
+        path_value = path_value.replace('\n', '').replace('\r', '')  # Remove newlines
+        path_value = path_value.replace('\t', '')  # Remove tabs
+        
+        if not path_value or path_value == 'nan':
+            return None
+            
+        path_obj = Path(path_value)
+        
+        # If already absolute, use as-is
+        if path_obj.is_absolute():
+            return str(path_obj)
+        
+        # If relative, prepend audio_dir
+        # Handle case where path might already include 'clips/'
+        if path_value.startswith('clips/'):
+            # Remove 'clips/' prefix and add to audio_dir
+            filename = path_value[6:]  # Remove 'clips/'
+            return str(audio_dir / filename)
+        else:
+            # Just filename, add to audio_dir
+            return str(audio_dir / path_value)
+    
+    df['audio_path'] = df['path'].apply(construct_audio_path)
+    
+    # Remove rows with invalid paths
+    initial_count = len(df)
+    df = df[df['audio_path'].notna()]
+    if len(df) < initial_count:
+        logger.warning(f"⚠️  Removed {initial_count - len(df)} rows with invalid paths")
+    
     logger.info(f"✅ Added audio paths")
+    
+    # Log a few examples for debugging
+    logger.info("Sample audio paths:")
+    for i, path in enumerate(df['audio_path'].head(3)):
+        logger.info(f"  [{i}] {path}")
+        # Verify first few actually exist
+        exists = Path(path).exists()
+        logger.info(f"      Exists: {exists}")
 
     # File validation (optional, can be slow for large datasets)
     if not skip_validation:
