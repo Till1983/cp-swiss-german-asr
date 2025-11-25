@@ -19,6 +19,8 @@
 
 **Example terminal output with warnings:**
 
+1.
+
 ```shell
 /workspace/cp-swiss-german-asr/scripts/train_german_adaptation.py:301: FutureWarning: load_metric is deprecated and will be removed in the next major version of datasets. Use 'evaluate.load' instead, from the new library 🤗 Evaluate: https://huggingface.co/docs/evaluate
   wer_metric = load_metric("wer")
@@ -28,3 +30,22 @@ Passing `trust_remote_code=True` will be mandatory to load this metric from the 
   warnings.warn(
 CRITICAL:train_german_adaptation:Fatal error: cannot import name 'compute_measures' from 'jiwer' (/usr/local/lib/python3.12/dist-packages/jiwer/__init__.py)
 ```
+
+**Attempted solution:** Force reinstallation of jiwer version lower then 4.0.0.
+** Success. Warnings gone after downgrade to jiwer 3.1.0
+
+2.
+
+```shell
+UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81
+```
+
+** No immediate action required. Monitor setuptools updates.
+
+3. 
+
+```shell
+/workspace/cp-swiss-german-asr/scripts/train_german_adaptation.py:400: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+```
+
+** Plan to update Trainer initialization in future refactor. No current impact.
