@@ -69,6 +69,20 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
         --learning-rate 3e-5
     
     echo "✅ Training complete on RunPod!"
+
+    # Download tokenizer files from Hugging Face
+    echo "🌐 Downloading tokenizer files from HuggingFace..."
+
+    wget -O /workspace/models/pretrained/wav2vec2-dutch-pretrained/vocab.json \
+        https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/resolve/main/vocab.json
+
+    wget -O /workspace/models/pretrained/wav2vec2-dutch-pretrained/tokenizer_config.json \
+        https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/resolve/main/tokenizer_config.json
+
+    wget -O /workspace/models/pretrained/wav2vec2-dutch-pretrained/special_tokens_map.json \
+        https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/resolve/main/special_tokens_map.json
+
+    echo "✅ Tokenizer files downloaded."
 ENDSSH
 
 # Download results FROM RUNPOD TO LAPTOP

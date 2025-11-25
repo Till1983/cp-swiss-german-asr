@@ -62,6 +62,20 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
     python scripts/train_german_adaptation.py --config configs/training/german_adaptation.yml
 
     echo "✅ Adaptation complete on RunPod!"
+
+    # Download tokenizer files from Hugging Face
+    echo "🌐 Downloading tokenizer files from HuggingFace..."
+
+    wget -O /workspace/models/adapted/wav2vec2-german-adapted/vocab.json \
+        https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/resolve/main/vocab.json
+
+    wget -O /workspace/models/adapted/wav2vec2-german-adapted/tokenizer_config.json \
+        https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/resolve/main/tokenizer_config.json
+
+    wget -O /workspace/models/adapted/wav2vec2-german-adapted/special_tokens_map.json \
+        https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/resolve/main/special_tokens_map.json
+
+    echo "✅ Tokenizer files downloaded."
 ENDSSH
 
 # Download results FROM RUNPOD TO LAPTOP
