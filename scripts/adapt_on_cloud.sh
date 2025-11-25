@@ -40,6 +40,8 @@ echo "🚀 Starting cloud adaptation job on RunPod..."
 echo "   Connecting to: ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PORT}"
 echo ""
 
+START_TIME=$(date)
+
 # Run adaptation ON RUNPOD via SSH
 ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
     set -e
@@ -48,20 +50,16 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
 
     echo "🔍 Checking for Dutch pretrained model..."
     if [ ! -d "/workspace/models/pretrained/wav2vec2-dutch-pretrained" ]; then
-        echo "⚠️  WARNING: Could not find Dutch pretrained model at /workspace/models/pretrained/wav2vec2-dutch-pretrained"
+        echo "⚠️  ERROR: Could not find Dutch pretrained model at /workspace/models/pretrained/wav2vec2-dutch-pretrained"
         ls -la /workspace/models/pretrained/ || echo "   Directory not found."
-        echo "   Proceeding anyway (script might fail if config path is invalid)..."
+        echo "   Adaptation cannot proceed without pretrained model. Exiting."
+        exit 1
     else
         echo "✅ Found pretrained model directory."
     fi
 
     echo "📁 Ensuring adapted model output directory exists..."
-    mkdir -p /workspace/models/adapted/
-
-    echo "🏃 Running German Adaptation (EWC)..."
-    python scripts/train_german_adaptation.py --config configs/training/german_adaptation.yml
-
-    echo "✅ Adaptation complete on RunPod!"
+    mkdir -p /workspace/models/adapted/wav2vec2-german-adapted
 
     # Download tokenizer files from Hugging Face
     echo "🌐 Downloading tokenizer files from HuggingFace..."
@@ -76,12 +74,19 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
         https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/resolve/main/special_tokens_map.json
 
     echo "✅ Tokenizer files downloaded."
+
+    ADAPT_START_TIME=\$(date)
+    echo "🏃 Starting German Adaptation (EWC) at: \$ADAPT_START_TIME"
+    python scripts/train_german_adaptation.py --config configs/training/german_adaptation.yml
+    ADAPT_END_TIME=\$(date)
+    echo "✅ Adaptation complete on RunPod at: \$ADAPT_END_TIME"
 ENDSSH
+
+END_TIME=$(date)
 
 # Download results FROM RUNPOD TO LAPTOP
 echo ""
 echo "📥 Downloading adapted model checkpoints to local machine..."
-# Sync the 'adapted' folder
 rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
     ${REMOTE_USER}@${REMOTE_HOST}:/workspace/models/adapted/ \
     models/adapted/
@@ -96,3 +101,6 @@ echo ""
 echo "🎉 All done! Results saved to:"
 echo "   - models/adapted/"
 echo "   - results/"
+echo "🕒 Adaptation job started at: $START_TIME"
+echo "🕒 Adaptation job finished at: $END_TIME"
+echo "Total duration: $(date -u -d @"$(($(date -d "$END_TIME" +%s) - $(date -d "$START_TIME" +%s)))" +"%H:%M:%S")"
