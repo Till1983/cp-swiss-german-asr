@@ -4,14 +4,15 @@ from pathlib import Path
 from typing import Dict
 from datetime import datetime
 
-def save_results_json(results: Dict, output_path: str, model_name: str) -> None:
+def save_results_json(results: Dict, output_path: str, model_name: str, experiment_type: str = None) -> None:
     """
-    Save evaluation results to JSON file with timestamp and model metadata.
+    Save evaluation results to JSON file with timestamp, model metadata, and experiment type.
     
     Args:
         results: Dictionary containing evaluation results
         output_path: Path where JSON file should be saved
         model_name: Name of the model being evaluated
+        experiment_type: Type of experiment (optional)
         
     Raises:
         IOError: If file cannot be written
@@ -25,6 +26,7 @@ def save_results_json(results: Dict, output_path: str, model_name: str) -> None:
         output_data = {
             'timestamp': timestamp,
             'model_name': model_name,
+            'experiment_type': experiment_type,
             'results': results
         }
         

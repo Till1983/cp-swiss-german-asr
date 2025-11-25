@@ -54,26 +54,54 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
     # export MODELS_DIR="/workspace/models"
     # export RESULTS_DIR="/workspace/results"
     
+    # Ensure Python finds the src package
+    export PYTHONPATH="/workspace/cp-swiss-german-asr"
+
     # Run training
-    python scripts/train_wav2vec2_model.py \
-        --model facebook/wav2vec2-large-xlsr-53-german \
+    python scripts/train_dutch_pretrain.py \
+        --model aware-ai/wav2vec2-large-xlsr-53-german-with-lm \
         --pretrain-data /workspace/data/metadata/dutch/train.tsv \
         --finetune-data /workspace/data/metadata/german/train.tsv \
         --target-data /workspace/data/metadata/train.tsv \
-        --output-dir /workspace/models/fine_tuned/wav2vec2-swiss \
+        --output-dir /workspace/models/pretrained/wav2vec2-dutch-pretrained \
         --epochs 10 \
         --batch-size 16 \
         --learning-rate 3e-5
     
     echo "✅ Training complete on RunPod!"
+
+    # Download tokenizer files from Hugging Face
+    echo "🌐 Downloading tokenizer files from HuggingFace..."
+
+    mkdir -p /workspace/models/pretrained/wav2vec2-dutch-pretrained/language_model
+
+    wget -O /workspace/models/pretrained/wav2vec2-dutch-pretrained/language_model/attrs.json \
+        https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/blob/main/language_model/attrs.json
+
+    wget -O /workspace/models/pretrained/wav2vec2-dutch-pretrained/language_model/KenLM.arpa \
+        https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/blob/main/language_model/kenLM.arpa
+
+    wget -O /workspace/models/pretrained/wav2vec2-dutch-pretrained/language_model/unigrams.txt \
+        https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/blob/main/language_model/unigrams.txt
+
+    wget -O /workspace/models/pretrained/wav2vec2-dutch-pretrained/vocab.json \
+        https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/resolve/main/vocab.json
+
+    wget -O /workspace/models/pretrained/wav2vec2-dutch-pretrained/tokenizer_config.json \
+        https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/resolve/main/tokenizer_config.json
+
+    wget -O /workspace/models/pretrained/wav2vec2-dutch-pretrained/special_tokens_map.json \
+        https://huggingface.co/aware-ai/wav2vec2-large-xlsr-53-german-with-lm/resolve/main/special_tokens_map.json
+
+    echo "✅ Tokenizer files downloaded."
 ENDSSH
 
 # Download results FROM RUNPOD TO LAPTOP
 echo ""
 echo "📥 Downloading model checkpoints to local machine..."
 rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
-    ${REMOTE_USER}@${REMOTE_HOST}:/workspace/models/fine_tuned/ \
-    models/fine_tuned/
+    ${REMOTE_USER}@${REMOTE_HOST}:/workspace/models/pretrained/ \
+    models/pretrained/
 
 echo ""
 echo "📥 Downloading training results to local machine..."
@@ -83,5 +111,5 @@ rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
 
 echo ""
 echo "🎉 All done! Results saved to:"
-echo "   - models/fine_tuned/"
+echo "   - models/pretrained/"
 echo "   - results/"

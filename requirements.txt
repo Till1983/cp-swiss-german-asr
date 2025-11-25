@@ -13,6 +13,8 @@ torch==2.6.0
 torchaudio==2.6.0
 torchvision==0.21.0
 transformers==4.54.1
+datasets==2.19.1
+accelerate==0.26.1
 
 # Audio processing
 librosa==0.10.1  # Requires numpy<2.0
@@ -21,6 +23,8 @@ soundfile>=0.12.1
 
 # ASR models
 openai-whisper==20250625
+pyctcdecode==0.5.0
+kenlm==0.3.0
 
 # Evaluation metrics
 jiwer>=3.0.0
@@ -31,3 +35,6 @@ pytest==8.0.0
 
 # Utilities
 python-dotenv>=1.0.0
+
+# Evaluation library
+evaluate>=0.4.3

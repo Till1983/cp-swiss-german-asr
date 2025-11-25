@@ -22,22 +22,32 @@ cd /workspace/cp-swiss-german-asr
 
 # Prepare Dutch metadata
 python scripts/prepare_common_voice.py \
-    --cv-root /workspace/data/raw/cv-corpus-23.0-2025-09-05 \
-    --language-code nl \
+    --cv-root /workspace/data/raw/cv-corpus-23.0-2025-09-05/nl \
+    --locale nl \
     --output-dir /workspace/data/metadata/dutch
 
 # Prepare German metadata
 python scripts/prepare_common_voice.py \
-    --cv-root /workspace/data/raw/cv-corpus-22.0-2025-06-20 \
-    --language-code de \
+    --cv-root /workspace/data/raw/cv-corpus-22.0-2025-06-20/de \
+    --locale de \
     --output-dir /workspace/data/metadata/german
 
 # Prepare Swiss German splits
-python scripts/splitter.py \
-    /workspace/data/raw/fhnw-swiss-german-corpus/metadata.tsv \
-    /workspace/data/metadata \
-    /workspace/data/raw/fhnw-swiss-german-corpus
+python scripts/prepare_scripts.py
 ```
+
+## Downloading the KenLM ARPA Model on RunPod
+
+To download the KenLM ARPA file from HuggingFace directly in your RunPod environment, run the following command in the RunPod console:
+
+```bash
+python scripts/download_lm.py
+```
+
+This will create the `kenLM.arpa` file in `src/models/lm/` within your project directory.
+
+**Tip:**  
+Ensure Python dependencies are installed (`pip install -r requirements.txt`) before running the script for the first time.
 
 ## Run Training
 ```bash

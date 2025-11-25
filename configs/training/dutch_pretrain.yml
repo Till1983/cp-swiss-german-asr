@@ -1,0 +1,60 @@
+model:
+  name: "aware-ai/wav2vec2-large-xlsr-53-german-with-lm"
+  freeze_feature_encoder: true
+  dropout: 0.1
+  attention_dropout: 0.1
+  activation_dropout: 0.0
+  feat_proj_dropout: 0.1
+  layerdrop: 0.1
+
+data:
+  train_metadata: "data/metadata/dutch/train.tsv"
+  sampling_rate: 16000
+  max_duration_seconds: 20
+  num_workers: 4
+
+training:
+  learning_rate: 3e-5
+  weight_decay: 0.01
+  adam_beta1: 0.9
+  adam_beta2: 0.999
+  adam_epsilon: 1e-8
+  num_train_epochs: 10
+  warmup_steps: 500
+  max_steps: -1
+  per_device_train_batch_size: 16
+  gradient_accumulation_steps: 2
+  fp16: true
+  fp16_opt_level: "O1"
+  max_grad_norm: 1.0
+
+checkpointing:
+  output_dir: "models/pretrained/wav2vec2-dutch-pretrained"
+  save_strategy: "steps"
+  save_steps: 1000
+  save_total_limit: 2
+  load_best_model_at_end: false
+
+logging:
+  logging_strategy: "steps"
+  logging_steps: 100
+  report_to: ["tensorboard"]
+  logging_dir: "results/logs/tensorboard/dutch_pretrain"
+
+evaluation:
+  evaluation_strategy: "steps"
+  eval_steps: 500
+  metric_for_best_model: "loss"
+  greater_is_better: false
+
+environment:
+  seed: 42
+  dataloader_num_workers: 4
+  group_by_length: true
+  length_column_name: "input_length"
+
+runpod:
+  per_device_train_batch_size: 32
+  gradient_accumulation_steps: 1
+  fp16: true
+  dataloader_num_workers: 8

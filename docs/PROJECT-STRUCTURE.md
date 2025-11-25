@@ -216,11 +216,12 @@ cp-swiss-german-asr/
 │   ├── inspect_results.py
 │   ├── prepare_common_voice.py
 │   ├── prepare_scripts.py
-│   ├── train_on_cloud.sh
-│   ├── train_wav2vec2_model.py
+│   ├── train_dutch_pretrain.py
+│   ├── train_german_adaptation.py
+│   ├── train_on_cloud.sh 
 │   └── upload_to_cloud.sh
 ├── src/
-│   ├── __init.py__
+│   ├── __init__.py
 │   ├── config.py
 │   ├── __pycache__/
 │   ├── backend/
@@ -266,5 +267,3 @@ cp-swiss-german-asr/
     ├── test_evaluation.py
     └── __pycache__/
 ```
-
-Note: Entries marked "..." indicate additional contents not enumerated in the source listing.

@@ -11,6 +11,7 @@ services:
       - ./logs:/app/logs
       - ./tests:/app/tests
       - huggingface-cache:/home/appuser/.cache/huggingface
+      - ./src/models/lm/kenLM.arpa:/app/models/lm/kenLM.arpa
     environment:
       - HF_TOKEN=${HF_TOKEN}
 

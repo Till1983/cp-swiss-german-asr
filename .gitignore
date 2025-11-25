@@ -217,3 +217,11 @@ early-experiments/
 
 # project structure file (temporary)
 #PROJECT-STRUCTURE.md
+
+# Models directory in the root (for large files)
+/models/
+
+# ARPA language model files
+*.arpa
+*.bin
+*.gz
