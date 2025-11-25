@@ -451,3 +451,8 @@ required_files = [
 missing = [f for f in required_files if not (MODEL_DIR / f).exists()]
 if missing:
     raise FileNotFoundError(f"Missing required model files: {missing}")
+
+import os
+print("Current working directory:", os.getcwd())
+print("Processor/model path:", MODEL_NAME)
+print("Exists?", os.path.exists(MODEL_NAME))
