@@ -49,3 +49,26 @@ UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.
 ```
 
 ** Plan to update Trainer initialization in future refactor. No current impact.
+
+
+## Dataset Size Management
+
+### German Training Data Subset
+
+**Decision:** Used 50,000 randomly sampled German Common Voice examples for adaptation (from 607,872 total).
+
+**Rationale:**
+- Standard practice in transfer learning and continual learning research
+- Random sampling ensures representative speaker and phonetic diversity
+- Computational efficiency for capstone timeline
+- Model already has German phonetic knowledge from base Wav2Vec2-XLSR-53
+- Focus on adaptation quality (with EWC) rather than data quantity
+
+**Scientific Precedent:**
+- Kirkpatrick et al. (2017) EWC paper used data subsets for continual learning
+- Common Voice fine-tuning studies typically use 10k-100k samples
+- Transfer learning literature emphasizes quality of adaptation over data volume
+
+**Future Work:**
+- Full 607k dataset training could be explored for marginal improvements
+- Current results with 50k provide strong baseline for Swiss German zero-shot evaluation
