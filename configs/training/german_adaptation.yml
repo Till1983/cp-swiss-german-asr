@@ -82,9 +82,9 @@ environment:
   length_column_name: "input_length"
 
 runpod:
-  per_device_train_batch_size: 8
+  per_device_train_batch_size: 4
   per_device_eval_batch_size: 16
-  gradient_accumulation_steps: 2
+  gradient_accumulation_steps: 4
   fp16: true
   dataloader_num_workers: 8
   eval_steps: 250
