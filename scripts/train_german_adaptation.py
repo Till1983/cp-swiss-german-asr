@@ -145,13 +145,17 @@ class EWCTrainer(Trainer):
                 ewc_loss += (fisher * (param - old_param).pow(2)).sum()
         return self.ewc_lambda * ewc_loss
 
-    def compute_loss(self, model, inputs, return_outputs=False):
-        """
-        Override compute_loss to add EWC penalty.
-        """
-        loss, outputs = super().compute_loss(model, inputs, return_outputs=True)
+    def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
+        """Override compute_loss to add EWC penalty."""
+        # Call parent with proper parameter handling
+        if num_items_in_batch is not None:
+            loss, outputs = super().compute_loss(model, inputs, return_outputs=True, num_items_in_batch=num_items_in_batch)
+        else:
+            loss, outputs = super().compute_loss(model, inputs, return_outputs=True)
+        
         ewc_loss = self.compute_ewc_loss()
         total_loss = loss + ewc_loss
+        
         if return_outputs:
             return total_loss, outputs
         return total_loss
@@ -505,7 +509,7 @@ def main():
             if i > 1000:  # Check first 1000 lines
                 break
             try:
-                text = line.strip().split('\t')[2]  # Sentence column
+                text = line.strip().split('\t')[3]  # Sentence column
                 for char in set(text):
                     if char not in tokenizer_vocab and char not in missing_chars:
                         missing_chars.add(char)
@@ -729,7 +733,7 @@ def main():
     logger.info("=" * 70)
     logger.info(f"Adapted model: {OUTPUT_DIR}")
     logger.info(f"Training logs: {RESULTS_LOG}")
-    logger.info(f"Next step: Zero-shot evaluation on Swiss German dialects")
+    logger.info(f"Next step: Evaluation on Swiss German dialects")
     logger.info("=" * 70)
 
 if __name__ == "__main__":
