@@ -77,7 +77,8 @@ cp-swiss-german-asr/
 │   ├── DASHBOARD.md
 │   ├── MIGRATION_GUIDE.md
 │   ├── MODEL_SELECTION.md
-│   └── RUNPOD_WORKFLOW.md
+│   ├── RUNPOD_WORKFLOW.md
+│   └── KNOWN_ISSUES.md
 ├── early-experiments/       # gitignored (the entire directory - large files)
 │   ├── 20251104_152716/
 │   │   ├── whisper-base_results.csv
