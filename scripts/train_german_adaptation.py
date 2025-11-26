@@ -351,7 +351,7 @@ def prepare_dataset(metadata_path, audio_dir, limit=None, random_sample=True, sk
     # Load audio and filter out failed loads
     logger.info("Mapping audio loading function...")
     dataset = dataset.map(
-        lambda x: {"audio": load_audio(x["audio_path"], sampling_rate=16000)},
+        lambda x: {"audio": load_audio(x["audio_path"], sample_rate=16000)},
         num_proc=1
     )
     
