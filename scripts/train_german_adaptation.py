@@ -418,9 +418,9 @@ def main():
         train_dataset = prepare_dataset(
             METADATA_FILE, 
             AUDIO_DIR,
-            limit=50000,           # 50k samples = ~8% of full dataset, sufficient for adaptation
+            limit=150000,           # 150k samples = ~25% of full dataset, sufficient for adaptation
             random_sample=True,    # Random sampling ensures diverse coverage
-            skip_validation=True   # Skip slow file checks, trust Common Voice data quality
+            skip_validation=False   # Skip slow file checks, trust Common Voice data quality
         )
         logger.info(f"✅ German training dataset loaded successfully")
     except Exception as e:
