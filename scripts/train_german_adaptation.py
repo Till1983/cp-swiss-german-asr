@@ -452,7 +452,7 @@ def main():
     logger.info(f"Sampling rate: {processor.feature_extractor.sampling_rate} Hz")
     
     def prepare_examples(batch):
-        audio_arrays = [item["array"] for item in batch["audio"]]
+        audio_arrays = batch["audio"]
         inputs = processor(
             audio_arrays,
             sampling_rate=16000,
