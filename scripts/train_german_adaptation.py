@@ -509,7 +509,7 @@ def main():
             if i > 1000:  # Check first 1000 lines
                 break
             try:
-                text = line.strip().split('\t')[3]  # Sentence column
+                text = line.strip().split('\t')[3].upper()  # Sentence column
                 for char in set(text):
                     if char not in tokenizer_vocab and char not in missing_chars:
                         missing_chars.add(char)
