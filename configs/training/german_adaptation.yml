@@ -1,13 +1,7 @@
-# German Adaptation Configuration with Elastic Weight Consolidation (EWC)
-# Supports German adaptation phase with catastrophic forgetting prevention
-#
-# NOTE: All paths are RELATIVE and will be resolved based on ENVIRONMENT:
-#   - local: Uses /app/* base paths
-#   - runpod: Uses /workspace/* base paths
-# This ensures the config works across environments without modification.
+# German Adaptation Configuration with EWC - OPTIMIZED FOR RTX 5090 (32GB)
+# This config uses larger batch sizes enabled by 32GB VRAM
 
 model:
-  # CHANGED: Relative path - script will prepend MODELS_DIR based on environment
   dutch_checkpoint: "pretrained/wav2vec2-dutch-pretrained"
   freeze_feature_encoder: true
   dropout: 0.1
@@ -17,22 +11,19 @@ model:
   layerdrop: 0.05
 
 data:
-  # These paths are defined but currently UNUSED by script
-  # Script uses hardcoded GERMAN_CV_ROOT instead
-  # Keeping for future use if script is refactored
-  train_metadata: "metadata/german/train.tsv"  # Relative to DATA_DIR
-  val_metadata: "metadata/german/val.tsv"      # Relative to DATA_DIR
+  train_metadata: "metadata/german/train.tsv"
+  val_metadata: "metadata/german/val.tsv"
   sampling_rate: 16000
   max_duration_seconds: 20
   num_workers: 4
 
 training:
-  learning_rate: 1e-5  # Lower than Dutch pre-training
+  learning_rate: 1e-5
   weight_decay: 0.01
   adam_beta1: 0.9
   adam_beta2: 0.999
   adam_epsilon: 1e-8
-  num_train_epochs: 3  # Fewer epochs for adaptation
+  num_train_epochs: 3
   warmup_steps: 300
   max_steps: -1
   per_device_train_batch_size: 8
@@ -41,18 +32,15 @@ training:
   fp16: true
   fp16_opt_level: "O1"
   max_grad_norm: 1.0
-  
 
 ewc:
   enabled: true
-  lambda: 0.4  # Regularization strength for catastrophic forgetting prevention
-  fisher_samples: 5000  # Number of Dutch samples for Fisher estimation (5k = ~5% of data, follows EWC best practices)
+  lambda: 0.4
+  fisher_samples: 5000
   compute_fisher: true
 
 checkpointing:
-  # NOTE: Script overrides this with MODELS_DIR / "adapted" / "wav2vec2-german-adapted"
-  # Keeping for documentation and potential future use
-  output_dir: "adapted/wav2vec2-german-adapted"  # Relative to MODELS_DIR
+  output_dir: "adapted/wav2vec2-german-adapted"
   save_strategy: "steps"
   save_steps: 1000
   save_total_limit: 3
@@ -62,12 +50,11 @@ logging:
   logging_strategy: "steps"
   logging_steps: 100
   report_to: ["tensorboard"]
-  # NOTE: Script overrides this with OUTPUT_DIR / "logs"
-  logging_dir: "logs/tensorboard/german_adaptation"  # Relative to RESULTS_DIR
+  logging_dir: "logs/tensorboard/german_adaptation"
 
 evaluation:
   evaluation_strategy: "steps"
-  eval_steps: 500  # Evaluation frequency for adaptation
+  eval_steps: 500
   metric_for_best_model: "loss"
   greater_is_better: false
 
@@ -81,10 +68,11 @@ environment:
   group_by_length: true
   length_column_name: "input_length"
 
+# RTX 5090 specific settings - 32GB VRAM allows larger batches with EWC
 runpod:
-  per_device_train_batch_size: 4
+  per_device_train_batch_size: 8     # Doubled from 4 (32GB can handle it)
   per_device_eval_batch_size: 16
-  gradient_accumulation_steps: 4
+  gradient_accumulation_steps: 2     # Halved from 4 (effective batch still 16)
   fp16: true
   dataloader_num_workers: 8
   eval_steps: 250
