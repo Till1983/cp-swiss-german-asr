@@ -11,7 +11,7 @@ echo ""
 
 # 1. Backup current packages
 echo "📦 Backing up current environment..."
-pip freeze > /workspace/backup_requirements_$(date +%Y%m%d_%H%M%S).txt
+pip freeze > /workspace/cp-swiss-german-asr/backup_requirements_$(date +%Y%m%d_%H%M%S).txt
 echo "✅ Backup saved"
 echo ""
 
