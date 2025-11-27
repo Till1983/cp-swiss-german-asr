@@ -12,9 +12,15 @@ cp-swiss-german-asr/
 ├── LICENSE
 ├── PROJECT-STRUCTURE.md                          
 ├── README.md
+├── configs/
+│   └── training/
+│       ├── dutch_pretrain.yml
+│       ├── german_adaptation.yml
+│       └── wav2vec2_config.yml
 ├── docker-compose.yml
 ├── main.py
 ├── requirements.txt
+├── requirements_blackwell.txt
 ├── .vscode/
 │   └── settings.json
 ├── data/                # gitignored (the entire directory - large files)
@@ -75,10 +81,15 @@ cp-swiss-german-asr/
 │           └── clips/
 ├── docs/
 │   ├── DASHBOARD.md
+│   ├── GPU_COMPATIBILITY.md
+│   ├── HYPERPARAMETER_TUNING.md
+│   ├── KNOWN_ISSUES.md
 │   ├── MIGRATION_GUIDE.md
 │   ├── MODEL_SELECTION.md
+│   ├── PROJECT-STRUCTURE.md
+│   ├── RUNPOD_POD_PERSISTENCE.md
 │   ├── RUNPOD_WORKFLOW.md
-│   └── KNOWN_ISSUES.md
+│   └── TRAINING_WORKFLOW.md
 ├── early-experiments/       # gitignored (the entire directory - large files)
 │   ├── 20251104_152716/
 │   │   ├── whisper-base_results.csv
@@ -209,9 +220,14 @@ cp-swiss-german-asr/
 │       │   ├── whisper-large-v2_results.json
 │       │   ├── whisper-large-v3_results.csv
 │       │   └── whisper-large-v3_results.json
-│       └── 20251114_113817/
-│           ├── whisper-medium_results.csv
-│           └── whisper-medium_results.json
+│       ├── 20251114_113817/
+│       │   ├── whisper-medium_results.csv
+│       │   └── whisper-medium_results.json
+│       └── 20251122_210804/
+│           ├── wav2vec2-german-with-lm_results.csv
+│           ├── wav2vec2-german-with-lm_results.json
+│           ├── wav2vec2-german_results.csv
+│           └── wav2vec2-german_results.json
 ├── scripts/
 │   ├── adapt_on_cloud.sh
 │   ├── check_lm_vocab.py
@@ -236,6 +252,7 @@ cp-swiss-german-asr/
 │   │   └── __pycache__/
 │   ├── data/
 │   │   ├── __init__.py
+│   │   ├── collator.py
 │   │   ├── loader.py
 │   │   ├── preprocessor.py
 │   │   └── splitter.py
@@ -262,9 +279,12 @@ cp-swiss-german-asr/
 │   │   ├── mms_model.py
 │   │   ├── wav2vec2_model.py
 │   │   └── __pycache__/
+│   ├── training/
+│   │   └── trainer.py
 │   └── utils/
 │       ├── __init__.py
 │       ├── audio_utils.py
+│       ├── checkpoint_manager.py
 │       ├── file_utils.py
 │       └── logging_config.py
 └── tests/
