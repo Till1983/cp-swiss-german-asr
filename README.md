@@ -240,5 +240,3 @@ Access the dashboard at `http://localhost:8501`
 - **Data Table View:** Browse detailed evaluation results in tabular format
 - **Filtering:** Filter by model, dialect, or custom date ranges
 
-## See Also
-   - [RunPod Pod Persistence Guide](RUNPOD_POD_PERSISTENCE.md) - Understanding storage and package management on RunPod pods.
