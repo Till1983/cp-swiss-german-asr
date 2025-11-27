@@ -52,10 +52,13 @@ Ensure Python dependencies are installed (`pip install -r requirements.txt`) bef
 ## Run Training
 ```bash
 # On your laptop (triggers remote training)
-./train_on_cloud.sh
+./scripts/train_on_cloud.sh
 ```
 
 ## Cost Management
 - **While working:** Keep pod running (~$0.47/hr)
 - **Between sessions:** Terminate pod (data persists on volume)
 - **Storage cost:** ~$0.01/hr for network volume (always running)
+
+## See Also
+   - [RunPod Pod Persistence Guide](RUNPOD_POD_PERSISTENCE.md) - Understanding storage and package management on RunPod pods.

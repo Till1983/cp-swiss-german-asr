@@ -239,3 +239,4 @@ Access the dashboard at `http://localhost:8501`
 - **Interactive Visualizations:** Explore metrics with dynamic charts and filters
 - **Data Table View:** Browse detailed evaluation results in tabular format
 - **Filtering:** Filter by model, dialect, or custom date ranges
+

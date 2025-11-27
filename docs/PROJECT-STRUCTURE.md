@@ -77,7 +77,8 @@ cp-swiss-german-asr/
 │   ├── DASHBOARD.md
 │   ├── MIGRATION_GUIDE.md
 │   ├── MODEL_SELECTION.md
-│   └── RUNPOD_WORKFLOW.md
+│   ├── RUNPOD_WORKFLOW.md
+│   └── KNOWN_ISSUES.md
 ├── early-experiments/       # gitignored (the entire directory - large files)
 │   ├── 20251104_152716/
 │   │   ├── whisper-base_results.csv
@@ -212,13 +213,17 @@ cp-swiss-german-asr/
 │           ├── whisper-medium_results.csv
 │           └── whisper-medium_results.json
 ├── scripts/
+│   ├── adapt_on_cloud.sh
+│   ├── check_lm_vocab.py
+│   ├── diagnose_lm_alignment.py
+│   ├── download_lm.py
 │   ├── evaluate_models.py
 │   ├── inspect_results.py
 │   ├── prepare_common_voice.py
 │   ├── prepare_scripts.py
 │   ├── train_dutch_pretrain.py
 │   ├── train_german_adaptation.py
-│   ├── train_on_cloud.sh 
+│   ├── train_on_cloud.sh
 │   └── upload_to_cloud.sh
 ├── src/
 │   ├── __init__.py
