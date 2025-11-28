@@ -38,3 +38,5 @@ python-dotenv>=1.0.0
 
 # Evaluation library
 evaluate>=0.4.3
+
+hf_transfer>=0.1.8
