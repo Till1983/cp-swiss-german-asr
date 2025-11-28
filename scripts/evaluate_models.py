@@ -28,6 +28,7 @@ MODEL_REGISTRY = {
     # Wav2Vec2 models
     ## German model
     "wav2vec2-german": {"type": "wav2vec2", "name": "jonatasgrosman/wav2vec2-large-xlsr-53-german"},
+    "wav2vec2-german-1b": {"type": "wav2vec2", "name": "jonatasgrosman/wav2vec2-xls-r-1b-german"},
     # ✅ Added LM support here
     "wav2vec2-german-with-lm": {
         "type": "wav2vec2", 
