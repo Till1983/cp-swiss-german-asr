@@ -3,10 +3,11 @@ import sys
 import shutil
 from pathlib import Path
 from huggingface_hub import hf_hub_download
+from src.config import MODELS_DIR  # Add this import
 
 # Setup paths
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-LM_DIR = PROJECT_ROOT / "src" / "models" / "lm"
+LM_DIR = MODELS_DIR / "lm"         # Use config path
 LM_FILE_NAME = "kenLM.arpa"
 DESTINATION_PATH = LM_DIR / LM_FILE_NAME
 
