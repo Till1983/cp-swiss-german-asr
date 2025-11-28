@@ -34,6 +34,13 @@ MODEL_REGISTRY = {
         "name": "aware-ai/wav2vec2-large-xlsr-53-german-with-lm", 
         "lm_path": str(MODELS_DIR / "lm" / "kenLM.arpa") 
     },
+
+    # ✅ Added adapted German model
+    "wav2vec2-ger-nl-adapted": {
+        "type": "wav2vec2",
+        "name": str(MODELS_DIR / "adapted" / "wav2vec2-german-adapted"),
+        "lm_path": str(MODELS_DIR / "adapted" / "wav2vec2-german-adapted" / "language_model" / "KenLM.arpa")
+    },
     # Dutch model
     "wav2vec2-dutch-pretrained": {"type": "wav2vec2", "name": "facebook/wav2vec2-large-xlsr-53-dutch"},
     ## Multilingual model
@@ -46,6 +53,8 @@ MODEL_REGISTRY = {
     "mms-1b-l1107": {"type": "mms", "name": "facebook/mms-1b-l1107"},
     # ⚠️ REMOVED: MMS models have vocab mismatch with KenLM decoders
     # "mms-1b-l1107-lm": {"type": "mms", "name": "facebook/mms-1b-l1107", "lm_path": str(MODELS_DIR / "lm" / "kenLM.arpa")}
+    
+    
 }
 
 def main():

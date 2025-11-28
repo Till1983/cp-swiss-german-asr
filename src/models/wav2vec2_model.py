@@ -31,16 +31,36 @@ class Wav2Vec2Model:
         self.decoder = None
         
         print(f"Loading Wav2Vec2 model '{self.model_name}' on {self.device}...")
-        
+
+        # ✅ Check if model path exists locally (before try block)
+        is_local_path = Path(model_name).exists()
+
         try:
-            self.processor = Wav2Vec2Processor.from_pretrained(model_name)
+            if is_local_path:
+                print(f"   Detected local model path, using local_files_only=True")
+                self.processor = Wav2Vec2Processor.from_pretrained(
+                    model_name, 
+                    local_files_only=True
+                )
+            else:
+                print(f"   Loading from HuggingFace Hub")
+                self.processor = Wav2Vec2Processor.from_pretrained(model_name)
         except (TypeError, OSError) as e:
             raise ValueError(f"Failed to load processor: {str(e)}") from e
+
+        # Load model with same logic
+        if is_local_path:
+            self.model = Wav2Vec2ForCTC.from_pretrained(
+                model_name, 
+                use_safetensors=True, 
+                local_files_only=True
+            )
+        else:
+            self.model = Wav2Vec2ForCTC.from_pretrained(
+                model_name, 
+                use_safetensors=True
+            )
         
-        self.model = Wav2Vec2ForCTC.from_pretrained(
-            model_name,
-            use_safetensors=True
-        )
         self.model.to(self.device)
         self.model.eval()
         
