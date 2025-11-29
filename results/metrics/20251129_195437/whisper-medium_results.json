@@ -1,0 +1,116 @@
+{
+  "timestamp": "20251129_200318",
+  "model_name": "whisper-medium",
+  "experiment_type": null,
+  "results": {
+    "overall_wer": 34.12097932931266,
+    "overall_cer": 14.721147806539058,
+    "overall_bleu": 48.72918636840073,
+    "per_dialect_wer": {
+      "BE": 31.606176994526507,
+      "SZ": 22.22222222222222,
+      "SG": 33.57580690914024,
+      "ZG": 38.583009583009584,
+      "GL": 28.422619047619044,
+      "NW": 50.0,
+      "FR": 59.09090909090909,
+      "GR": 47.863247863247864,
+      "UR": 44.827703161036496,
+      "ZH": 34.91994887828221,
+      "SO": 36.83090058090058,
+      "SH": 57.14285714285714,
+      "VS": 37.1875,
+      "LU": 34.08800601108293,
+      "BL": 39.58168268513096,
+      "TG": 29.215261234492004,
+      "AG": 31.073926073926074
+    },
+    "per_dialect_cer": {
+      "BE": 13.454790823211876,
+      "SZ": 6.273062730627306,
+      "SG": 16.022696568495,
+      "ZG": 16.44518272425249,
+      "GL": 7.608695652173914,
+      "NW": 26.436781609195403,
+      "FR": 27.572016460905353,
+      "GR": 18.71794871794872,
+      "UR": 16.216216216216218,
+      "ZH": 15.685164212910532,
+      "SO": 19.534184823441024,
+      "SH": 13.953488372093023,
+      "VS": 13.654618473895583,
+      "LU": 14.669051878354203,
+      "BL": 16.45822911455728,
+      "TG": 12.467362924281984,
+      "AG": 11.82039491479578
+    },
+    "per_dialect_bleu": {
+      "BE": 53.90441493063529,
+      "SZ": 55.42327716631421,
+      "SG": 48.208690117523105,
+      "ZG": 38.95446467068283,
+      "GL": 54.69171146625571,
+      "NW": 15.718877363021202,
+      "FR": 18.84206836316442,
+      "GR": 28.894862647573547,
+      "UR": 41.48685292193593,
+      "ZH": 48.4263284962029,
+      "SO": 48.263355102461134,
+      "SH": 19.740631366145518,
+      "VS": 46.67977356261051,
+      "LU": 47.59275576290453,
+      "BL": 43.30634743535226,
+      "TG": 52.3110035621689,
+      "AG": 49.99650879634845
+    },
+    "total_samples": 432,
+    "failed_samples": 0,
+    "samples": [
+      {
+        "audio_file": "3a0cb41b-31c1-4a11-bc9f-5b6836cf4c50.flac",
+        "dialect": "BE",
+        "reference": "Den Weg dazu sieht er im Dialog über die Glaubensinhalte.",
+        "hypothesis": " Und der Weg dazu sieht er im Dialog über Glaubensinhalt.",
+        "wer": 40.0,
+        "cer": 17.543859649122805,
+        "bleu": 59.00468726392806
+      },
+      {
+        "audio_file": "d5c16201-7d8a-4a42-97f0-8ff2981007b3.flac",
+        "dialect": "ZH",
+        "reference": "Hier debütierte er in der Ekstraklasa.",
+        "hypothesis": " Hier debütiert er in der Extra-Klasse.",
+        "wer": 33.33333333333333,
+        "cer": 15.789473684210526,
+        "bleu": 27.77619034011791
+      },
+      {
+        "audio_file": "08e6c960-942b-4294-9655-bd5142cfaf45.flac",
+        "dialect": "BE",
+        "reference": "Ebenfalls wird der Quellcode zur Anpassung an andere Computersysteme bereitgestellt.",
+        "hypothesis": " Ebenfalls wird der Quellcode zur Anpassung an andere Computersysteme bereitgestellt.",
+        "wer": 0.0,
+        "cer": 0.0,
+        "bleu": 100.00000000000004
+      },
+      {
+        "audio_file": "f28b4689-83ab-4816-90de-0b4fe24a7edb.flac",
+        "dialect": "ZG",
+        "reference": "Fritz Holthoff ist der Großvater des zeitgenössischen deutschen Malers Jan Holthoff.",
+        "hypothesis": " Fritz Holdhoff ist der Grossvater vom zeitgenössischen deutschen Maler Jan Holdhoff.",
+        "wer": 45.45454545454545,
+        "cer": 9.523809523809524,
+        "bleu": 11.016798394984658
+      },
+      {
+        "audio_file": "9726619a-c734-4ca7-929f-e3f4c9300dd6.flac",
+        "dialect": "AG",
+        "reference": "Asylbewerber sind keine Kriminellen.",
+        "hypothesis": " Asylbewerber sind keine Kriminelle.",
+        "wer": 25.0,
+        "cer": 2.7777777777777777,
+        "bleu": 42.7287006396234
+      }
+    ]
+  }
+}

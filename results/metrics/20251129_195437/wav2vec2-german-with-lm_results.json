@@ -1,0 +1,116 @@
+{
+  "timestamp": "20251129_201824",
+  "model_name": "wav2vec2-german-with-lm",
+  "experiment_type": null,
+  "results": {
+    "overall_wer": 73.9482360489305,
+    "overall_cer": 31.733280439022778,
+    "overall_bleu": 14.213811649589454,
+    "per_dialect_wer": {
+      "BE": 78.70464756387086,
+      "SZ": 65.27777777777777,
+      "SG": 73.97064355397688,
+      "ZG": 84.80267880267881,
+      "GL": 72.12301587301587,
+      "NW": 110.00000000000001,
+      "FR": 80.68181818181819,
+      "GR": 87.95940170940172,
+      "UR": 80.76787410120743,
+      "ZH": 69.30497742997744,
+      "SO": 75.89825298158631,
+      "SH": 57.14285714285714,
+      "VS": 61.101190476190474,
+      "LU": 76.26795213333675,
+      "BL": 74.02926575340369,
+      "TG": 64.99696884312269,
+      "AG": 69.7070277730655
+    },
+    "per_dialect_cer": {
+      "BE": 34.385964912280706,
+      "SZ": 24.354243542435423,
+      "SG": 30.505268846257767,
+      "ZG": 35.548172757475086,
+      "GL": 18.115942028985508,
+      "NW": 44.827586206896555,
+      "FR": 47.73662551440329,
+      "GR": 32.82051282051282,
+      "UR": 38.513513513513516,
+      "ZH": 29.27519818799547,
+      "SO": 37.56574004507889,
+      "SH": 13.953488372093023,
+      "VS": 22.48995983935743,
+      "LU": 31.007751937984494,
+      "BL": 33.866933466733364,
+      "TG": 26.827676240208874,
+      "AG": 29.483364890451718
+    },
+    "per_dialect_bleu": {
+      "BE": 11.85423307294021,
+      "SZ": 15.691374748513987,
+      "SG": 13.771647362238124,
+      "ZG": 7.787094146676026,
+      "GL": 18.35894318735225,
+      "NW": 3.1157290929555894,
+      "FR": 7.748292282393712,
+      "GR": 5.512282882909671,
+      "UR": 10.010845289812172,
+      "ZH": 16.049787789594596,
+      "SO": 11.923798574238889,
+      "SH": 20.873176328735713,
+      "VS": 17.018501195302036,
+      "LU": 14.172228679188608,
+      "BL": 14.915765904094332,
+      "TG": 20.122627975332193,
+      "AG": 17.390836008394235
+    },
+    "total_samples": 432,
+    "failed_samples": 0,
+    "samples": [
+      {
+        "audio_file": "3a0cb41b-31c1-4a11-bc9f-5b6836cf4c50.flac",
+        "dialect": "BE",
+        "reference": "Den Weg dazu sieht er im Dialog über die Glaubensinhalte.",
+        "hypothesis": "DER WERKE ZU EXETER IM DIALOG ÜBER KLOBEN SEIN HAUT",
+        "wer": 80.0,
+        "cer": 38.59649122807017,
+        "bleu": 14.133288733111716
+      },
+      {
+        "audio_file": "d5c16201-7d8a-4a42-97f0-8ff2981007b3.flac",
+        "dialect": "ZH",
+        "reference": "Hier debütierte er in der Ekstraklasa.",
+        "hypothesis": "DA DEBÜTIERT ER IN DER EXTRA KLASSE",
+        "wer": 66.66666666666666,
+        "cer": 26.31578947368421,
+        "bleu": 24.446151121745054
+      },
+      {
+        "audio_file": "08e6c960-942b-4294-9655-bd5142cfaf45.flac",
+        "dialect": "BE",
+        "reference": "Ebenfalls wird der Quellcode zur Anpassung an andere Computersysteme bereitgestellt.",
+        "hypothesis": "ABERFALLS WERDE CREW GOTT ZU ALPASSIGER ANGENE COMPUTERSYSTEM BEREITGESTELLT",
+        "wer": 100.0,
+        "cer": 28.57142857142857,
+        "bleu": 3.817681337429047
+      },
+      {
+        "audio_file": "f28b4689-83ab-4816-90de-0b4fe24a7edb.flac",
+        "dialect": "ZG",
+        "reference": "Fritz Holthoff ist der Großvater des zeitgenössischen deutschen Malers Jan Holthoff.",
+        "hypothesis": "FRITZ HOLTHOFF IST DER GROSSVATER VOM ZITGENÖSSISCHER DECHEMA RIAN HOLTHOFF",
+        "wer": 63.63636363636363,
+        "cer": 21.428571428571427,
+        "bleu": 22.741221234802104
+      },
+      {
+        "audio_file": "9726619a-c734-4ca7-929f-e3f4c9300dd6.flac",
+        "dialect": "AG",
+        "reference": "Asylbewerber sind keine Kriminellen.",
+        "hypothesis": "ASYLBEWERBER SIND CA KRIMINELL",
+        "wer": 50.0,
+        "cer": 22.22222222222222,
+        "bleu": 24.880469496253564
+      }
+    ]
+  }
+}
