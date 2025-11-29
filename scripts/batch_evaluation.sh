@@ -121,47 +121,5 @@ rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
 
 echo ""
 echo "✅ Results downloaded to: results/metrics/"
-
-# ============================================================================
-# Display evaluation summary
-# ============================================================================
-
 echo ""
-echo "📊 Evaluation Summary"
-echo "========================================================================"
-
-# ✅ FIX: Use sort to get most recent directory by timestamp
-LATEST_DIR=$(ls -d results/metrics/202*/ 2>/dev/null | sort | tail -n 1)
-
-if [ -d "$LATEST_DIR" ]; then
-    if command -v jq >/dev/null 2>&1; then
-        # Use jq for formatted output of ALL models
-        for json_file in "$LATEST_DIR"/*_results.json; do
-            if [ -f "$json_file" ]; then
-                model_name=$(basename "$json_file" _results.json)
-                echo ""
-                echo "Model: $model_name"
-                echo "----------------------------------------------------------------------"
-                jq -r '"  WER:     " + (.overall_wer | tostring) + "%\n  CER:     " + (.overall_cer | tostring) + "%\n  BLEU:    " + (.overall_bleu | tostring) + "\n  Samples: " + (.total_samples | tostring)' "$json_file"
-            fi
-        done
-        echo ""
-        echo "========================================================================"
-    else
-        echo ""
-        echo "Results directory: $LATEST_DIR"
-        echo ""
-        echo "ℹ️  Install jq to view formatted summary:"
-        echo "    brew install jq          # macOS"
-        echo "    sudo apt-get install jq  # Ubuntu/Debian"
-        echo ""
-        ls -1 "$LATEST_DIR"/*_results.json 2>/dev/null | while read -r file; do
-            echo "  - $(basename "$file")"
-        done
-    fi
-else
-    echo "⚠️  No evaluation results found in results/metrics/"
-fi
-
-echo ""
-echo "🎉 All done! Results saved to: results/metrics/"
+echo "🎉 Batch evaluation complete!"
