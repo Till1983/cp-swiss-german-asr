@@ -130,7 +130,7 @@ echo ""
 echo "📊 Evaluation Summary"
 echo "========================================================================"
 
-LATEST_DIR=$(ls -td results/metrics/*/ 2>/dev/null | head -n 1)
+LATEST_DIR=$(ls -d results/metrics/*/ 2>/dev/null | tail -n 1)
 
 if [ -d "$LATEST_DIR" ]; then
     if command -v jq >/dev/null 2>&1; then
