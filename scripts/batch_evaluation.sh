@@ -29,7 +29,6 @@ if [ ${#MISSING_VARS[@]} -ne 0 ]; then
 fi
 
 REMOTE_PORT="${REMOTE_PORT:-22}"
-REMOTE_PROJECT_ROOT="${PROJECT_ROOT:-/workspace/cp-swiss-german-asr}"
 
 # Parse CLI arguments for models and other evaluate_models.py args
 EVAL_ARGS=()
@@ -65,55 +64,59 @@ echo ""
 # ============================================================================
 # Run evaluation on RunPod
 # ============================================================================
-# Note: Using quoted heredoc ('ENDSSH') to prevent local variable expansion
-ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} bash << 'ENDSSH'
+# FIX: Use unquoted heredoc to allow variable expansion
+# Note: We need $EVAL_ARGS_STR to expand before sending to remote
+ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} bash << ENDSSH
     set -e
     cd /workspace/cp-swiss-german-asr
 
     echo "📦 Installing requirements (no-cache)..."
-    pip install --no-cache-dir -r requirements.txt --break-system-packages
+    pip install --no-cache-dir -r requirements.txt
     echo "✅ Dependencies installed"
     echo ""
 
     # Check if KenLM LM file exists, otherwise download
-    # Note: download_lm.py saves to src/models/lm/kenLM.arpa (project structure)
-    # but MODEL_REGISTRY expects models/lm/kenLM.arpa (config structure)
+    # Note: download_lm.py saves to src/models/lm/kenLM.arpa
     LM_SRC_PATH="/workspace/cp-swiss-german-asr/src/models/lm/kenLM.arpa"
     LM_DEST_PATH="/workspace/models/lm/kenLM.arpa"
     
-    if [ ! -f "$LM_SRC_PATH" ]; then
+    if [ ! -f "\$LM_SRC_PATH" ]; then
         echo "📥 Downloading KenLM language model..."
         python scripts/download_lm.py
-        echo "✅ KenLM downloaded to: $LM_SRC_PATH"
+        echo "✅ KenLM downloaded to: \$LM_SRC_PATH"
     else
-        echo "✅ KenLM found at: $LM_SRC_PATH"
+        echo "✅ KenLM found at: \$LM_SRC_PATH"
     fi
     
     # Create symlink for MODEL_REGISTRY compatibility
+    # This bridges the gap between where download_lm.py saves it
+    # and where the model registry expects it
     mkdir -p /workspace/models/lm
-    if [ ! -L "$LM_DEST_PATH" ] && [ ! -f "$LM_DEST_PATH" ]; then
-        echo "🔗 Creating symlink: $LM_DEST_PATH -> $LM_SRC_PATH"
-        ln -s "$LM_SRC_PATH" "$LM_DEST_PATH"
+    if [ ! -L "\$LM_DEST_PATH" ] && [ ! -f "\$LM_DEST_PATH" ]; then
+        echo "🔗 Creating symlink for MODEL_REGISTRY compatibility..."
+        ln -s "\$LM_SRC_PATH" "\$LM_DEST_PATH"
+        echo "   \$LM_DEST_PATH -> \$LM_SRC_PATH"
     fi
     echo ""
 
     echo "🏃 Running evaluation..."
+    echo "   Arguments: $EVAL_ARGS_STR"
     python scripts/evaluate_models.py $EVAL_ARGS_STR
 
     echo ""
     echo "✅ Evaluation finished!"
 ENDSSH
 
-# ============================================================================
-# Download results from RunPod
-# ============================================================================
-
 echo ""
 echo "📥 Downloading evaluation results to local machine..."
+
+# Ensure local directory exists
 mkdir -p results/metrics/
 
+# FIX: Use correct hardcoded remote path
+# The results are always at /workspace/cp-swiss-german-asr/results/metrics/
 rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
-    ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PROJECT_ROOT}/results/metrics/ \
+    ${REMOTE_USER}@${REMOTE_HOST}:/workspace/cp-swiss-german-asr/results/metrics/ \
     results/metrics/
 
 echo ""
@@ -131,7 +134,7 @@ LATEST_DIR=$(ls -td results/metrics/*/ 2>/dev/null | head -n 1)
 
 if [ -d "$LATEST_DIR" ]; then
     if command -v jq >/dev/null 2>&1; then
-        # Use jq for formatted output
+        # Use jq for formatted output of ALL models
         for json_file in "$LATEST_DIR"/*_results.json; do
             if [ -f "$json_file" ]; then
                 model_name=$(basename "$json_file" _results.json)
@@ -151,7 +154,7 @@ if [ -d "$LATEST_DIR" ]; then
         echo "    brew install jq          # macOS"
         echo "    sudo apt-get install jq  # Ubuntu/Debian"
         echo ""
-        ls -1 "$LATEST_DIR"/*_results.json | while read -r file; do
+        ls -1 "$LATEST_DIR"/*_results.json 2>/dev/null | while read -r file; do
             echo "  - $(basename "$file")"
         done
     fi
