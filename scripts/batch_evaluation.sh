@@ -64,19 +64,18 @@ echo ""
 # ============================================================================
 # Run evaluation on RunPod
 # ============================================================================
-# FIX: Use unquoted heredoc to allow variable expansion
-# Note: We need $EVAL_ARGS_STR to expand before sending to remote
 ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} bash << ENDSSH
     set -e
     cd /workspace/cp-swiss-german-asr
 
     echo "📦 Installing requirements (no-cache)..."
-    pip install --no-cache-dir -r requirements.txt --break-system-packages
+    pip install --no-cache-dir -r requirements.txt
     echo "✅ Dependencies installed"
     echo ""
 
     # Check if KenLM LM file exists, otherwise download
-    # Note: download_lm.py saves to src/models/lm/kenLM.arpa
+    # Note: download_lm.py saves to src/models/lm/kenLM.arpa (inside project)
+    # but MODEL_REGISTRY expects /workspace/models/lm/kenLM.arpa (outside project)
     LM_SRC_PATH="/workspace/cp-swiss-german-asr/src/models/lm/kenLM.arpa"
     LM_DEST_PATH="/workspace/models/lm/kenLM.arpa"
     
@@ -89,8 +88,6 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} bash << ENDSSH
     fi
     
     # Create symlink for MODEL_REGISTRY compatibility
-    # This bridges the gap between where download_lm.py saves it
-    # and where the model registry expects it
     mkdir -p /workspace/models/lm
     if [ ! -L "\$LM_DEST_PATH" ] && [ ! -f "\$LM_DEST_PATH" ]; then
         echo "🔗 Creating symlink for MODEL_REGISTRY compatibility..."
@@ -98,6 +95,9 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} bash << ENDSSH
         echo "   \$LM_DEST_PATH -> \$LM_SRC_PATH"
     fi
     echo ""
+
+    # Set environment explicitly
+    export ENVIRONMENT=runpod
 
     echo "🏃 Running evaluation..."
     echo "   Arguments: $EVAL_ARGS_STR"
@@ -113,10 +113,10 @@ echo "📥 Downloading evaluation results to local machine..."
 # Ensure local directory exists
 mkdir -p results/metrics/
 
-# FIX: Use correct hardcoded remote path
-# The results are always at /workspace/cp-swiss-german-asr/results/metrics/
+# ✅ FIX: Download from /workspace/results/metrics/ (OUTSIDE project dir)
+# This matches RESULTS_DIR in src/config.py for RunPod environment
 rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
-    ${REMOTE_USER}@${REMOTE_HOST}:/workspace/cp-swiss-german-asr/results/metrics/ \
+    ${REMOTE_USER}@${REMOTE_HOST}:/workspace/results/metrics/ \
     results/metrics/
 
 echo ""
@@ -130,7 +130,8 @@ echo ""
 echo "📊 Evaluation Summary"
 echo "========================================================================"
 
-LATEST_DIR=$(ls -d results/metrics/*/ 2>/dev/null | tail -n 1)
+# ✅ FIX: Use sort to get most recent directory by timestamp
+LATEST_DIR=$(ls -d results/metrics/202*/ 2>/dev/null | sort | tail -n 1)
 
 if [ -d "$LATEST_DIR" ]; then
     if command -v jq >/dev/null 2>&1; then
