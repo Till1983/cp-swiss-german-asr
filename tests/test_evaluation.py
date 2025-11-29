@@ -268,6 +268,77 @@ class TestEdgeCases:
         bleu_result = batch_bleu(references, hypotheses)
         assert len(bleu_result["per_sample_bleu"]) == 3
 
+    def test_batch_metrics_with_empty_strings_mixed(self):
+        """
+        Batch functions should filter out empty references.
+        Empty references are mathematically undefined for WER/CER.
+        """
+        references = ["hello world", "", "test"]
+        hypotheses = ["hello world", "something", "test"]
+        
+        # WER should filter empty references
+        wer_result = batch_wer(references, hypotheses)
+        
+        # Should have 3 per-sample results (including None for empty ref)
+        assert len(wer_result["per_sample_wer"]) == 3
+        
+        # Second sample should be None (filtered)
+        assert wer_result["per_sample_wer"][1] is None
+        
+        # Overall WER calculated only on valid samples (samples 0 and 2)
+        # Both are perfect matches, so WER should be 0.0
+        assert wer_result["overall_wer"] == 0.0
+        
+        # First and third samples should have WER scores
+        assert wer_result["per_sample_wer"][0] == 0.0  # Perfect match
+        assert wer_result["per_sample_wer"][2] == 0.0  # Perfect match
+        
+        # CER should behave the same way
+        cer_result = batch_cer(references, hypotheses)
+        assert len(cer_result["per_sample_cer"]) == 3
+        assert cer_result["per_sample_cer"][1] is None
+        assert cer_result["overall_cer"] == 0.0
+        
+        # BLEU handles empty strings differently (returns 0.0, not None)
+        bleu_result = batch_bleu(references, hypotheses)
+        assert len(bleu_result["per_sample_bleu"]) == 3
+        assert bleu_result["per_sample_bleu"][1] == 0.0  # Empty ref -> 0.0 BLEU
+    
+    def test_batch_metrics_all_empty_references(self):
+        """When all references are empty, should return sensible defaults"""
+        references = ["", "", ""]
+        hypotheses = ["hello", "world", "test"]
+        
+        wer_result = batch_wer(references, hypotheses)
+        assert wer_result["overall_wer"] == 0.0  # No valid samples
+        assert all(x is None for x in wer_result["per_sample_wer"])
+        
+        cer_result = batch_cer(references, hypotheses)
+        assert cer_result["overall_cer"] == 0.0  # No valid samples
+        assert all(x is None for x in cer_result["per_sample_cer"])
+        
+        bleu_result = batch_bleu(references, hypotheses)
+        assert bleu_result["overall_bleu"] == 0.0
+        assert all(x == 0.0 for x in bleu_result["per_sample_bleu"])
+    
+    def test_batch_metrics_no_empty_references(self):
+        """Normal case with no empty references should work as before"""
+        references = ["hello world", "foo bar"]
+        hypotheses = ["hello world", "foo baz"]
+        
+        wer_result = batch_wer(references, hypotheses)
+        
+        # No None values - all valid
+        assert all(x is not None for x in wer_result["per_sample_wer"])
+        assert len(wer_result["per_sample_wer"]) == 2
+        
+        # First sample perfect (0% WER), second has 1 substitution (50% WER)
+        assert wer_result["per_sample_wer"][0] == 0.0
+        assert wer_result["per_sample_wer"][1] == 50.0
+        
+        # Overall WER: 1 error / 4 total words = 25%
+        assert wer_result["overall_wer"] == 25.0
+
 
 class TestNormalizationEdgeCases:
     """Test text normalization edge cases"""
