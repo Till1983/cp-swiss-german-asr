@@ -58,7 +58,7 @@ class ASREvaluator:
     def _get_transcription(self, audio_path: Path) -> str:
         if self.model_type == "whisper":
             audio = whisper.load_audio(str(audio_path))
-            result = self.model.transcribe(audio, language="de")
+            result = self.model.transcribe(audio, language="de", temperature=0.0, beam_size=5, best_of=5, fp16=False if torch.backends.mps.is_available() else True)
             return result['text']
         elif self.model_type == "wav2vec2":
             result = self.model.transcribe(audio_path, language="de")
