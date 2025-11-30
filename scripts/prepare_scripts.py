@@ -11,7 +11,7 @@ from src.data.splitter import create_splits
 
 if __name__ == "__main__":
     # Validate input file exists (use config paths)
-    input_path = FHNW_SWISS_GERMAN_ROOT / "public.tsv"
+    input_path = FHNW_SWISS_GERMAN_ROOT / "all.tsv"
     if not input_path.exists():
         print(f"❌ Error: Input file not found at {input_path}")
         print("Please download the dataset first!")
