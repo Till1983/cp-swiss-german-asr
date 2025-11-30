@@ -57,28 +57,30 @@ class ASREvaluator:
                 raise RuntimeError(f"Failed to load Whisper model: {e}") from e
 
         elif self.model_type == "wav2vec2":
-            print(f"Loading Wav2Vec2 model '{self.model_name}'...")
+            # ✅ FIX: Wav2Vec2Model.__init__() handles all loading
+            # Constructor already prints loading messages - no duplicates needed
             try:
                 self.model = Wav2Vec2Model(
                     model_name=self.model_name,
                     device=self.device,
                     lm_path=self.lm_path
                 )
-                self.model.load_model()
-                print("Model loaded successfully.")
+                # Note: NO self.model.load_model() - method doesn't exist
+                # Model is fully loaded after __init__() completes
             except Exception as e:
                 raise RuntimeError(f"Failed to load Wav2Vec2 model: {e}") from e
 
         elif self.model_type == "mms":
-            print(f"Loading MMS model '{self.model_name}'...")
+            # ✅ FIX: MMSModel.__init__() handles all loading
+            # Constructor already prints loading messages - no duplicates needed
             try:
                 self.model = MMSModel(
                     model_name=self.model_name,
                     device=self.device,
                     lm_path=self.lm_path
                 )
-                self.model.load_model()
-                print("Model loaded successfully.")
+                # Note: NO self.model.load_model() - method doesn't exist
+                # Model is fully loaded after __init__() completes
             except Exception as e:
                 raise RuntimeError(f"Failed to load MMS model: {e}") from e
 
