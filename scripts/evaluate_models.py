@@ -23,7 +23,7 @@ MODEL_REGISTRY = {
     "whisper-medium": {"type": "whisper", "name": "medium"},
     "whisper-large": {"type": "whisper", "name": "large"},
     "whisper-large-v2": {"type": "whisper", "name": "large-v2"},
-    "whisper-large-v3": {"type": "whisper", "name": "large-v3"},  # Current best, pinned version
+    "whisper-large-v3": {"type": "whisper", "name": "large-v3"},  # pinned version: identical to "whisper-large"
     "whisper-large-v3-turbo": {"type": "whisper", "name": "large-v3-turbo"},
     
     # Wav2Vec2 models
