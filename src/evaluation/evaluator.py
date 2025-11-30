@@ -99,7 +99,13 @@ class ASREvaluator:
             )
             return result['text']
         elif self.model_type in ["wav2vec2", "mms"]:
-            return self.model.transcribe(audio_path)
+            # ✅ FIX: Wav2Vec2Model/MMSModel.transcribe() returns Dict[str, str]
+            # Must extract 'text' key to get the actual transcription string
+            result = self.model.transcribe(audio_path)
+            if isinstance(result, dict) and "text" in result:
+                return result["text"]
+            # Fallback for unexpected return type (shouldn't happen)
+            return str(result)
         else:
             raise ValueError(f"Unknown model_type: {self.model_type}")
 
