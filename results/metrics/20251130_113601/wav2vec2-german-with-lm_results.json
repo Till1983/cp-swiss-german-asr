@@ -1,0 +1,116 @@
+{
+  "timestamp": "20251130_120421",
+  "model_name": "wav2vec2-german-with-lm",
+  "experiment_type": null,
+  "results": {
+    "overall_wer": 75.2622020698498,
+    "overall_cer": 31.514516709764003,
+    "overall_bleu": 13.901750437063995,
+    "per_dialect_wer": {
+      "TG": 71.81547896547896,
+      "SH": 65.40750915750915,
+      "ZG": 83.26370851370851,
+      "GR": 63.567821067821065,
+      "GL": 57.77777777777778,
+      "AG": 73.22577371188483,
+      "UR": 84.39427239427239,
+      "BL": 70.75026311137422,
+      "VS": 67.29162993868876,
+      "SZ": 75.56881390214724,
+      "FR": 71.55146440860726,
+      "SG": 72.70980217100907,
+      "SO": 76.11053298553298,
+      "ZH": 69.97236945153612,
+      "LU": 75.03579753579754,
+      "BE": 83.9634106998639,
+      "NW": 50.0
+    },
+    "per_dialect_cer": {
+      "TG": 27.736576683476716,
+      "SH": 26.056338028169012,
+      "ZG": 33.54545454545455,
+      "GR": 27.01525054466231,
+      "GL": 13.695090439276486,
+      "AG": 29.419977154461225,
+      "UR": 37.52535496957404,
+      "BL": 28.736221481671365,
+      "VS": 29.96632996632997,
+      "SZ": 35.687732342007436,
+      "FR": 36.87943262411347,
+      "SG": 30.016354258397282,
+      "SO": 32.650695517774345,
+      "ZH": 28.125899625755686,
+      "LU": 30.79112122936824,
+      "BE": 37.519131765688044,
+      "NW": 15.0
+    },
+    "per_dialect_bleu": {
+      "TG": 15.667078203132382,
+      "SH": 13.193533907642493,
+      "ZG": 12.706980731488303,
+      "GR": 16.655106825135267,
+      "GL": 31.231419941658714,
+      "AG": 14.55842956724091,
+      "UR": 8.49419676571966,
+      "BL": 15.697385210880883,
+      "VS": 14.708244645336368,
+      "SZ": 13.073377815800837,
+      "FR": 10.936030001527243,
+      "SG": 15.052726729010603,
+      "SO": 16.487497865369612,
+      "ZH": 16.6097920427316,
+      "LU": 13.815443671855355,
+      "BE": 9.483551728418501,
+      "NW": 39.76353643835254
+    },
+    "total_samples": 863,
+    "failed_samples": 0,
+    "samples": [
+      {
+        "audio_file": "8370c5fe-754e-4d88-86e8-37d15933334f.flac",
+        "dialect": "BE",
+        "reference": "Damit ergeben sich die Elemente einer Verfassung für eine europäische Föderation der Nationalstaaten.",
+        "hypothesis": "MIT DEM GAB ER SEIN ELEMENT VOR DER VERFASSUNG FÜR EINE EUROPÄISCHE FÖDERATION VOR DER NATIONALSTAATEN",
+        "wer": 76.92307692307693,
+        "cer": 24.752475247524753,
+        "bleu": 26.33201939239633
+      },
+      {
+        "audio_file": "2d85162f-eaa8-4f8d-a7c0-926050f28e18.flac",
+        "dialect": "AG",
+        "reference": "Das könnte Tausenden von Menschen das Leben retten.",
+        "hypothesis": "DAS RÄUMT DIE DUSIGER VON MANCHES LABARETTER",
+        "wer": 87.5,
+        "cer": 49.01960784313725,
+        "bleu": 5.8689248188165335
+      },
+      {
+        "audio_file": "0e43afec-03c5-49de-a163-c5ba8c364482.flac",
+        "dialect": "BE",
+        "reference": "An seiner Spitze steht ein Direktor.",
+        "hypothesis": "AUF IHRER SPITZE STEHT DER DIREKTOR",
+        "wer": 66.66666666666666,
+        "cer": 27.77777777777778,
+        "bleu": 15.207218222740094
+      },
+      {
+        "audio_file": "42ba1159-1c4f-490a-b0c2-965807c800dc.flac",
+        "dialect": "TG",
+        "reference": "Dieses Kräftemessen war eine der Ursachen für die Resignation seines Nachfolgers Burchard.",
+        "hypothesis": "DAS REIFTE MESSE IGENOURSACHXY FÜR RESIGNATION WO IM NACHFOLGER BURCHARD",
+        "wer": 91.66666666666666,
+        "cer": 37.77777777777778,
+        "bleu": 4.091092899898373
+      },
+      {
+        "audio_file": "d3535ea7-e4cc-40b9-8e56-88ce68bdac27.flac",
+        "dialect": "BE",
+        "reference": "Linssen wuchs in Wachtendonk auf.",
+        "hypothesis": "T LESEN ICH IHR WARTEN DONKUFGUARSE",
+        "wer": 120.0,
+        "cer": 57.57575757575758,
+        "bleu": 0.0
+      }
+    ]
+  }
+}
