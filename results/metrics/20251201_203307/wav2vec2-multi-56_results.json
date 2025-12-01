@@ -1,0 +1,116 @@
+{
+  "timestamp": "20251201_205137",
+  "model_name": "wav2vec2-multi-56",
+  "experiment_type": null,
+  "results": {
+    "overall_wer": 84.16113949138284,
+    "overall_cer": 35.488200058917876,
+    "overall_bleu": 6.927158457530573,
+    "per_dialect_wer": {
+      "AG": 80.05201845479623,
+      "TG": 81.92888777888778,
+      "SO": 82.28230103230104,
+      "FR": 85.03698682270111,
+      "ZH": 80.35818541026873,
+      "VS": 84.04982272629331,
+      "LU": 87.02710143886614,
+      "GR": 73.88708513708514,
+      "NW": 100.0,
+      "SH": 71.22252747252747,
+      "SG": 82.46961611185749,
+      "BL": 81.38117540895318,
+      "ZG": 91.20987345987346,
+      "UR": 94.01420801420801,
+      "SZ": 85.43225293225292,
+      "BE": 89.96195922304297,
+      "GL": 80.41666666666667
+    },
+    "per_dialect_cer": {
+      "AG": 33.2402589161061,
+      "TG": 32.30495401957876,
+      "SO": 35.58732612055641,
+      "FR": 39.71631205673759,
+      "ZH": 32.65521543038096,
+      "VS": 34.68013468013468,
+      "LU": 35.173591348890156,
+      "GR": 30.718954248366014,
+      "NW": 17.5,
+      "SH": 30.985915492957744,
+      "SG": 34.079758460183676,
+      "BL": 32.76083055626762,
+      "ZG": 37.18181818181818,
+      "UR": 41.98782961460446,
+      "SZ": 38.47583643122677,
+      "BE": 41.05329066369834,
+      "GL": 19.638242894056848
+    },
+    "per_dialect_bleu": {
+      "AG": 9.067284881665202,
+      "TG": 7.190428545988842,
+      "SO": 8.40112267986671,
+      "FR": 4.683567033881721,
+      "ZH": 8.132880860315577,
+      "VS": 5.6844332786713805,
+      "LU": 7.373748897779906,
+      "GR": 9.643617396356413,
+      "NW": 10.682175159905853,
+      "SH": 8.504047341684512,
+      "SG": 7.397695654338887,
+      "BL": 7.336867167536922,
+      "ZG": 4.076539012449339,
+      "UR": 4.055542911204961,
+      "SZ": 6.178289093160407,
+      "BE": 4.7082311637949745,
+      "GL": 8.507104473998544
+    },
+    "total_samples": 863,
+    "failed_samples": 0,
+    "samples": [
+      {
+        "audio_file": "8370c5fe-754e-4d88-86e8-37d15933334f.flac",
+        "dialect": "BE",
+        "reference": "Damit ergeben sich die Elemente einer Verfassung für eine europäische Föderation der Nationalstaaten.",
+        "hypothesis": "mit dam ergab er echt element vor defürforsic fürne europaischi föderation vor der nationalstaate",
+        "wer": 92.3076923076923,
+        "cer": 38.613861386138616,
+        "bleu": 3.377156414337854
+      },
+      {
+        "audio_file": "2d85162f-eaa8-4f8d-a7c0-926050f28e18.flac",
+        "dialect": "AG",
+        "reference": "Das könnte Tausenden von Menschen das Leben retten.",
+        "hypothesis": "das rännt die dussige für mancheslaberette",
+        "wer": 87.5,
+        "cer": 50.98039215686274,
+        "bleu": 4.923026124015933
+      },
+      {
+        "audio_file": "0e43afec-03c5-49de-a163-c5ba8c364482.flac",
+        "dialect": "BE",
+        "reference": "An seiner Spitze steht ein Direktor.",
+        "hypothesis": "as ire spetze stehte die reaktor",
+        "wer": 100.0,
+        "cer": 36.11111111111111,
+        "bleu": 0.0
+      },
+      {
+        "audio_file": "42ba1159-1c4f-490a-b0c2-965807c800dc.flac",
+        "dialect": "TG",
+        "reference": "Dieses Kräftemessen war eine der Ursachen für die Resignation seines Nachfolgers Burchard.",
+        "hypothesis": "das refte messe igenorsachi für dresignation fo sim nachfolger borrat",
+        "wer": 91.66666666666666,
+        "cer": 42.22222222222222,
+        "bleu": 3.1085583786586426
+      },
+      {
+        "audio_file": "d3535ea7-e4cc-40b9-8e56-88ce68bdac27.flac",
+        "dialect": "BE",
+        "reference": "Linssen wuchs in Wachtendonk auf.",
+        "hypothesis": "tlissen ich iwachtendonk uf guarse",
+        "wer": 100.0,
+        "cer": 45.45454545454545,
+        "bleu": 0.0
+      }
+    ]
+  }
+}
