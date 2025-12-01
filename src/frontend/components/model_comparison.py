@@ -1,23 +1,22 @@
 import pandas as pd
 from typing import Literal
 
-# TODO: Validate these thresholds through systematic experiments
-# These values are provisional and based on initial observations
+
 METRIC_THRESHOLDS = {
     'wer': {
-        'excellent': (0, 15),
-        'good': (15, 30),
-        'poor': (30, float('inf'))
-    },
-    'cer': {
         'excellent': (0, 30),
         'good': (30, 50),
         'poor': (50, float('inf'))
     },
+    'cer': {
+        'excellent': (0, 15),
+        'good': (15, 35),
+        'poor': (35, float('inf'))
+    },
     'bleu': {
-        'excellent': (40, 100),
-        'good': (20, 40),
-        'poor': (0, 20)
+        'excellent': (50, 100),
+        'good': (30, 50),
+        'poor': (0, 30)
     }
 }
 
