@@ -52,12 +52,17 @@ class ErrorAnalyzer:
         
         # out.alignments is a list of lists of AlignmentChunk. 
         # Since we process one sentence pair, we take the first list.
+        # out.references and out.hypotheses are also lists of lists (one per sentence)
+        ref_words_list = out.references[0]
+        hyp_words_list = out.hypotheses[0]
+        
         for chunk in out.alignments[0]:
             type_ = chunk.type
             
             # Get the words corresponding to this chunk
-            ref_words = out.references[chunk.ref_start : chunk.ref_end]
-            hyp_words = out.hypotheses[chunk.hyp_start : chunk.hyp_end]
+            # AlignmentChunk uses ref_start_idx/ref_end_idx and hyp_start_idx/hyp_end_idx
+            ref_words = ref_words_list[chunk.ref_start_idx : chunk.ref_end_idx]
+            hyp_words = hyp_words_list[chunk.hyp_start_idx : chunk.hyp_end_idx]
             
             if type_ == 'equal':
                 for r, h in zip(ref_words, hyp_words):
