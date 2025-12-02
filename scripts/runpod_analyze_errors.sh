@@ -59,6 +59,9 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} bash << 'ENDSSH'
     export LC_ALL=en_US.UTF-8
     
     cd /workspace/cp-swiss-german-asr
+
+    echo "📦 Installing requirements (no-cache)..."
+    pip install --no-cache-dir -r requirements_blackwell.txt --break-system-packages
     
     # Define paths
     RESULTS_DIR="/workspace/results"
