@@ -1,102 +1,65 @@
 # Error Analysis Configuration
-# This file controls parameters for post-training analysis scripts.
-# Paths are generally relative to RESULTS_DIR defined in src/config.py unless absolute.
+# Controls parameters for scripts/analyze_errors.py
 
 # ============================================================================
-# INPUT SELECTION
+# INPUT/OUTPUT PATHS
 # ============================================================================
-inputs:
-  # List of specific run directories to analyze.
-  # These should contain 'predictions.json' or similar output files.
-  # Example: ["logs/german_adaptation/run-20231027", "logs/swiss_german_finetuning/run-20231028"]
-  # If empty, the analysis script may default to the most recent run in RESULTS_DIR.
-  target_runs: []
-
-  # File naming convention for predictions within the run directories
-  predictions_filename: "predictions.json"
+paths:
+  # Input directory containing *_results.json files
+  # Relative to RESULTS_DIR or absolute path
+  input_dir: "metrics"
+  
+  # Output directory for analysis results
+  # Relative to RESULTS_DIR or absolute path
+  output_dir: "analysis"
 
 # ============================================================================
 # SAMPLING STRATEGY
 # ============================================================================
-# Defines how to select specific samples for qualitative review (e.g., "worst offenders")
 sampling:
-  # Metric to sort by: 'wer' (Word Error Rate) or 'cer' (Character Error Rate)
-  metric: "wer"
-
-  # Selection strategy:
-  # - 'top_n': Select exactly N worst samples
-  # - 'threshold': Select all samples with error rate > threshold
-  # - 'percentage': Select top X% worst samples
-  strategy: "top_n"
-
-  # Parameters for strategies
-  top_n_count: 50         # Used for 'top_n'
-  threshold_value: 0.25   # Used for 'threshold' (e.g., > 25% WER)
-  percentage: 0.10        # Used for 'percentage' (e.g., top 10%)
-
-  # Filters to exclude noise
-  filters:
-    min_duration_seconds: 1.0   # Ignore very short segments (often high variance)
-    max_duration_seconds: 30.0  # Ignore very long segments
-    exclude_empty_refs: true    # Ignore samples where ground truth was empty
+  # Top N% of worst-performing samples to extract for analysis
+  # 0.10 = top 10%, 0.05 = top 5%
+  top_percent: 0.10
+  
+  # Alternative: Use absolute WER threshold instead of percentile
+  # If set, overrides top_percent
+  # absolute_threshold: 60.0  # Only samples with WER > 60%
 
 # ============================================================================
-# DIALECT HANDLING
+# ANALYSIS OPTIONS
 # ============================================================================
-# Configuration for grouping and analyzing dialect-specific performance
-dialects:
-  # Metadata column name representing the dialect/region
-  column_name: "dialect"
-
-  # Minimum samples required to treat a dialect as a distinct category in plots.
-  # Dialects with fewer samples will be grouped into "Other" or "Rare".
-  min_samples_threshold: 50
-
-  # Custom grouping map (optional).
-  # Useful for aggregating specific sub-dialects into broader regions.
-  # Format: { "SpecificLabel": "BroadGroup" }
-  grouping_map:
-    "Bern_Old": "Bern"
-    "Zurich_City": "Zurich"
-
-# ============================================================================
-# ANALYSIS MODULES
-# ============================================================================
-# Toggle specific types of analysis to run
-analysis_types:
-  # Calculate aggregate WER/CER
-  compute_metrics: true
-
-  # Breakdown metrics by dialect/region
+analysis:
+  # Calculate per-dialect statistics and confusion patterns
   dialect_breakdown: true
-
-  # Analyze error types (Substitutions vs Insertions vs Deletions)
+  
+  # Generate error type distributions (substitution/deletion/insertion rates)
   error_distribution: true
-
-  # Generate confusion matrix (character-level) to spot phonetic systematic errors
-  confusion_matrix: 
-    enabled: true
-    top_k: 20  # Number of most frequent confusions to display
-
-  # Analyze correlation between audio length and error rate
-  length_correlation: true
+  
+  # Find top N most common confusion pairs per dialect
+  top_confusion_pairs: 10
 
 # ============================================================================
-# OUTPUT CONFIGURATION
+# OUTPUT FORMATS
 # ============================================================================
 output:
-  # Subdirectory inside RESULTS_DIR/analysis/ where reports are saved
-  # Final path structure: RESULTS_DIR/analysis/{base_dir}/{run_name}_{timestamp}/
-  base_dir: "error_reports"
+  # Save detailed JSON analysis (hierarchical structure)
+  save_json: true
+  
+  # Save worst samples as CSV for quick inspection
+  save_csv: true
+  
+  # Generate model comparison summary
+  comparison_summary: true
 
-  # Data export formats
-  save_csv: true        # Save filtered/analyzed dataframes
-  save_json: true       # Save summary metrics
-  save_html: true       # Generate a readable HTML report
-
-  # Visualization settings
-  plots:
-    enabled: true
-    format: "png"       # 'png', 'svg', or 'pdf'
-    dpi: 300
-    style: "seaborn-v0_8"
+# ============================================================================
+# LOGGING
+# ============================================================================
+logging:
+  # Logging level: DEBUG, INFO, WARNING, ERROR
+  level: "INFO"
+  
+  # Log to file in addition to console
+  log_to_file: false
+  
+  # If log_to_file=true, specify filename
+  log_filename: "error_analysis.log"
