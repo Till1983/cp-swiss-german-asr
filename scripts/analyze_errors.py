@@ -20,7 +20,11 @@ except ImportError:
 # Try to import jiwer to check version
 try:
     import jiwer
-    JIWER_VERSION = jiwer.__version__
+    try:
+        from importlib.metadata import version
+        JIWER_VERSION = version('jiwer')
+    except Exception:
+        JIWER_VERSION = "unknown"
 except ImportError:
     JIWER_VERSION = "unknown"
 
@@ -83,7 +87,11 @@ def analyze_single_result(
         data = json.load(f)
     
     model_name = data.get('model_name', 'unknown')
-    samples = data.get('samples', [])
+    
+    # Handle both nested (results.samples) and flat (samples) structures
+    results_obj = data.get('results', {})
+    samples = results_obj.get('samples', data.get('samples', []))
+    
     total_samples = len(samples)
     
     if not samples:
