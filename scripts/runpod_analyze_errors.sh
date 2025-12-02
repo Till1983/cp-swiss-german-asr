@@ -57,7 +57,8 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} bash << 'ENDSSH'
     set -e
     export LANG=en_US.UTF-8
     export LC_ALL=en_US.UTF-8
-    
+    export ENVIRONMENT=runpod
+
     cd /workspace/cp-swiss-german-asr
 
     echo "📦 Installing requirements (no-cache)..."
