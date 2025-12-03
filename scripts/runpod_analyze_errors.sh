@@ -118,6 +118,12 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} bash << 'ENDSSH'
     # Verify Python
     PYTHON_VER=$(python --version 2>&1)
     log_message "Python Environment: ${PYTHON_VER}"
+
+    # Check src/ directory
+    if [ ! -d "src" ]; then
+       log_message "${RED}[CRITICAL ERROR] src/ directory not found.${NC}"
+       exit 1
+    fi
     
     # Check script existence
     if [ ! -f "scripts/analyze_errors.py" ]; then
@@ -155,6 +161,9 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} bash << 'ENDSSH'
         done
     ) &
     KEEPALIVE_PID=$!
+
+    # Set PYTHONPATH
+    export PYTHONPATH="/workspace/cp-swiss-german-asr:${PYTHONPATH}"
     
     # Run the python script
     set +e # Temporarily disable exit-on-error to capture python failure
