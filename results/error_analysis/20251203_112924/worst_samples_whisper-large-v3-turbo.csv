@@ -1,0 +1,259 @@
+dialect,wer,cer,reference,hypothesis,substitutions,deletions,insertions,alignment_viz
+SO,200.0,77.27272727272727,Allerdings sind diese Ergebnisse umstritten.," Man muss aber auch sagen, dass die Ergebnisse sehr umstritten sind.",4,0,6,"REF:  ***  ****  ****  ****  allerdings  sind  diese  ergebnisse  ****  **********  umstritten.
+HYP:  man  muss  aber  auch  sagen,      dass  die    ergebnisse  sehr  umstritten  sind.      
+TYPE: I    I     I     I     S           S     S      C           I     I           S          "
+BE,146.15384615384613,87.35632183908046,Trencavel seiner Besitzungen für verlustig erklärt und begab sich ins Exil nach Aragon.," Es wurde erklärt, dass das, was Rengabel gehört hat, er verloren hat und dann hat er sich in 6.7 nach Aragon begeben.",10,0,9,"REF:  **  *****  ********  ****  ****  ***  trencavel  seiner  besitzungen  für  verlustig  erklärt  und  ****  ***  begab  sich  ins  exil  nach  ******  aragon. 
+HYP:  es  wurde  erklärt,  dass  das,  was  rengabel   gehört  hat,         er   verloren   hat      und  dann  hat  er     sich  in   6.7   nach  aragon  begeben.
+TYPE: I   I      I         I     I     I    S          S       S            S    S          S        C    I     I    S      C     S    S     C     I       S       "
+UR,133.33333333333331,31.57894736842105,Wohin führt dieser?, Wo hi fährt der?,3,0,1,"REF:  **  wohin  führt  dieser?
+HYP:  wo  hi     fährt  der?   
+TYPE: I   S      S      S      "
+SZ,125.0,57.14285714285714,Aber woran liegt das?, A prvo roll ist das.,4,0,1,"REF:  *  aber  woran  liegt  das?
+HYP:  a  prvo  roll   ist    das.
+TYPE: I  S     S      S      S   "
+SG,114.28571428571428,43.13725490196079,Aber auch auf diesem herrschten unsaubere Zustände., Aber auch auf dem haben wir uns aber die Zustände erst.,4,0,4,"REF:  aber  auch  auf  ***  *****  ***  ***  diesem  herrschten  unsaubere  zustände.
+HYP:  aber  auch  auf  dem  haben  wir  uns  aber    die         zustände   erst.    
+TYPE: C     C     C    I    I      I    I    S       S           S          S        "
+ZG,107.14285714285714,76.47058823529412,Trotz dieses Wachstums verlor der Ort seine Selbstständigkeit durch die Eingemeindung nach Den Helder., Durch die Eingemeindung nach den Heldern hat der Ort trotz dem Wachstum seine Selbstständigkeit verloren.,10,2,3,"REF:  *****  ***  *************  trotz  dieses  wachstums  verlor  der  ort  seine  selbstständigkeit  durch     die    eingemeindung      nach       den  helder.
+HYP:  durch  die  eingemeindung  nach   den     heldern    hat     der  ort  trotz  dem                wachstum  seine  selbstständigkeit  verloren.  ***  *******
+TYPE: I      I    I              S      S       S          S       C    C    S      S                  S         S      S                  S          D    D      "
+BE,100.0,66.66666666666666,Linssen wuchs in Wachtendonk auf., Die Lissin ist in Wartendonk aufgewachsen.,4,0,1,"REF:  ***  linssen  wuchs  in  wachtendonk  auf.         
+HYP:  die  lissin   ist    in  wartendonk   aufgewachsen.
+TYPE: I    S        S      C   S            S            "
+UR,100.0,54.54545454545454,Tötet nicht den Boten., Du hättest nicht da bulte.,3,0,1,"REF:  **  tötet    nicht  den  boten.
+HYP:  du  hättest  nicht  da   bulte.
+TYPE: I   S        C      S    S     "
+BE,100.0,22.058823529411764,"Der Ort ist Sitz des Bistums Ventimiglia-Sanremo, Seebad und Kurort."," Da hat ich Sitz vom Bistum Ventimilia San Remo, Selbad und Kuroort.",8,0,2,"REF:  der  ort  ist  sitz  ***  ******  des         bistums  ventimiglia-sanremo,  seebad  und  kurort. 
+HYP:  da   hat  ich  sitz  vom  bistum  ventimilia  san      remo,                 selbad  und  kuroort.
+TYPE: S    S    S    C     I    I       S           S        S                     S       C    S       "
+BL,100.0,63.63636363636363,Späth Orgelbau erbaut., Spread all about.,3,0,0,"REF:  späth   orgelbau  erbaut.
+HYP:  spread  all       about. 
+TYPE: S       S         S      "
+AG,100.0,66.66666666666666,Isotope waren damals noch unbekannt., Isotoppe sind schon damals bekannt gewesen.,4,0,1,"REF:  ********  isotope  waren  damals  noch     unbekannt.
+HYP:  isotoppe  sind     schon  damals  bekannt  gewesen.  
+TYPE: I         S        S      C       S        S         "
+ZH,100.0,68.96551724137932,Im Norden liegt die Bandasee., Der Bandasee ist im Norden.,5,0,0,"REF:  im   norden    liegt  die  bandasee.
+HYP:  der  bandasee  ist    im   norden.  
+TYPE: S    S         S      S    S        "
+SG,100.0,58.82352941176471,"Dies war nicht der Fall für die Kontrollgruppen, die keine Fehlinformation erhielten."," Das war für diese Kontrollgruppen, die keine Fehlinformationen bekommen haben, nicht der Fall war.",4,3,5,"REF:  dies  war  nicht  der  fall  für  die    kontrollgruppen,  die  keine  *****************  ********  ******  *****  ***  fehlinformation  erhielten.
+HYP:  das   war  *****  ***  ****  für  diese  kontrollgruppen,  die  keine  fehlinformationen  bekommen  haben,  nicht  der  fall             war.      
+TYPE: S     C    D      D    D     C    S      C                 C    C      I                  I         I       I      I    S                S         "
+BE,100.0,36.36363636363637,Zu Bioley-Magnoux gehören einige Einzelhöfe., Zu Biore Manu gehören einige ihnen zu helfen.,2,0,3,"REF:  zu  *****  bioley-magnoux  gehören  einige  *****  **  einzelhöfe.
+HYP:  zu  biore  manu            gehören  einige  ihnen  zu  helfen.    
+TYPE: C   I      S               C        C       I      I   S          "
+BE,100.0,70.96774193548387,"Mensch, schön habt ihr es hier!", Kopfheit ist schön hier.,2,3,1,"REF:  ********  mensch,  schön  habt   ihr  es  hier!
+HYP:  kopfheit  ist      schön  hier.  ***  **  *****
+TYPE: I         S        C      S      D    D   D    "
+LU,100.0,65.625,Heute reicht das nicht mehr aus., Hut Langetasnummer,2,4,0,"REF:  heute  reicht          das  nicht  mehr  aus.
+HYP:  hut    langetasnummer  ***  *****  ****  ****
+TYPE: S      S               D    D      D     D   "
+SG,100.0,65.21739130434783,"Also, das gab es schon.", Also da hätte es schon gegeben.,4,0,1,"REF:  also,  das  gab    es  *****  schon.  
+HYP:  also   da   hätte  es  schon  gegeben.
+TYPE: S      S    S      C   I      S       "
+AG,100.0,38.095238095238095,Lebensjahr vollendet., Das Lebensjahr ist vollendet.,0,0,2,"REF:  ***  lebensjahr  ***  vollendet.
+HYP:  das  lebensjahr  ist  vollendet.
+TYPE: I    C           I    C         "
+SO,100.0,54.09836065573771,Warum aber sagen wir das dann nicht in unserer Entschließung?," Warum sagen wir so etwas nicht, wenn wir uns so etwas entschliessen?",6,1,3,"REF:  warum  aber  sagen  wir  **  *****  ******  das   dann  nicht  in  unserer  entschließung?
+HYP:  warum  ****  sagen  wir  so  etwas  nicht,  wenn  wir   uns    so  etwas    entschliessen?
+TYPE: C      D     C      C    I   I      I       S     S     S      S   S        S             "
+BE,100.0,54.385964912280706,Fortan verdiente er seinen Lebensunterhalt als Busfahrer., Ab dann hat er die Lebenshungerhaut als Bössfahrer verdient.,5,0,2,"REF:  **  fortan  verdiente  er  seinen  lebensunterhalt   als  **********  busfahrer.
+HYP:  ab  dann    hat        er  die     lebenshungerhaut  als  bössfahrer  verdient. 
+TYPE: I   S       S          C   S       S                 C    I           S         "
+UR,91.66666666666666,22.330097087378643,Dieser geringere Zusammenhang gegenüber eineiigen Zwillingen deutet auf einen genetischen Einfluss hin., Die geringe Zusammenhänge gegen über die Zwillinge teilt auf eine genetische Einfluss ein.,10,0,1,"REF:  ***  dieser   geringere      zusammenhang  gegenüber  eineiigen  zwillingen  deutet  auf  einen  genetischen  einfluss  hin.
+HYP:  die  geringe  zusammenhänge  gegen         über       die        zwillinge   teilt   auf  eine   genetische   einfluss  ein.
+TYPE: I    S        S              S             S          S          S           S       C    S      S            C         S   "
+BE,90.9090909090909,43.67816091954023,"Nina Jäckle verfasste bislang Hörspiele, Theaterstücke, Drehbücher und vor allem Prosa."," Nina Jäckle hat Besitz vor allem Hörspiele, Theaterstücke und Reibücher, aber vor allem Prosa geschrieben.",6,0,4,"REF:  nina  jäckle  ***  ******  verfasste  bislang  hörspiele,  *************  theaterstücke,  drehbücher  und   vor  allem  *****  prosa.      
+HYP:  nina  jäckle  hat  besitz  vor        allem    hörspiele,  theaterstücke  und             reibücher,  aber  vor  allem  prosa  geschrieben.
+TYPE: C     C       I    I       S          S        C           I              S               S           S     C    C      I      S           "
+BE,90.9090909090909,70.29702970297029,"Außerdem studierte er an der Wiener Universität Philosophie, Kunstgeschichte und Literaturgeschichte."," Ausserdem hat er Philosophie, Kunstgeschichte und Literaturgeschichte an der Wiener Universität studiert.",3,3,4,"REF:  außerdem   studierte  er  ************  ***************  ***  *******************  an  der  wiener  universität  philosophie,  kunstgeschichte  und  literaturgeschichte.
+HYP:  ausserdem  hat        er  philosophie,  kunstgeschichte  und  literaturgeschichte  an  der  wiener  universität  studiert.     ***************  ***  ********************
+TYPE: S          S          C   I             I                I    I                    C   C    C       C            S             D                D    D                   "
+BE,88.88888888888889,50.0,Der Rat hat die Reden Muammar Gadaffis nicht besprochen., Die Rede von Muammar Gaddafi hat der Rat nicht besprochen.,7,0,1,"REF:  ***  der   rat  hat      die      reden  muammar  gadaffis  nicht  besprochen.
+HYP:  die  rede  von  muammar  gaddafi  hat    der      rat       nicht  besprochen.
+TYPE: I    S     S    S        S        S      S        S         C      C          "
+BE,87.5,56.36363636363636,"Als dieser starb, übernahm Jacopo Capece dessen Stelle."," Als derjenige starb, hat er Jacopo Capecce seine Stelle übernommen.",5,0,2,"REF:  als  dieser     starb,  ***  übernahm  jacopo  *******  capece  dessen  stelle.    
+HYP:  als  derjenige  starb,  hat  er        jacopo  capecce  seine   stelle  übernommen.
+TYPE: C    S          C       I    S         C       I        S       S       S          "
+ZH,87.5,49.09090909090909,Dadurch verformt sich das zu bearbeitende Blech zurück.," Durch das verformt sich das Blech, das man bearbeiten muss, zurück.",4,0,3,"REF:  *****  dadurch  verformt  sich  das  ******  ***  zu   bearbeitende  blech  zurück.
+HYP:  durch  das      verformt  sich  das  blech,  das  man  bearbeiten    muss,  zurück.
+TYPE: I      S        C         C     C    I       I    S    S             S      C      "
+TG,87.5,61.702127659574465,Kanonen besaß zwei Züge mit jeweils vier Wagen., Die Kanone hat jeweils zwei Züge mit vier Wagen besessen.,5,0,2,"REF:  ***  ******  kanonen  besaß    zwei  züge  mit  jeweils  vier   wagen.   
+HYP:  die  kanone  hat      jeweils  zwei  züge  mit  vier     wagen  besessen.
+TYPE: I    I       S        S        C     C     C    S        S      S        "
+BE,87.5,40.38461538461539,Alle Daten und Fakten siehe unter Weinbaugebiet Ahr., Für alle Daten und Fakten schauen wir uns das Einbaugebiet an.,4,0,3,"REF:  ***  alle  daten  und  fakten  *******  ***  siehe  unter  weinbaugebiet  ahr.
+HYP:  für  alle  daten  und  fakten  schauen  wir  uns    das    einbaugebiet   an. 
+TYPE: I    C     C      C    C       I        I    S      S      S              S   "
+SZ,85.71428571428571,32.35294117647059,"Auch das zweite Album ""Is It Safe?", Aus zweiter Album ist es safe.,5,1,0,"REF:  auch  das      zweite  album  ""is  it  safe?
+HYP:  aus   zweiter  ******  album  ist  es  safe.
+TYPE: S     S        D       C      S    S   S    "
+SO,85.71428571428571,42.857142857142854,Auch zu sehen ist eine große Briefmarkensammlung., Man sieht auch eine sehr grosse Briefmarkensammlung.,6,0,0,"REF:  auch  zu     sehen  ist   eine  große   briefmarkensammlung.
+HYP:  man   sieht  auch   eine  sehr  grosse  briefmarkensammlung.
+TYPE: S     S      S      S     S     S       C                   "
+ZH,83.33333333333334,23.809523809523807,Landsberg-Velen war promovierter Jurist und Rittergutsbesitzer., Der Landsberg Wehlen war ein promovierter Jurist und ein Rittergutsbesitzer.,1,0,4,"REF:  ***  *********  landsberg-velen  war  ***  promovierter  jurist  und  ***  rittergutsbesitzer.
+HYP:  der  landsberg  wehlen           war  ein  promovierter  jurist  und  ein  rittergutsbesitzer.
+TYPE: I    I          S                C    I    C             C       C    I    C                  "
+ZG,83.33333333333334,22.058823529411764,Dort gehörte er zur ursprünglichen Macintosh-Entwicklungsmannschaft., Dort hat er zu der ursprünglichen Macintosh-Entwicklungsmannschaft gehört.,3,0,2,"REF:  dort  gehörte  er  **  zur  ursprünglichen  ********************************  macintosh-entwicklungsmannschaft.
+HYP:  dort  hat      er  zu  der  ursprünglichen  macintosh-entwicklungsmannschaft  gehört.                          
+TYPE: C     S        C   I   S    C               I                                 S                                "
+BE,83.33333333333334,40.845070422535215,"Earl of Arundel, der zu den vierzig Märtyrern Englands und Wales zählt."," Earl of Rundle, da zu den 40 wenigen Märtyrer Englern, som du weiss, zauwt.",8,0,2,"REF:  earl  of  arundel,  der  zu  den  **  *******  vierzig   märtyrern  englands  und  wales   zählt.
+HYP:  earl  of  rundle,   da   zu  den  40  wenigen  märtyrer  englern,   som       du   weiss,  zauwt.
+TYPE: C     C   S         S    C   C    I   I        S         S          S         S    S       S     "
+LU,81.81818181818183,25.0,Auf unseren Donnerstagssitzungen in Straßburg erörtern wir Menschenrechtsverletzungen in aller Welt., Aus unserer Donnerstagssitzung in Strassburg haben wir die Menschenrechtsverletzungen in alle welt eutredd.,7,0,2,"REF:  auf  unseren  donnerstagssitzungen  in  straßburg   erörtern  wir  ***  menschenrechtsverletzungen  in  ****  aller  welt.   
+HYP:  aus  unserer  donnerstagssitzung    in  strassburg  haben     wir  die  menschenrechtsverletzungen  in  alle  welt   eutredd.
+TYPE: S    S        S                     C   S           S         C    I    C                           C   I     S      S       "
+BE,80.0,44.0,Es liegt im flachen Land., zurück dein frachen Land.,3,1,0,"REF:  es      liegt  im       flachen  land.
+HYP:  zurück  dein   frachen  *******  land.
+TYPE: S       S      S        D        C    "
+BE,78.57142857142857,29.7029702970297,Auch in der Auseinandersetzung um Johannes Chrysostomos folgte Honorius eher ihrem als Stilichos Rat., Auch in der Auseinandersetzung um Johannes Chrysostomos ist der Honorios ein der Ehren als dem Stilikos im Rat gefolgt.,6,0,5,"REF:  auch  in  der  auseinandersetzung  um  johannes  chrysostomos  ***  ***  folgte    honorius  eher  ihrem  als  ***  ********  **  stilichos  rat.    
+HYP:  auch  in  der  auseinandersetzung  um  johannes  chrysostomos  ist  der  honorios  ein       der   ehren  als  dem  stilikos  im  rat        gefolgt.
+TYPE: C     C   C    C                   C   C         C             I    I    S         S         S     S      C    I    I         I   S          S       "
+ZH,77.77777777777779,33.33333333333333,Erst danach unterzieht er Heidegger einer „ausführlichen philosophischen Kritik“., Erst danach hat Heidegger eine ausführliche philosophische Kritik unterzogen.,7,0,0,"REF:  erst  danach  unterzieht  er         heidegger  einer         „ausführlichen  philosophischen  kritik“.   
+HYP:  erst  danach  hat         heidegger  eine       ausführliche  philosophische  kritik           unterzogen.
+TYPE: C     C       S           S          S          S             S               S                S          "
+ZH,77.77777777777779,46.15384615384615,Blattl legte gegen den Bußgeldbescheid jedoch keine Berufung ein., Der Plattl hat jedoch gegen den Bussgelbescheid keine Berufung eingelegt.,4,1,2,"REF:  ***  ******  blattl  legte   gegen  den  bußgeldbescheid  jedoch  keine  berufung  ein.      
+HYP:  der  plattl  hat     jedoch  gegen  den  bussgelbescheid  ******  keine  berufung  eingelegt.
+TYPE: I    I       S       S       C      C    S                D       C      C         S         "
+BL,76.92307692307693,36.58536585365854,Angeblich liegen der Nerv fürs Sehen und der für den Niesreiz dicht nebeneinander., Angehend liegen die Nerven für sie und Denise reisst sie direkt nebeneinander.,9,1,0,"REF:  angeblich  liegen  der  nerv    fürs  sehen  und  der     für     den  niesreiz  dicht  nebeneinander.
+HYP:  angehend   liegen  die  nerven  für   sie    und  denise  reisst  sie  direkt    *****  nebeneinander.
+TYPE: S          C       S    S       S     S      C    S       S       S    S         D      C             "
+ZH,75.0,54.794520547945204,Dave erschießt Baby Face und erhält von der Polizei eine große Belohnung., Dave hat das Babyface verschossen und kommt darum von der Polizei eine grosse Belohnung über.,6,0,3,"REF:  dave  ***  erschießt  baby      face         und  *****  erhält  von  der  polizei  eine  ******  große      belohnung.
+HYP:  dave  hat  das        babyface  verschossen  und  kommt  darum   von  der  polizei  eine  grosse  belohnung  über.     
+TYPE: C     I    S          S         S            C    I      S       C    C    C        C     I       S          S         "
+TG,75.0,40.38461538461539,Ich bin noch mit drei weiteren Dingen einverstanden., Mit nur drei weiteren Dingen bin ich einverstanden.,2,2,2,"REF:  ich  bin  noch  mit  drei  weiteren  dingen  ***  ***  einverstanden.
+HYP:  mit  nur  ****  ***  drei  weiteren  dingen  bin  ich  einverstanden.
+TYPE: S    S    D     D    C     C         C       I    I    C             "
+BE,75.0,42.69662921348314,Daran wird sich auch mit der Annahme einiger Änderungsanträge nichts Wesentliches ändern., Auch mit der Annahme von einigen Änderungsanträgen wird sich nichts Wesentliches daran ändern.,2,3,4,"REF:  daran  wird  sich  auch  mit  der  annahme  ***  *******  *****************  einiger  änderungsanträge  nichts  wesentliches  *****  ändern.
+HYP:  *****  ****  ****  auch  mit  der  annahme  von  einigen  änderungsanträgen  wird     sich              nichts  wesentliches  daran  ändern.
+TYPE: D      D     D     C     C    C    C        I    I        I                  S        S                 C       C             I      C      "
+AG,75.0,20.0,Man sollte ein paar Deutschlehrer zum Korrekturlesen rekrutieren.," Wir sollten ein paar Deutsch lernen, um Korrekturlesen zu rekrutieren.",4,0,2,"REF:  man  sollte   ein  paar  *******  deutschlehrer  zum  korrekturlesen  **  rekrutieren.
+HYP:  wir  sollten  ein  paar  deutsch  lernen,        um   korrekturlesen  zu  rekrutieren.
+TYPE: S    S        C    C     I        S              S    C               I   C           "
+SG,75.0,45.33333333333333,Bei der Aktion wird sowohl Marvin getötet als auch die Tankstelle zerstört., Bei dieser Aktion ist Marvin ums Leben gekommen und auch die Tankstelle zerstört worden.,7,0,2,"REF:  bei  der     aktion  ***  wird    sowohl  marvin  getötet   als  auch  die  tankstelle  ********  zerstört.
+HYP:  bei  dieser  aktion  ist  marvin  ums     leben   gekommen  und  auch  die  tankstelle  zerstört  worden.  
+TYPE: C    S       C       I    S       S       S       S         S    C     C    C           I         S        "
+BE,75.0,77.5,Er unterschrieb einen Dreijahresvertrag., Er hat einen 3-Jahres-Vertrag unterschrieben.,2,0,1,"REF:  er  unterschrieb  einen  ****************  dreijahresvertrag.
+HYP:  er  hat           einen  3-jahres-vertrag  unterschrieben.   
+TYPE: C   S             C      I                 S                 "
+SG,75.0,36.666666666666664,Cassie erschien auf der Nicki Minaj-Version als Feature-Act., Cassie ist auf der Nicki Minaj Version als Future Act erschienen.,3,0,3,"REF:  cassie  erschien  auf  der  nicki  *****  minaj-version  als  ******  ***  feature-act.
+HYP:  cassie  ist       auf  der  nicki  minaj  version        als  future  act  erschienen. 
+TYPE: C       S         C    C    C      I      S              C    I       I    S           "
+SG,75.0,16.129032258064516,Eine betrifft die Außenpolitik., Einer betrifft den Aussenpolitik.,3,0,0,"REF:  eine   betrifft  die  außenpolitik. 
+HYP:  einer  betrifft  den  aussenpolitik.
+TYPE: S      C         S    S             "
+ZG,75.0,52.307692307692314,Seitdem absolvierte das Atom-U-Boot bis heute mehrere Testreihen., Seitdem hat das Atomaubaut mehrere Testreihen absolviert.,5,1,0,"REF:  seitdem  absolvierte  das  atom-u-boot  bis      heute       mehrere      testreihen.
+HYP:  seitdem  hat          das  atomaubaut   mehrere  testreihen  absolviert.  ***********
+TYPE: C        S            C    S            S        S           S            D          "
+AG,72.72727272727273,34.285714285714285,Sie ist benannt nach den Städten Alexandria in Virginia und Louisiana., Sie wurde nach der Städte Alexandria und Virginia in Louisiana benannt.,6,1,1,"REF:  sie  ist    benannt  nach  den  städten  alexandria  in   virginia  **  und        louisiana.
+HYP:  sie  wurde  *******  nach  der  städte   alexandria  und  virginia  in  louisiana  benannt.  
+TYPE: C    S      D        C     S    S        C           S    C         I   S          S         "
+SG,72.72727272727273,45.55555555555556,Nicht-ordensgebundene Männer und Frauen stellen heute die Mehrheit unter den Studierenden.," Männer und Frauen, die nicht an Orten gebunden sind, stellen heute die Mehrheit unter den Studierenden.",1,1,6,"REF:  nicht-ordensgebundene  männer  und  *******  ***  *****  **  *****  ********  frauen  stellen  heute  die  mehrheit  unter  den  studierenden.
+HYP:  *********************  männer  und  frauen,  die  nicht  an  orten  gebunden  sind,   stellen  heute  die  mehrheit  unter  den  studierenden.
+TYPE: D                      C       C    I        I    I      I   I      I         S       C        C      C    C         C      C    C            "
+BE,72.72727272727273,32.857142857142854,"Anfangs wurde unter anderem behauptet, sie sei negativ für die Umwelt."," Am Anfang ist es unter anderem behauptet worden, sie wäre negativ für die Umbaut.",5,0,3,"REF:  **  ******  anfangs  wurde  unter  anderem  *********  behauptet,  sie  sei   negativ  für  die  umwelt.
+HYP:  am  anfang  ist      es     unter  anderem  behauptet  worden,     sie  wäre  negativ  für  die  umbaut.
+TYPE: I   I       S        S      C      C        I          S           C    S     C        C    C    S      "
+BE,72.72727272727273,23.076923076923077,Dieser kann über einen stählernen Steg und ebensolche Treppen erreicht werden., Da kann über eine Stelle eine Stege oder eben solche Treppen erreicht werden.,6,0,2,"REF:  dieser  kann  über  ****  ******  einen  stählernen  steg  und   ebensolche  treppen  erreicht  werden.
+HYP:  da      kann  über  eine  stelle  eine   stege       oder  eben  solche      treppen  erreicht  werden.
+TYPE: S       C     C     I     I       S      S           S     S     S           C        C         C      "
+BE,72.72727272727273,30.58823529411765,Die Darstellung der Erde in Kugelform begründete keine grundsätzliche neue Weltsicht., Die Darstellung der Erde in Kugelform hat nicht auf einer grundsätzlich neuen Weltsicht begründet.,5,0,3,"REF:  die  darstellung  der  erde  in  kugelform  ***  *****  ***  begründete  keine          grundsätzliche  neue       weltsicht.
+HYP:  die  darstellung  der  erde  in  kugelform  hat  nicht  auf  einer       grundsätzlich  neuen           weltsicht  begründet.
+TYPE: C    C            C    C     C   C          I    I      I    S           S              S               S          S         "
+AG,71.42857142857143,63.888888888888886,Etappe trat er danach nicht mehr an., Die Etappe ist nachher nicht mehr angetreten.,3,1,1,"REF:  ***  etappe  trat  er       danach  nicht  mehr  an.        
+HYP:  die  etappe  ist   nachher  ******  nicht  mehr  angetreten.
+TYPE: I    C       S     S        D       C      C     S          "
+SG,71.42857142857143,28.888888888888886,Moore verliebt sich in Normans Tochter Cindy., Der Moor verliebt sich in Norma und seine Tochter Cindy.,2,0,3,"REF:  ***  moore  verliebt  sich  in  *****  ***  normans  tochter  cindy.
+HYP:  der  moor   verliebt  sich  in  norma  und  seine    tochter  cindy.
+TYPE: I    S      C         C     C   I      I    S        C        C     "
+BE,71.42857142857143,61.36363636363637,Der November wurde dadurch zum elften Monat., Durch das wurde der November zum 11. Monat.,4,0,1,"REF:  der    november  wurde  ***  dadurch   zum  elften  monat.
+HYP:  durch  das       wurde  der  november  zum  11.     monat.
+TYPE: S      S         C      I    S         C    S       C     "
+ZH,71.42857142857143,42.5531914893617,Er lief Weltrekord und gewann olympisches Gold., Er rennt Weltrekorde und hat olympisches Gold gewonnen.,4,0,1,"REF:  er  lief   weltrekord   und  gewann  olympisches  ****  gold.    
+HYP:  er  rennt  weltrekorde  und  hat     olympisches  gold  gewonnen.
+TYPE: C   S      S            C    S       C            I     S        "
+AG,71.42857142857143,37.06896551724138,"Daraufhin schloss sich Riemer dem Drittligaaufsteiger Preußen Münster an, wo er einen Einjahresvertrag unterschrieb."," Daraufhin hat sich der Riemer am 3. Liga-Aufstieg in Preussen-Münster angeschlossen, wo er einen Einjahresvertrag unterschrieben hat.",7,0,3,"REF:  daraufhin  schloss  sich  ***  riemer  **  dem  drittligaaufsteiger  preußen  münster           an,             wo  er  einen  einjahresvertrag  **************  unterschrieb.
+HYP:  daraufhin  hat      sich  der  riemer  am  3.   liga-aufstieg        in       preussen-münster  angeschlossen,  wo  er  einen  einjahresvertrag  unterschrieben  hat.         
+TYPE: C          S        C     I    C       I   S    S                    S        S                 S               C   C   C      C                 I               S            "
+ZG,71.42857142857143,35.08771929824561,Orson Welles verbrachte seine Flitterwochen im Algonquin., Orson Welles hat seine Flitterwoche in Algonquin verbracht.,4,0,1,"REF:  orson  welles  verbrachte  seine  ************  flitterwochen  im         algonquin.
+HYP:  orson  welles  hat         seine  flitterwoche  in             algonquin  verbracht.
+TYPE: C      C       S           C      I             S              S          S         "
+SG,71.42857142857143,32.11009174311927,"Währenddessen pachtet Elke Berger zusätzlich das Luxushotel „Park’s“, um ihr Personal beschäftigen zu können."," Währenddessen hat Elke Berger zusätzlich zu Luxus Hotel Parks gepachtet, damit sie ihr Personal beschäftigen kann.",6,1,3,"REF:  währenddessen  pachtet  elke  berger  zusätzlich  **  *****  *****  das    luxushotel  „park’s“,  um   ihr  personal  beschäftigen  zu     können.
+HYP:  währenddessen  hat      elke  berger  zusätzlich  zu  luxus  hotel  parks  gepachtet,  damit      sie  ihr  personal  beschäftigen  kann.  *******
+TYPE: C              S        C     C       C           I   I      I      S      S           S          S    C    C         C             S      D      "
+BL,71.42857142857143,36.507936507936506,Bundesliga landeten die Weiß-Rot-Blauen auf einem Abstiegsrang., Bundesliga sind die Wiss-Rot-Blau auf dem Abstiegsrang gelandet.,4,0,1,"REF:  bundesliga  landeten  die  weiß-rot-blauen  auf  ***  einem         abstiegsrang.
+HYP:  bundesliga  sind      die  wiss-rot-blau    auf  dem  abstiegsrang  gelandet.    
+TYPE: C           S         C    S                C    I    S             S            "
+BE,71.42857142857143,47.82608695652174,"Diese wurden bereits in Technicolor gefilmt, als selbst die Serie noch in Schwarz-Weiß lief."," Diese sind schon in Technik-Color gefilmt worden, wo die Serie selbst noch in Schwarz-Weiss gelaufen ist.",8,0,2,"REF:  diese  wurden  bereits  in  technicolor    gefilmt,  als      selbst  die  serie  ******  noch  in  *************  schwarz-weiß  lief.
+HYP:  diese  sind    schon    in  technik-color  gefilmt   worden,  wo      die  serie  selbst  noch  in  schwarz-weiss  gelaufen      ist. 
+TYPE: C      S       S        C   S              S         S        S       C    C      I       C     C   I              S             S    "
+TG,71.42857142857143,44.44444444444444,Die Burg befand sich bei der Kirche., Der Bogen war neben der Kirche.,4,1,0,"REF:  die  burg   befand  sich   bei  der  kirche.
+HYP:  der  bogen  war     neben  ***  der  kirche.
+TYPE: S    S      S       S      D    C    C      "
+ZH,70.0,25.396825396825395,In den letzten Jahren gewinnt auch der Fußball an Begeisterung., In der letzten Jahr gewinnt er auch den 4. Baller begeistert.,6,0,1,"REF:  in  den  letzten  jahren  gewinnt  **  auch  der  fußball  an      begeisterung.
+HYP:  in  der  letzten  jahr    gewinnt  er  auch  den  4.       baller  begeistert.  
+TYPE: C   S    C        S       C        I   C     S    S        S       S            "
+SO,70.0,59.70149253731343,"Wir begrüßen Ihre Absicht, Herr Ratspräsident, für Gent und Laeken."," Herr Ratspräsident, wir begrüssen Ihre Absicht für Gent und Laiken.",3,2,2,"REF:  ****  **************  wir  begrüßen   ihre  absicht,  herr  ratspräsident,  für  gent  und  laeken.
+HYP:  herr  ratspräsident,  wir  begrüssen  ihre  absicht   ****  **************  für  gent  und  laiken.
+TYPE: I     I               C    S          C     S         D     D               C    C     C    S      "
+FR,69.23076923076923,35.714285714285715,Das siebte gebaute Fahrzeug wurde dennoch nach Deutschland importiert und in Hamburg ausgeliefert., Die 7. Pulta-Fahrzeuge ist dann doch noch nach Deutschland importiert und in Hamburg ausgeliefert gekommen.,7,0,2,"REF:  ***  das  siebte           gebaute  fahrzeug  wurde  dennoch  nach  deutschland  importiert  und  in  hamburg  ************  ausgeliefert.
+HYP:  die  7.   pulta-fahrzeuge  ist      dann      doch   noch     nach  deutschland  importiert  und  in  hamburg  ausgeliefert  gekommen.    
+TYPE: I    S    S                S        S         S      S        C     C            C           C    C   C        I             S            "
+SG,69.23076923076923,30.0,"Die Transplantation umfasste die Haut von Nase, Mund, Kinn und Teile der Wangen."," Transplantation umfasst Hut von Nase, Mul, Phönie und Teil von der Backen.",6,2,1,"REF:  die  transplantation  umfasste  die  haut  von  nase,  mund,  kinn    und  ****  teile  der  wangen.
+HYP:  ***  transplantation  umfasst   hut  ****  von  nase,  mul,   phönie  und  teil  von    der  backen.
+TYPE: D    C                S         S    D     C    C      S      S       C    I     S      C    S      "
+ZG,66.66666666666666,6.976744186046512,"Staats-Obergymnasium unterrichtete, kennen."," Staatsopergymnasium unterrichtet, kennen.",2,0,0,"REF:  staats-obergymnasium  unterrichtete,  kennen.
+HYP:  staatsopergymnasium   unterrichtet,   kennen.
+TYPE: S                     S               C      "
+SG,66.66666666666666,9.523809523809524,Gute Überwachung: Ja!," Gute Überwachung, ja.",2,0,0,"REF:  gute  überwachung:  ja!
+HYP:  gute  überwachung,  ja.
+TYPE: C     S             S  "
+ZH,66.66666666666666,39.62264150943396,In Risse drang Wasser ein und sprengte Felsblöcke ab., Ich reisse wasser eingedrungen und spreng die Felsblöcke ab.,4,1,1,"REF:  in   risse   drang  wasser  ein           und  ******  sprengte  felsblöcke  ab.
+HYP:  ich  reisse  *****  wasser  eingedrungen  und  spreng  die       felsblöcke  ab.
+TYPE: S    S       D      C       S             C    I       S         C           C  "
+ZH,66.66666666666666,45.0,Das Album erhielt nur positive Kritiken., Dieses Album hat nur positive Kritiken bekommen.,3,0,1,"REF:  das     album  erhielt  nur  positive  ********  kritiken.
+HYP:  dieses  album  hat      nur  positive  kritiken  bekommen.
+TYPE: S       C      S        C    C         I         S        "
+BE,66.66666666666666,29.213483146067414,Über Faustinus lässt sich aus seinem wenig aussagekräftigen Namen kaum etwas erschließen., Über den Faustinos lässt Kussim wenig aussagekräftigen Armen auch kaum etwas schliessen.,4,2,2,"REF:  über  ***  faustinus  lässt  sich    aus  seinem  wenig  aussagekräftigen  *****  namen  kaum  etwas  erschließen.
+HYP:  über  den  faustinos  lässt  kussim  ***  ******  wenig  aussagekräftigen  armen  auch   kaum  etwas  schliessen. 
+TYPE: C     I    S          C      S       D    D       C      C                 I      S      C     C      S           "
+SZ,66.66666666666666,33.33333333333333,Einige der besten Blues-Musiker ihrer Zeit spielten in Atlanta., Ein paar der besten Bluesmusiker ihrer Zeit haben in Atlanta gespielt.,4,0,2,"REF:  ***  einige  der  besten  blues-musiker  ihrer  zeit  spielten  in  *******  atlanta. 
+HYP:  ein  paar    der  besten  bluesmusiker   ihrer  zeit  haben     in  atlanta  gespielt.
+TYPE: I    S       C    C       S              C      C     S         C   I        S        "
+BL,66.66666666666666,39.130434782608695,Wie anderswo waren auch hier zunächst nur Männer teilnahmeberechtigt., Wie auch anders sind auch hier zunächst nur Amanda-Teilnahme berechtigt gewesen.,4,0,2,"REF:  wie  ****  anderswo  waren  auch  hier  zunächst  nur  ****************  männer      teilnahmeberechtigt.
+HYP:  wie  auch  anders    sind   auch  hier  zunächst  nur  amanda-teilnahme  berechtigt  gewesen.            
+TYPE: C    I     S         S      C     C     C         C    I                 S           S                   "
+TG,66.66666666666666,33.33333333333333,Nikolaus von Myra., Nikolaus Fumira,1,1,0,"REF:  nikolaus  von     myra.
+HYP:  nikolaus  fumira  *****
+TYPE: C         S       D    "
+AG,66.66666666666666,20.833333333333336,"Thirty Years of Magic"", das seine Design-Kunst ausführlich dokumentiert.", 30 Years of Magic – das tut seine Designkunst ausführlich dokumentieren.,4,0,2,"REF:  thirty  years  of  *****  magic"",  das  ***  seine  design-kunst  ausführlich  dokumentiert. 
+HYP:  30      years  of  magic  –        das  tut  seine  designkunst   ausführlich  dokumentieren.
+TYPE: S       C      C   I      S        C    I    C      S             C            S             "
+AG,66.66666666666666,30.357142857142854,Weil es sich nicht um ein einfaches Facelifting handelt., Welcht sich nicht nur um das Facelifting handelt?,3,2,1,"REF:  weil    es  sich  nicht  ***  um  ein  einfaches  facelifting  handelt.
+HYP:  welcht  **  sich  nicht  nur  um  das  *********  facelifting  handelt?
+TYPE: S       D   C     C      I    C   S    D          C            S       "
+SG,66.66666666666666,27.142857142857142,Außerdem werden Benefiz-Veranstaltungen durchgeführt oder unterstützt., Zusätzlich werden die Benefizveranstaltungen durchgeführt oder auch unterstützt.,2,0,2,"REF:  außerdem    werden  ***  benefiz-veranstaltungen  durchgeführt  oder  ****  unterstützt.
+HYP:  zusätzlich  werden  die  benefizveranstaltungen   durchgeführt  oder  auch  unterstützt.
+TYPE: S           C       I    S                        C             C     I     C           "
+SG,64.28571428571429,38.73873873873874,"Diese Reise wirkte inspirierend auf ihr künstlerisches Schaffen, besonders widmete sie sich der Porträtmalerei."," Diese Reise hat sich inspirierend auf ihre künstliche Arbeit ausgewirkt, besonders hat sie sich der Porträtmalerei gewidmet.",6,0,3,"REF:  diese  reise  ***  wirkte  inspirierend  auf  ****  ihr         künstlerisches  schaffen,    besonders  widmete  sie  sich  der  **************  porträtmalerei.
+HYP:  diese  reise  hat  sich    inspirierend  auf  ihre  künstliche  arbeit          ausgewirkt,  besonders  hat      sie  sich  der  porträtmalerei  gewidmet.      
+TYPE: C      C      I    S       C             C    I     S           S               S            C          S        C    C     C    I               S              "
+SO,63.63636363636363,29.333333333333332,Während ihres Studiums verbrachte Bußmann längere Zeit in London und Paris., Während ihrem Studium hat der Busmann längere Zeit in London und Paris verbracht.,5,0,2,"REF:  während  *****  ihres    studiums  verbrachte  bußmann  längere  zeit  in  london  und  *****  paris.    
+HYP:  während  ihrem  studium  hat       der         busmann  längere  zeit  in  london  und  paris  verbracht.
+TYPE: C        I      S        S         S           S        C        C     C   C       C    I      S         "
+BE,63.63636363636363,23.711340206185564,Beispielsweise enthielten die ersten Duden-Auflagen nach der Reform den Eintrag „Sciencefiction“., Beispielsweise haben die erste Dudenauflage nach der Reform der Eintrag Science Fiction enthalten.,5,0,2,"REF:  beispielsweise  enthielten  die  ersten  duden-auflagen  nach  der  reform  den  eintrag  *******  *******  „sciencefiction“.
+HYP:  beispielsweise  haben       die  erste   dudenauflage    nach  der  reform  der  eintrag  science  fiction  enthalten.       
+TYPE: C               S           C    S       S               C     C    C       S    C        I        I        S                "
+BE,63.63636363636363,43.47826086956522,"Im selben Jahr erschien das erste und einzige Demo ""Horror Infinity"".", Im gleichen Jahr ist die erste und die einzige Demo Horror Infinity erschienen.,5,0,2,"REF:  im  selben    jahr  erschien  das  erste  und  ***  einzige  demo  ******  ""horror   infinity"". 
+HYP:  im  gleichen  jahr  ist       die  erste  und  die  einzige  demo  horror  infinity  erschienen.
+TYPE: C   S         C     S         S    C      C    I    C        C     I       S         S          "
+SG,63.63636363636363,45.83333333333333,"Cibulka begann mit Versen, und lange dominierte die Lyrik sein Schaffen.", Cibulca hat mit Fersen angefangen und lange hat die Lyrik sein Schaffen dominiert.,5,0,2,"REF:  cibulka  begann  mit  ******  versen,     und  lange  dominierte  die  lyrik  sein  ********  schaffen. 
+HYP:  cibulca  hat     mit  fersen  angefangen  und  lange  hat         die  lyrik  sein  schaffen  dominiert.
+TYPE: S        S       C    I       S           C    C      S           C    C      C     I         S         "
+TG,62.5,18.181818181818183,"Sind Problembereiche vorhanden, sollte ein zweiter Schritt folgen."," Wenn Problembereiche vorhanden sind, sollte der zweite Schritt folgen.",4,0,1,"REF:  sind  problembereiche  *********  vorhanden,  sollte  ein  zweiter  schritt  folgen.
+HYP:  wenn  problembereiche  vorhanden  sind,       sollte  der  zweite   schritt  folgen.
+TYPE: S     C                I          S           C       S    S        C        C      "
+AG,62.5,28.125,Dieser Interessengegensatz führte oft zur Erklärung einer Fehde., Der Interessensgegensatz hat oft zur Erklärung einer Feder geführt.,4,0,1,"REF:  dieser  interessengegensatz   führte  oft  zur  erklärung  einer  *****  fehde.  
+HYP:  der     interessensgegensatz  hat     oft  zur  erklärung  einer  feder  geführt.
+TYPE: S       S                     S       C    C    C          C      I      S       "
+BE,62.5,13.432835820895523,"Herr Kommissar Liikanen, wir erwarten ein überzeugendes Eingreifen."," Herr Kommissar Likanen, wir erwarten, es überzügend Sie eingreifen.",4,0,1,"REF:  herr  kommissar  liikanen,  wir  *********  erwarten  ein         überzeugendes  eingreifen.
+HYP:  herr  kommissar  likanen,   wir  erwarten,  es        überzügend  sie            eingreifen.
+TYPE: C     C          S          C    I          S         S           S              C          "
