@@ -14,6 +14,7 @@ class ErrorAnalyzer:
     - Categorize errors (Substitution, Deletion, Insertion)
     - Identify common confusion pairs
     - Analyze performance by dialect or other metadata
+    - Analyze WER-BLEU correlation for semantic preservation
     """
 
     def get_alignment(self, reference: str, hypothesis: str) -> List[Dict[str, Optional[str]]]:
@@ -137,59 +138,116 @@ class ErrorAnalyzer:
         Filter results for samples with WER above a certain threshold.
         
         Args:
-            results: List of result dictionaries (from evaluator.py)
-            threshold: WER threshold (0-100)
+            results: List of evaluation results
+            threshold: WER threshold (default: 50.0%)
             
         Returns:
-            Filtered list of result dictionaries.
+            List of samples with WER >= threshold
         """
-        return [r for r in results if r.get('wer', 0) > threshold]
+        return [r for r in results if r.get('wer', 0) >= threshold]
+
+    def calculate_aggregate_stats(self, results: List[Dict]) -> Dict[str, float]:
+        """
+        Calculate mean, median, and standard deviation for WER, CER, and BLEU.
+        
+        Args:
+            results: List of evaluation results with wer, cer, and bleu fields
+            
+        Returns:
+            Dictionary with aggregate statistics
+        """
+        wers = [r['wer'] for r in results]
+        cers = [r['cer'] for r in results]
+        bleus = [r.get('bleu', 0.0) for r in results]  # MODIFIED: Extract BLEU scores
+        
+        return {
+            'mean_wer': statistics.mean(wers),
+            'median_wer': statistics.median(wers),
+            'std_wer': statistics.stdev(wers) if len(wers) > 1 else 0.0,
+            'mean_cer': statistics.mean(cers),
+            'median_cer': statistics.median(cers),
+            'std_cer': statistics.stdev(cers) if len(cers) > 1 else 0.0,
+            # NEW: BLEU statistics
+            'mean_bleu': statistics.mean(bleus) if bleus else 0.0,
+            'median_bleu': statistics.median(bleus) if bleus else 0.0,
+            'std_bleu': statistics.stdev(bleus) if len(bleus) > 1 else 0.0,
+        }
+
+    def format_alignment_readable(self, alignment: List[Dict[str, Optional[str]]]) -> str:
+        """
+        Format alignment as a readable 3-line string for visual inspection.
+        
+        Args:
+            alignment: Output from get_alignment()
+            
+        Returns:
+            String with REF, HYP, and TYPE lines aligned vertically
+        """
+        if not alignment:
+            return "REF:  (empty)\nHYP:  (empty)\nTYPE: "
+        
+        ref_line = "REF:  "
+        hyp_line = "HYP:  "
+        type_line = "TYPE: "
+        
+        for item in alignment:
+            ref_word = item['ref'] if item['ref'] else '*' * 5
+            hyp_word = item['hyp'] if item['hyp'] else '*' * 5
+            type_char = item['type'][0].upper()  # C, S, D, I
+            
+            # Use the longer word for column width
+            max_len = max(len(ref_word), len(hyp_word))
+            
+            ref_line += ref_word.ljust(max_len) + " "
+            hyp_line += hyp_word.ljust(max_len) + " "
+            type_line += type_char.ljust(max_len) + " "
+        
+        return ref_line.rstrip() + "\n" + hyp_line.rstrip() + "\n" + type_line.rstrip()
 
     def analyze_by_dialect(self, results: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
         """
-        Group results by dialect and calculate aggregate statistics and error patterns.
+        Group results by dialect and compute statistics and confusion patterns for each.
         
         Args:
-            results: List of result dictionaries containing 'dialect', 'reference', 'hypothesis', 'wer', 'cer'.
+            results: List of evaluation results with dialect, reference, hypothesis, wer, cer, bleu fields
             
         Returns:
-            Dictionary keyed by dialect name containing stats and patterns.
+            Dictionary mapping dialect to analysis results
         """
+        # Group by dialect
         by_dialect = defaultdict(list)
         for r in results:
             dialect = r.get('dialect', 'unknown')
             by_dialect[dialect].append(r)
-            
+        
         analysis = {}
+        
         for dialect, samples in by_dialect.items():
+            # Compute WER/CER/BLEU stats
             wers = [s['wer'] for s in samples]
             cers = [s['cer'] for s in samples]
+            bleus = [s.get('bleu', 0.0) for s in samples]  # MODIFIED: Extract BLEU
             
-            # Calculate error distribution by running alignment on all samples
-            total_sub = 0
-            total_del = 0
-            total_ins = 0
-            total_cor = 0
+            # Compute alignments to get error distribution
+            alignments = [self.get_alignment(s['reference'], s['hypothesis']) for s in samples]
+            all_counts = [self.categorize_errors(align) for align in alignments]
             
-            alignments = []
-            for s in samples:
-                align = self.get_alignment(s['reference'], s['hypothesis'])
-                alignments.append(align)
-                counts = self.categorize_errors(align)
-                
-                total_sub += counts['substitution']
-                total_del += counts['deletion']
-                total_ins += counts['insertion']
-                total_cor += counts['correct']
+            total_sub = sum(counts['substitution'] for counts in all_counts)
+            total_del = sum(counts['deletion'] for counts in all_counts)
+            total_ins = sum(counts['insertion'] for counts in all_counts)
+            total_cor = sum(counts['correct'] for counts in all_counts)
             
+            # Calculate rates over ERRORS ONLY (excluding correct)
             total_errs = total_sub + total_del + total_ins
-            total_ops = total_errs + total_cor
             
             analysis[dialect] = {
                 'sample_count': len(samples),
-                'mean_wer': statistics.mean(wers) if wers else 0.0,
+                'mean_wer': statistics.mean(wers),
                 'std_wer': statistics.stdev(wers) if len(wers) > 1 else 0.0,
-                'mean_cer': statistics.mean(cers) if cers else 0.0,
+                'mean_cer': statistics.mean(cers),
+                # NEW: BLEU statistics per dialect
+                'mean_bleu': statistics.mean(bleus) if bleus else 0.0,
+                'std_bleu': statistics.stdev(bleus) if len(bleus) > 1 else 0.0,
                 'error_distribution': {
                     'substitution': total_sub,
                     'deletion': total_del,
@@ -201,57 +259,59 @@ class ErrorAnalyzer:
                 },
                 'top_confusions': self.find_confusion_pairs(alignments)[:10]
             }
-            
+        
         return analysis
 
-    def calculate_aggregate_stats(self, results: List[Dict[str, Any]]) -> Dict[str, float]:
+    def analyze_wer_bleu_correlation(
+        self, 
+        results: List[Dict[str, Any]], 
+        wer_threshold: float = 50.0,
+        bleu_threshold: float = 40.0
+    ) -> Dict[str, Any]:
         """
-        Calculate basic aggregate statistics (mean, median, stdev) for WER and CER.
-        """
-        if not results:
-            return {}
+        Analyze correlation between WER and BLEU to identify semantic preservation.
+        
+        High-WER + High-BLEU samples = Valid paraphrases (semantic preservation)
+        High-WER + Low-BLEU samples = True errors (semantic drift)
+        
+        Args:
+            results: List of evaluation results with wer, cer, bleu scores
+            wer_threshold: WER above which samples are considered "high error" (default: 50.0)
+            bleu_threshold: BLEU above which samples are considered "high similarity" (default: 40.0)
             
-        wers = [r['wer'] for r in results]
-        cers = [r['cer'] for r in results]
+        Returns:
+            Dictionary with categorized samples and statistics
+        """
+        high_wer_high_bleu = []  # Valid paraphrases
+        high_wer_low_bleu = []   # True errors
+        low_wer_high_bleu = []   # Good translations
+        low_wer_low_bleu = []    # Edge cases
+        
+        for sample in results:
+            wer = sample.get('wer', 0.0)
+            bleu = sample.get('bleu', 0.0)
+            
+            if wer >= wer_threshold and bleu >= bleu_threshold:
+                high_wer_high_bleu.append(sample)
+            elif wer >= wer_threshold and bleu < bleu_threshold:
+                high_wer_low_bleu.append(sample)
+            elif wer < wer_threshold and bleu >= bleu_threshold:
+                low_wer_high_bleu.append(sample)
+            else:
+                low_wer_low_bleu.append(sample)
         
         return {
-            'mean_wer': statistics.mean(wers),
-            'median_wer': statistics.median(wers),
-            'std_wer': statistics.stdev(wers) if len(wers) > 1 else 0.0,
-            'mean_cer': statistics.mean(cers),
-            'median_cer': statistics.median(cers),
-            'std_cer': statistics.stdev(cers) if len(cers) > 1 else 0.0,
+            'summary': {
+                'total_samples': len(results),
+                'high_wer_high_bleu_count': len(high_wer_high_bleu),
+                'high_wer_low_bleu_count': len(high_wer_low_bleu),
+                'low_wer_high_bleu_count': len(low_wer_high_bleu),
+                'low_wer_low_bleu_count': len(low_wer_low_bleu),
+                'semantic_preservation_rate': (
+                    len(high_wer_high_bleu) / len(results) * 100 
+                    if results else 0.0
+                )
+            },
+            'high_wer_high_bleu_samples': high_wer_high_bleu[:10],  # Top 10 examples
+            'high_wer_low_bleu_samples': high_wer_low_bleu[:10],
         }
-
-    def format_alignment_readable(self, alignment: List[Dict[str, Optional[str]]]) -> str:
-        """
-        Create a human-readable string representation of an alignment.
-        
-        Example output:
-        REF:  hello  world
-        HYP:  hello  *****
-        TYPE:   C      D
-        """
-        ref_line = []
-        hyp_line = []
-        type_line = []
-        
-        for item in alignment:
-            r = item['ref'] if item['ref'] else "*" * len(item['hyp'] or "")
-            h = item['hyp'] if item['hyp'] else "*" * len(item['ref'] or "")
-            
-            # Determine width needed for this column
-            width = max(len(r), len(h), 1)
-            
-            ref_line.append(f"{r:<{width}}")
-            hyp_line.append(f"{h:<{width}}")
-            
-            # Type code: C=Correct, S=Sub, D=Del, I=Ins
-            code = item['type'][0].upper()
-            type_line.append(f"{code:<{width}}")
-            
-        return (
-            f"REF:  {'  '.join(ref_line)}\n"
-            f"HYP:  {'  '.join(hyp_line)}\n"
-            f"TYPE: {'  '.join(type_line)}"
-        )
