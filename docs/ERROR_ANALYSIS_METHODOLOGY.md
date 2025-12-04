@@ -112,6 +112,7 @@ Compared to Reference: "ich gehe heute in die stadt"
 - Translation failures (wrong lexical choice)
 - Grammatical construction mismatches (tense/aspect)
 - Valid translation variants counted as errors
+- Conscious choice by the speaker to rephrase (dialectal influence or creative license on the part of the speaker), not model error
 
 **Wav2Vec2 errors may indicate:**
 - Acoustic recognition failures (wrong phonemes heard)
