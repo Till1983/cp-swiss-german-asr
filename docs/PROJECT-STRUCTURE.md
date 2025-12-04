@@ -37,6 +37,10 @@ cp-swiss-german-asr/
 │   │       ├── test.tsv
 │   │       ├── train.tsv
 │   │       └── val.tsv
+│   ├── metadata.backup_public_split/
+│   │   ├── test.tsv
+│   │   ├── train.tsv
+│   │   └── val.tsv
 │   ├── processed/
 │   └── raw/
 │       ├── cv-corpus-22.0-2025-06-20/
@@ -45,6 +49,7 @@ cp-swiss-german-asr/
 │       │       ├── dev.tsv
 │       │       ├── invalidated.tsv
 │       │       ├── other.tsv
+│       │       ├── README-cv-de.txt
 │       │       ├── reported.tsv
 │       │       ├── test.tsv
 │       │       ├── train.tsv
@@ -58,6 +63,7 @@ cp-swiss-german-asr/
 │       │       ├── dev.tsv
 │       │       ├── invalidated.tsv
 │       │       ├── other.tsv
+│       │       ├── README-cv-nl.txt
 │       │       ├── reported.tsv
 │       │       ├── test.tsv
 │       │       ├── train.tsv
@@ -80,7 +86,9 @@ cp-swiss-german-asr/
 │           ├── README_columns.txt
 │           └── clips/
 ├── docs/
+│   ├── ANALYSIS_NOTES.md
 │   ├── DASHBOARD.md
+│   ├── ERROR_ANALYSIS_METHODOLOGY.md
 │   ├── GPU_COMPATIBILITY.md
 │   ├── HYPERPARAMETER_TUNING.md
 │   ├── KNOWN_ISSUES.md
@@ -182,6 +190,7 @@ cp-swiss-german-asr/
 │   ├── 20251113_180429/
 │   └── 20251113_181410/
 ├── logs/
+│   └── evaluation.log
 ├── personal-notes/     # gitignored (the entire directory - personal notes)
 │   ├── week01_days1-2_docker_local_setup.md
 │   ├── week01_days3-4_data_pipeline.md
@@ -192,44 +201,78 @@ cp-swiss-german-asr/
 │   ├── week03_days3-4_cloud_gpu_setup.md
 │   └── week04_days1-2_dutch_pre-training.md
 ├── results/
-│   └── metrics/
-│       ├── 20251113_210648/
-│       │   ├── whisper-large-v3-turbo_results.csv
-│       │   ├── whisper-large-v3-turbo_results.json
-│       │   ├── whisper-small_results.csv
-│       │   └── whisper-small_results.json
-│       ├── 20251113_214357/
-│       │   ├── wav2vec2-german_results.csv
-│       │   ├── wav2vec2-german_results.json
-│       │   ├── wav2vec2-multi-56_results.csv
-│       │   └── wav2vec2-multi-56_results.json
-│       ├── 20251113_215305/
-│       │   ├── mms-1b-all_results.csv
-│       │   ├── mms-1b-all_results.json
-│       │   ├── mms-1b-l1107_results.csv
-│       │   └── mms-1b-l1107_results.json
-│       ├── 20251113_221929/
-│       │   ├── whisper-base_results.csv
-│       │   ├── whisper-base_results.json
-│       │   ├── whisper-tiny_results.csv
-│       │   └── whisper-tiny_results.json
-│       ├── 20251114_072930/
-│       │   ├── whisper-large_results.csv
-│       │   ├── whisper-large_results.json
-│       │   ├── whisper-large-v2_results.csv
-│       │   ├── whisper-large-v2_results.json
-│       │   ├── whisper-large-v3_results.csv
-│       │   └── whisper-large-v3_results.json
-│       ├── 20251114_113817/
-│       │   ├── whisper-medium_results.csv
-│       │   └── whisper-medium_results.json
-│       └── 20251122_210804/
-│           ├── wav2vec2-german-with-lm_results.csv
-│           ├── wav2vec2-german-with-lm_results.json
-│           ├── wav2vec2-german_results.csv
-│           └── wav2vec2-german_results.json
+│   ├── error_analysis/
+│   │   ├── ANALYSIS_NOTES.md
+│   │   ├── error_analysis_config.yml
+│   │   ├── .ipynb_checkpoints/
+│   │   └── 20251203_112924/
+│   │       ├── analysis_wav2vec2-1b-german-cv11.json
+│   │       ├── analysis_wav2vec2-german-with-lm.json
+│   │       ├── analysis_whisper-large-v2.json
+│   │       ├── analysis_whisper-large-v3-turbo.json
+│   │       ├── analysis_whisper-large-v3.json
+│   │       ├── analysis_whisper-medium.json
+│   │       ├── model_comparison_summary.json
+│   │       ├── worst_samples_wav2vec2-1b-german-cv11.csv
+│   │       ├── worst_samples_wav2vec2-german-with-lm.csv
+│   │       ├── worst_samples_whisper-large-v2.csv
+│   │       ├── worst_samples_whisper-large-v3-turbo.csv
+│   │       ├── worst_samples_whisper-large-v3.csv
+│   │       └── worst_samples_whisper-medium.csv
+│   ├── metrics/
+│   │   ├── .ipynb_checkpoints/
+│   │   ├── 20251113_210648/
+│   │   │   ├── whisper-large-v3-turbo_results.csv
+│   │   │   ├── whisper-large-v3-turbo_results.json
+│   │   │   ├── whisper-small_results.csv
+│   │   │   └── whisper-small_results.json
+│   │   ├── 20251113_214357/
+│   │   │   ├── wav2vec2-german_results.csv
+│   │   │   ├── wav2vec2-german_results.json
+│   │   │   ├── wav2vec2-multi-56_results.csv
+│   │   │   └── wav2vec2-multi-56_results.json
+│   │   ├── 20251113_215305/
+│   │   │   ├── mms-1b-all_results.csv
+│   │   │   ├── mms-1b-all_results.json
+│   │   │   ├── mms-1b-l1107_results.csv
+│   │   │   └── mms-1b-l1107_results.json
+│   │   ├── 20251113_221929/
+│   │   │   ├── whisper-base_results.csv
+│   │   │   ├── whisper-base_results.json
+│   │   │   ├── whisper-tiny_results.csv
+│   │   │   └── whisper-tiny_results.json
+│   │   ├── 20251114_072930/
+│   │   │   ├── whisper-large_results.csv
+│   │   │   ├── whisper-large_results.json
+│   │   │   ├── whisper-large-v2_results.csv
+│   │   │   ├── whisper-large-v2_results.json
+│   │   │   ├── whisper-large-v3_results.csv
+│   │   │   └── whisper-large-v3_results.json
+│   │   ├── 20251114_113817/
+│   │   │   ├── whisper-medium_results.csv
+│   │   │   └── whisper-medium_results.json
+│   │   ├── 20251122_210804/
+│   │   │   ├── wav2vec2-german-with-lm_results.csv
+│   │   │   ├── wav2vec2-german-with-lm_results.json
+│   │   │   ├── wav2vec2-german_results.csv
+│   │   │   └── wav2vec2-german_results.json
+│   │   └── 20251202_171718/
+│   │       ├── wav2vec2-1b-german-cv11_results.csv
+│   │       ├── wav2vec2-1b-german-cv11_results.json
+│   │       ├── wav2vec2-german-with-lm_results.csv
+│   │       ├── wav2vec2-german-with-lm_results.json
+│   │       ├── whisper-large-v2_results.csv
+│   │       ├── whisper-large-v2_results.json
+│   │       ├── whisper-large-v3_results.csv
+│   │       ├── whisper-large-v3_results.json
+│   │       ├── whisper-large-v3-turbo_results.csv
+│   │       ├── whisper-large-v3-turbo_results.json
+│   │       ├── whisper-medium_results.csv
+│   │       └── whisper-medium_results.json
 ├── scripts/
 │   ├── adapt_on_cloud.sh
+│   ├── analyze_errors.py
+│   ├── batch_evaluation.sh
 │   ├── check_lm_vocab.py
 │   ├── diagnose_lm_alignment.py
 │   ├── download_lm.py
@@ -237,6 +280,7 @@ cp-swiss-german-asr/
 │   ├── inspect_results.py
 │   ├── prepare_common_voice.py
 │   ├── prepare_scripts.py
+│   ├── runpod_analyze_errors.sh
 │   ├── train_dutch_pretrain.py
 │   ├── train_german_adaptation.py
 │   ├── train_on_cloud.sh
@@ -272,7 +316,7 @@ cp-swiss-german-asr/
 │   │   │   ├── statistics_panel.py
 │   │   │   └── __pycache__/
 │   │   └── utils/
-│   │       ├── __inip__.py
+│   │       ├── __init__.py
 │   │       ├── data_loader.py
 │   │       └── __pycache__/
 │   ├── models/
