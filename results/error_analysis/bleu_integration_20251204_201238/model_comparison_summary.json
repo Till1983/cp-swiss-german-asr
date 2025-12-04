@@ -1,0 +1,47 @@
+{
+  "timestamp": "2025-12-04T19:12:40.292685",
+  "models": {
+    "whisper-medium": {
+      "mean_wer": 34.10878840484866,
+      "mean_cer": 15.996185533766699,
+      "mean_bleu": 50.815606562464,
+      "total_samples": 863,
+      "semantic_preservation_rate": 2.085747392815759
+    },
+    "wav2vec2-german-with-lm": {
+      "mean_wer": 75.28151454570921,
+      "mean_cer": 31.907427163984092,
+      "mean_bleu": 13.887680356759788,
+      "total_samples": 863,
+      "semantic_preservation_rate": 1.0428736964078795
+    },
+    "whisper-large-v3-turbo": {
+      "mean_wer": 30.94447557077916,
+      "mean_cer": 14.15363295626278,
+      "mean_bleu": 53.973439602631814,
+      "total_samples": 863,
+      "semantic_preservation_rate": 1.738122827346466
+    },
+    "wav2vec2-1b-german-cv11": {
+      "mean_wer": 72.42381090005655,
+      "mean_cer": 29.425031340102446,
+      "mean_bleu": 14.931977252073363,
+      "total_samples": 863,
+      "semantic_preservation_rate": 0.6952491309385863
+    },
+    "whisper-large-v3": {
+      "mean_wer": 29.529397472618793,
+      "mean_cer": 13.698717618623728,
+      "mean_bleu": 56.27820391726185,
+      "total_samples": 863,
+      "semantic_preservation_rate": 2.085747392815759
+    },
+    "whisper-large-v2": {
+      "mean_wer": 28.00487654485337,
+      "mean_cer": 12.614807456963463,
+      "mean_bleu": 57.74201970182838,
+      "total_samples": 863,
+      "semantic_preservation_rate": 1.3904982618771726
+    }
+  }
+}

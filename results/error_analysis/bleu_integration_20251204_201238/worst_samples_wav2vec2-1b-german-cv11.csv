@@ -1,0 +1,259 @@
+dialect,wer,cer,bleu,reference,hypothesis,substitutions,deletions,insertions,alignment_viz
+SO,220.00000000000003,77.27272727272727,4.065425428798724,Allerdings sind diese Ergebnisse umstritten.,"Man muss aber auch sagen, dass die Ergeibniss sehr umstritten sind.",5,0,6,"REF:  ***** ***** ***** ***** *****  ***** allerdings sind       diese ergebnisse umstritten.
+HYP:  man   muss  aber  auch  sagen, dass  die        ergeibniss sehr  umstritten sind.
+TYPE: I     I     I     I     I      I     S          S          S     S          S"
+AG,200.0,47.61904761904761,10.682175159905853,Lebensjahr vollendet.,Slavens jar ist vollandet.,2,0,2,"REF:  *****   ***** lebensjahr vollendet.
+HYP:  slavens jar   ist        vollandet.
+TYPE: I       I     S          S"
+BE,150.0,13.333333333333334,15.97357760615681,Mal Etappenort.,Mau etappe Ort.,2,0,1,"REF:  ***** mal    etappenort.
+HYP:  mau   etappe ort.
+TYPE: I     S      S"
+ZG,150.0,30.88235294117647,4.196114906296549,Dort gehörte er zur ursprünglichen Macintosh-Entwicklungsmannschaft.,Det hett e zu der ursprüngliche Makintosh Entwicklingsmannschaft khürt.,6,0,3,"REF:  ***** ***** ***** dort gehörte er            zur       ursprünglichen         macintosh-entwicklungsmannschaft.
+HYP:  det   hett  e     zu   der     ursprüngliche makintosh entwicklingsmannschaft khürt.
+TYPE: I     I     I     S    S       S             S         S                      S"
+SO,150.0,68.85245901639344,2.719665272174911,Warum aber sagen wir das dann nicht in unserer Entschließung?,"Worum sagen mir da so bis niht, e wenn mir die Story zo bis entschliesst?",10,0,5,"REF:  ***** ***** ***** ***** ***** warum aber  sagen wir  das dann nicht in unserer entschließung?
+HYP:  worum sagen mir   da    so    bis   niht, e     wenn mir die  story zo bis     entschliesst?
+TYPE: I     I     I     I     I     S     S     S     S    S   S    S     S  S       S"
+BE,142.85714285714286,71.9298245614035,3.7477767366779213,Fortan verdiente er seinen Lebensunterhalt als Busfahrer.,Aub denn hat Arsi Labensonge und Haut aus Bösforder verdient.,7,0,3,"REF:  ***** ***** ***** fortan verdiente  er  seinen lebensunterhalt als       busfahrer.
+HYP:  aub   denn  hat   arsi   labensonge und haut   aus             bösforder verdient.
+TYPE: I     I     I     S      S          S   S      S               S         S"
+ZH,140.0,82.75862068965517,6.567274736060396,Im Norden liegt die Bandasee.,Der Ban dar sehe isch im Norde.,5,0,2,"REF:  ***** ***** im  norden liegt die bandasee.
+HYP:  der   ban   dar sehe   isch  im  norde.
+TYPE: I     I     S   S      S     S   S"
+LU,140.0,23.333333333333332,5.522397783539471,Auftraggeber befürchten eine sogenannte „Lock-in-Situation“.,Duftragape befürchtet ein sogenannt die Lockin Situation.,5,0,2,"REF:  *****      *****      auftraggeber befürchten eine sogenannte „lock-in-situation“.
+HYP:  duftragape befürchtet ein          sogenannt  die  lockin     situation.
+TYPE: I          I          S            S          S    S          S"
+BE,138.46153846153845,75.86206896551724,4.108053662461269,Trencavel seiner Besitzungen für verlustig erklärt und begab sich ins Exil nach Aragon.,"Es ist erklart wurde, das tas wo Trengavel Kurthet ar verlorehet oder hätt er sich i Sexil nach Aragon begat.",11,0,7,"REF:  ***** ***** *****   *****  ***** ***** trencavel seiner    besitzungen für verlustig  erklärt und  begab sich ins exil  nach *****  aragon.
+HYP:  es    ist   erklart wurde, das   tas   wo        trengavel kurthet     ar  verlorehet oder    hätt er    sich i   sexil nach aragon begat.
+TYPE: I     I     I       I      I     I     S         S         S           S   S          S       S    S     C    S   S     C    I      S"
+BE,128.57142857142858,63.63636363636363,4.932351569489709,Der November wurde dadurch zum elften Monat.,De Das ist nof ember zum Elf te Monat worde.,6,0,3,"REF:  ***** der november wurde dadurch zum ***** ***** elften monat.
+HYP:  de    das ist      nof   ember   zum elf   te    monat  worde.
+TYPE: I     S   S        S     S       C   I     I     S      S"
+SG,128.57142857142858,25.0,4.196114906296549,Abgestufte Inanspruchnahme von Betriebsmitteln regelt die Zugriffskontrolle.,Abegstruf di in Anspruchnahm für Betriebsmittel reglet zur Griffskontrolle.,7,0,2,"REF:  *****     ***** abgestufte inanspruchnahme von betriebsmitteln regelt die zugriffskontrolle.
+HYP:  abegstruf di    in         anspruchnahm    für betriebsmittel  reglet zur griffskontrolle.
+TYPE: I         I     S          S               S   S               S      S   S"
+SO,125.0,56.94444444444444,4.065425428798724,"Zunächst wurden gemietete Geschäftsräume in Berlin-Mitte, Potsdamer Str.",Zust sind Kmeeteti Gshaftsrim in Berlin mitt der Potsdamer Strasse kmeetet wurde.,6,0,4,"REF:  zunächst wurden gemietete geschäftsräume in *****  ***** berlin-mitte, potsdamer *****   *****   str.
+HYP:  zust     sind   kmeeteti  gshaftsrim     in berlin mitt  der           potsdamer strasse kmeetet wurde.
+TYPE: S        S      S         S              C  I      I     S             C         I       I       S"
+ZG,125.0,39.39393939393939,6.772997136689072,Von anderen Seiten werden noch niedrigere Wachstumsraten erwartet.,Vor der andere Sitte war der Moti für i Wachstumsrat erwartet.,7,0,3,"REF:  ***** ***** *****  von   anderen seiten werden noch niedrigere wachstumsraten erwartet.
+HYP:  vor   der   andere sitte war     der    moti   für  i          wachstumsrat   erwartet.
+TYPE: I     I     I      S     S       S      S      S    S          S              C"
+LU,122.22222222222223,48.275862068965516,6.285596338261262,"Fünf Angreifer wurden von Sicherheitskräften getötet, vier Sturmgewehre sichergestellt.","Fi Fargrifer simvo der Sicherheitskräft tötet wurde, vier Stormquer sind sichergestaut wurde.",8,0,3,"REF:  ***** fünf      angreifer wurden von              sicherheitskräften getötet, vier *****     ***** sturmgewehre  sichergestellt.
+HYP:  fi    fargrifer simvo     der    sicherheitskräft tötet              wurde,   vier stormquer sind  sichergestaut wurde.
+TYPE: I     S         S         S      S                S                  S        C    I         I     S             S"
+BE,120.0,45.45454545454545,6.567274736060395,Linssen wuchs in Wachtendonk auf.,Sissen ish ihr wachten donk ufgache.,5,0,1,"REF:  *****  linssen wuchs in      wachtendonk auf.
+HYP:  sissen ish     ihr   wachten donk        ufgache.
+TYPE: I      S       S     S       S           S"
+BE,120.0,30.434782608695656,3.4015426186864377,"Das Schicksal führt das heimatlose Ex-Bunny ins Haus der ""Zeta-Alpha-Zeta-""Schwesternschaft.",SSchicksau führt Zeimatlose Ex Buny it Hus vor Seta Alfa Ceta Schlösterschaft.,10,0,2,"REF:  *****      ***** das        schicksal führt das heimatlose ex-bunny ins  haus der  ""zeta-alpha-zeta-""schwesternschaft.
+HYP:  sschicksau führt zeimatlose ex        buny  it  hus        vor      seta alfa ceta schlösterschaft.
+TYPE: I          I     S          S         S     S   S          S        S    S    S    S"
+ZH,116.66666666666667,33.33333333333333,14.991106946711685,Landsberg-Velen war promovierter Jurist und Rittergutsbesitzer.,De Landsberg Wehlen icen promovierter Jurist und den Ritterguets Psizirxi.,3,0,4,"REF:  ***** *****     landsberg-velen war  promovierter jurist und ***** *****       rittergutsbesitzer.
+HYP:  de    landsberg wehlen          icen promovierter jurist und den   ritterguets psizirxi.
+TYPE: I     I         S               S    C            C      C   I     I           S"
+ZG,114.28571428571428,52.63157894736842,4.990049701936832,Orson Welles verbrachte seine Flitterwochen im Algonquin.,Der Orson Wells hat sienie Flitterwoche in Algonqueen verbracht.,6,0,2,"REF:  ***** orson ***** welles verbrachte seine        flitterwochen im         algonquin.
+HYP:  der   orson wells hat    sienie     flitterwoche in            algonqueen verbracht.
+TYPE: I     C     I     S      S          S            S             S          S"
+SG,112.5,44.827586206896555,4.196114906296549,Die heute U-förmige Anlage entstand in mehreren Bauphasen.,Diehyt U Förmig Aalag is i mehrere Bauphase entstande.,8,0,1,"REF:  *****  die heute  u-förmige anlage entstand in      mehreren bauphasen.
+HYP:  diehyt u   förmig aalag     is     i        mehrere bauphase entstande.
+TYPE: I      S   S      S         S      S        S       S        S"
+BE,111.11111111111111,68.25396825396825,4.456882760699064,Nebenbei verdiente er sich mit seinem Gitarrenspiel etwas dazu.,Nababi hat Arstach mit zim Gitarishpua bis ter Zur verdinet.,9,0,1,"REF:  *****  nebenbei verdiente er  sich mit         seinem gitarrenspiel etwas dazu.
+HYP:  nababi hat      arstach   mit zim  gitarishpua bis    ter           zur   verdinet.
+TYPE: I      S        S         S   S    S           S      S             S     S"
+SZ,111.11111111111111,52.38095238095239,4.065425428798724,Einige der besten Blues-Musiker ihrer Zeit spielten in Atlanta.,Espar fo der beste BluesMusiker vor ihre Rezit hand in Atlantok spielt.,7,0,3,"REF:  ***** einige der ***** besten       blues-musiker ihrer zeit  spielten in *****    atlanta.
+HYP:  espar fo     der beste bluesmusiker vor           ihre  rezit hand     in atlantok spielt.
+TYPE: I     S      C   I     S            S             S     S     S        C  I        S"
+SO,108.33333333333333,62.35294117647059,2.8398387225677895,"Pfostenlöcher am Südtor lassen annehmen, dass er mit einer Holzbrücke überspannt war.",Auf Grund vor der Fostellöcheram Süddor kam Ana das Dete an Holsbrocoküberspannt xiih.,12,0,1,"REF:  ***** pfostenlöcher am  südtor lassen         annehmen, dass er  mit einer holzbrücke überspannt           war.
+HYP:  auf   grund         vor der    fostellöcheram süddor    kam  ana das dete  an         holsbrocoküberspannt xiih.
+TYPE: I     S             S   S      S              S         S    S   S   S     S          S                    S"
+ZG,107.6923076923077,32.743362831858406,5.751391809950023,Auf dem ursprünglichen Schallplattencover wurde der Name von Ozzy Osbourne fälschlicherweise „Ossie“ geschrieben.,Ufm ursprüngliche Shalld Blotter Cover ist der Name vom Osee Osburne falschlicher wies Osi geschrieben wurde.,11,0,3,"REF:  ***** auf           dem    ursprünglichen schallplattencover wurde der name ***** ***** von     ozzy         osbourne fälschlicherweise „ossie“     geschrieben.
+HYP:  ufm   ursprüngliche shalld blotter        cover              ist   der name vom   osee  osburne falschlicher wies     osi               geschrieben wurde.
+TYPE: I     S             S      S              S                  S     C   C    I     I     S       S            S        S                 S           S"
+BE,107.14285714285714,41.584158415841586,3.21858262703621,Auch in der Auseinandersetzung um Johannes Chrysostomos folgte Honorius eher ihrem als Stilichos Rat.,Oh ieder auseinandersetzig oner Johannes Crisostamos ist er holorios ein der Eren asemystilikos imrat Kokt.,14,0,1,"REF:  ***** auch  in                der  auseinandersetzung um          johannes chrysostomos folgte   honorius eher ihrem als           stilichos rat.
+HYP:  oh    ieder auseinandersetzig oner johannes           crisostamos ist      er           holorios ein      der  eren  asemystilikos imrat     kokt.
+TYPE: I     S     S                 S    S                  S           S        S            S        S        S    S     S             S         S"
+BE,100.0,28.71287128712871,5.439330544349823,Damit ergeben sich die Elemente einer Verfassung für eine europäische Föderation der Nationalstaaten.,Mit dem ergab er secht Element vor er verfassig für ne europäische Föderation vor den Nationalstaate.,10,0,3,"REF:  ***** ***** damit ergeben sich  die     elemente einer verfassung für eine europäische föderation ***** der nationalstaaten.
+HYP:  mit   dem   ergab er      secht element vor      er    verfassig  für ne   europäische föderation vor   den nationalstaate.
+TYPE: I     I     S     S       S     S       S        S     S          C   S    C           C          I     S   S"
+SG,100.0,52.5,5.522397783539471,Danach absolvierte er ebendort eine dreijährige Ausbildung zum Volksschullehrer.,Nachdem hätte Dötter er drüjährige Usbildig zum Volksschulenlehrer absolviert.,7,1,1,"REF:  *****   danach absolvierte er ebendort   eine     dreijährige ausbildung         zum         volksschullehrer.
+HYP:  nachdem hätte  dötter      er drüjährige usbildig zum         volksschulenlehrer absolviert. *****
+TYPE: I       S      S           C  S          S        S           S                  S           D"
+ZG,100.0,11.627906976744185,12.44023474812678,"Staats-Obergymnasium unterrichtete, kennen.",Staatsopergymnasium unterrichtet Kenne.,3,0,0,"REF:  staats-obergymnasium unterrichtete, kennen.
+HYP:  staatsopergymnasium  unterrichtet   kenne.
+TYPE: S                    S              S"
+BE,100.0,41.891891891891895,3.7954847898457067,Gestern habe ich über die Bedenken hinsichtlich der Verfassung gesprochen.,Gester han Jubert Bedenke hinsichlich dafür Fasssigret.,7,3,0,"REF:  gestern habe ich    über    die         bedenken hinsichtlich der   verfassung gesprochen.
+HYP:  gester  han  jubert bedenke hinsichlich dafür    fasssigret.  ***** *****      *****
+TYPE: S       S    S      S       S           S        S            D     D          D"
+ZH,100.0,41.46341463414634,7.809849842300641,Die Gleise sind teilweise noch vorhanden.,Gleis sind zum Teil nur vorHonde.,6,0,0,"REF:  die   gleise sind teilweise noch vorhanden.
+HYP:  gleis sind   zum  teil      nur  vorhonde.
+TYPE: S     S      S    S         S    S"
+VS,100.0,47.05882352941176,3.737437943747671,"Um die Abstimmung zu erleichtern, wurden diese Änderungsanträge allerdings in Blöcken zusammengefasst.",Um Dob stimme zerlechteru sind d Andrigsatreg allerdings im h Same fast orde.,11,0,1,"REF:  um ***** die    abstimmung  zu   erleichtern, wurden       diese      änderungsanträge allerdings in   blöcken zusammengefasst.
+HYP:  um dob   stimme zerlechteru sind d            andrigsatreg allerdings im               h          same fast    orde.
+TYPE: C  I     S      S           S    S            S            S          S                S          S    S       S"
+SG,100.0,48.0,5.0735520042259505,Ollie kommt als Affe wieder aus dem Becken heraus.,Der Oli rummt als auf wie de RusembeKriuse.,6,2,1,"REF:  ***** ollie kommt als affe wieder aus dem            becken heraus.
+HYP:  der   oli   rummt als auf  wie    de  rusembekriuse. *****  *****
+TYPE: I     S     S     C   S    S      S   S              D      D"
+AG,100.0,66.66666666666666,5.669791110976001,Etappe trat er danach nicht mehr an.,De Etappe ist schon nach e Nummer atrate.,6,0,1,"REF:  ***** etappe trat er    danach nicht mehr   an.
+HYP:  de    etappe ist  schon nach   e     nummer atrate.
+TYPE: I     C      S    S     S      S     S      S"
+BE,100.0,52.83018867924528,3.9297526283216277,"Wir können so verfahren, wie Sie vorgeschlagen haben.",Der Ceuzauverfahren widerhält Vorkschlacke.,4,4,0,"REF:  wir können          so        verfahren,    wie   sie   vorgeschlagen haben.
+HYP:  der ceuzauverfahren widerhält vorkschlacke. ***** ***** *****         *****
+TYPE: S   S               S         S             D     D     D             D"
+SG,100.0,28.57142857142857,12.44023474812678,Gute Überwachung: Ja!,"Gutüberwachig, jo!",2,1,0,"REF:  gute           überwachung: ja!
+HYP:  gutüberwachig, jo!          *****
+TYPE: S              S            D"
+BE,100.0,43.75,6.567274736060396,Er schloss sein Studium als Diplom-Soziologe ab.,Erhit sie Studium aus Diplom Soziolog abschlossen.,7,0,0,"REF:  er    schloss sein    studium als    diplom-soziologe ab.
+HYP:  erhit sie     studium aus     diplom soziolog         abschlossen.
+TYPE: S     S       S       S       S      S                S"
+LU,100.0,23.809523809523807,8.643019616048525,Penda war vermutlich mehrmals verheiratet.,Pender ict vermutlich memals verheiratet xi.,4,0,1,"REF:  penda  war vermutlich *****  mehrmals    verheiratet.
+HYP:  pender ict vermutlich memals verheiratet xi.
+TYPE: S      S   C          I      S           S"
+AG,100.0,41.7910447761194,3.708659055657029,Aus den nominierten Beiträgen kürt die Jury sodann die Preisträger.,Us der nominierte Bitrahür Juriden Priestrager.,6,4,0,"REF:  aus den nominierten beiträgen kürt    die          jury  sodann die   preisträger.
+HYP:  us  der nominierte  bitrahür  juriden priestrager. ***** *****  ***** *****
+TYPE: S   S   S           S         S       S            D     D      D     D"
+BE,100.0,33.33333333333333,5.669791110976001,Sein Sohn Jacobus hat die Porträts dafür gestochen.,Seson Jacobus hät deer Portras de fur Knoche.,8,0,0,"REF:  sein  sohn    jacobus hat  die     porträts dafür gestochen.
+HYP:  seson jacobus hät     deer portras de       fur   knoche.
+TYPE: S     S       S       S    S       S        S     S"
+ZG,100.0,43.75,5.795599612995366,Die Schwerkraft lässt das Salz in Tanks fließen.,Schwercraft lat Salz i de Dunk Fliesse.,7,1,0,"REF:  die         schwerkraft lässt das salz in   tanks    fließen.
+HYP:  schwercraft lat         salz  i   de   dunk fliesse. *****
+TYPE: S           S           S     S   S    S    S        D"
+BL,100.0,41.66666666666667,3.7052472057637615,"Seine Nachfahren kündigten gerichtliche Schritte an, um die Umbettung zu verhindern.",Sin die Nochfahre hand es christliche schritt erkündet und unbertig zurhinder.,11,0,0,"REF:  seine nachfahren kündigten gerichtliche schritte an,         um      die      umbettung zu       verhindern.
+HYP:  sin   die        nochfahre hand         es       christliche schritt erkündet und       unbertig zurhinder.
+TYPE: S     S          S         S            S        S           S       S        S         S        S"
+TG,100.0,48.07692307692308,5.669791110976001,Ich bin noch mit drei weiteren Dingen einverstanden.,Mit nur drü wietere Dinge bie ni verstande.,8,0,0,"REF:  ich bin noch mit     drei  weiteren dingen einverstanden.
+HYP:  mit nur drü  wietere dinge bie      ni     verstande.
+TYPE: S   S   S    S       S     S        S      S"
+BE,100.0,48.0,12.44023474812678,Sie fehlen im Mittelmeer.,Sefala imme Tumeir.,3,1,0,"REF:  sie    fehlen im      mittelmeer.
+HYP:  sefala imme   tumeir. *****
+TYPE: S      S      S       D"
+ZH,100.0,37.2093023255814,4.100530090638893,In der Folge wurden die übrigen Kugeln durch die Einsatzkräfte kontrolliert gesprengt.,Wieder folg sindübrige Cugle durch d Isatz Kraft kontrolliert gesprangt worden.,11,1,0,"REF:  in     der  folge      wurden die   übrigen kugeln durch die          einsatzkräfte kontrolliert gesprengt.
+HYP:  wieder folg sindübrige cugle  durch d       isatz  kraft kontrolliert gesprangt     worden.      *****
+TYPE: S      S    S          S      S     S       S      S     S            S             S            D"
+AG,100.0,38.70967741935484,5.669791110976001,Die Speicherung erfolgt dabei im Shared-Memory des Webservers.,Spiechediger folgte bie im Shirt Memory vom Webserver.,8,0,0,"REF:  die          speicherung erfolgt dabei im    shared-memory des webservers.
+HYP:  spiechediger folgte      bie     im    shirt memory        vom webserver.
+TYPE: S            S           S       S     S     S             S   S"
+BE,100.0,31.25,4.935157841536379,Wir stehen auch vor einer wichtigen humanitären Herausforderung.,Mistand auf forere wichtiger humanitäre Herausfortrig.,6,2,0,"REF:  wir     stehen auch   vor       einer      wichtigen      humanitären herausforderung.
+HYP:  mistand auf    forere wichtiger humanitäre herausfortrig. *****       *****
+TYPE: S       S      S      S         S          S              D           D"
+AG,100.0,52.77777777777778,8.643019616048525,Isotope waren damals noch unbekannt.,Isodope sind schor damals unbekannt xe.,4,0,1,"REF:  *****   isotope waren damals noch      unbekannt.
+HYP:  isodope sind    schor damals unbekannt xe.
+TYPE: I       S       S     C      S         S"
+BL,100.0,34.48275862068966,2.853183878886449,Nach einigen Jahren in unteren Ligen ging es Anfang dieses Jahrhunderts wieder bergauf.,Noch einige Jahre ind unterer Liga ishes Auffang vom Jahrhundertweterbarufgange.,10,3,0,"REF:  nach einigen jahren in  unteren ligen ging  es      anfang dieses                      jahrhunderts wieder bergauf.
+HYP:  noch einige  jahre  ind unterer liga  ishes auffang vom    jahrhundertweterbarufgange. *****        *****  *****
+TYPE: S    S       S      S   S       S     S     S       S      S                           D            D      D"
+BE,100.0,49.36708860759494,3.737437943747671,"Es könnte viel schlimmer kommen, als sie sich möglicherweise vorstellen können.","Es rant Fech leben meho, aus si sach möglicher wies Reyfog deue.",10,0,1,"REF:  es ***** könnte viel  schlimmer kommen, als sie  sich      möglicherweise vorstellen können.
+HYP:  es rant  fech   leben meho,     aus     si  sach möglicher wies           reyfog     deue.
+TYPE: C  I     S      S     S         S       S   S    S         S              S          S"
+ZH,100.0,58.18181818181818,8.913765521398126,Dadurch verformt sich das zu bearbeitende Blech zurück.,Durch das verformt sich sblech wo man muss bearbeitet zruck.,6,0,2,"REF:  ***** dadurch verformt sich *****  das zu  bearbeitende blech      zurück.
+HYP:  durch das     verformt sich sblech wo  man muss         bearbeitet zruck.
+TYPE: I     S       C        C    I      S   S   S            S          S"
+BE,100.0,51.21951219512195,11.044795567078939,Die Verhandlungen laufen aber zu langsam.,Für handliger Lauf ver jetzt abers langsam.,5,0,1,"REF:  ***** die       verhandlungen laufen aber  zu    langsam.
+HYP:  für   handliger lauf          ver    jetzt abers langsam.
+TYPE: I     S         S             S      S     S     C"
+AG,100.0,36.58536585365854,12.223075560872525,Allmählich verlieben sie sich ineinander.,Langsam verliebe sie sich in en and.,3,0,2,"REF:  allmählich verlieben sie sich ***** ***** ineinander.
+HYP:  langsam    verliebe  sie sich in    en    and.
+TYPE: S          S         C   C    I     I     S"
+SG,100.0,55.294117647058826,2.7354882120611315,"Dies war nicht der Fall für die Kontrollgruppen, die keine Fehlinformation erhielten.",Das ist fürdier kontrollgruppe wo Kaifeilinformationeüberhohend Nötte Falxi.,8,4,0,"REF:  dies war nicht   der            fall für                           die   kontrollgruppen, die   keine fehlinformation erhielten.
+HYP:  das  ist fürdier kontrollgruppe wo   kaifeilinformationeüberhohend nötte falxi.           ***** ***** *****           *****
+TYPE: S    S   S       S              S    S                             S     S                D     D     D               D"
+BE,100.0,40.909090909090914,11.498759556447222,Diese Ranch war früher Drehort von Wildwest-Filmen mit John Wayne.,Die Rance is frichte Driotxe vom Wilde Weshte Film Madam John Wayne.,8,0,2,"REF:  ***** ***** diese ranch   war     früher drehort von    wildwest-filmen mit   john wayne.
+HYP:  die   rance is    frichte driotxe vom    wilde   weshte film            madam john wayne.
+TYPE: I     I     S     S       S       S      S       S      S               S     C    C"
+BE,100.0,60.67415730337079,7.431878014503621,Daran wird sich auch mit der Annahme einiger Änderungsanträge nichts Wesentliches ändern.,O mit Drana voeinige Andriksartrag wird sich nütwessentlach stran andere.,10,2,0,"REF:  daran wird sich  auch     mit           der  annahme einiger        änderungsanträge nichts  wesentliches ändern.
+HYP:  o     mit  drana voeinige andriksartrag wird sich    nütwessentlach stran            andere. *****        *****
+TYPE: S     S    S     S        S             S    S       S              S                S       D            D"
+BE,100.0,41.30434782608695,2.447822402834545,"Ich habe den Eindruck, dass viele der europäischen Agenturen ein gewisses Eigenleben führen.",Jadridruck das fiw Europäische Agentures grüsse Seigelabe führe.,8,5,0,"REF:  ich        habe den eindruck,   dass      viele  der       europäischen agenturen ein   gewisses eigenleben führen.
+HYP:  jadridruck das  fiw europäische agentures grüsse seigelabe führe.       *****     ***** *****    *****      *****
+TYPE: S          S    S   S           S         S      S         S            D         D     D        D          D"
+SG,100.0,26.923076923076923,12.70331870386537,Mit welcher Unterstützung?,Mit Wellerau unterstütz ic?,2,0,1,"REF:  mit *****    welcher    unterstützung?
+HYP:  mit wellerau unterstütz ic?
+TYPE: C   I        S          S"
+ZH,100.0,32.25806451612903,5.934202609760488,Er kreierte als erster einen pragmatisch-rationalen Kommissar.,Er hat als erste ein pragmatisch rationale Kommissar kreiert.,5,0,2,"REF:  er kreierte als ***** ***** erster      einen     pragmatisch-rationalen kommissar.
+HYP:  er hat      als erste ein   pragmatisch rationale kommissar              kreiert.
+TYPE: C  S        C   I     I     S           S         S                      S"
+BE,100.0,30.120481927710845,4.419021106340002,"Tourismus, Fischfang und Forstwirtschaft spielen eine wichtige Rolle in der Gegend.",Der Tourismus Fehfang uf orstwerkschaft spiele er wichtigi Rolle ergeigent.,8,2,1,"REF:  ***** tourismus, fischfang und forstwirtschaft spielen eine wichtige rolle in         der   gegend.
+HYP:  der   tourismus  fehfang   uf  orstwerkschaft  spiele  er   wichtigi rolle ergeigent. ***** *****
+TYPE: I     S          S         S   S               S       S    S        C     S          D     D"
+BE,100.0,45.97701149425287,3.9297193407553013,"Nina Jäckle verfasste bislang Hörspiele, Theaterstücke, Drehbücher und vor allem Prosa.","Nina Yaklehät besitz voralem Hörspiel, Theaterstück ud Deibücher, aber vorallum Prosa schriebe.",10,0,1,"REF:  nina *****    jäckle verfasste bislang   hörspiele,   theaterstücke, drehbücher und  vor      allem prosa.
+HYP:  nina yaklehät besitz voralem   hörspiel, theaterstück ud             deibücher, aber vorallum prosa schriebe.
+TYPE: C    I        S      S         S         S            S              S          S    S        S     S"
+BL,100.0,51.28205128205128,6.870636427700047,Es wurde auch ihr erfolgreichstes Buch.,Sicher wi das erfolgreichste Buchworde.,5,1,0,"REF:  es     wurde auch ihr            erfolgreichstes buch.
+HYP:  sicher wi    das  erfolgreichste buchworde.      *****
+TYPE: S      S     S    S              S               D"
+AG,100.0,34.090909090909086,5.669791110976001,Britta Huttenlocher wuchs in Winterthur auf.,"Brita HutenLoche, ich in Winter tor ufgwahe.",5,0,1,"REF:  britta huttenlocher wuchs in *****  winterthur auf.
+HYP:  brita  hutenloche,  ich   in winter tor        ufgwahe.
+TYPE: S      S            S     C  I      S          S"
+AG,100.0,42.5,3.4015426186864377,Die Samples wurden in der Vergangenheit von verschiedenen Kommentatoren der verschiedenen Sprachversionen eingesprochen.,Ihr Vergangenheit sind Temples for verschiedene Kommentatore wos verschiedene Sprochversionen gesprocher wurde.,12,1,0,"REF:  die samples       wurden in      der vergangenheit von          verschiedenen kommentatoren der             verschiedenen sprachversionen eingesprochen.
+HYP:  ihr vergangenheit sind   temples for verschiedene  kommentatore wos           verschiedene  sprochversionen gesprocher    wurde.          *****
+TYPE: S   S             S      S       S   S             S            S             S             S               S             S               D"
+BE,100.0,61.111111111111114,5.522397783539471,Dies ist heute jedoch nicht mehr so.,"Da si schwirt, aber ni meso.",6,1,0,"REF:  dies ist heute    jedoch nicht mehr  so.
+HYP:  da   si  schwirt, aber   ni    meso. *****
+TYPE: S    S   S        S      S     S     D"
+AG,100.0,43.93939393939394,5.300156689756297,Abermals wurden Tausende bis Zehntausende von Frauen vergewaltigt.,Abermals sind Tusiki bis za Dusiki für Fraue vergewaltigt worde.,6,0,2,"REF:  abermals wurden tausende bis ***** *****  zehntausende von   frauen       vergewaltigt.
+HYP:  abermals sind   tusiki   bis za    dusiki für          fraue vergewaltigt worde.
+TYPE: C        S      S        C   I     I      S            S     S            S"
+VS,100.0,58.82352941176471,7.160476144948854,Sie ist die Hauptkirche der Stadt.,Sistteptrecher war des Start.,4,2,0,"REF:  sie            ist die hauptkirche der   stadt.
+HYP:  sistteptrecher war des start.      ***** *****
+TYPE: S              S   S   S           D     D"
+UR,100.0,50.0,7.809849842300641,Dort wurde er nach seinem Tod bestattet.,Der Dische nach sim dot bestattet wurde.,7,0,0,"REF:  dort wurde  er   nach seinem tod       bestattet.
+HYP:  der  dische nach sim  dot    bestattet wurde.
+TYPE: S    S      S    S    S      S         S"
+BE,100.0,41.509433962264154,7.545383788761362,Die Förderung soll in Kindertagesstätten stattfinden.,Förderixoi Hintertoggesstadt stattfinde.,3,3,0,"REF:  die        förderung         soll        in    kindertagesstätten stattfinden.
+HYP:  förderixoi hintertoggesstadt stattfinde. ***** *****              *****
+TYPE: S          S                 S           D     D                  D"
+BL,100.0,40.0,6.567274736060396,Eine zweite Sprengung verlief nicht erfolgreicher.,Dr zweite Sprangig ist niet erfolgreich Lofe.,5,0,1,"REF:  eine zweite *****    sprengung verlief nicht       erfolgreicher.
+HYP:  dr   zweite sprangig ist       niet    erfolgreich lofe.
+TYPE: S    C      I        S         S       S           S"
+ZG,100.0,39.62264150943396,3.125190763972442,Die kommunistische Geheimpolizei durchsuchte sein Elternhaus und seine Eltern wurden zu Verhören abgeholt.,Der Kommunistisch Kime Dunge durchsucht sies Elterehus und sini Altere sind zum Verörapkot wurde.,12,0,1,"REF:  ***** die           kommunistische geheimpolizei durchsuchte sein elternhaus und seine eltern wurden zu  verhören   abgeholt.
+HYP:  der   kommunistisch kime           dunge         durchsucht  sies elterehus  und sini  altere sind   zum verörapkot wurde.
+TYPE: I     S             S              S             S           S    S          C   S     S      S      S   S          S"
+BE,100.0,30.357142857142854,5.815868174415823,Weitere Pläne und Skizzen sind archivalisch überliefert.,Vitri Plan uscice sie archivalischüberlifert.,5,2,0,"REF:  weitere pläne und    skizzen sind                    archivalisch überliefert.
+HYP:  vitri   plan  uscice sie     archivalischüberlifert. *****        *****
+TYPE: S       S     S      S       S                       D            D"
+BE,100.0,53.03030303030303,5.0243511979240845,Schnell wurde das Haus zu einer beliebten Adresse der Prominenten.,Schnauish Tuso der beliebtadrasse vor der Prominante wurde.,8,2,0,"REF:  schnell   wurde das haus           zu  einer beliebten  adresse der   prominenten.
+HYP:  schnauish tuso  der beliebtadrasse vor der   prominante wurde.  ***** *****
+TYPE: S         S     S   S              S   S     S          S       D     D"
+AG,100.0,38.18181818181819,5.1145987070888905,In der Hauptphase dreht der Körper um seine Längsachse.,Ich haubtvusedrete Körper und sie ni Langsochse.,7,2,0,"REF:  in  der            hauptphase dreht der körper um          seine längsachse.
+HYP:  ich haubtvusedrete körper     und   sie ni     langsochse. ***** *****
+TYPE: S   S              S          S     S   S      S           D     D"
+BE,100.0,55.55555555555556,10.552670315936318,Ebenso gelang die Ansiedlung auf der Taimyr-Halbinsel.,Aberso ist datsächlich auf der Timir Haubinsel klungen.,4,1,2,"REF:  ebenso gelang die         ansiedlung auf der ***** *****     taimyr-halbinsel.
+HYP:  aberso ist    datsächlich *****      auf der timir haubinsel klungen.
+TYPE: S      S      S           D          C   C   I     I         S"
+TG,100.0,50.90909090909091,5.795599612995366,In Containern können auch keine Treiber geladen werden.,Ie Grundein noch in Daukeit dribeklade Werde.,7,1,0,"REF:  in containern können auch keine   treiber    geladen werden.
+HYP:  ie grundein   noch   in   daukeit dribeklade werde.  *****
+TYPE: S  S          S      S    S       S          S       D"
+BE,100.0,39.705882352941174,4.196114906296549,Dies zumeist in den besonders fruchtbaren Küstenregionen des Landes.,Das mincht ide psundrik fruchtbare Küschte Regione vom Land.,9,0,0,"REF:  dies zumeist in  den      besonders  fruchtbaren küstenregionen des landes.
+HYP:  das  mincht  ide psundrik fruchtbare küschte     regione        vom land.
+TYPE: S    S       S   S        S          S           S              S   S"
+ZH,100.0,33.33333333333333,6.870636427700047,Das Projekt endete nach der Ausschreibung.,Sprojekt andet noch dos schribig.,5,1,0,"REF:  das      projekt endete nach der       ausschreibung.
+HYP:  sprojekt andet   noch   dos  schribig. *****
+TYPE: S        S       S      S    S         D"
+TG,100.0,27.86885245901639,4.8734989388136185,Diese Stauung kann durch eine portale Hypertension auftreten.,Die Staui Kan dure potale Hypotension uftrete.,7,1,0,"REF:  diese stauung kann durch eine   portale     hypertension auftreten.
+HYP:  die   staui   kan  dure  potale hypotension uftrete.     *****
+TYPE: S     S       S    S     S      S           S            D"
+BE,100.0,45.588235294117645,3.124719790499494,"Je schwerer ein Zug ist, desto höhere Kräfte können dabei auftreten.",Ihr Schwar erzog ich dessdo höcher die Kraft Ceudbi auftrate.,10,1,0,"REF:  je  schwerer ein   zug ist,   desto  höhere kräfte können dabei     auftreten.
+HYP:  ihr schwar   erzog ich dessdo höcher die    kraft  ceudbi auftrate. *****
+TYPE: S   S        S     S   S      S      S      S      S      S         D"
+ZG,100.0,73.52941176470588,13.380161378318954,Trotz dieses Wachstums verlor der Ort seine Selbstständigkeit durch die Eingemeindung nach Den Helder.,Durt ikmeindig nach den Helder hätt der Ort trotz em Wachstum sienie Selbständigkeit verloren.,10,2,2,"REF:  ***** *****     trotz dieses wachstums verlor der ort seine selbstständigkeit durch    die    eingemeindung   nach      den   helder.
+HYP:  durt  ikmeindig nach  den    helder    hätt   der ort trotz em                wachstum sienie selbständigkeit verloren. ***** *****
+TYPE: I     I         S     S      S         S      C   C   S     S                 S        S      S               S         D     D"
+LU,100.0,50.0,10.552670315936318,In Kriegszeiten wurde das Schloss stärker befestigt.,"Ich erisitte ist das Schloss, dercher befestigt wurde.",6,0,1,"REF:  in  kriegszeiten wurde das *****    schloss stärker   befestigt.
+HYP:  ich erisitte     ist   das schloss, dercher befestigt wurde.
+TYPE: S   S            S     C   I        S       S         S"
+SG,100.0,44.11764705882353,4.266331692956901,Hinweise auf eine steinerne Ringmauer konnten nicht gefunden werden.,Hivis Ufe Steinoni Ringmur hät nükrene Quunde werde.,8,1,0,"REF:  hinweise auf eine     steinerne ringmauer konnten nicht  gefunden werden.
+HYP:  hivis    ufe steinoni ringmur   hät       nükrene quunde werde.   *****
+TYPE: S        S   S        S         S         S       S      S        D"
+LU,100.0,12.5,27.516060407455225,Epping erworben.,Apping erworbe.,2,0,0,"REF:  epping erworben.
+HYP:  apping erworbe.
+TYPE: S      S"
+SG,100.0,40.36697247706422,2.908317710573758,"Währenddessen pachtet Elke Berger zusätzlich das Luxushotel „Park’s“, um ihr Personal beschäftigen zu können.","Während dessen hat Elkeberger zorsetzlach Luxus Hotel Parks bachtet, damit sie ihres Personalbeschäftiger kann.",14,0,0,"REF:  währenddessen pachtet elke berger     zusätzlich  das   luxushotel „park’s“, um       ihr   personal beschäftigen zu                   können.
+HYP:  während       dessen  hat  elkeberger zorsetzlach luxus hotel      parks     bachtet, damit sie      ihres        personalbeschäftiger kann.
+TYPE: S             S       S    S          S           S     S          S         S        S     S        S            S                    S"
+ZH,100.0,43.47826086956522,5.693025330278465,In dieser Zeit war intensives Touren angesagt.,Iderezit ist intensiv sture aug sidxi.,6,1,0,"REF:  in       dieser zeit     war   intensives touren angesagt.
+HYP:  iderezit ist    intensiv sture aug        sidxi. *****
+TYPE: S        S      S        S     S          S      D"
+GR,100.0,43.42105263157895,5.522397783539471,Die Krieger konnten hierdurch dem militärisch überlegenen Gegner ausweichen.,Krieger en Doduri an militärischeberlegener Gegner können Mus wicha.,9,0,0,"REF:  die     krieger konnten hierdurch dem                    militärisch überlegenen gegner ausweichen.
+HYP:  krieger en      doduri  an        militärischeberlegener gegner      können      mus    wicha.
+TYPE: S       S       S       S         S                      S           S           S      S"
+BE,100.0,40.32258064516129,2.6485681362909563,"In den beiden Ländern herrschten unterschiedliche Netzwerk-Infrastrukturen, die den Austausch von Informationen erschwerten.",Etabeter Lander hei ungersädlichi Netzwach Infrastrukture kerscht od Rustusch für Informatione heschwert.,12,1,0,"REF:  in       den    beiden ländern       herrschten unterschiedliche netzwerk-infrastrukturen, die den      austausch von          informationen erschwerten.
+HYP:  etabeter lander hei    ungersädlichi netzwach   infrastrukture   kerscht                   od  rustusch für       informatione heschwert.    *****
+TYPE: S        S      S      S             S          S                S                         S   S        S         S            S             D"

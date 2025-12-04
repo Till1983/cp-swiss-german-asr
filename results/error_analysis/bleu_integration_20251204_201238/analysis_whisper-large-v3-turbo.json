@@ -1,0 +1,3085 @@
+{
+  "meta": {
+    "model_name": "whisper-large-v3-turbo",
+    "source_file": "whisper-large-v3-turbo_results.json",
+    "timestamp": "20251202_181020",
+    "total_samples": 863
+  },
+  "global_metrics": {
+    "mean_wer": 30.94447557077916,
+    "median_wer": 27.27272727272727,
+    "std_wer": 25.192092063512693,
+    "mean_cer": 14.15363295626278,
+    "median_cer": 9.89010989010989,
+    "std_cer": 14.551906913065572,
+    "mean_bleu": 53.973439602631814,
+    "median_bleu": 51.56626918239821,
+    "std_bleu": 28.393945044360876
+  },
+  "error_distribution_percent": {
+    "substitution": 21.221900734475852,
+    "deletion": 2.270198085911418,
+    "insertion": 5.308257289116403,
+    "correct": 71.19964389049632
+  },
+  "wer_bleu_correlation": {
+    "summary": {
+      "total_samples": 863,
+      "high_wer_high_bleu_count": 15,
+      "high_wer_low_bleu_count": 183,
+      "low_wer_high_bleu_count": 531,
+      "low_wer_low_bleu_count": 134,
+      "semantic_preservation_rate": 1.738122827346466
+    },
+    "high_wer_high_bleu_samples": [
+      {
+        "audio_file": "8d889bf5-b9b6-427f-a69d-4ad51f9a10ba.flac",
+        "dialect": "LU",
+        "reference": "Danach arbeitete er als Rechtsanwalt in München.",
+        "hypothesis": " Nachdem hat er als Rechtsanwalt in München gearbeitet.",
+        "wer": 57.14285714285714,
+        "cer": 45.83333333333333,
+        "bleu": 46.713797772820016
+      },
+      {
+        "audio_file": "9bfb1058-28ea-4372-888a-5d59340672b4.flac",
+        "dialect": "BL",
+        "reference": "Die Bemühungen in dieser Sache laufen.",
+        "hypothesis": " Bemühungen in dieser Sache sind am Laufen.",
+        "wer": 50.0,
+        "cer": 31.57894736842105,
+        "bleu": 41.11336169005198
+      },
+      {
+        "audio_file": "b0889e7c-4325-430a-ae1c-eea46c0e0c26.flac",
+        "dialect": "AG",
+        "reference": "Dabei wurde im Finale der damals amtierende Meister Al-Gharafa bezwungen.",
+        "hypothesis": " Der Bier ist im Finale der damals amtierende Meister Algarafa bezwungen wurde.",
+        "wer": 60.0,
+        "cer": 24.65753424657534,
+        "bleu": 42.11813371894876
+      },
+      {
+        "audio_file": "ff1329c9-d4da-4c72-abd4-0da83826d8b0.flac",
+        "dialect": "AG",
+        "reference": "Die Speicherung erfolgt dabei im Shared-Memory des Webservers.",
+        "hypothesis": " Die Speicherung erfolgt dabei im Shared Memory vom Web-Server.",
+        "wer": 50.0,
+        "cer": 9.67741935483871,
+        "bleu": 41.11336169005198
+      },
+      {
+        "audio_file": "616ea279-71f7-4adb-bed3-56f65733005b.flac",
+        "dialect": "SG",
+        "reference": "Nicht-ordensgebundene Männer und Frauen stellen heute die Mehrheit unter den Studierenden.",
+        "hypothesis": " Männer und Frauen, die nicht an Orten gebunden sind, stellen heute die Mehrheit unter den Studierenden.",
+        "wer": 72.72727272727273,
+        "cer": 45.55555555555556,
+        "bleu": 43.931603696853834
+      },
+      {
+        "audio_file": "a9f2a9ef-1f7d-4ab1-8f3b-3b193118277f.flac",
+        "dialect": "BE",
+        "reference": "Hinzu kamen die Habilitationen von Heinz Thomas und Ingrid Heidrich.",
+        "hypothesis": " Zusätzlich sind die Habilitationen von Heinz Thomas und Ingrid Heydrich dazu gekommen.",
+        "wer": 50.0,
+        "cer": 41.17647058823529,
+        "bleu": 48.63383168079944
+      },
+      {
+        "audio_file": "3696c39f-8a42-4375-8ad3-080128c161aa.flac",
+        "dialect": "BL",
+        "reference": "Stirling studierte Anthropologie an der University of California.",
+        "hypothesis": " Sterling hat Anthropologie an der University of California studiert.",
+        "wer": 50.0,
+        "cer": 27.692307692307693,
+        "bleu": 53.7284965911771
+      },
+      {
+        "audio_file": "9b077364-a916-4ea5-8f8e-68e83b7ef335.flac",
+        "dialect": "LU",
+        "reference": "Damenteam spielen in der Regionalliga Nord-Ost.",
+        "hypothesis": " Das Damen-Team spielt in der Regionalliga Nord-Ost.",
+        "wer": 50.0,
+        "cer": 14.893617021276595,
+        "bleu": 51.69731539571708
+      },
+      {
+        "audio_file": "35fed508-8421-47cc-93ff-dc16c2441d80.flac",
+        "dialect": "ZH",
+        "reference": "Nach der Scheidung ihrer Ehe zog sie wieder zurück nach New York.",
+        "hypothesis": " Nach ihrer Scheidung ist sie wieder zurück nach New York gezogen.",
+        "wer": 50.0,
+        "cer": 35.38461538461539,
+        "bleu": 43.61566471268857
+      },
+      {
+        "audio_file": "17d6b11b-e0ff-478d-bcad-c044c2073c56.flac",
+        "dialect": "BE",
+        "reference": "Ein Problem stellte im Fall einer Belagerung nur die Versorgung mit Trinkwasser dar.",
+        "hypothesis": " Im Fall einer Belagerung hat nur die Versorgung mit Trinkwasser ein Problem dargestellt.",
+        "wer": 53.84615384615385,
+        "cer": 52.38095238095239,
+        "bleu": 49.4799546857679
+      }
+    ],
+    "high_wer_low_bleu_samples": [
+      {
+        "audio_file": "42ba1159-1c4f-490a-b0c2-965807c800dc.flac",
+        "dialect": "TG",
+        "reference": "Dieses Kräftemessen war eine der Ursachen für die Resignation seines Nachfolgers Burchard.",
+        "hypothesis": " Das Kräftemessen war eine Ursache für die Resignation von seinem Nachfolger Buchart.",
+        "wer": 58.333333333333336,
+        "cer": 18.88888888888889,
+        "bleu": 20.098339913206324
+      },
+      {
+        "audio_file": "d3535ea7-e4cc-40b9-8e56-88ce68bdac27.flac",
+        "dialect": "BE",
+        "reference": "Linssen wuchs in Wachtendonk auf.",
+        "hypothesis": " Die Lissin ist in Wartendonk aufgewachsen.",
+        "wer": 100.0,
+        "cer": 66.66666666666666,
+        "bleu": 7.809849842300641
+      },
+      {
+        "audio_file": "1cccaffd-b3ea-442d-adea-85be608c4883.flac",
+        "dialect": "UR",
+        "reference": "Tötet nicht den Boten.",
+        "hypothesis": " Du hättest nicht da bulte.",
+        "wer": 100.0,
+        "cer": 54.54545454545454,
+        "bleu": 9.652434877402245
+      },
+      {
+        "audio_file": "92e4c3de-2111-4099-b784-8f2597495647.flac",
+        "dialect": "SG",
+        "reference": "Danach absolvierte er ebendort eine dreijährige Ausbildung zum Volksschullehrer.",
+        "hypothesis": " Nachdem hat er dort eine dreijährige Ausbildung zum Volksschullehrer absolviert.",
+        "wer": 55.55555555555556,
+        "cer": 35.0,
+        "bleu": 38.16330911371337
+      },
+      {
+        "audio_file": "f190938f-f9e8-43e1-9c16-aa762239df8f.flac",
+        "dialect": "TG",
+        "reference": "Am Ende kommt sie dennoch frei und findet ihre wahre Liebe.",
+        "hypothesis": " Schlussendlich ist sie dann noch frei und findet jetzt ihre wahre Liebe.",
+        "wer": 54.54545454545454,
+        "cer": 38.983050847457626,
+        "bleu": 28.917849332325716
+      },
+      {
+        "audio_file": "88ca5d6e-6ba0-44ee-b540-a28e213c93ec.flac",
+        "dialect": "SG",
+        "reference": "Wenige Meter nördlich des Gipfels beginnt die Waldgemarkung der Kleinstadt Wachenheim.",
+        "hypothesis": " Wenige Meter nördlich vom Gipfel fängt die Waldmarkierung der Kleinstadt Wachenheim an.",
+        "wer": 54.54545454545454,
+        "cer": 19.767441860465116,
+        "bleu": 20.78060434846712
+      },
+      {
+        "audio_file": "332d2e69-5674-4dcb-bb80-9900901a5ca8.flac",
+        "dialect": "ZG",
+        "reference": "Staats-Obergymnasium unterrichtete, kennen.",
+        "hypothesis": " Staatsopergymnasium unterrichtet, kennen.",
+        "wer": 66.66666666666666,
+        "cer": 6.976744186046512,
+        "bleu": 39.76353643835254
+      },
+      {
+        "audio_file": "e415eb7f-19fa-4678-b31e-9fbbba4c4e2e.flac",
+        "dialect": "AG",
+        "reference": "Diese Supernova vom Typ Ia war eine der am besten beobachteten Supernovae.",
+        "hypothesis": " Die Supernova vom Typ IA ist einer der besten beobachteten Supernova aller Zeiten.",
+        "wer": 58.333333333333336,
+        "cer": 28.37837837837838,
+        "bleu": 22.718709780542323
+      },
+      {
+        "audio_file": "a0094388-4457-48b4-ab6e-ce9f701e5130.flac",
+        "dialect": "AG",
+        "reference": "Etappe trat er danach nicht mehr an.",
+        "hypothesis": " Die Etappe ist nachher nicht mehr angetreten.",
+        "wer": 71.42857142857143,
+        "cer": 63.888888888888886,
+        "bleu": 13.134549472120788
+      },
+      {
+        "audio_file": "6a428acc-ff53-4da8-bd83-9ef08bbea356.flac",
+        "dialect": "ZH",
+        "reference": "Der erklärt sich bereit Mace zu helfen, Tau zu überführen.",
+        "hypothesis": " Er erklärt sich bereit, die Hau zu überführen.",
+        "wer": 60.0,
+        "cer": 27.586206896551722,
+        "bleu": 22.35233909919704
+      }
+    ]
+  },
+  "dialect_analysis": {
+    "BE": {
+      "sample_count": 203,
+      "mean_wer": 32.23078235393506,
+      "std_wer": 26.90949253079121,
+      "mean_cer": 15.905567023006265,
+      "mean_bleu": 53.33710466585393,
+      "std_bleu": 29.54777879031426,
+      "error_distribution": {
+        "substitution": 467,
+        "deletion": 45,
+        "insertion": 135,
+        "correct": 1498,
+        "sub_rate": 0.7217928902627512,
+        "del_rate": 0.0695517774343122,
+        "ins_rate": 0.20865533230293662
+      },
+      "top_confusions": [
+        [
+          [
+            "dies",
+            "das"
+          ],
+          5
+        ],
+        [
+          [
+            "wurde",
+            "ist"
+          ],
+          3
+        ],
+        [
+          [
+            "wurden",
+            "sind"
+          ],
+          3
+        ],
+        [
+          [
+            "hatte",
+            "hat"
+          ],
+          3
+        ],
+        [
+          [
+            "als",
+            "aus"
+          ],
+          2
+        ],
+        [
+          [
+            "der",
+            "von"
+          ],
+          2
+        ],
+        [
+          [
+            "fand",
+            "hat"
+          ],
+          2
+        ],
+        [
+          [
+            "der",
+            "da"
+          ],
+          2
+        ],
+        [
+          [
+            "verdiente",
+            "hat"
+          ],
+          2
+        ],
+        [
+          [
+            "diese",
+            "die"
+          ],
+          2
+        ]
+      ]
+    },
+    "AG": {
+      "sample_count": 108,
+      "mean_wer": 29.55872316983428,
+      "std_wer": 23.08289756474026,
+      "mean_cer": 13.22617877026307,
+      "mean_bleu": 55.44046446885309,
+      "std_bleu": 28.888311597617157,
+      "error_distribution": {
+        "substitution": 231,
+        "deletion": 27,
+        "insertion": 54,
+        "correct": 830,
+        "sub_rate": 0.7403846153846154,
+        "del_rate": 0.08653846153846154,
+        "ins_rate": 0.17307692307692307
+      },
+      "top_confusions": [
+        [
+          [
+            "diese",
+            "die"
+          ],
+          3
+        ],
+        [
+          [
+            "war",
+            "ist"
+          ],
+          3
+        ],
+        [
+          [
+            "wurde",
+            "ist"
+          ],
+          3
+        ],
+        [
+          [
+            "spielte",
+            "spielt"
+          ],
+          2
+        ],
+        [
+          [
+            "tausenden",
+            "tausende"
+          ],
+          1
+        ],
+        [
+          [
+            "menschen",
+            "manches"
+          ],
+          1
+        ],
+        [
+          [
+            "spielte",
+            "hat"
+          ],
+          1
+        ],
+        [
+          [
+            "vegas.",
+            "gespielt."
+          ],
+          1
+        ],
+        [
+          [
+            "dargestellt.",
+            "dargestellt"
+          ],
+          1
+        ],
+        [
+          [
+            "carl",
+            "karl"
+          ],
+          1
+        ]
+      ]
+    },
+    "TG": {
+      "sample_count": 50,
+      "mean_wer": 31.26989121989122,
+      "std_wer": 21.521582623683745,
+      "mean_cer": 14.186754174727353,
+      "mean_bleu": 51.69095909587785,
+      "std_bleu": 24.62161245180567,
+      "error_distribution": {
+        "substitution": 106,
+        "deletion": 13,
+        "insertion": 25,
+        "correct": 352,
+        "sub_rate": 0.7361111111111112,
+        "del_rate": 0.09027777777777778,
+        "ins_rate": 0.1736111111111111
+      },
+      "top_confusions": [
+        [
+          [
+            "wurde",
+            "ist"
+          ],
+          5
+        ],
+        [
+          [
+            "seines",
+            "seinem"
+          ],
+          2
+        ],
+        [
+          [
+            "dieses",
+            "das"
+          ],
+          1
+        ],
+        [
+          [
+            "der",
+            "ursache"
+          ],
+          1
+        ],
+        [
+          [
+            "nachfolgers",
+            "nachfolger"
+          ],
+          1
+        ],
+        [
+          [
+            "burchard.",
+            "buchart."
+          ],
+          1
+        ],
+        [
+          [
+            "die",
+            "zollbezeichnungen"
+          ],
+          1
+        ],
+        [
+          [
+            "zoll-bezeichnungen",
+            "in"
+          ],
+          1
+        ],
+        [
+          [
+            "in",
+            "der"
+          ],
+          1
+        ],
+        [
+          [
+            "nebenstehender",
+            "nebenstehenden"
+          ],
+          1
+        ]
+      ]
+    },
+    "BL": {
+      "sample_count": 54,
+      "mean_wer": 29.10866396977508,
+      "std_wer": 23.144764623092975,
+      "mean_cer": 13.645242770397225,
+      "mean_bleu": 54.09453508104104,
+      "std_bleu": 29.3968843540484,
+      "error_distribution": {
+        "substitution": 120,
+        "deletion": 13,
+        "insertion": 25,
+        "correct": 413,
+        "sub_rate": 0.759493670886076,
+        "del_rate": 0.08227848101265822,
+        "ins_rate": 0.15822784810126583
+      },
+      "top_confusions": [
+        [
+          [
+            "dem",
+            "im"
+          ],
+          2
+        ],
+        [
+          [
+            "kehrte",
+            "ist"
+          ],
+          2
+        ],
+        [
+          [
+            "lassen",
+            "leute"
+          ],
+          1
+        ],
+        [
+          [
+            "grundform",
+            "grundformen"
+          ],
+          1
+        ],
+        [
+          [
+            "beamtete",
+            "beamte"
+          ],
+          1
+        ],
+        [
+          [
+            "junge",
+            "junge,"
+          ],
+          1
+        ],
+        [
+          [
+            "architekten.",
+            "architekte."
+          ],
+          1
+        ],
+        [
+          [
+            "ratsvorsitz.",
+            "rotsvorsitz."
+          ],
+          1
+        ],
+        [
+          [
+            "sechziger",
+            "60er"
+          ],
+          1
+        ],
+        [
+          [
+            "zurück.",
+            "zurückgekehrt."
+          ],
+          1
+        ]
+      ]
+    },
+    "GR": {
+      "sample_count": 12,
+      "mean_wer": 18.772523772523773,
+      "std_wer": 10.515684773631811,
+      "mean_cer": 9.421925896438509,
+      "mean_bleu": 64.49170754686112,
+      "std_bleu": 18.813595525194216,
+      "error_distribution": {
+        "substitution": 18,
+        "deletion": 1,
+        "insertion": 3,
+        "correct": 105,
+        "sub_rate": 0.8181818181818182,
+        "del_rate": 0.045454545454545456,
+        "ins_rate": 0.13636363636363635
+      },
+      "top_confusions": [
+        [
+          [
+            "wurde",
+            "ist"
+          ],
+          1
+        ],
+        [
+          [
+            "endgültig",
+            "wirklich"
+          ],
+          1
+        ],
+        [
+          [
+            "geregelt.",
+            "gelöst."
+          ],
+          1
+        ],
+        [
+          [
+            "dessen",
+            "der"
+          ],
+          1
+        ],
+        [
+          [
+            "dem",
+            "am"
+          ],
+          1
+        ],
+        [
+          [
+            "funk-empfänger",
+            "funkempfänger"
+          ],
+          1
+        ],
+        [
+          [
+            "dolden",
+            "olden"
+          ],
+          1
+        ],
+        [
+          [
+            "anschließend",
+            "anschliessend"
+          ],
+          1
+        ],
+        [
+          [
+            "hierdurch",
+            "durch"
+          ],
+          1
+        ],
+        [
+          [
+            "dem",
+            "einen"
+          ],
+          1
+        ]
+      ]
+    },
+    "ZH": {
+      "sample_count": 144,
+      "mean_wer": 28.208018833018834,
+      "std_wer": 21.585791125515655,
+      "mean_cer": 12.754200570161938,
+      "mean_bleu": 55.83858394677899,
+      "std_bleu": 26.738760880561795,
+      "error_distribution": {
+        "substitution": 307,
+        "deletion": 31,
+        "insertion": 65,
+        "correct": 1116,
+        "sub_rate": 0.7617866004962779,
+        "del_rate": 0.07692307692307693,
+        "ins_rate": 0.16129032258064516
+      },
+      "top_confusions": [
+        [
+          [
+            "diese",
+            "die"
+          ],
+          7
+        ],
+        [
+          [
+            "wurde",
+            "ist"
+          ],
+          4
+        ],
+        [
+          [
+            "wurden",
+            "sind"
+          ],
+          3
+        ],
+        [
+          [
+            "des",
+            "vom"
+          ],
+          2
+        ],
+        [
+          [
+            "erhielt",
+            "hat"
+          ],
+          2
+        ],
+        [
+          [
+            "gewann",
+            "hat"
+          ],
+          2
+        ],
+        [
+          [
+            "der",
+            "den"
+          ],
+          2
+        ],
+        [
+          [
+            "von",
+            "der"
+          ],
+          2
+        ],
+        [
+          [
+            "marmor­waschtische",
+            "marmorwaschtische"
+          ],
+          1
+        ],
+        [
+          [
+            "hinzugezogen.",
+            "zugezogen."
+          ],
+          1
+        ]
+      ]
+    },
+    "UR": {
+      "sample_count": 15,
+      "mean_wer": 35.971102971102965,
+      "std_wer": 42.67869490827333,
+      "mean_cer": 12.003789023619449,
+      "mean_bleu": 60.74833764291256,
+      "std_bleu": 39.11922372285452,
+      "error_distribution": {
+        "substitution": 33,
+        "deletion": 2,
+        "insertion": 7,
+        "correct": 106,
+        "sub_rate": 0.7857142857142857,
+        "del_rate": 0.047619047619047616,
+        "ins_rate": 0.16666666666666666
+      },
+      "top_confusions": [
+        [
+          [
+            "tötet",
+            "hättest"
+          ],
+          1
+        ],
+        [
+          [
+            "den",
+            "da"
+          ],
+          1
+        ],
+        [
+          [
+            "boten.",
+            "bulte."
+          ],
+          1
+        ],
+        [
+          [
+            "in",
+            "der"
+          ],
+          1
+        ],
+        [
+          [
+            "dem",
+            "der"
+          ],
+          1
+        ],
+        [
+          [
+            "dreidimensionale",
+            "dreidimensionalen"
+          ],
+          1
+        ],
+        [
+          [
+            "fehlte",
+            "hat"
+          ],
+          1
+        ],
+        [
+          [
+            "an",
+            "ein"
+          ],
+          1
+        ],
+        [
+          [
+            "bildungszentren",
+            "bildungszentrum"
+          ],
+          1
+        ],
+        [
+          [
+            "an",
+            "gelehrten"
+          ],
+          1
+        ]
+      ]
+    },
+    "LU": {
+      "sample_count": 51,
+      "mean_wer": 30.721147044676457,
+      "std_wer": 22.225422539361283,
+      "mean_cer": 12.12853046530717,
+      "mean_bleu": 54.43796666126755,
+      "std_bleu": 27.856621231973335,
+      "error_distribution": {
+        "substitution": 102,
+        "deletion": 17,
+        "insertion": 25,
+        "correct": 362,
+        "sub_rate": 0.7083333333333334,
+        "del_rate": 0.11805555555555555,
+        "ins_rate": 0.1736111111111111
+      },
+      "top_confusions": [
+        [
+          [
+            "wurde",
+            "ist"
+          ],
+          2
+        ],
+        [
+          [
+            "danach",
+            "nachdem"
+          ],
+          1
+        ],
+        [
+          [
+            "arbeitete",
+            "hat"
+          ],
+          1
+        ],
+        [
+          [
+            "münchen.",
+            "gearbeitet."
+          ],
+          1
+        ],
+        [
+          [
+            "anteilig",
+            "an"
+          ],
+          1
+        ],
+        [
+          [
+            "diese",
+            "diesen"
+          ],
+          1
+        ],
+        [
+          [
+            "berichte.",
+            "bericht."
+          ],
+          1
+        ],
+        [
+          [
+            "zwölf",
+            "12"
+          ],
+          1
+        ],
+        [
+          [
+            "debatten",
+            "debatte"
+          ],
+          1
+        ],
+        [
+          [
+            "gezeichneten",
+            "zeichneten"
+          ],
+          1
+        ]
+      ]
+    },
+    "SG": {
+      "sample_count": 116,
+      "mean_wer": 30.505976303390096,
+      "std_wer": 24.476102699082478,
+      "mean_cer": 13.799406476788745,
+      "mean_bleu": 53.53961413773427,
+      "std_bleu": 28.43870308760612,
+      "error_distribution": {
+        "substitution": 247,
+        "deletion": 21,
+        "insertion": 77,
+        "correct": 849,
+        "sub_rate": 0.7159420289855073,
+        "del_rate": 0.06086956521739131,
+        "ins_rate": 0.22318840579710145
+      },
+      "top_confusions": [
+        [
+          [
+            "die",
+            "diese"
+          ],
+          3
+        ],
+        [
+          [
+            "wurde",
+            "ist"
+          ],
+          3
+        ],
+        [
+          [
+            "diese",
+            "die"
+          ],
+          2
+        ],
+        [
+          [
+            "dies",
+            "das"
+          ],
+          2
+        ],
+        [
+          [
+            "danach",
+            "nachdem"
+          ],
+          1
+        ],
+        [
+          [
+            "absolvierte",
+            "hat"
+          ],
+          1
+        ],
+        [
+          [
+            "ebendort",
+            "dort"
+          ],
+          1
+        ],
+        [
+          [
+            "volksschullehrer.",
+            "absolviert."
+          ],
+          1
+        ],
+        [
+          [
+            "indigenen",
+            "indigene"
+          ],
+          1
+        ],
+        [
+          [
+            "diente",
+            "dient"
+          ],
+          1
+        ]
+      ]
+    },
+    "SO": {
+      "sample_count": 36,
+      "mean_wer": 36.03352665852666,
+      "std_wer": 38.40905334250079,
+      "mean_cer": 17.293802082191796,
+      "mean_bleu": 54.373883431536356,
+      "std_bleu": 29.71392313488081,
+      "error_distribution": {
+        "substitution": 79,
+        "deletion": 13,
+        "insertion": 27,
+        "correct": 260,
+        "sub_rate": 0.6638655462184874,
+        "del_rate": 0.1092436974789916,
+        "ins_rate": 0.226890756302521
+      },
+      "top_confusions": [
+        [
+          [
+            "außer",
+            "ausser"
+          ],
+          2
+        ],
+        [
+          [
+            "in",
+            "im"
+          ],
+          1
+        ],
+        [
+          [
+            "der",
+            "obbau"
+          ],
+          1
+        ],
+        [
+          [
+            "ihres",
+            "studium"
+          ],
+          1
+        ],
+        [
+          [
+            "studiums",
+            "hat"
+          ],
+          1
+        ],
+        [
+          [
+            "verbrachte",
+            "der"
+          ],
+          1
+        ],
+        [
+          [
+            "bußmann",
+            "busmann"
+          ],
+          1
+        ],
+        [
+          [
+            "paris.",
+            "verbracht."
+          ],
+          1
+        ],
+        [
+          [
+            "allerdings",
+            "sagen,"
+          ],
+          1
+        ],
+        [
+          [
+            "sind",
+            "dass"
+          ],
+          1
+        ]
+      ]
+    },
+    "ZG": {
+      "sample_count": 30,
+      "mean_wer": 41.64113664113664,
+      "std_wer": 25.348416998802563,
+      "mean_cer": 18.460247730251634,
+      "mean_bleu": 42.177780413919876,
+      "std_bleu": 27.888156336892035,
+      "error_distribution": {
+        "substitution": 92,
+        "deletion": 8,
+        "insertion": 20,
+        "correct": 190,
+        "sub_rate": 0.7666666666666667,
+        "del_rate": 0.06666666666666667,
+        "ins_rate": 0.16666666666666666
+      },
+      "top_confusions": [
+        [
+          [
+            "wurden",
+            "sind"
+          ],
+          2
+        ],
+        [
+          [
+            "gehörte",
+            "hat"
+          ],
+          2
+        ],
+        [
+          [
+            "staats-obergymnasium",
+            "staatsopergymnasium"
+          ],
+          1
+        ],
+        [
+          [
+            "unterrichtete,",
+            "unterrichtet,"
+          ],
+          1
+        ],
+        [
+          [
+            "tanks",
+            "tank"
+          ],
+          1
+        ],
+        [
+          [
+            "fließen.",
+            "fliessen."
+          ],
+          1
+        ],
+        [
+          [
+            "sollte",
+            "sollten"
+          ],
+          1
+        ],
+        [
+          [
+            "den",
+            "mitgliedsländer"
+          ],
+          1
+        ],
+        [
+          [
+            "mitgliedsländern",
+            "auch"
+          ],
+          1
+        ],
+        [
+          [
+            "ziegenhain",
+            "ziegenhai"
+          ],
+          1
+        ]
+      ]
+    },
+    "VS": {
+      "sample_count": 17,
+      "mean_wer": 28.78748702278114,
+      "std_wer": 18.436001440403622,
+      "mean_cer": 12.48499545902219,
+      "mean_bleu": 51.576732394569966,
+      "std_bleu": 25.638677603654468,
+      "error_distribution": {
+        "substitution": 42,
+        "deletion": 8,
+        "insertion": 3,
+        "correct": 123,
+        "sub_rate": 0.7924528301886793,
+        "del_rate": 0.1509433962264151,
+        "ins_rate": 0.05660377358490566
+      },
+      "top_confusions": [
+        [
+          [
+            "wurden",
+            "sind"
+          ],
+          1
+        ],
+        [
+          [
+            "diese",
+            "die"
+          ],
+          1
+        ],
+        [
+          [
+            "in",
+            "zusammengefasst"
+          ],
+          1
+        ],
+        [
+          [
+            "blöcken",
+            "worden."
+          ],
+          1
+        ],
+        [
+          [
+            "weist",
+            "weiss"
+          ],
+          1
+        ],
+        [
+          [
+            "einen",
+            "der"
+          ],
+          1
+        ],
+        [
+          [
+            "schmalen",
+            "schmale"
+          ],
+          1
+        ],
+        [
+          [
+            "first",
+            "frisch"
+          ],
+          1
+        ],
+        [
+          [
+            "ist",
+            "sticht"
+          ],
+          1
+        ],
+        [
+          [
+            "purpurnen",
+            "purpurnen,"
+          ],
+          1
+        ]
+      ]
+    },
+    "NW": {
+      "sample_count": 1,
+      "mean_wer": 25.0,
+      "std_wer": 0.0,
+      "mean_cer": 10.0,
+      "mean_bleu": 75.98356856515926,
+      "std_bleu": 0.0,
+      "error_distribution": {
+        "substitution": 0,
+        "deletion": 0,
+        "insertion": 1,
+        "correct": 4,
+        "sub_rate": 0.0,
+        "del_rate": 0.0,
+        "ins_rate": 1.0
+      },
+      "top_confusions": []
+    },
+    "GL": {
+      "sample_count": 6,
+      "mean_wer": 10.694444444444445,
+      "std_wer": 9.72420614678572,
+      "mean_cer": 2.0996480441598693,
+      "mean_bleu": 80.10664568586964,
+      "std_bleu": 16.437937188030137,
+      "error_distribution": {
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 0,
+        "correct": 44,
+        "sub_rate": 1.0,
+        "del_rate": 0.0,
+        "ins_rate": 0.0
+      },
+      "top_confusions": [
+        [
+          [
+            "\"ehrensenator\"",
+            "ehrensenator"
+          ],
+          1
+        ],
+        [
+          [
+            "känguru-start.",
+            "kängurustart."
+          ],
+          1
+        ],
+        [
+          [
+            "nationen.",
+            "nationen"
+          ],
+          1
+        ],
+        [
+          [
+            "krebsleiden.",
+            "krebslied."
+          ],
+          1
+        ]
+      ]
+    },
+    "SH": {
+      "sample_count": 4,
+      "mean_wer": 38.11813186813187,
+      "std_wer": 12.857172208100245,
+      "mean_cer": 13.759254311579893,
+      "mean_bleu": 40.47933991920552,
+      "std_bleu": 22.89382956111798,
+      "error_distribution": {
+        "substitution": 13,
+        "deletion": 2,
+        "insertion": 2,
+        "correct": 30,
+        "sub_rate": 0.7647058823529411,
+        "del_rate": 0.11764705882352941,
+        "ins_rate": 0.11764705882352941
+      },
+      "top_confusions": [
+        [
+          [
+            "den",
+            "der"
+          ],
+          2
+        ],
+        [
+          [
+            "straßen",
+            "straße"
+          ],
+          1
+        ],
+        [
+          [
+            "gral.",
+            "graal."
+          ],
+          1
+        ],
+        [
+          [
+            "erhielt",
+            "hat"
+          ],
+          1
+        ],
+        [
+          [
+            "kurd-laßwitz-preis",
+            "kurt-lasswitz-preis"
+          ],
+          1
+        ],
+        [
+          [
+            "bester",
+            "ausländische"
+          ],
+          1
+        ],
+        [
+          [
+            "ausländischer",
+            "roman"
+          ],
+          1
+        ],
+        [
+          [
+            "roman.",
+            "bekommen."
+          ],
+          1
+        ],
+        [
+          [
+            "diese",
+            "die"
+          ],
+          1
+        ],
+        [
+          [
+            "drei",
+            "3t"
+          ],
+          1
+        ]
+      ]
+    },
+    "SZ": {
+      "sample_count": 9,
+      "mean_wer": 38.41723091723092,
+      "std_wer": 44.12968197236115,
+      "mean_cer": 16.877222672429642,
+      "mean_bleu": 52.73523678029124,
+      "std_bleu": 37.65458417113412,
+      "error_distribution": {
+        "substitution": 20,
+        "deletion": 1,
+        "insertion": 3,
+        "correct": 63,
+        "sub_rate": 0.8333333333333334,
+        "del_rate": 0.041666666666666664,
+        "ins_rate": 0.125
+      },
+      "top_confusions": [
+        [
+          [
+            "auch",
+            "aus"
+          ],
+          1
+        ],
+        [
+          [
+            "das",
+            "zweiter"
+          ],
+          1
+        ],
+        [
+          [
+            "\"is",
+            "ist"
+          ],
+          1
+        ],
+        [
+          [
+            "it",
+            "es"
+          ],
+          1
+        ],
+        [
+          [
+            "safe?",
+            "safe."
+          ],
+          1
+        ],
+        [
+          [
+            "aber",
+            "prvo"
+          ],
+          1
+        ],
+        [
+          [
+            "woran",
+            "roll"
+          ],
+          1
+        ],
+        [
+          [
+            "liegt",
+            "ist"
+          ],
+          1
+        ],
+        [
+          [
+            "das?",
+            "das."
+          ],
+          1
+        ],
+        [
+          [
+            "dieses",
+            "das"
+          ],
+          1
+        ]
+      ]
+    },
+    "FR": {
+      "sample_count": 7,
+      "mean_wer": 39.863311291882724,
+      "std_wer": 14.722749473470525,
+      "mean_cer": 20.5681196531812,
+      "mean_bleu": 36.12204783031898,
+      "std_bleu": 14.335995290721105,
+      "error_distribution": {
+        "substitution": 26,
+        "deletion": 2,
+        "insertion": 5,
+        "correct": 53,
+        "sub_rate": 0.7878787878787878,
+        "del_rate": 0.06060606060606061,
+        "ins_rate": 0.15151515151515152
+      },
+      "top_confusions": [
+        [
+          [
+            "wurde",
+            "kam"
+          ],
+          2
+        ],
+        [
+          [
+            "zurückgebracht",
+            "zurück"
+          ],
+          1
+        ],
+        [
+          [
+            "der",
+            "den"
+          ],
+          1
+        ],
+        [
+          [
+            "kathedrale",
+            "kathedralen"
+          ],
+          1
+        ],
+        [
+          [
+            "nach",
+            "am"
+          ],
+          1
+        ],
+        [
+          [
+            "begrenzt,",
+            "begrenzt."
+          ],
+          1
+        ],
+        [
+          [
+            "erzählt",
+            "verzählt"
+          ],
+          1
+        ],
+        [
+          [
+            "wird",
+            "kommt"
+          ],
+          1
+        ],
+        [
+          [
+            "„unerhörte",
+            "unerhörte"
+          ],
+          1
+        ],
+        [
+          [
+            "begebenheit“,",
+            "begebenheit,"
+          ],
+          1
+        ]
+      ]
+    }
+  },
+  "worst_samples": [
+    {
+      "audio_file": "699a7e10-2912-427f-9947-8c73e60394c1.flac",
+      "dialect": "SO",
+      "reference": "Allerdings sind diese Ergebnisse umstritten.",
+      "hypothesis": " Man muss aber auch sagen, dass die Ergebnisse sehr umstritten sind.",
+      "wer": 200.0,
+      "cer": 77.27272727272727,
+      "bleu": 4.368583925857938,
+      "alignment_readable": "REF:  ***** ***** ***** ***** allerdings sind diese ergebnisse ***** *****      umstritten.\nHYP:  man   muss  aber  auch  sagen,     dass die   ergebnisse sehr  umstritten sind.\nTYPE: I     I     I     I     S          S    S     C          I     I          S",
+      "error_counts": {
+        "correct": 1,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 6,
+        "total_errors": 10
+      }
+    },
+    {
+      "audio_file": "ae929da4-e560-4812-b0a6-a9ddc74d50ce.flac",
+      "dialect": "BE",
+      "reference": "Trencavel seiner Besitzungen für verlustig erklärt und begab sich ins Exil nach Aragon.",
+      "hypothesis": " Es wurde erklärt, dass das, was Rengabel gehört hat, er verloren hat und dann hat er sich in 6.7 nach Aragon begeben.",
+      "wer": 146.15384615384613,
+      "cer": 87.35632183908046,
+      "bleu": 3.802351022611669,
+      "alignment_readable": "REF:  ***** ***** *****    ***** ***** ***** trencavel seiner besitzungen für verlustig erklärt und ***** ***** begab sich ins exil nach *****  aragon.\nHYP:  es    wurde erklärt, dass  das,  was   rengabel  gehört hat,        er  verloren  hat     und dann  hat   er    sich in  6.7  nach aragon begeben.\nTYPE: I     I     I        I     I     I     S         S      S           S   S         S       C   I     I     S     C    S   S    C    I      S",
+      "error_counts": {
+        "correct": 3,
+        "substitution": 10,
+        "deletion": 0,
+        "insertion": 9,
+        "total_errors": 19
+      }
+    },
+    {
+      "audio_file": "49a11f9d-d3cc-439a-a56c-5e585550c754.flac",
+      "dialect": "UR",
+      "reference": "Wohin führt dieser?",
+      "hypothesis": " Wo hi fährt der?",
+      "wer": 133.33333333333331,
+      "cer": 31.57894736842105,
+      "bleu": 10.682175159905853,
+      "alignment_readable": "REF:  ***** wohin führt dieser?\nHYP:  wo    hi    fährt der?\nTYPE: I     S     S     S",
+      "error_counts": {
+        "correct": 0,
+        "substitution": 3,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 4
+      }
+    },
+    {
+      "audio_file": "98b2381e-bde4-49b2-97e3-5b867a9be815.flac",
+      "dialect": "SZ",
+      "reference": "Aber woran liegt das?",
+      "hypothesis": " A prvo roll ist das.",
+      "wer": 125.0,
+      "cer": 57.14285714285714,
+      "bleu": 8.116697886877475,
+      "alignment_readable": "REF:  ***** aber woran liegt das?\nHYP:  a     prvo roll  ist   das.\nTYPE: I     S    S     S     S",
+      "error_counts": {
+        "correct": 0,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "63daf2e7-9d35-48aa-b718-3e45e7e51a96.flac",
+      "dialect": "SG",
+      "reference": "Aber auch auf diesem herrschten unsaubere Zustände.",
+      "hypothesis": " Aber auch auf dem haben wir uns aber die Zustände erst.",
+      "wer": 114.28571428571428,
+      "cer": 43.13725490196079,
+      "bleu": 14.323145079400492,
+      "alignment_readable": "REF:  aber auch auf ***** ***** ***** ***** diesem herrschten unsaubere zustände.\nHYP:  aber auch auf dem   haben wir   uns   aber   die        zustände  erst.\nTYPE: C    C    C   I     I     I     I     S      S          S         S",
+      "error_counts": {
+        "correct": 3,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 4,
+        "total_errors": 8
+      }
+    },
+    {
+      "audio_file": "68974798-4b20-4a31-89e2-eb3a913e79f6.flac",
+      "dialect": "ZG",
+      "reference": "Trotz dieses Wachstums verlor der Ort seine Selbstständigkeit durch die Eingemeindung nach Den Helder.",
+      "hypothesis": " Durch die Eingemeindung nach den Heldern hat der Ort trotz dem Wachstum seine Selbstständigkeit verloren.",
+      "wer": 107.14285714285714,
+      "cer": 76.47058823529412,
+      "bleu": 30.856960108358766,
+      "alignment_readable": "REF:  ***** ***** *****         trotz dieses wachstums verlor der ort seine selbstständigkeit durch    die   eingemeindung     nach      den   helder.\nHYP:  durch die   eingemeindung nach  den    heldern   hat    der ort trotz dem               wachstum seine selbstständigkeit verloren. ***** *****\nTYPE: I     I     I             S     S      S         S      C   C   S     S                 S        S     S                 S         D     D",
+      "error_counts": {
+        "correct": 2,
+        "substitution": 10,
+        "deletion": 2,
+        "insertion": 3,
+        "total_errors": 15
+      }
+    },
+    {
+      "audio_file": "d3535ea7-e4cc-40b9-8e56-88ce68bdac27.flac",
+      "dialect": "BE",
+      "reference": "Linssen wuchs in Wachtendonk auf.",
+      "hypothesis": " Die Lissin ist in Wartendonk aufgewachsen.",
+      "wer": 100.0,
+      "cer": 66.66666666666666,
+      "bleu": 7.809849842300641,
+      "alignment_readable": "REF:  ***** linssen wuchs in wachtendonk auf.\nHYP:  die   lissin  ist   in wartendonk  aufgewachsen.\nTYPE: I     S       S     C  S           S",
+      "error_counts": {
+        "correct": 1,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "1cccaffd-b3ea-442d-adea-85be608c4883.flac",
+      "dialect": "UR",
+      "reference": "Tötet nicht den Boten.",
+      "hypothesis": " Du hättest nicht da bulte.",
+      "wer": 100.0,
+      "cer": 54.54545454545454,
+      "bleu": 9.652434877402245,
+      "alignment_readable": "REF:  ***** tötet   nicht den boten.\nHYP:  du    hättest nicht da  bulte.\nTYPE: I     S       C     S   S",
+      "error_counts": {
+        "correct": 1,
+        "substitution": 3,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 4
+      }
+    },
+    {
+      "audio_file": "e483cfbd-e8b4-4b3a-ba2f-dbada24ab04f.flac",
+      "dialect": "BE",
+      "reference": "Der Ort ist Sitz des Bistums Ventimiglia-Sanremo, Seebad und Kurort.",
+      "hypothesis": " Da hat ich Sitz vom Bistum Ventimilia San Remo, Selbad und Kuroort.",
+      "wer": 100.0,
+      "cer": 22.058823529411764,
+      "bleu": 4.016138436407654,
+      "alignment_readable": "REF:  der ort ist sitz ***** *****  des        bistums ventimiglia-sanremo, seebad und kurort.\nHYP:  da  hat ich sitz vom   bistum ventimilia san     remo,                selbad und kuroort.\nTYPE: S   S   S   C    I     I      S          S       S                    S      C   S",
+      "error_counts": {
+        "correct": 2,
+        "substitution": 8,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 10
+      }
+    },
+    {
+      "audio_file": "3950d3dc-4b1f-4de6-8742-aa9306c85f65.flac",
+      "dialect": "BL",
+      "reference": "Späth Orgelbau erbaut.",
+      "hypothesis": " Spread all about.",
+      "wer": 100.0,
+      "cer": 63.63636363636363,
+      "bleu": 15.97357760615681,
+      "alignment_readable": "REF:  späth  orgelbau erbaut.\nHYP:  spread all      about.\nTYPE: S      S        S",
+      "error_counts": {
+        "correct": 0,
+        "substitution": 3,
+        "deletion": 0,
+        "insertion": 0,
+        "total_errors": 3
+      }
+    },
+    {
+      "audio_file": "acaaa975-240e-4265-9be2-7bd80b2d9398.flac",
+      "dialect": "AG",
+      "reference": "Isotope waren damals noch unbekannt.",
+      "hypothesis": " Isotoppe sind schon damals bekannt gewesen.",
+      "wer": 100.0,
+      "cer": 66.66666666666666,
+      "bleu": 7.809849842300641,
+      "alignment_readable": "REF:  *****    isotope waren damals noch    unbekannt.\nHYP:  isotoppe sind    schon damals bekannt gewesen.\nTYPE: I        S       S     C      S       S",
+      "error_counts": {
+        "correct": 1,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "254ad4f9-bf85-4b08-a6d6-1d324d53300e.flac",
+      "dialect": "ZH",
+      "reference": "Im Norden liegt die Bandasee.",
+      "hypothesis": " Der Bandasee ist im Norden.",
+      "wer": 100.0,
+      "cer": 68.96551724137932,
+      "bleu": 19.304869754804482,
+      "alignment_readable": "REF:  im  norden   liegt die bandasee.\nHYP:  der bandasee ist   im  norden.\nTYPE: S   S        S     S   S",
+      "error_counts": {
+        "correct": 0,
+        "substitution": 5,
+        "deletion": 0,
+        "insertion": 0,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "b0234fd9-1ffb-4952-aa9d-0b0304e81101.flac",
+      "dialect": "SG",
+      "reference": "Dies war nicht der Fall für die Kontrollgruppen, die keine Fehlinformation erhielten.",
+      "hypothesis": " Das war für diese Kontrollgruppen, die keine Fehlinformationen bekommen haben, nicht der Fall war.",
+      "wer": 100.0,
+      "cer": 58.82352941176471,
+      "bleu": 22.637359354764463,
+      "alignment_readable": "REF:  dies war nicht der   fall  für die   kontrollgruppen, die keine *****             *****    *****  ***** ***** fehlinformation erhielten.\nHYP:  das  war ***** ***** ***** für diese kontrollgruppen, die keine fehlinformationen bekommen haben, nicht der   fall            war.\nTYPE: S    C   D     D     D     C   S     C                C   C     I                 I        I      I     I     S               S",
+      "error_counts": {
+        "correct": 5,
+        "substitution": 4,
+        "deletion": 3,
+        "insertion": 5,
+        "total_errors": 12
+      }
+    },
+    {
+      "audio_file": "28c1daae-a56b-4741-95a4-2dc56b8f2844.flac",
+      "dialect": "BE",
+      "reference": "Zu Bioley-Magnoux gehören einige Einzelhöfe.",
+      "hypothesis": " Zu Biore Manu gehören einige ihnen zu helfen.",
+      "wer": 100.0,
+      "cer": 36.36363636363637,
+      "bleu": 11.339582221952005,
+      "alignment_readable": "REF:  zu ***** bioley-magnoux gehören einige ***** ***** einzelhöfe.\nHYP:  zu biore manu           gehören einige ihnen zu    helfen.\nTYPE: C  I     S              C       C      I     I     S",
+      "error_counts": {
+        "correct": 3,
+        "substitution": 2,
+        "deletion": 0,
+        "insertion": 3,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "9143a06d-8892-42a0-82c9-a27c0b24319a.flac",
+      "dialect": "BE",
+      "reference": "Mensch, schön habt ihr es hier!",
+      "hypothesis": " Kopfheit ist schön hier.",
+      "wer": 100.0,
+      "cer": 70.96774193548387,
+      "bleu": 6.971729121692201,
+      "alignment_readable": "REF:  *****    mensch, schön habt  ihr   es    hier!\nHYP:  kopfheit ist     schön hier. ***** ***** *****\nTYPE: I        S       C     S     D     D     D",
+      "error_counts": {
+        "correct": 1,
+        "substitution": 2,
+        "deletion": 3,
+        "insertion": 1,
+        "total_errors": 6
+      }
+    },
+    {
+      "audio_file": "633f3365-3884-462d-aa3a-fbfb12fb2202.flac",
+      "dialect": "LU",
+      "reference": "Heute reicht das nicht mehr aus.",
+      "hypothesis": " Hut Langetasnummer",
+      "wer": 100.0,
+      "cer": 65.625,
+      "bleu": 0.0,
+      "alignment_readable": "REF:  heute reicht         das   nicht mehr  aus.\nHYP:  hut   langetasnummer ***** ***** ***** *****\nTYPE: S     S              D     D     D     D",
+      "error_counts": {
+        "correct": 0,
+        "substitution": 2,
+        "deletion": 4,
+        "insertion": 0,
+        "total_errors": 6
+      }
+    },
+    {
+      "audio_file": "f1a092aa-6402-412b-883f-bb1650dcc792.flac",
+      "dialect": "SG",
+      "reference": "Also, das gab es schon.",
+      "hypothesis": " Also da hätte es schon gegeben.",
+      "wer": 100.0,
+      "cer": 65.21739130434783,
+      "bleu": 15.619699684601283,
+      "alignment_readable": "REF:  also, das gab   es ***** schon.\nHYP:  also  da  hätte es schon gegeben.\nTYPE: S     S   S     C  I     S",
+      "error_counts": {
+        "correct": 1,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "1c0e7e9d-c6f9-4ef1-8f89-a551136551a7.flac",
+      "dialect": "AG",
+      "reference": "Lebensjahr vollendet.",
+      "hypothesis": " Das Lebensjahr ist vollendet.",
+      "wer": 100.0,
+      "cer": 38.095238095238095,
+      "bleu": 23.643540225079395,
+      "alignment_readable": "REF:  ***** lebensjahr ***** vollendet.\nHYP:  das   lebensjahr ist   vollendet.\nTYPE: I     C          I     C",
+      "error_counts": {
+        "correct": 2,
+        "substitution": 0,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 2
+      }
+    },
+    {
+      "audio_file": "81498cb3-d406-4aa5-a519-66550adda99c.flac",
+      "dialect": "SO",
+      "reference": "Warum aber sagen wir das dann nicht in unserer Entschließung?",
+      "hypothesis": " Warum sagen wir so etwas nicht, wenn wir uns so etwas entschliessen?",
+      "wer": 100.0,
+      "cer": 54.09836065573771,
+      "bleu": 7.141816289329644,
+      "alignment_readable": "REF:  warum aber  sagen wir ***** ***** *****  das  dann nicht in unserer entschließung?\nHYP:  warum ***** sagen wir so    etwas nicht, wenn wir  uns   so etwas   entschliessen?\nTYPE: C     D     C     C   I     I     I      S    S    S     S  S       S",
+      "error_counts": {
+        "correct": 3,
+        "substitution": 6,
+        "deletion": 1,
+        "insertion": 3,
+        "total_errors": 10
+      }
+    },
+    {
+      "audio_file": "3c5d4218-be3d-4565-b7c7-5f8a85a7f4c5.flac",
+      "dialect": "BE",
+      "reference": "Fortan verdiente er seinen Lebensunterhalt als Busfahrer.",
+      "hypothesis": " Ab dann hat er die Lebenshungerhaut als Bössfahrer verdient.",
+      "wer": 100.0,
+      "cer": 54.385964912280706,
+      "bleu": 5.522397783539471,
+      "alignment_readable": "REF:  ***** fortan verdiente er seinen lebensunterhalt  als *****      busfahrer.\nHYP:  ab    dann   hat       er die    lebenshungerhaut als bössfahrer verdient.\nTYPE: I     S      S         C  S      S                C   I          S",
+      "error_counts": {
+        "correct": 2,
+        "substitution": 5,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 7
+      }
+    },
+    {
+      "audio_file": "5f2adf5f-1272-4557-b60e-03608b521f47.flac",
+      "dialect": "UR",
+      "reference": "Dieser geringere Zusammenhang gegenüber eineiigen Zwillingen deutet auf einen genetischen Einfluss hin.",
+      "hypothesis": " Die geringe Zusammenhänge gegen über die Zwillinge teilt auf eine genetische Einfluss ein.",
+      "wer": 91.66666666666666,
+      "cer": 22.330097087378643,
+      "bleu": 3.737437943747671,
+      "alignment_readable": "REF:  ***** dieser  geringere     zusammenhang gegenüber eineiigen zwillingen deutet auf einen genetischen einfluss hin.\nHYP:  die   geringe zusammenhänge gegen        über      die       zwillinge  teilt  auf eine  genetische  einfluss ein.\nTYPE: I     S       S             S            S         S         S          S      C   S     S           C        S",
+      "error_counts": {
+        "correct": 2,
+        "substitution": 10,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 11
+      }
+    },
+    {
+      "audio_file": "5da5e669-2f95-4efa-862b-b6cb3bead8f7.flac",
+      "dialect": "BE",
+      "reference": "Nina Jäckle verfasste bislang Hörspiele, Theaterstücke, Drehbücher und vor allem Prosa.",
+      "hypothesis": " Nina Jäckle hat Besitz vor allem Hörspiele, Theaterstücke und Reibücher, aber vor allem Prosa geschrieben.",
+      "wer": 90.9090909090909,
+      "cer": 43.67816091954023,
+      "bleu": 16.54274233399128,
+      "alignment_readable": "REF:  nina jäckle ***** *****  verfasste bislang hörspiele, *****         theaterstücke, drehbücher und  vor allem ***** prosa.\nHYP:  nina jäckle hat   besitz vor       allem   hörspiele, theaterstücke und            reibücher, aber vor allem prosa geschrieben.\nTYPE: C    C      I     I      S         S       C          I             S              S          S    C   C     I     S",
+      "error_counts": {
+        "correct": 5,
+        "substitution": 6,
+        "deletion": 0,
+        "insertion": 4,
+        "total_errors": 10
+      }
+    },
+    {
+      "audio_file": "f44eaa4c-be6d-4186-b742-76bcc4f69d3a.flac",
+      "dialect": "BE",
+      "reference": "Außerdem studierte er an der Wiener Universität Philosophie, Kunstgeschichte und Literaturgeschichte.",
+      "hypothesis": " Ausserdem hat er Philosophie, Kunstgeschichte und Literaturgeschichte an der Wiener Universität studiert.",
+      "wer": 90.9090909090909,
+      "cer": 70.29702970297029,
+      "bleu": 46.825687910244035,
+      "alignment_readable": "REF:  außerdem  studierte er *****        *****           ***** *****               an der wiener universität philosophie, kunstgeschichte und   literaturgeschichte.\nHYP:  ausserdem hat       er philosophie, kunstgeschichte und   literaturgeschichte an der wiener universität studiert.    *****           ***** *****\nTYPE: S         S         C  I            I               I     I                   C  C   C      C           S            D               D     D",
+      "error_counts": {
+        "correct": 5,
+        "substitution": 3,
+        "deletion": 3,
+        "insertion": 4,
+        "total_errors": 10
+      }
+    },
+    {
+      "audio_file": "758f090c-f6f0-481a-bd09-b82e4f880506.flac",
+      "dialect": "BE",
+      "reference": "Der Rat hat die Reden Muammar Gadaffis nicht besprochen.",
+      "hypothesis": " Die Rede von Muammar Gaddafi hat der Rat nicht besprochen.",
+      "wer": 88.88888888888889,
+      "cer": 50.0,
+      "bleu": 19.72940627795883,
+      "alignment_readable": "REF:  ***** der  rat hat     die     reden muammar gadaffis nicht besprochen.\nHYP:  die   rede von muammar gaddafi hat   der     rat      nicht besprochen.\nTYPE: I     S    S   S       S       S     S       S        C     C",
+      "error_counts": {
+        "correct": 2,
+        "substitution": 7,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 8
+      }
+    },
+    {
+      "audio_file": "49991f06-323c-4df4-86ef-d60b6d996466.flac",
+      "dialect": "BE",
+      "reference": "Als dieser starb, übernahm Jacopo Capece dessen Stelle.",
+      "hypothesis": " Als derjenige starb, hat er Jacopo Capecce seine Stelle übernommen.",
+      "wer": 87.5,
+      "cer": 56.36363636363636,
+      "bleu": 8.913765521398126,
+      "alignment_readable": "REF:  als dieser    starb, ***** übernahm jacopo *****   capece dessen stelle.\nHYP:  als derjenige starb, hat   er       jacopo capecce seine  stelle übernommen.\nTYPE: C   S         C      I     S        C      I       S      S      S",
+      "error_counts": {
+        "correct": 3,
+        "substitution": 5,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 7
+      }
+    },
+    {
+      "audio_file": "8b338fb5-22bd-47e0-98b7-adf16b6b744e.flac",
+      "dialect": "ZH",
+      "reference": "Dadurch verformt sich das zu bearbeitende Blech zurück.",
+      "hypothesis": " Durch das verformt sich das Blech, das man bearbeiten muss, zurück.",
+      "wer": 87.5,
+      "cer": 49.09090909090909,
+      "bleu": 13.912311644176565,
+      "alignment_readable": "REF:  ***** dadurch verformt sich das *****  ***** zu  bearbeitende blech zurück.\nHYP:  durch das     verformt sich das blech, das   man bearbeiten   muss, zurück.\nTYPE: I     S       C        C    C   I      I     S   S            S     C",
+      "error_counts": {
+        "correct": 4,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 3,
+        "total_errors": 7
+      }
+    },
+    {
+      "audio_file": "1ae773d7-17a7-4288-84aa-aba9acf7cf73.flac",
+      "dialect": "TG",
+      "reference": "Kanonen besaß zwei Züge mit jeweils vier Wagen.",
+      "hypothesis": " Die Kanone hat jeweils zwei Züge mit vier Wagen besessen.",
+      "wer": 87.5,
+      "cer": 61.702127659574465,
+      "bleu": 19.081654556856684,
+      "alignment_readable": "REF:  ***** *****  kanonen besaß   zwei züge mit jeweils vier  wagen.\nHYP:  die   kanone hat     jeweils zwei züge mit vier    wagen besessen.\nTYPE: I     I      S       S       C    C    C   S       S     S",
+      "error_counts": {
+        "correct": 3,
+        "substitution": 5,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 7
+      }
+    },
+    {
+      "audio_file": "b59c869b-0f5e-44b2-8731-5d3e991c570d.flac",
+      "dialect": "BE",
+      "reference": "Alle Daten und Fakten siehe unter Weinbaugebiet Ahr.",
+      "hypothesis": " Für alle Daten und Fakten schauen wir uns das Einbaugebiet an.",
+      "wer": 87.5,
+      "cer": 40.38461538461539,
+      "bleu": 22.416933501922298,
+      "alignment_readable": "REF:  ***** alle daten und fakten *****   ***** siehe unter weinbaugebiet ahr.\nHYP:  für   alle daten und fakten schauen wir   uns   das   einbaugebiet  an.\nTYPE: I     C    C     C   C      I       I     S     S     S             S",
+      "error_counts": {
+        "correct": 4,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 3,
+        "total_errors": 7
+      }
+    },
+    {
+      "audio_file": "d66268be-5331-413d-8eb5-339cdc6dfd60.flac",
+      "dialect": "SZ",
+      "reference": "Auch das zweite Album \"Is It Safe?",
+      "hypothesis": " Aus zweiter Album ist es safe.",
+      "wer": 85.71428571428571,
+      "cer": 32.35294117647059,
+      "bleu": 5.8689248188165335,
+      "alignment_readable": "REF:  auch das     zweite album \"is it safe?\nHYP:  aus  zweiter *****  album ist es safe.\nTYPE: S    S       D      C     S   S  S",
+      "error_counts": {
+        "correct": 1,
+        "substitution": 5,
+        "deletion": 1,
+        "insertion": 0,
+        "total_errors": 6
+      }
+    },
+    {
+      "audio_file": "f431d3ed-1bcc-45b4-82b1-8d30225909c1.flac",
+      "dialect": "SO",
+      "reference": "Auch zu sehen ist eine große Briefmarkensammlung.",
+      "hypothesis": " Man sieht auch eine sehr grosse Briefmarkensammlung.",
+      "wer": 85.71428571428571,
+      "cer": 42.857142857142854,
+      "bleu": 13.134549472120788,
+      "alignment_readable": "REF:  auch zu    sehen ist  eine große  briefmarkensammlung.\nHYP:  man  sieht auch  eine sehr grosse briefmarkensammlung.\nTYPE: S    S     S     S    S    S      C",
+      "error_counts": {
+        "correct": 1,
+        "substitution": 6,
+        "deletion": 0,
+        "insertion": 0,
+        "total_errors": 6
+      }
+    },
+    {
+      "audio_file": "8708ff28-66f0-4445-82a5-b14fb55f21cb.flac",
+      "dialect": "ZH",
+      "reference": "Landsberg-Velen war promovierter Jurist und Rittergutsbesitzer.",
+      "hypothesis": " Der Landsberg Wehlen war ein promovierter Jurist und ein Rittergutsbesitzer.",
+      "wer": 83.33333333333334,
+      "cer": 23.809523809523807,
+      "bleu": 18.36028134946796,
+      "alignment_readable": "REF:  ***** *****     landsberg-velen war ***** promovierter jurist und ***** rittergutsbesitzer.\nHYP:  der   landsberg wehlen          war ein   promovierter jurist und ein   rittergutsbesitzer.\nTYPE: I     I         S               C   I     C            C      C   I     C",
+      "error_counts": {
+        "correct": 5,
+        "substitution": 1,
+        "deletion": 0,
+        "insertion": 4,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "b938a223-23f7-443d-880b-4bf243c26af7.flac",
+      "dialect": "ZG",
+      "reference": "Dort gehörte er zur ursprünglichen Macintosh-Entwicklungsmannschaft.",
+      "hypothesis": " Dort hat er zu der ursprünglichen Macintosh-Entwicklungsmannschaft gehört.",
+      "wer": 83.33333333333334,
+      "cer": 22.058823529411764,
+      "bleu": 11.99014838091355,
+      "alignment_readable": "REF:  dort gehörte er ***** zur ursprünglichen *****                            macintosh-entwicklungsmannschaft.\nHYP:  dort hat     er zu    der ursprünglichen macintosh-entwicklungsmannschaft gehört.\nTYPE: C    S       C  I     S   C              I                                S",
+      "error_counts": {
+        "correct": 3,
+        "substitution": 3,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "beef965b-4327-44c0-81a6-96190d3cb673.flac",
+      "dialect": "BE",
+      "reference": "Earl of Arundel, der zu den vierzig Märtyrern Englands und Wales zählt.",
+      "hypothesis": " Earl of Rundle, da zu den 40 wenigen Märtyrer Englern, som du weiss, zauwt.",
+      "wer": 83.33333333333334,
+      "cer": 40.845070422535215,
+      "bleu": 6.722636787666482,
+      "alignment_readable": "REF:  earl of arundel, der zu den ***** *****   vierzig  märtyrern englands und wales  zählt.\nHYP:  earl of rundle,  da  zu den 40    wenigen märtyrer englern,  som      du  weiss, zauwt.\nTYPE: C    C  S        S   C  C   I     I       S        S         S        S   S      S",
+      "error_counts": {
+        "correct": 4,
+        "substitution": 8,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 10
+      }
+    },
+    {
+      "audio_file": "2ce0965d-1820-4e59-b03a-fea291ee2f1f.flac",
+      "dialect": "LU",
+      "reference": "Auf unseren Donnerstagssitzungen in Straßburg erörtern wir Menschenrechtsverletzungen in aller Welt.",
+      "hypothesis": " Aus unserer Donnerstagssitzung in Strassburg haben wir die Menschenrechtsverletzungen in alle welt eutredd.",
+      "wer": 81.81818181818183,
+      "cer": 25.0,
+      "bleu": 7.474875887495341,
+      "alignment_readable": "REF:  auf unseren donnerstagssitzungen in straßburg  erörtern wir ***** menschenrechtsverletzungen in ***** aller welt.\nHYP:  aus unserer donnerstagssitzung   in strassburg haben    wir die   menschenrechtsverletzungen in alle  welt  eutredd.\nTYPE: S   S       S                    C  S          S        C   I     C                          C  I     S     S",
+      "error_counts": {
+        "correct": 4,
+        "substitution": 7,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 9
+      }
+    },
+    {
+      "audio_file": "9e527410-3240-432e-81b5-18aab0489e48.flac",
+      "dialect": "BE",
+      "reference": "Es liegt im flachen Land.",
+      "hypothesis": " zurück dein frachen Land.",
+      "wer": 80.0,
+      "cer": 44.0,
+      "bleu": 17.491650626361256,
+      "alignment_readable": "REF:  es     liegt im      flachen land.\nHYP:  zurück dein  frachen *****   land.\nTYPE: S      S     S       D       C",
+      "error_counts": {
+        "correct": 1,
+        "substitution": 3,
+        "deletion": 1,
+        "insertion": 0,
+        "total_errors": 4
+      }
+    },
+    {
+      "audio_file": "a2d20b2c-a56f-441f-8175-41052aea4583.flac",
+      "dialect": "BE",
+      "reference": "Auch in der Auseinandersetzung um Johannes Chrysostomos folgte Honorius eher ihrem als Stilichos Rat.",
+      "hypothesis": " Auch in der Auseinandersetzung um Johannes Chrysostomos ist der Honorios ein der Ehren als dem Stilikos im Rat gefolgt.",
+      "wer": 78.57142857142857,
+      "cer": 29.7029702970297,
+      "bleu": 31.872714733206724,
+      "alignment_readable": "REF:  auch in der auseinandersetzung um johannes chrysostomos ***** ***** folgte   honorius eher ihrem als ***** *****    ***** stilichos rat.\nHYP:  auch in der auseinandersetzung um johannes chrysostomos ist   der   honorios ein      der  ehren als dem   stilikos im    rat       gefolgt.\nTYPE: C    C  C   C                  C  C        C            I     I     S        S        S    S     C   I     I        I     S         S",
+      "error_counts": {
+        "correct": 8,
+        "substitution": 6,
+        "deletion": 0,
+        "insertion": 5,
+        "total_errors": 11
+      }
+    },
+    {
+      "audio_file": "5b94b3e9-9911-47c8-af38-871e1344e76d.flac",
+      "dialect": "ZH",
+      "reference": "Erst danach unterzieht er Heidegger einer „ausführlichen philosophischen Kritik“.",
+      "hypothesis": " Erst danach hat Heidegger eine ausführliche philosophische Kritik unterzogen.",
+      "wer": 77.77777777777779,
+      "cer": 33.33333333333333,
+      "bleu": 9.980099403873663,
+      "alignment_readable": "REF:  erst danach unterzieht er        heidegger einer        „ausführlichen philosophischen kritik“.\nHYP:  erst danach hat        heidegger eine      ausführliche philosophische kritik          unterzogen.\nTYPE: C    C      S          S         S         S            S              S               S",
+      "error_counts": {
+        "correct": 2,
+        "substitution": 7,
+        "deletion": 0,
+        "insertion": 0,
+        "total_errors": 7
+      }
+    },
+    {
+      "audio_file": "ecd2c264-9f88-421c-a62f-725b1796aafd.flac",
+      "dialect": "ZH",
+      "reference": "Blattl legte gegen den Bußgeldbescheid jedoch keine Berufung ein.",
+      "hypothesis": " Der Plattl hat jedoch gegen den Bussgelbescheid keine Berufung eingelegt.",
+      "wer": 77.77777777777779,
+      "cer": 46.15384615384615,
+      "bleu": 11.731175160263996,
+      "alignment_readable": "REF:  ***** *****  blattl legte  gegen den bußgeldbescheid jedoch keine berufung ein.\nHYP:  der   plattl hat    jedoch gegen den bussgelbescheid *****  keine berufung eingelegt.\nTYPE: I     I      S      S      C     C   S               D      C     C        S",
+      "error_counts": {
+        "correct": 4,
+        "substitution": 4,
+        "deletion": 1,
+        "insertion": 2,
+        "total_errors": 7
+      }
+    },
+    {
+      "audio_file": "311ec7e0-c8c2-4840-a061-ce87442df5bb.flac",
+      "dialect": "BL",
+      "reference": "Angeblich liegen der Nerv fürs Sehen und der für den Niesreiz dicht nebeneinander.",
+      "hypothesis": " Angehend liegen die Nerven für sie und Denise reisst sie direkt nebeneinander.",
+      "wer": 76.92307692307693,
+      "cer": 36.58536585365854,
+      "bleu": 7.1933868327348085,
+      "alignment_readable": "REF:  angeblich liegen der nerv   fürs sehen und der    für    den niesreiz dicht nebeneinander.\nHYP:  angehend  liegen die nerven für  sie   und denise reisst sie direkt   ***** nebeneinander.\nTYPE: S         C      S   S      S    S     C   S      S      S   S        D     C",
+      "error_counts": {
+        "correct": 3,
+        "substitution": 9,
+        "deletion": 1,
+        "insertion": 0,
+        "total_errors": 10
+      }
+    },
+    {
+      "audio_file": "9e0f0d70-f031-42c9-be17-171752590b40.flac",
+      "dialect": "ZH",
+      "reference": "Dave erschießt Baby Face und erhält von der Polizei eine große Belohnung.",
+      "hypothesis": " Dave hat das Babyface verschossen und kommt darum von der Polizei eine grosse Belohnung über.",
+      "wer": 75.0,
+      "cer": 54.794520547945204,
+      "bleu": 18.20705281109213,
+      "alignment_readable": "REF:  dave ***** erschießt baby     face        und ***** erhält von der polizei eine *****  große     belohnung.\nHYP:  dave hat   das       babyface verschossen und kommt darum  von der polizei eine grosse belohnung über.\nTYPE: C    I     S         S        S           C   I     S      C   C   C       C    I      S         S",
+      "error_counts": {
+        "correct": 6,
+        "substitution": 6,
+        "deletion": 0,
+        "insertion": 3,
+        "total_errors": 9
+      }
+    },
+    {
+      "audio_file": "002d0bbb-0f5b-482c-89b6-a100b805a6f2.flac",
+      "dialect": "TG",
+      "reference": "Ich bin noch mit drei weiteren Dingen einverstanden.",
+      "hypothesis": " Mit nur drei weiteren Dingen bin ich einverstanden.",
+      "wer": 75.0,
+      "cer": 40.38461538461539,
+      "bleu": 25.098621243978968,
+      "alignment_readable": "REF:  ich bin noch  mit   drei weiteren dingen ***** ***** einverstanden.\nHYP:  mit nur ***** ***** drei weiteren dingen bin   ich   einverstanden.\nTYPE: S   S   D     D     C    C        C      I     I     C",
+      "error_counts": {
+        "correct": 4,
+        "substitution": 2,
+        "deletion": 2,
+        "insertion": 2,
+        "total_errors": 6
+      }
+    },
+    {
+      "audio_file": "dd22b032-4055-4c2c-9cab-7b4c54c77360.flac",
+      "dialect": "BE",
+      "reference": "Daran wird sich auch mit der Annahme einiger Änderungsanträge nichts Wesentliches ändern.",
+      "hypothesis": " Auch mit der Annahme von einigen Änderungsanträgen wird sich nichts Wesentliches daran ändern.",
+      "wer": 75.0,
+      "cer": 42.69662921348314,
+      "bleu": 27.22589423069702,
+      "alignment_readable": "REF:  daran wird  sich  auch mit der annahme ***** *****   *****             einiger änderungsanträge nichts wesentliches ***** ändern.\nHYP:  ***** ***** ***** auch mit der annahme von   einigen änderungsanträgen wird    sich             nichts wesentliches daran ändern.\nTYPE: D     D     D     C    C   C   C       I     I       I                 S       S                C      C            I     C",
+      "error_counts": {
+        "correct": 7,
+        "substitution": 2,
+        "deletion": 3,
+        "insertion": 4,
+        "total_errors": 9
+      }
+    },
+    {
+      "audio_file": "e4fe965a-fd34-445f-82b1-0e92823c5158.flac",
+      "dialect": "AG",
+      "reference": "Man sollte ein paar Deutschlehrer zum Korrekturlesen rekrutieren.",
+      "hypothesis": " Wir sollten ein paar Deutsch lernen, um Korrekturlesen zu rekrutieren.",
+      "wer": 75.0,
+      "cer": 20.0,
+      "bleu": 10.127993013562818,
+      "alignment_readable": "REF:  man sollte  ein paar *****   deutschlehrer zum korrekturlesen ***** rekrutieren.\nHYP:  wir sollten ein paar deutsch lernen,       um  korrekturlesen zu    rekrutieren.\nTYPE: S   S       C   C    I       S             S   C              I     C",
+      "error_counts": {
+        "correct": 4,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 6
+      }
+    },
+    {
+      "audio_file": "cf7b74b4-7f97-48c6-a47b-43a350a14d41.flac",
+      "dialect": "SG",
+      "reference": "Bei der Aktion wird sowohl Marvin getötet als auch die Tankstelle zerstört.",
+      "hypothesis": " Bei dieser Aktion ist Marvin ums Leben gekommen und auch die Tankstelle zerstört worden.",
+      "wer": 75.0,
+      "cer": 45.33333333333333,
+      "bleu": 19.5647514979229,
+      "alignment_readable": "REF:  bei der    aktion ***** wird   sowohl marvin getötet  als auch die tankstelle *****    zerstört.\nHYP:  bei dieser aktion ist   marvin ums    leben  gekommen und auch die tankstelle zerstört worden.\nTYPE: C   S      C      I     S      S      S      S        S   C    C   C          I        S",
+      "error_counts": {
+        "correct": 5,
+        "substitution": 7,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 9
+      }
+    },
+    {
+      "audio_file": "3d9f579c-8c8d-4b3f-b7de-a8ba97c7c77d.flac",
+      "dialect": "BE",
+      "reference": "Er unterschrieb einen Dreijahresvertrag.",
+      "hypothesis": " Er hat einen 3-Jahres-Vertrag unterschrieben.",
+      "wer": 75.0,
+      "cer": 77.5,
+      "bleu": 7.267884212102741,
+      "alignment_readable": "REF:  er unterschrieb einen *****            dreijahresvertrag.\nHYP:  er hat          einen 3-jahres-vertrag unterschrieben.\nTYPE: C  S            C     I                S",
+      "error_counts": {
+        "correct": 2,
+        "substitution": 2,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 3
+      }
+    },
+    {
+      "audio_file": "301270cd-545e-400f-be17-2c8ae365b2f2.flac",
+      "dialect": "SG",
+      "reference": "Cassie erschien auf der Nicki Minaj-Version als Feature-Act.",
+      "hypothesis": " Cassie ist auf der Nicki Minaj Version als Future Act erschienen.",
+      "wer": 75.0,
+      "cer": 36.666666666666664,
+      "bleu": 14.991106946711685,
+      "alignment_readable": "REF:  cassie erschien auf der nicki ***** minaj-version als *****  ***** feature-act.\nHYP:  cassie ist      auf der nicki minaj version       als future act   erschienen.\nTYPE: C      S        C   C   C     I     S             C   I      I     S",
+      "error_counts": {
+        "correct": 5,
+        "substitution": 3,
+        "deletion": 0,
+        "insertion": 3,
+        "total_errors": 6
+      }
+    },
+    {
+      "audio_file": "d9f2ee12-5734-45aa-8a0f-e55809938119.flac",
+      "dialect": "SG",
+      "reference": "Eine betrifft die Außenpolitik.",
+      "hypothesis": " Einer betrifft den Aussenpolitik.",
+      "wer": 75.0,
+      "cer": 16.129032258064516,
+      "bleu": 12.70331870386537,
+      "alignment_readable": "REF:  eine  betrifft die außenpolitik.\nHYP:  einer betrifft den aussenpolitik.\nTYPE: S     C        S   S",
+      "error_counts": {
+        "correct": 1,
+        "substitution": 3,
+        "deletion": 0,
+        "insertion": 0,
+        "total_errors": 3
+      }
+    },
+    {
+      "audio_file": "4364b9f2-16e5-42b8-9126-d4735f42bbad.flac",
+      "dialect": "ZG",
+      "reference": "Seitdem absolvierte das Atom-U-Boot bis heute mehrere Testreihen.",
+      "hypothesis": " Seitdem hat das Atomaubaut mehrere Testreihen absolviert.",
+      "wer": 75.0,
+      "cer": 52.307692307692314,
+      "bleu": 12.256200970377108,
+      "alignment_readable": "REF:  seitdem absolvierte das atom-u-boot bis     heute      mehrere     testreihen.\nHYP:  seitdem hat         das atomaubaut  mehrere testreihen absolviert. *****\nTYPE: C       S           C   S           S       S          S           D",
+      "error_counts": {
+        "correct": 2,
+        "substitution": 5,
+        "deletion": 1,
+        "insertion": 0,
+        "total_errors": 6
+      }
+    },
+    {
+      "audio_file": "98977894-0883-49ae-b13f-fbd2b5b13083.flac",
+      "dialect": "AG",
+      "reference": "Sie ist benannt nach den Städten Alexandria in Virginia und Louisiana.",
+      "hypothesis": " Sie wurde nach der Städte Alexandria und Virginia in Louisiana benannt.",
+      "wer": 72.72727272727273,
+      "cer": 34.285714285714285,
+      "bleu": 5.865587580131999,
+      "alignment_readable": "REF:  sie ist   benannt nach den städten alexandria in  virginia ***** und       louisiana.\nHYP:  sie wurde *****   nach der städte  alexandria und virginia in    louisiana benannt.\nTYPE: C   S     D       C    S   S       C          S   C        I     S         S",
+      "error_counts": {
+        "correct": 4,
+        "substitution": 6,
+        "deletion": 1,
+        "insertion": 1,
+        "total_errors": 8
+      }
+    },
+    {
+      "audio_file": "616ea279-71f7-4adb-bed3-56f65733005b.flac",
+      "dialect": "SG",
+      "reference": "Nicht-ordensgebundene Männer und Frauen stellen heute die Mehrheit unter den Studierenden.",
+      "hypothesis": " Männer und Frauen, die nicht an Orten gebunden sind, stellen heute die Mehrheit unter den Studierenden.",
+      "wer": 72.72727272727273,
+      "cer": 45.55555555555556,
+      "bleu": 43.931603696853834,
+      "alignment_readable": "REF:  nicht-ordensgebundene männer und *****   ***** ***** ***** ***** *****    frauen stellen heute die mehrheit unter den studierenden.\nHYP:  *****                 männer und frauen, die   nicht an    orten gebunden sind,  stellen heute die mehrheit unter den studierenden.\nTYPE: D                     C      C   I       I     I     I     I     I        S      C       C     C   C        C     C   C",
+      "error_counts": {
+        "correct": 9,
+        "substitution": 1,
+        "deletion": 1,
+        "insertion": 6,
+        "total_errors": 8
+      }
+    },
+    {
+      "audio_file": "2da3736b-2e96-45d2-84cd-350c8fd77cba.flac",
+      "dialect": "BE",
+      "reference": "Anfangs wurde unter anderem behauptet, sie sei negativ für die Umwelt.",
+      "hypothesis": " Am Anfang ist es unter anderem behauptet worden, sie wäre negativ für die Umbaut.",
+      "wer": 72.72727272727273,
+      "cer": 32.857142857142854,
+      "bleu": 17.915645938206765,
+      "alignment_readable": "REF:  ***** *****  anfangs wurde unter anderem *****     behauptet, sie sei  negativ für die umwelt.\nHYP:  am    anfang ist     es    unter anderem behauptet worden,    sie wäre negativ für die umbaut.\nTYPE: I     I      S       S     C     C       I         S          C   S    C       C   C   S",
+      "error_counts": {
+        "correct": 6,
+        "substitution": 5,
+        "deletion": 0,
+        "insertion": 3,
+        "total_errors": 8
+      }
+    },
+    {
+      "audio_file": "9689a006-1dff-4e3f-bc7a-383b15abd29d.flac",
+      "dialect": "BE",
+      "reference": "Dieser kann über einen stählernen Steg und ebensolche Treppen erreicht werden.",
+      "hypothesis": " Da kann über eine Stelle eine Stege oder eben solche Treppen erreicht werden.",
+      "wer": 72.72727272727273,
+      "cer": 23.076923076923077,
+      "bleu": 21.142141714303076,
+      "alignment_readable": "REF:  dieser kann über ***** *****  einen stählernen steg und  ebensolche treppen erreicht werden.\nHYP:  da     kann über eine  stelle eine  stege      oder eben solche     treppen erreicht werden.\nTYPE: S      C    C    I     I      S     S          S    S    S          C       C        C",
+      "error_counts": {
+        "correct": 5,
+        "substitution": 6,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 8
+      }
+    },
+    {
+      "audio_file": "37b02d1f-c171-4e91-aa17-df0532f99137.flac",
+      "dialect": "BE",
+      "reference": "Die Darstellung der Erde in Kugelform begründete keine grundsätzliche neue Weltsicht.",
+      "hypothesis": " Die Darstellung der Erde in Kugelform hat nicht auf einer grundsätzlich neuen Weltsicht begründet.",
+      "wer": 72.72727272727273,
+      "cer": 30.58823529411765,
+      "bleu": 34.79159475128446,
+      "alignment_readable": "REF:  die darstellung der erde in kugelform ***** ***** ***** begründete keine         grundsätzliche neue      weltsicht.\nHYP:  die darstellung der erde in kugelform hat   nicht auf   einer      grundsätzlich neuen          weltsicht begründet.\nTYPE: C   C           C   C    C  C         I     I     I     S          S             S              S         S",
+      "error_counts": {
+        "correct": 6,
+        "substitution": 5,
+        "deletion": 0,
+        "insertion": 3,
+        "total_errors": 8
+      }
+    },
+    {
+      "audio_file": "a0094388-4457-48b4-ab6e-ce9f701e5130.flac",
+      "dialect": "AG",
+      "reference": "Etappe trat er danach nicht mehr an.",
+      "hypothesis": " Die Etappe ist nachher nicht mehr angetreten.",
+      "wer": 71.42857142857143,
+      "cer": 63.888888888888886,
+      "bleu": 13.134549472120788,
+      "alignment_readable": "REF:  ***** etappe trat er      danach nicht mehr an.\nHYP:  die   etappe ist  nachher *****  nicht mehr angetreten.\nTYPE: I     C      S    S       D      C     C    S",
+      "error_counts": {
+        "correct": 3,
+        "substitution": 3,
+        "deletion": 1,
+        "insertion": 1,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "b5db7507-a399-4bc1-98fc-8ac706b3e43d.flac",
+      "dialect": "SG",
+      "reference": "Moore verliebt sich in Normans Tochter Cindy.",
+      "hypothesis": " Der Moor verliebt sich in Norma und seine Tochter Cindy.",
+      "wer": 71.42857142857143,
+      "cer": 28.888888888888886,
+      "bleu": 23.462350320527996,
+      "alignment_readable": "REF:  ***** moore verliebt sich in ***** ***** normans tochter cindy.\nHYP:  der   moor  verliebt sich in norma und   seine   tochter cindy.\nTYPE: I     S     C        C    C  I     I     S       C       C",
+      "error_counts": {
+        "correct": 5,
+        "substitution": 2,
+        "deletion": 0,
+        "insertion": 3,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "e6f0c848-a2fe-40da-8573-c86d543369c2.flac",
+      "dialect": "BE",
+      "reference": "Der November wurde dadurch zum elften Monat.",
+      "hypothesis": " Durch das wurde der November zum 11. Monat.",
+      "wer": 71.42857142857143,
+      "cer": 61.36363636363637,
+      "bleu": 13.134549472120794,
+      "alignment_readable": "REF:  der   november wurde ***** dadurch  zum elften monat.\nHYP:  durch das      wurde der   november zum 11.    monat.\nTYPE: S     S        C     I     S        C   S      C",
+      "error_counts": {
+        "correct": 3,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "fde620ff-6467-4230-8bb6-38b575fe2a6e.flac",
+      "dialect": "ZH",
+      "reference": "Er lief Weltrekord und gewann olympisches Gold.",
+      "hypothesis": " Er rennt Weltrekorde und hat olympisches Gold gewonnen.",
+      "wer": 71.42857142857143,
+      "cer": 42.5531914893617,
+      "bleu": 11.99014838091355,
+      "alignment_readable": "REF:  er lief  weltrekord  und gewann olympisches ***** gold.\nHYP:  er rennt weltrekorde und hat    olympisches gold  gewonnen.\nTYPE: C  S     S           C   S      C           I     S",
+      "error_counts": {
+        "correct": 3,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "dfde354e-7ef4-4e4a-80c2-9b0610323711.flac",
+      "dialect": "AG",
+      "reference": "Daraufhin schloss sich Riemer dem Drittligaaufsteiger Preußen Münster an, wo er einen Einjahresvertrag unterschrieb.",
+      "hypothesis": " Daraufhin hat sich der Riemer am 3. Liga-Aufstieg in Preussen-Münster angeschlossen, wo er einen Einjahresvertrag unterschrieben hat.",
+      "wer": 71.42857142857143,
+      "cer": 37.06896551724138,
+      "bleu": 20.76047003130265,
+      "alignment_readable": "REF:  daraufhin schloss sich ***** riemer ***** dem drittligaaufsteiger preußen münster          an,            wo er einen einjahresvertrag *****          unterschrieb.\nHYP:  daraufhin hat     sich der   riemer am    3.  liga-aufstieg       in      preussen-münster angeschlossen, wo er einen einjahresvertrag unterschrieben hat.\nTYPE: C         S       C    I     C      I     S   S                   S       S                S              C  C  C     C                I              S",
+      "error_counts": {
+        "correct": 7,
+        "substitution": 7,
+        "deletion": 0,
+        "insertion": 3,
+        "total_errors": 10
+      }
+    },
+    {
+      "audio_file": "bad505a5-6fc9-4edb-bcf2-3306334284d9.flac",
+      "dialect": "ZG",
+      "reference": "Orson Welles verbrachte seine Flitterwochen im Algonquin.",
+      "hypothesis": " Orson Welles hat seine Flitterwoche in Algonquin verbracht.",
+      "wer": 71.42857142857143,
+      "cer": 35.08771929824561,
+      "bleu": 11.99014838091355,
+      "alignment_readable": "REF:  orson welles verbrachte seine *****        flitterwochen im        algonquin.\nHYP:  orson welles hat        seine flitterwoche in            algonquin verbracht.\nTYPE: C     C      S          C     I            S             S         S",
+      "error_counts": {
+        "correct": 3,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "16bb6895-f5c8-4931-84a0-1cd22fe5e005.flac",
+      "dialect": "SG",
+      "reference": "Währenddessen pachtet Elke Berger zusätzlich das Luxushotel „Park’s“, um ihr Personal beschäftigen zu können.",
+      "hypothesis": " Währenddessen hat Elke Berger zusätzlich zu Luxus Hotel Parks gepachtet, damit sie ihr Personal beschäftigen kann.",
+      "wer": 71.42857142857143,
+      "cer": 32.11009174311927,
+      "bleu": 15.27678022374703,
+      "alignment_readable": "REF:  währenddessen pachtet elke berger zusätzlich ***** ***** ***** das   luxushotel „park’s“, um  ihr personal beschäftigen zu    können.\nHYP:  währenddessen hat     elke berger zusätzlich zu    luxus hotel parks gepachtet, damit     sie ihr personal beschäftigen kann. *****\nTYPE: C             S       C    C      C          I     I     I     S     S          S         S   C   C        C            S     D",
+      "error_counts": {
+        "correct": 7,
+        "substitution": 6,
+        "deletion": 1,
+        "insertion": 3,
+        "total_errors": 10
+      }
+    },
+    {
+      "audio_file": "638f0512-7fe0-439f-8470-5ccea5e31071.flac",
+      "dialect": "BL",
+      "reference": "Bundesliga landeten die Weiß-Rot-Blauen auf einem Abstiegsrang.",
+      "hypothesis": " Bundesliga sind die Wiss-Rot-Blau auf dem Abstiegsrang gelandet.",
+      "wer": 71.42857142857143,
+      "cer": 36.507936507936506,
+      "bleu": 7.129384882260374,
+      "alignment_readable": "REF:  bundesliga landeten die weiß-rot-blauen auf ***** einem        abstiegsrang.\nHYP:  bundesliga sind     die wiss-rot-blau   auf dem   abstiegsrang gelandet.\nTYPE: C          S        C   S               C   I     S            S",
+      "error_counts": {
+        "correct": 3,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "dc2917d9-db38-45e8-9748-226c15fd65b8.flac",
+      "dialect": "BE",
+      "reference": "Diese wurden bereits in Technicolor gefilmt, als selbst die Serie noch in Schwarz-Weiß lief.",
+      "hypothesis": " Diese sind schon in Technik-Color gefilmt worden, wo die Serie selbst noch in Schwarz-Weiss gelaufen ist.",
+      "wer": 71.42857142857143,
+      "cer": 47.82608695652174,
+      "bleu": 7.638390111873514,
+      "alignment_readable": "REF:  diese wurden bereits in technicolor   gefilmt, als     selbst die serie *****  noch in *****         schwarz-weiß lief.\nHYP:  diese sind   schon   in technik-color gefilmt  worden, wo     die serie selbst noch in schwarz-weiss gelaufen     ist.\nTYPE: C     S      S       C  S             S        S       S      C   C     I      C    C  I             S            S",
+      "error_counts": {
+        "correct": 6,
+        "substitution": 8,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 10
+      }
+    },
+    {
+      "audio_file": "9dd725f4-a76f-4f6e-b926-f36592cb5cd5.flac",
+      "dialect": "TG",
+      "reference": "Die Burg befand sich bei der Kirche.",
+      "hypothesis": " Der Bogen war neben der Kirche.",
+      "wer": 71.42857142857143,
+      "cer": 44.44444444444444,
+      "bleu": 21.191828141393902,
+      "alignment_readable": "REF:  die burg  befand sich  bei   der kirche.\nHYP:  der bogen war    neben ***** der kirche.\nTYPE: S   S     S      S     D     C   C",
+      "error_counts": {
+        "correct": 2,
+        "substitution": 4,
+        "deletion": 1,
+        "insertion": 0,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "1df83feb-4208-4a8b-9873-1aff7a84fd23.flac",
+      "dialect": "ZH",
+      "reference": "In den letzten Jahren gewinnt auch der Fußball an Begeisterung.",
+      "hypothesis": " In der letzten Jahr gewinnt er auch den 4. Baller begeistert.",
+      "wer": 70.0,
+      "cer": 25.396825396825395,
+      "bleu": 5.024584978301581,
+      "alignment_readable": "REF:  in den letzten jahren gewinnt ***** auch der fußball an     begeisterung.\nHYP:  in der letzten jahr   gewinnt er    auch den 4.      baller begeistert.\nTYPE: C  S   C       S      C       I     C    S   S       S      S",
+      "error_counts": {
+        "correct": 4,
+        "substitution": 6,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 7
+      }
+    },
+    {
+      "audio_file": "f4cf1779-b582-4dd5-b3cb-96338b7e7410.flac",
+      "dialect": "SO",
+      "reference": "Wir begrüßen Ihre Absicht, Herr Ratspräsident, für Gent und Laeken.",
+      "hypothesis": " Herr Ratspräsident, wir begrüssen Ihre Absicht für Gent und Laiken.",
+      "wer": 70.0,
+      "cer": 59.70149253731343,
+      "bleu": 23.434040928376113,
+      "alignment_readable": "REF:  ***** *****          wir begrüßen  ihre absicht, herr  ratspräsident, für gent und laeken.\nHYP:  herr  ratspräsident, wir begrüssen ihre absicht  ***** *****          für gent und laiken.\nTYPE: I     I              C   S         C    S        D     D              C   C    C   S",
+      "error_counts": {
+        "correct": 5,
+        "substitution": 3,
+        "deletion": 2,
+        "insertion": 2,
+        "total_errors": 7
+      }
+    },
+    {
+      "audio_file": "f400c9c7-e3f3-4f94-8098-a665be4ad3c4.flac",
+      "dialect": "FR",
+      "reference": "Das siebte gebaute Fahrzeug wurde dennoch nach Deutschland importiert und in Hamburg ausgeliefert.",
+      "hypothesis": " Die 7. Pulta-Fahrzeuge ist dann doch noch nach Deutschland importiert und in Hamburg ausgeliefert gekommen.",
+      "wer": 69.23076923076923,
+      "cer": 35.714285714285715,
+      "bleu": 36.005658542850306,
+      "alignment_readable": "REF:  ***** das siebte          gebaute fahrzeug wurde dennoch nach deutschland importiert und in hamburg *****        ausgeliefert.\nHYP:  die   7.  pulta-fahrzeuge ist     dann     doch  noch    nach deutschland importiert und in hamburg ausgeliefert gekommen.\nTYPE: I     S   S               S       S        S     S       C    C           C          C   C  C       I            S",
+      "error_counts": {
+        "correct": 6,
+        "substitution": 7,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 9
+      }
+    },
+    {
+      "audio_file": "5da3e73c-fd33-4111-8905-9d1116b9238b.flac",
+      "dialect": "SG",
+      "reference": "Die Transplantation umfasste die Haut von Nase, Mund, Kinn und Teile der Wangen.",
+      "hypothesis": " Transplantation umfasst Hut von Nase, Mul, Phönie und Teil von der Backen.",
+      "wer": 69.23076923076923,
+      "cer": 30.0,
+      "bleu": 11.69455115701007,
+      "alignment_readable": "REF:  die   transplantation umfasste die haut  von nase, mund, kinn   und ***** teile der wangen.\nHYP:  ***** transplantation umfasst  hut ***** von nase, mul,  phönie und teil  von   der backen.\nTYPE: D     C               S        S   D     C   C     S     S      C   I     S     C   S",
+      "error_counts": {
+        "correct": 5,
+        "substitution": 6,
+        "deletion": 2,
+        "insertion": 1,
+        "total_errors": 9
+      }
+    },
+    {
+      "audio_file": "332d2e69-5674-4dcb-bb80-9900901a5ca8.flac",
+      "dialect": "ZG",
+      "reference": "Staats-Obergymnasium unterrichtete, kennen.",
+      "hypothesis": " Staatsopergymnasium unterrichtet, kennen.",
+      "wer": 66.66666666666666,
+      "cer": 6.976744186046512,
+      "bleu": 39.76353643835254,
+      "alignment_readable": "REF:  staats-obergymnasium unterrichtete, kennen.\nHYP:  staatsopergymnasium  unterrichtet,  kennen.\nTYPE: S                    S              C",
+      "error_counts": {
+        "correct": 1,
+        "substitution": 2,
+        "deletion": 0,
+        "insertion": 0,
+        "total_errors": 2
+      }
+    },
+    {
+      "audio_file": "81ad1bd1-007a-481c-a2ca-97d43ccf959b.flac",
+      "dialect": "SG",
+      "reference": "Gute Überwachung: Ja!",
+      "hypothesis": " Gute Überwachung, ja.",
+      "wer": 66.66666666666666,
+      "cer": 9.523809523809524,
+      "bleu": 23.643540225079395,
+      "alignment_readable": "REF:  gute überwachung: ja!\nHYP:  gute überwachung, ja.\nTYPE: C    S            S",
+      "error_counts": {
+        "correct": 1,
+        "substitution": 2,
+        "deletion": 0,
+        "insertion": 0,
+        "total_errors": 2
+      }
+    },
+    {
+      "audio_file": "019cc1c5-df3f-4a03-8b89-9b6caee7238a.flac",
+      "dialect": "ZH",
+      "reference": "In Risse drang Wasser ein und sprengte Felsblöcke ab.",
+      "hypothesis": " Ich reisse wasser eingedrungen und spreng die Felsblöcke ab.",
+      "wer": 66.66666666666666,
+      "cer": 39.62264150943396,
+      "bleu": 17.747405280050266,
+      "alignment_readable": "REF:  in  risse  drang wasser ein          und *****  sprengte felsblöcke ab.\nHYP:  ich reisse ***** wasser eingedrungen und spreng die      felsblöcke ab.\nTYPE: S   S      D     C      S            C   I      S        C          C",
+      "error_counts": {
+        "correct": 4,
+        "substitution": 4,
+        "deletion": 1,
+        "insertion": 1,
+        "total_errors": 6
+      }
+    },
+    {
+      "audio_file": "a952ed65-d6fd-43fb-a4d9-d34c9054cec5.flac",
+      "dialect": "ZH",
+      "reference": "Das Album erhielt nur positive Kritiken.",
+      "hypothesis": " Dieses Album hat nur positive Kritiken bekommen.",
+      "wer": 66.66666666666666,
+      "cer": 45.0,
+      "bleu": 23.356898886410004,
+      "alignment_readable": "REF:  das    album erhielt nur positive *****    kritiken.\nHYP:  dieses album hat     nur positive kritiken bekommen.\nTYPE: S      C     S       C   C        I        S",
+      "error_counts": {
+        "correct": 3,
+        "substitution": 3,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 4
+      }
+    },
+    {
+      "audio_file": "190b0c03-0734-4646-a9c5-b1fd7dcc970f.flac",
+      "dialect": "BE",
+      "reference": "Über Faustinus lässt sich aus seinem wenig aussagekräftigen Namen kaum etwas erschließen.",
+      "hypothesis": " Über den Faustinos lässt Kussim wenig aussagekräftigen Armen auch kaum etwas schliessen.",
+      "wer": 66.66666666666666,
+      "cer": 29.213483146067414,
+      "bleu": 10.04916995660316,
+      "alignment_readable": "REF:  über ***** faustinus lässt sich   aus   seinem wenig aussagekräftigen ***** namen kaum etwas erschließen.\nHYP:  über den   faustinos lässt kussim ***** *****  wenig aussagekräftigen armen auch  kaum etwas schliessen.\nTYPE: C    I     S         C     S      D     D      C     C                I     S     C    C     S",
+      "error_counts": {
+        "correct": 6,
+        "substitution": 4,
+        "deletion": 2,
+        "insertion": 2,
+        "total_errors": 8
+      }
+    },
+    {
+      "audio_file": "4964d019-d8be-4a9e-8042-76d61719cbca.flac",
+      "dialect": "SZ",
+      "reference": "Einige der besten Blues-Musiker ihrer Zeit spielten in Atlanta.",
+      "hypothesis": " Ein paar der besten Bluesmusiker ihrer Zeit haben in Atlanta gespielt.",
+      "wer": 66.66666666666666,
+      "cer": 33.33333333333333,
+      "bleu": 12.192091596713041,
+      "alignment_readable": "REF:  ***** einige der besten blues-musiker ihrer zeit spielten in *****   atlanta.\nHYP:  ein   paar   der besten bluesmusiker  ihrer zeit haben    in atlanta gespielt.\nTYPE: I     S      C   C      S             C     C    S        C  I       S",
+      "error_counts": {
+        "correct": 5,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 6
+      }
+    },
+    {
+      "audio_file": "11e2d4d7-b7f6-4b78-a9e7-261731da2c58.flac",
+      "dialect": "BL",
+      "reference": "Wie anderswo waren auch hier zunächst nur Männer teilnahmeberechtigt.",
+      "hypothesis": " Wie auch anders sind auch hier zunächst nur Amanda-Teilnahme berechtigt gewesen.",
+      "wer": 66.66666666666666,
+      "cer": 39.130434782608695,
+      "bleu": 23.462350320527996,
+      "alignment_readable": "REF:  wie ***** anderswo waren auch hier zunächst nur *****            männer     teilnahmeberechtigt.\nHYP:  wie auch  anders   sind  auch hier zunächst nur amanda-teilnahme berechtigt gewesen.\nTYPE: C   I     S        S     C    C    C        C   I                S          S",
+      "error_counts": {
+        "correct": 5,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 6
+      }
+    },
+    {
+      "audio_file": "215889de-a4f1-4349-8e3f-bcb5afb37b22.flac",
+      "dialect": "TG",
+      "reference": "Nikolaus von Myra.",
+      "hypothesis": " Nikolaus Fumira",
+      "wer": 66.66666666666666,
+      "cer": 33.33333333333333,
+      "bleu": 18.393972058572114,
+      "alignment_readable": "REF:  nikolaus von    myra.\nHYP:  nikolaus fumira *****\nTYPE: C        S      D",
+      "error_counts": {
+        "correct": 1,
+        "substitution": 1,
+        "deletion": 1,
+        "insertion": 0,
+        "total_errors": 2
+      }
+    },
+    {
+      "audio_file": "d82be012-c51e-4e4e-9ba6-caa2fda8f5f7.flac",
+      "dialect": "AG",
+      "reference": "Thirty Years of Magic\", das seine Design-Kunst ausführlich dokumentiert.",
+      "hypothesis": " 30 Years of Magic – das tut seine Designkunst ausführlich dokumentieren.",
+      "wer": 66.66666666666666,
+      "cer": 20.833333333333336,
+      "bleu": 15.58010570411745,
+      "alignment_readable": "REF:  thirty years of ***** magic\", das ***** seine design-kunst ausführlich dokumentiert.\nHYP:  30     years of magic –       das tut   seine designkunst  ausführlich dokumentieren.\nTYPE: S      C     C  I     S       C   I     C     S            C           S",
+      "error_counts": {
+        "correct": 5,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 6
+      }
+    },
+    {
+      "audio_file": "a053c97e-9be0-4eb5-8877-af7d0167dfca.flac",
+      "dialect": "AG",
+      "reference": "Weil es sich nicht um ein einfaches Facelifting handelt.",
+      "hypothesis": " Welcht sich nicht nur um das Facelifting handelt?",
+      "wer": 66.66666666666666,
+      "cer": 30.357142857142854,
+      "bleu": 12.759307794697138,
+      "alignment_readable": "REF:  weil   es    sich nicht ***** um ein einfaches facelifting handelt.\nHYP:  welcht ***** sich nicht nur   um das *****     facelifting handelt?\nTYPE: S      D     C    C     I     C  S   D         C           S",
+      "error_counts": {
+        "correct": 4,
+        "substitution": 3,
+        "deletion": 2,
+        "insertion": 1,
+        "total_errors": 6
+      }
+    },
+    {
+      "audio_file": "3f7372ad-fbd5-4d9e-9933-1b3e2afe35bd.flac",
+      "dialect": "SG",
+      "reference": "Außerdem werden Benefiz-Veranstaltungen durchgeführt oder unterstützt.",
+      "hypothesis": " Zusätzlich werden die Benefizveranstaltungen durchgeführt oder auch unterstützt.",
+      "wer": 66.66666666666666,
+      "cer": 27.142857142857142,
+      "bleu": 14.25876976452075,
+      "alignment_readable": "REF:  außerdem   werden ***** benefiz-veranstaltungen durchgeführt oder ***** unterstützt.\nHYP:  zusätzlich werden die   benefizveranstaltungen  durchgeführt oder auch  unterstützt.\nTYPE: S          C      I     S                       C            C    I     C",
+      "error_counts": {
+        "correct": 4,
+        "substitution": 2,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 4
+      }
+    },
+    {
+      "audio_file": "aade300a-ee35-4208-a4ad-b4c52ee59fa3.flac",
+      "dialect": "SG",
+      "reference": "Diese Reise wirkte inspirierend auf ihr künstlerisches Schaffen, besonders widmete sie sich der Porträtmalerei.",
+      "hypothesis": " Diese Reise hat sich inspirierend auf ihre künstliche Arbeit ausgewirkt, besonders hat sie sich der Porträtmalerei gewidmet.",
+      "wer": 64.28571428571429,
+      "cer": 38.73873873873874,
+      "bleu": 19.4086232706272,
+      "alignment_readable": "REF:  diese reise ***** wirkte inspirierend auf ***** ihr        künstlerisches schaffen,   besonders widmete sie sich der *****          porträtmalerei.\nHYP:  diese reise hat   sich   inspirierend auf ihre  künstliche arbeit         ausgewirkt, besonders hat     sie sich der porträtmalerei gewidmet.\nTYPE: C     C     I     S      C            C   I     S          S              S           C         S       C   C    C   I              S",
+      "error_counts": {
+        "correct": 8,
+        "substitution": 6,
+        "deletion": 0,
+        "insertion": 3,
+        "total_errors": 9
+      }
+    },
+    {
+      "audio_file": "1aa39471-37cb-48f3-9e87-f574cf79e507.flac",
+      "dialect": "SO",
+      "reference": "Während ihres Studiums verbrachte Bußmann längere Zeit in London und Paris.",
+      "hypothesis": " Während ihrem Studium hat der Busmann längere Zeit in London und Paris verbracht.",
+      "wer": 63.63636363636363,
+      "cer": 29.333333333333332,
+      "bleu": 37.596635294670186,
+      "alignment_readable": "REF:  während ***** ihres   studiums verbrachte bußmann längere zeit in london und ***** paris.\nHYP:  während ihrem studium hat      der        busmann längere zeit in london und paris verbracht.\nTYPE: C       I     S       S        S          S       C       C    C  C      C   I     S",
+      "error_counts": {
+        "correct": 6,
+        "substitution": 5,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 7
+      }
+    },
+    {
+      "audio_file": "1f4bbc51-ae8a-4088-af35-3d7eaab60ccb.flac",
+      "dialect": "BE",
+      "reference": "Beispielsweise enthielten die ersten Duden-Auflagen nach der Reform den Eintrag „Sciencefiction“.",
+      "hypothesis": " Beispielsweise haben die erste Dudenauflage nach der Reform der Eintrag Science Fiction enthalten.",
+      "wer": 63.63636363636363,
+      "cer": 23.711340206185564,
+      "bleu": 13.065113298388567,
+      "alignment_readable": "REF:  beispielsweise enthielten die ersten duden-auflagen nach der reform den eintrag *****   *****   „sciencefiction“.\nHYP:  beispielsweise haben      die erste  dudenauflage   nach der reform der eintrag science fiction enthalten.\nTYPE: C              S          C   S      S              C    C   C      S   C       I       I       S",
+      "error_counts": {
+        "correct": 6,
+        "substitution": 5,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 7
+      }
+    },
+    {
+      "audio_file": "54098f4a-17ca-4fe8-a6b6-92a21b0839a1.flac",
+      "dialect": "BE",
+      "reference": "Im selben Jahr erschien das erste und einzige Demo \"Horror Infinity\".",
+      "hypothesis": " Im gleichen Jahr ist die erste und die einzige Demo Horror Infinity erschienen.",
+      "wer": 63.63636363636363,
+      "cer": 43.47826086956522,
+      "bleu": 10.886972213737396,
+      "alignment_readable": "REF:  im selben   jahr erschien das erste und ***** einzige demo *****  \"horror  infinity\".\nHYP:  im gleichen jahr ist      die erste und die   einzige demo horror infinity erschienen.\nTYPE: C  S        C    S        S   C     C   I     C       C    I      S        S",
+      "error_counts": {
+        "correct": 6,
+        "substitution": 5,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 7
+      }
+    },
+    {
+      "audio_file": "776ecfb9-bc67-40af-94b5-3cd1bace9772.flac",
+      "dialect": "SG",
+      "reference": "Cibulka begann mit Versen, und lange dominierte die Lyrik sein Schaffen.",
+      "hypothesis": " Cibulca hat mit Fersen angefangen und lange hat die Lyrik sein Schaffen dominiert.",
+      "wer": 63.63636363636363,
+      "cer": 45.83333333333333,
+      "bleu": 22.718709780542323,
+      "alignment_readable": "REF:  cibulka begann mit *****  versen,    und lange dominierte die lyrik sein *****    schaffen.\nHYP:  cibulca hat    mit fersen angefangen und lange hat        die lyrik sein schaffen dominiert.\nTYPE: S       S      C   I      S          C   C     S          C   C     C    I        S",
+      "error_counts": {
+        "correct": 6,
+        "substitution": 5,
+        "deletion": 0,
+        "insertion": 2,
+        "total_errors": 7
+      }
+    },
+    {
+      "audio_file": "306944f5-7b8b-4d17-b6ed-301ed40710f8.flac",
+      "dialect": "TG",
+      "reference": "Sind Problembereiche vorhanden, sollte ein zweiter Schritt folgen.",
+      "hypothesis": " Wenn Problembereiche vorhanden sind, sollte der zweite Schritt folgen.",
+      "wer": 62.5,
+      "cer": 18.181818181818183,
+      "bleu": 21.200626759025184,
+      "alignment_readable": "REF:  sind problembereiche *****     vorhanden, sollte ein zweiter schritt folgen.\nHYP:  wenn problembereiche vorhanden sind,      sollte der zweite  schritt folgen.\nTYPE: S    C               I         S          C      S   S       C       C",
+      "error_counts": {
+        "correct": 4,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "e13aac5a-66f4-43ae-af8e-7d5a3e9bd902.flac",
+      "dialect": "AG",
+      "reference": "Dieser Interessengegensatz führte oft zur Erklärung einer Fehde.",
+      "hypothesis": " Der Interessensgegensatz hat oft zur Erklärung einer Feder geführt.",
+      "wer": 62.5,
+      "cer": 28.125,
+      "bleu": 27.77619034011791,
+      "alignment_readable": "REF:  dieser interessengegensatz  führte oft zur erklärung einer ***** fehde.\nHYP:  der    interessensgegensatz hat    oft zur erklärung einer feder geführt.\nTYPE: S      S                    S      C   C   C         C     I     S",
+      "error_counts": {
+        "correct": 4,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 5
+      }
+    },
+    {
+      "audio_file": "6fecd70e-199b-424f-9afc-9e645bb24c8b.flac",
+      "dialect": "BE",
+      "reference": "Herr Kommissar Liikanen, wir erwarten ein überzeugendes Eingreifen.",
+      "hypothesis": " Herr Kommissar Likanen, wir erwarten, es überzügend Sie eingreifen.",
+      "wer": 62.5,
+      "cer": 13.432835820895523,
+      "bleu": 18.52797255583095,
+      "alignment_readable": "REF:  herr kommissar liikanen, wir *****     erwarten ein        überzeugendes eingreifen.\nHYP:  herr kommissar likanen,  wir erwarten, es       überzügend sie           eingreifen.\nTYPE: C    C         S         C   I         S        S          S             C",
+      "error_counts": {
+        "correct": 4,
+        "substitution": 4,
+        "deletion": 0,
+        "insertion": 1,
+        "total_errors": 5
+      }
+    }
+  ]
+}
