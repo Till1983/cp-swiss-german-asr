@@ -40,7 +40,8 @@ Functionality:
 2. Uses ErrorAnalyzer to compute detailed error statistics
 3. Identifies high-error samples (worst N% by WER)
 4. Generates dialect-specific confusion matrices
-5. Outputs structured analysis for dashboard integration
+5. Analyzes WER-BLEU correlation for semantic preservation (NEW)
+6. Outputs structured analysis for dashboard integration
 
 Usage:
     python scripts/analyze_errors.py --input_dir results/metrics --top_percent 0.1
@@ -105,35 +106,35 @@ def analyze_single_result(
     sys.stdout.flush()
     dialect_stats = analyzer.analyze_by_dialect(samples)
     
-    # 2. Global Error Distribution
-    logger.info(f"  Computing alignments for {total_samples} samples...")
+    # 2. Global Alignment Computation
+    logger.info("  Computing global alignments (this may take a while)...")
     sys.stdout.flush()
     
+    # Progress tracking with dots
     global_alignments = []
-    
-    # Progress loop with heartbeat
-    for i, s in enumerate(samples):
-        global_alignments.append(analyzer.get_alignment(s['reference'], s['hypothesis']))
+    for i, s in enumerate(samples, 1):
+        align = analyzer.get_alignment(s['reference'], s['hypothesis'])
+        global_alignments.append(align)
         
-        # Heartbeat: print dot every 50 samples
-        if (i + 1) % 50 == 0:
-            print(".", end="", flush=True)
-            
-        # Progress log every 100 samples
-        if (i + 1) % 100 == 0:
-            print()  # Clear dots line
-            progress_pct = ((i + 1) / total_samples) * 100
-            logger.info(f"    Aligned {i + 1}/{total_samples} samples ({progress_pct:.1f}%)")
+        # Progress dots every 50 samples
+        if i % 50 == 0:
+            print('.', end='', flush=True)
+        
+        # Detailed log every 100 samples
+        if i % 100 == 0:
+            logger.info(f"  Processed {i}/{total_samples} alignments...")
             sys.stdout.flush()
         
         # Memory check every 200 samples
-        if (i + 1) % 200 == 0:
+        if i % 200 == 0 and PSUTIL_AVAILABLE:
             log_memory_usage()
-
-    if total_samples % 100 != 0:  # Ensure final newline after dots
-        print()
     
-    logger.info("  Categorizing global errors...")
+    print()  # Newline after dots
+    logger.info(f"  ✓ Completed {total_samples} alignments")
+    sys.stdout.flush()
+    
+    # 3. Global Error Distribution
+    logger.info("  Computing global error type distribution...")
     sys.stdout.flush()
     
     global_counts = {'substitution': 0, 'deletion': 0, 'insertion': 0, 'correct': 0}
@@ -142,14 +143,27 @@ def analyze_single_result(
         counts = analyzer.categorize_errors(align)
         for k in global_counts:
             global_counts[k] += counts.get(k, 0)
-            
+    
     total_ops = sum(global_counts.values())
     global_dist = {
         k: (v / total_ops * 100) if total_ops > 0 else 0.0 
         for k, v in global_counts.items()
     }
-
-    # 3. Extract Worst Samples (Top N% by WER)
+    
+    # 4. WER-BLEU Correlation Analysis (NEW)
+    logger.info("  Analyzing WER-BLEU correlation for semantic preservation...")
+    sys.stdout.flush()
+    
+    wer_bleu_analysis = analyzer.analyze_wer_bleu_correlation(
+        samples,
+        wer_threshold=50.0,
+        bleu_threshold=40.0
+    )
+    
+    logger.info(f"  ✓ Found {wer_bleu_analysis['summary']['high_wer_high_bleu_count']} samples with semantic preservation (high WER + high BLEU)")
+    sys.stdout.flush()
+    
+    # 5. Extract Worst Samples (Top N% by WER)
     logger.info(f"  Identifying worst {top_percent*100:.0f}% samples by WER...")
     sys.stdout.flush()
     
@@ -178,6 +192,7 @@ def analyze_single_result(
         },
         'global_metrics': analyzer.calculate_aggregate_stats(samples),
         'error_distribution_percent': global_dist,
+        'wer_bleu_correlation': wer_bleu_analysis,  # NEW
         'dialect_analysis': dialect_stats,
         'worst_samples': enriched_worst
     }
@@ -207,6 +222,7 @@ def save_analysis(analysis: Dict[str, Any], output_dir: Path):
                 'dialect': s.get('dialect'),
                 'wer': s.get('wer'),
                 'cer': s.get('cer'),
+                'bleu': s.get('bleu', 0.0),  # NEW
                 'reference': s.get('reference'),
                 'hypothesis': s.get('hypothesis'),
                 'substitutions': s['error_counts']['substitution'],
@@ -272,62 +288,56 @@ def main():
     logger.info(f"Found {len(result_files)} result files to analyze.")
     sys.stdout.flush()
     
-    summary_comparison = {}
-    total_start_time = time.time()
-    processed_count = 0
-
-    for idx, file_path in enumerate(result_files, 1):
-        logger.info("")
-        logger.info(f"[{idx}/{len(result_files)}] Starting analysis: {file_path.name}")
-        sys.stdout.flush()
-        
-        model_start_time = time.time()
-        
+    # Process each file
+    all_analyses = []
+    
+    for file_path in result_files:
         try:
-            analysis = analyze_single_result(file_path, analyzer, args.top_percent)
-            if analysis:
-                save_analysis(analysis, args.output_dir)
+            result = analyze_single_result(file_path, analyzer, args.top_percent)
+            if result:
+                all_analyses.append(result)
+                save_analysis(result, args.output_dir)
                 
-                # Collect high-level stats for comparison summary
-                model_name = analysis['meta']['model_name']
-                summary_comparison[model_name] = {
-                    'wer_mean': analysis['global_metrics'].get('mean_wer'),
-                    'cer_mean': analysis['global_metrics'].get('mean_cer'),
-                    'sub_rate': analysis['error_distribution_percent'].get('substitution'),
-                    'del_rate': analysis['error_distribution_percent'].get('deletion'),
-                    'ins_rate': analysis['error_distribution_percent'].get('insertion'),
-                }
-                processed_count += 1
-                
-                # Log duration and memory
-                duration = time.time() - model_start_time
-                logger.info(f"Finished {model_name} in {duration:.2f}s")
-                log_memory_usage()
+                # Log summary statistics
+                metrics = result['global_metrics']
+                corr = result['wer_bleu_correlation']['summary']
+                logger.info(f"  Summary for {result['meta']['model_name']}:")
+                logger.info(f"    Overall WER: {metrics['mean_wer']:.2f}%")
+                logger.info(f"    Overall CER: {metrics['mean_cer']:.2f}%")
+                logger.info(f"    Overall BLEU: {metrics['mean_bleu']:.2f}")
+                logger.info(f"    Semantic preservation rate: {corr['semantic_preservation_rate']:.2f}%")
                 sys.stdout.flush()
-
         except Exception as e:
-            logger.error(f"Failed to analyze {file_path.name}: {e}", exc_info=True)
-            sys.stdout.flush()
-
-    # Save comparison summary
-    if summary_comparison:
-        summary_path = args.output_dir / "model_comparison_summary.json"
-        with open(summary_path, 'w', encoding='utf-8') as f:
-            json.dump(summary_comparison, f, indent=2)
-        logger.info(f"Saved model comparison summary to {summary_path.name}")
+            logger.error(f"Error processing {file_path}: {e}", exc_info=True)
+            continue
+    
+    # Generate comparison summary
+    if all_analyses:
+        comparison = {
+            'timestamp': datetime.now().isoformat(),
+            'models': {}
+        }
+        
+        for analysis in all_analyses:
+            model_name = analysis['meta']['model_name']
+            comparison['models'][model_name] = {
+                'mean_wer': analysis['global_metrics']['mean_wer'],
+                'mean_cer': analysis['global_metrics']['mean_cer'],
+                'mean_bleu': analysis['global_metrics']['mean_bleu'],
+                'total_samples': analysis['meta']['total_samples'],
+                'semantic_preservation_rate': analysis['wer_bleu_correlation']['summary']['semantic_preservation_rate']
+            }
+        
+        comparison_path = args.output_dir / "model_comparison_summary.json"
+        with open(comparison_path, 'w', encoding='utf-8') as f:
+            json.dump(comparison, f, indent=2, ensure_ascii=False)
+        
+        logger.info(f"\n✓ Saved model comparison: {comparison_path}")
         sys.stdout.flush()
-
-    total_duration = time.time() - total_start_time
-    avg_time = total_duration / processed_count if processed_count > 0 else 0
-
-    logger.info("")
+    
+    logger.info("\n" + "=" * 60)
+    logger.info("Error Analysis Complete!")
     logger.info("=" * 60)
-    logger.info("Analysis Complete")
-    logger.info("=" * 60)
-    logger.info(f"Total Models Processed: {processed_count}/{len(result_files)}")
-    logger.info(f"Total Time: {total_duration:.2f}s ({total_duration/60:.1f}min)")
-    logger.info(f"Average Time per Model: {avg_time:.2f}s")
-    sys.stdout.flush()
 
 
 if __name__ == "__main__":
