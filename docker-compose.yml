@@ -15,6 +15,7 @@ services:
       - ./src/models/lm/kenLM.arpa:/app/models/lm/kenLM.arpa
     environment:
       - HF_TOKEN=${HF_TOKEN}
+      - PYTHONPATH=/app
 
   dashboard:
     build: .

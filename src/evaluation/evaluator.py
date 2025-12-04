@@ -288,5 +288,5 @@ class ASREvaluator:
             'per_dialect_bleu': per_dialect_bleu,
             'total_samples': len(results),
             'failed_samples': failed_samples,
-            'samples': results[:5]
+            'samples': results
         }

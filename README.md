@@ -7,6 +7,7 @@ Comparative ASR for Swiss‑German dialects: reproducible Docker pipeline, basel
 - [Data Pipeline](#data-pipeline)
 - [Evaluation API](#evaluation-api)
 - [Running Model Evaluation](#running-model-evaluation)
+- [Error Analysis](#error-analysis)
 - [Testing](#testing)
 - [Dashboard](#dashboard)
 
@@ -155,6 +156,60 @@ results/metrics/20251105_110723/
 
 The script prints a summary table comparing WER, CER, BLEU scores, and sample counts across all evaluated models.
 
+## Error Analysis
+
+Detailed error analysis to understand ASR failure modes through alignment-based categorization, dialect-specific patterns, and worst-sample inspection.
+
+### Run Error Analysis
+
+After running model evaluations, analyze error patterns:
+
+```bash
+docker compose run --rm api python scripts/analyze_errors.py \
+  --input_dir results/metrics \
+  --output_dir results/error_analysis \
+  --top_percent 0.1
+```
+
+**Parameters:**
+- `--input_dir`: Directory containing `*_results.json` files (default: `results/metrics`)
+- `--output_dir`: Directory for analysis outputs (default: `results/error_analysis`)
+- `--top_percent`: Fraction of worst-performing samples to extract (default: 0.1 for 10%)
+
+### Output Structure
+
+Analysis results are saved to `results/error_analysis/YYYYMMDD_HHMMSS/`:
+
+```
+results/error_analysis/20251203_112924/
+├── analysis_whisper-large-v3.json          # Hierarchical error analysis
+├── worst_samples_whisper-large-v3.csv      # High-error samples for inspection
+├── analysis_wav2vec2-german.json
+├── worst_samples_wav2vec2-german.csv
+└── model_comparison_summary.json           # Cross-model comparison
+```
+
+**Key Files:**
+
+- **`analysis_*.json`** – Detailed breakdown including:
+  - Error type distribution (substitution/deletion/insertion rates)
+  - Per-dialect performance and confusion patterns
+  - Aligned reference/hypothesis pairs for worst samples
+  
+- **`worst_samples_*.csv`** – Spreadsheet view of high-error utterances with alignment visualizations
+
+- **`model_comparison_summary.json`** – High-level metrics across all analyzed models
+
+### Methodology
+
+For detailed technical documentation on error categorization, threshold selection, and alignment algorithms, see [ERROR_ANALYSIS_METHODOLOGY.md](docs/ERROR_ANALYSIS_METHODOLOGY.md).
+
+Key concepts:
+- **Error Types:** Substitutions (wrong word), deletions (missing word), insertions (extra word)
+- **Worst-N% Threshold:** Top 10% by WER for efficient error pattern discovery
+- **Dialect Breakdown:** Separate error analysis for each Swiss German dialect/canton
+- **Confusion Pairs:** Most common word substitution errors within each dialect
+
 ## Testing
 
 Run the test suite to verify metrics calculations (WER, CER, BLEU) and evaluation logic.
@@ -209,7 +264,7 @@ The test suite validates:
 All tests should pass:
 ```
 ======================== test session starts ========================
-collected 66 items
+collected 81 items
 
 tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_exact_match PASSED
 tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_complete_mismatch PASSED
@@ -217,7 +272,7 @@ tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_partial_match PAS
 ...
 tests/test_evaluation.py::TestSwissGermanRealistic::test_bleu_partial_swiss_german_match PASSED
 
-======================== 66 passed in 4.42s ========================
+======================== 81 passed in 4.42s ========================
 ```
 
 ## Dashboard

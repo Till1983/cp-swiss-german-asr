@@ -1,0 +1,65 @@
+# Error Analysis Configuration
+# Controls parameters for scripts/analyze_errors.py
+
+# ============================================================================
+# INPUT/OUTPUT PATHS
+# ============================================================================
+paths:
+  # Input directory containing *_results.json files
+  # Relative to RESULTS_DIR or absolute path
+  input_dir: "metrics"
+  
+  # Output directory for analysis results
+  # Relative to RESULTS_DIR or absolute path
+  output_dir: "analysis"
+
+# ============================================================================
+# SAMPLING STRATEGY
+# ============================================================================
+sampling:
+  # Top N% of worst-performing samples to extract for analysis
+  # 0.10 = top 10%, 0.05 = top 5%
+  top_percent: 0.10
+  
+  # Alternative: Use absolute WER threshold instead of percentile
+  # If set, overrides top_percent
+  # absolute_threshold: 60.0  # Only samples with WER > 60%
+
+# ============================================================================
+# ANALYSIS OPTIONS
+# ============================================================================
+analysis:
+  # Calculate per-dialect statistics and confusion patterns
+  dialect_breakdown: true
+  
+  # Generate error type distributions (substitution/deletion/insertion rates)
+  error_distribution: true
+  
+  # Find top N most common confusion pairs per dialect
+  top_confusion_pairs: 10
+
+# ============================================================================
+# OUTPUT FORMATS
+# ============================================================================
+output:
+  # Save detailed JSON analysis (hierarchical structure)
+  save_json: true
+  
+  # Save worst samples as CSV for quick inspection
+  save_csv: true
+  
+  # Generate model comparison summary
+  comparison_summary: true
+
+# ============================================================================
+# LOGGING
+# ============================================================================
+logging:
+  # Logging level: DEBUG, INFO, WARNING, ERROR
+  level: "INFO"
+  
+  # Log to file in addition to console
+  log_to_file: false
+  
+  # If log_to_file=true, specify filename
+  log_filename: "error_analysis.log"

@@ -27,9 +27,25 @@ MODEL_REGISTRY = {
     "whisper-large-v3-turbo": {"type": "whisper", "name": "large-v3-turbo"},
     
     # Wav2Vec2 models
-    ## German model
+    ## German models
     "wav2vec2-german": {"type": "wav2vec2", "name": "jonatasgrosman/wav2vec2-large-xlsr-53-german"},
     "wav2vec2-german-1b": {"type": "wav2vec2", "name": "jonatasgrosman/wav2vec2-xls-r-1b-german"},
+    "wav2vec2-german-1b-5gram": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-1b-5gram-german"},
+    "wav2vec2-1b-german-cv11": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-1b-german-cv11"},
+    "wav2vec2-german-300m": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-300m-german"},
+
+     # ✅ Added adapted German model - needs to be retrained and uploaded
+    "wav2vec2-ger-nl-adapted": {
+        "type": "wav2vec2",
+        "name": str(MODELS_DIR / "adapted" / "wav2vec2-german-adapted"),
+        "lm_path": str(MODELS_DIR / "adapted" / "wav2vec2-german-adapted" / "language_model" / "KenLM.arpa")
+    },
+    
+    # Multilingual models
+    "wav2vec2-multi-56": {"type": "wav2vec2", "name": "voidful/wav2vec2-xlsr-multilingual-56"},
+    "wav2vec2-european-1b": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-1b-european"},
+    "wav2vec2-european-300m": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-300m-european"},
+
     # ✅ Added LM support here
     "wav2vec2-german-with-lm": {
         "type": "wav2vec2", 
@@ -37,26 +53,9 @@ MODEL_REGISTRY = {
         "lm_path": str(MODELS_DIR / "lm" / "kenLM.arpa") 
     },
 
-    # ✅ Added adapted German model
-    "wav2vec2-ger-nl-adapted": {
-        "type": "wav2vec2",
-        "name": str(MODELS_DIR / "adapted" / "wav2vec2-german-adapted"),
-        "lm_path": str(MODELS_DIR / "adapted" / "wav2vec2-german-adapted" / "language_model" / "KenLM.arpa")
-    },
-    # Dutch model
-    "wav2vec2-dutch-pretrained": {"type": "wav2vec2", "name": "facebook/wav2vec2-large-xlsr-53-dutch"},
-    ## Multilingual model
-    "wav2vec2-multi-56": {"type": "wav2vec2", "name": "voidful/wav2vec2-xlsr-multilingual-56"},
-
     # MMS models
     "mms-1b-all": {"type": "mms", "name": "facebook/mms-1b-all"},
-    # ⚠️ REMOVED: MMS models have vocab mismatch with KenLM decoders
-    # "mms-1b-all-lm": {"type": "mms", "name": "facebook/mms-1b-all", "lm_path": str(MODELS_DIR / "lm" / "kenLM.arpa")},
     "mms-1b-l1107": {"type": "mms", "name": "facebook/mms-1b-l1107"},
-    # ⚠️ REMOVED: MMS models have vocab mismatch with KenLM decoders
-    # "mms-1b-l1107-lm": {"type": "mms", "name": "facebook/mms-1b-l1107", "lm_path": str(MODELS_DIR / "lm" / "kenLM.arpa")}
-    
-    
 }
 
 def main():
