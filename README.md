@@ -264,7 +264,7 @@ The test suite validates:
 All tests should pass:
 ```
 ======================== test session starts ========================
-collected 81 items
+collected 91 items
 
 tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_exact_match PASSED
 tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_complete_mismatch PASSED
@@ -272,7 +272,7 @@ tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_partial_match PAS
 ...
 tests/test_evaluation.py::TestSwissGermanRealistic::test_bleu_partial_swiss_german_match PASSED
 
-======================== 81 passed in 4.42s ========================
+======================== 91 passed in 1.06s ========================
 ```
 
 ## Dashboard
