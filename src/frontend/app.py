@@ -1,6 +1,7 @@
 import streamlit as st
 from pathlib import Path
 import plotly.graph_objects as go
+import plotly.io as pio
 from utils.data_loader import load_data
 from utils.data_loader import get_available_results
 from utils.data_loader import combine_model_results
@@ -9,6 +10,31 @@ from components.model_comparison import compare_models, _get_performance_categor
 from components.dialect_breakdown import create_dialect_comparison, create_aggregate_comparison
 from components.data_table import display_data_table, display_summary_statistics, download_filtered_data
 from components.statistics_panel import render_metrics_definitions
+from components.plotly_charts import create_wer_by_dialect_chart, create_metric_comparison_chart
+
+# Configure Plotly theme to match Streamlit
+pio.templates["streamlit"] = go.layout.Template(
+    layout=go.Layout(
+        font=dict(family="Source Sans Pro, sans-serif"),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        colorway=['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', 
+                  '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'],
+        xaxis=dict(
+            showgrid=True,
+            gridcolor='rgba(128,128,128,0.2)',
+            showline=True,
+            linecolor='rgba(128,128,128,0.4)',
+        ),
+        yaxis=dict(
+            showgrid=True,
+            gridcolor='rgba(128,128,128,0.2)',
+            showline=True,
+            linecolor='rgba(128,128,128,0.4)',
+        ),
+    )
+)
+pio.templates.default = "streamlit"
 
 # Page configuration
 st.set_page_config(
@@ -58,6 +84,37 @@ if df.empty:
 # Apply sidebar filters
 filtered_df, selected_metric = render_sidebar(df)
 
+@st.cache_data
+def prepare_chart_data(dataframe, metric: str) -> dict:
+    """
+    Transform DataFrame to format expected by plotly_charts functions.
+    
+    Args:
+        dataframe: Filtered DataFrame with model, dialect, and metric columns
+        metric: The metric column name (wer, cer, bleu)
+        
+    Returns:
+        Dictionary mapping model names to dictionaries of dialect -> metric values
+    """
+    chart_data = {}
+    
+    # Exclude OVERALL rows for dialect charts
+    dialect_df = dataframe[dataframe['dialect'] != 'OVERALL']
+    
+    if 'model' in dialect_df.columns:
+        for model_name in dialect_df['model'].unique():
+            model_data = dialect_df[dialect_df['model'] == model_name]
+            chart_data[model_name] = dict(
+                zip(model_data['dialect'], model_data[metric])
+            )
+    else:
+        # Single model case - use selected_model as key
+        chart_data[selected_model] = dict(
+            zip(dialect_df['dialect'], dialect_df[metric])
+        )
+    
+    return chart_data
+
 # Tab structure placeholder
 st.markdown("---")
 tab1, tab2, tab3, tab4 = st.tabs([
@@ -103,7 +160,7 @@ with tab1:  # Overview
     st.divider()
     
     # For summary statistics, exclude OVERALL row to show per-dialect distribution
-    dialect_only_df = filtered_df[filtered_df['dialect'] != 'OVERALL'] # Earlier calculation mistakenly included OVERALL, skewed results
+    dialect_only_df = filtered_df[filtered_df['dialect'] != 'OVERALL']
     display_summary_statistics(dialect_only_df)
     
     # Add download button
@@ -130,12 +187,20 @@ with tab2:
         has_model_column = 'model' in filtered_df.columns
         multiple_models = has_model_column and filtered_df['model'].nunique() > 1
         
-        # Use dialect comparison chart if we have model data
+        # Use new plotly_charts for dialect comparison
         if has_model_column and (multiple_models or len(model_files) > 1):
             st.subheader("Model Comparison Across Dialects")
-            fig_dialect = create_dialect_comparison(
-                filtered_df,
-                selected_metric=selected_metric
+            
+            # Prepare data for plotly_charts
+            chart_data = prepare_chart_data(filtered_df, selected_metric)
+            
+            # Use new create_metric_comparison_chart
+            fig_dialect = create_metric_comparison_chart(
+                data=chart_data,
+                metric_name=selected_metric.upper(),
+                title=f"{selected_metric.upper()} by Dialect and Model",
+                height=500,
+                show_legend=True
             )
             st.plotly_chart(fig_dialect, use_container_width=True)
             
@@ -156,71 +221,29 @@ with tab2:
             st.dataframe(styled_comparison, use_container_width=True)
             st.divider()
         
-        # Create color-coded bar chart for selected metric
+        # Create color-coded bar chart for selected metric using new component
         st.subheader(f"{selected_metric.upper()} Distribution")
         st.markdown("""
         **Quality Scale:** 
         🟢 Excellent | 🟡 Good | 🔴 Poor
         """)
         
-        # Prepare data
-        dialect_metrics = filtered_df.groupby('dialect')[selected_metric].mean().reset_index()
-        dialect_metrics.columns = ['dialect', 'value']
-        dialect_metrics = dialect_metrics.sort_values('value', ascending=True)
+        # Use the plotly_charts module for consistency
+        chart_data = prepare_chart_data(filtered_df, selected_metric)
+
+        is_single_model = len(chart_data) == 1
         
-        # Add performance category and color for each bar
-        color_map = {
-            'excellent': '#90EE90',  # Light green
-            'good': '#FFFFE0',        # Light yellow
-            'poor': '#FFB6C6'         # Light red
-        }
-        
-        dialect_metrics['category'] = dialect_metrics['value'].apply(
-            lambda x: _get_performance_category(x, selected_metric)
-        )
-        dialect_metrics['color'] = dialect_metrics['category'].map(color_map)
-        
-        # Create Plotly bar chart
-        fig = go.Figure(data=[
-            go.Bar(
-                x=dialect_metrics['dialect'],
-                y=dialect_metrics['value'],
-                marker_color=dialect_metrics['color'],
-                marker_line_color='rgb(8,48,107)',
-                marker_line_width=1.5,
-                text=dialect_metrics['value'].round(2),
-                textposition='outside',
-                hovertemplate='<b>%{x}</b><br>' +
-                              selected_metric.upper() + ': %{y:.2f}<br>' +
-                              'Performance: %{customdata}<br>' +
-                              '<extra></extra>',
-                customdata=dialect_metrics['category'].str.capitalize()
-            )
-        ])
-        
-        # Update layout
-        fig.update_layout(
+        # Create chart using the reusable component
+        fig_distribution = create_metric_comparison_chart(
+            data=chart_data,
+            metric_name=selected_metric.upper(),
             title=f"{selected_metric.upper()} by Dialect",
-            xaxis_title="Dialect",
-            yaxis_title=selected_metric.upper(),
             height=500,
-            showlegend=False,
-            hovermode='x',
-            plot_bgcolor='white',
-            xaxis=dict(
-                showgrid=False,
-                showline=True,
-                linecolor='rgb(204, 204, 204)',
-            ),
-            yaxis=dict(
-                showgrid=True,
-                gridcolor='rgb(230, 230, 230)',
-                showline=True,
-                linecolor='rgb(204, 204, 204)',
-            )
+            show_legend=not is_single_model,
+            use_performance_colors=is_single_model
         )
         
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig_distribution, use_container_width=True)
         
         # Show table with color coding
         st.subheader("Detailed Scores")
@@ -232,7 +255,7 @@ with tab2:
         # Apply color formatting to the dialect metrics table
         from components.model_comparison import _apply_color_formatting
         
-        dialect_df = filtered_df.groupby('dialect')[selected_metric].mean().reset_index()
+        dialect_df = filtered_df[filtered_df['dialect'] != 'OVERALL'].groupby('dialect')[selected_metric].mean().reset_index()
         dialect_df.columns = ['Dialect', selected_metric.upper()]
         
         styled_dialect = dialect_df.style.map(
@@ -246,7 +269,43 @@ with tab2:
 with tab3:  # Detailed Metrics
     st.header("Detailed Metrics")
     
-    # Your existing visualizations...
+    # Add WER by dialect chart using new component
+    if not filtered_df.empty and 'wer' in filtered_df.columns:
+        st.subheader("WER Comparison by Dialect")
+        wer_chart_data = prepare_chart_data(filtered_df, 'wer')
+        fig_wer = create_wer_by_dialect_chart(
+            data=wer_chart_data,
+            title="Word Error Rate by Dialect",
+            height=450,
+            show_legend=True
+        )
+        st.plotly_chart(fig_wer, use_container_width=True)
+    
+    # Add CER comparison if available
+    if not filtered_df.empty and 'cer' in filtered_df.columns:
+        st.subheader("CER Comparison by Dialect")
+        cer_chart_data = prepare_chart_data(filtered_df, 'cer')
+        fig_cer = create_metric_comparison_chart(
+            data=cer_chart_data,
+            metric_name="CER",
+            title="Character Error Rate by Dialect",
+            height=450,
+            show_legend=True
+        )
+        st.plotly_chart(fig_cer, use_container_width=True)
+
+    # Add BLEU comparison if available
+    if not filtered_df.empty and 'bleu' in filtered_df.columns:
+        st.subheader("BLEU Score Comparison by Dialect")
+        bleu_chart_data = prepare_chart_data(filtered_df, 'bleu')
+        fig_bleu = create_metric_comparison_chart(
+            data=bleu_chart_data,
+            metric_name="BLEU",
+            title="BLEU Score by Dialect",
+            height=450,
+            show_legend=True
+        )
+        st.plotly_chart(fig_bleu, use_container_width=True)
     
     st.divider()
     
@@ -262,5 +321,35 @@ with tab3:  # Detailed Metrics
     download_filtered_data(filtered_df, filename_prefix=f"{selected_model}_detailed")
 
 with tab4:
-    st.info("Sample Predictions tab - Coming soon")
-    # TODO: Add sample predictions and error analysis (requires JSON data)
+    st.header("🔍 Error Analysis & Sample Inspection")
+    
+    st.info("""
+    **Coming in Days 6-7**: This tab will provide detailed error analysis including:
+    
+    📊 **Features to be implemented:**
+    - **Worst-performing samples** with aligned reference/hypothesis comparison
+    - **Color-coded error highlighting** (substitutions, deletions, insertions)
+    - **Per-dialect confusion patterns** showing common word substitution errors
+    - **Interactive sample navigation** with prev/next buttons
+    - **Statistical error distribution** breakdown by error type
+    
+    ⚙️ **Requirements:**
+    - Error analysis outputs from `scripts/analyze_errors.py`
+    - Files: `analysis_*.json` and `worst_samples_*.csv`
+    
+    💡 **Tip:** Run error analysis with:
+```bash
+    docker compose run --rm api python scripts/analyze_errors.py
+```
+    """)
+    
+    # Show placeholder for future implementation
+    st.markdown("---")
+    st.markdown("### Preview: Sample Error Alignment")
+    st.code("""
+    REF:  das    ist    ein    test
+    HYP:  das    isch   ei     test   extra
+    TYPE: ✓      ✗      ✗      ✓      +
+    
+    Legend: ✓ = Correct | ✗ = Substitution | - = Deletion | + = Insertion
+    """, language="text")
