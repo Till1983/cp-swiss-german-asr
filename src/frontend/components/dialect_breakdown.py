@@ -417,6 +417,27 @@ def render_per_dialect_analysis(
         st.warning(f"No data available for {selected_dialect}")
         return
     
+    # Load error analysis to get true sample count
+    error_data_all = load_error_analysis_data(error_analysis_dir, selected_model)
+    
+    # Get first available model's error data if not specified
+    if selected_model and selected_model in error_data_all:
+        error_data = error_data_all[selected_model]
+        model_display = selected_model
+    elif error_data_all:
+        model_display = list(error_data_all.keys())[0]
+        error_data = error_data_all[model_display]
+    else:
+        error_data = None
+        model_display = None
+    
+    # Try to get sample count from error analysis
+    true_sample_count = None
+    if error_data:
+        dialect_stats = get_dialect_statistics(error_data, selected_dialect)
+        if dialect_stats and 'sample_count' in dialect_stats:
+            true_sample_count = dialect_stats['sample_count']
+    
     # Display metrics in columns
     col1, col2, col3, col4 = st.columns(4)
     
@@ -436,18 +457,20 @@ def render_per_dialect_analysis(
             st.metric("BLEU", f"{avg_bleu:.2f}")
     
     with col4:
-        sample_count = len(dialect_data)
-        st.metric("Samples", f"{sample_count}")
+        # Use true sample count from error analysis if available
+        if true_sample_count is not None:
+            st.metric("Samples", f"{true_sample_count}")
+        else:
+            # Fallback: show that count is unavailable
+            st.metric("Samples", "N/A")
+            st.caption("⚠️ Run error analysis to see sample count")
     
     st.divider()
     
     # === Error Analysis Section ===
     st.subheader("🔍 Error Analysis")
     
-    # Load error analysis data
-    error_data_all = load_error_analysis_data(error_analysis_dir, selected_model)
-    
-    if not error_data_all:
+    if not error_data:
         st.info("""
         **Error analysis data not available.**
         
@@ -458,19 +481,9 @@ def render_per_dialect_analysis(
         """)
         return
     
-    # Get first available model's error data if not specified
-    if selected_model and selected_model in error_data_all:
-        error_data = error_data_all[selected_model]
-        model_display = selected_model
-    else:
-        model_display = list(error_data_all.keys())[0]
-        error_data = error_data_all[model_display]
-    
     st.caption(f"Analyzing: **{model_display}**")
     
-    # Get dialect statistics
-    dialect_stats = get_dialect_statistics(error_data, selected_dialect)
-    
+    # Get dialect statistics (already fetched above, but keep for clarity)
     if not dialect_stats:
         st.warning(f"No error analysis data found for {selected_dialect}")
         return
