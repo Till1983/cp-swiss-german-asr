@@ -3,19 +3,26 @@ Dialect Breakdown Component for Swiss German ASR Dashboard
 
 Provides visualization and analysis tools for per-dialect model performance,
 including error distribution and confusion pattern analysis.
+
+This component handles ONLY visualization and UI logic. Data loading is delegated
+to utils.error_data_loader.
 """
 
 import pandas as pd
-from pathlib import Path
-import json
-from typing import Literal, Optional, Dict, Any, List, Tuple
+from typing import Literal, Optional, List, Dict, Any
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import streamlit as st
+
+# Import data loading utilities
+from utils.error_data_loader import (
+    load_all_error_analyses,
+    extract_dialect_statistics,
+    extract_confusion_pairs_raw
+)
 
 
 # ============================================================================
-# EXISTING FUNCTIONS (Backward Compatible - Keep as-is)
+# CHART FUNCTIONS - Backward Compatible
 # ============================================================================
 
 def create_dialect_comparison(
@@ -165,54 +172,8 @@ def create_aggregate_comparison(
 
 
 # ============================================================================
-# NEW DAY 6 FUNCTIONS - Error Analysis Integration
+# DAY 6 VISUALIZATION FUNCTIONS
 # ============================================================================
-
-def load_error_analysis_data(
-    error_analysis_dir: str = "results/error_analysis",
-    model_name: Optional[str] = None
-) -> Dict[str, Any]:
-    """
-    Load error analysis JSON files for specified model(s).
-    
-    Args:
-        error_analysis_dir: Directory containing analysis_*.json files
-        model_name: Specific model to load (None loads all available)
-        
-    Returns:
-        Dictionary mapping model names to their error analysis data
-    """
-    error_dir = Path(error_analysis_dir)
-    
-    if not error_dir.exists():
-        return {}
-    
-    # Find all analysis JSON files
-    analysis_files = list(error_dir.glob("**/analysis_*.json"))
-    
-    if not analysis_files:
-        return {}
-    
-    error_data = {}
-    
-    for file_path in analysis_files:
-        # Extract model name from filename (analysis_<model>.json)
-        file_model_name = file_path.stem.replace("analysis_", "")
-        
-        # Skip if specific model requested and this isn't it
-        if model_name and file_model_name != model_name:
-            continue
-        
-        try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                error_data[file_model_name] = data
-        except (json.JSONDecodeError, IOError) as e:
-            st.warning(f"Could not load error analysis for {file_model_name}: {e}")
-            continue
-    
-    return error_data
-
 
 def create_error_distribution_chart(
     error_data: Dict[str, Any],
@@ -222,25 +183,19 @@ def create_error_distribution_chart(
     Create pie chart showing error type distribution for a specific dialect.
     
     Args:
-        error_data: Error analysis data for a model (from load_error_analysis_data)
+        error_data: Error analysis data for a model
         dialect: Dialect code (e.g., 'BE', 'ZH')
         
     Returns:
         Plotly figure object or None if no data
     """
-    # Navigate to dialect-specific error distribution
-    if 'dialect_analysis' not in error_data:
+    # Get dialect statistics using data loader
+    dialect_stats = extract_dialect_statistics(error_data, dialect)
+    
+    if not dialect_stats or 'error_distribution' not in dialect_stats:
         return None
     
-    if dialect not in error_data['dialect_analysis']:
-        return None
-    
-    dialect_data = error_data['dialect_analysis'][dialect]
-    
-    if 'error_distribution' not in dialect_data:
-        return None
-    
-    error_dist = dialect_data['error_distribution']
+    error_dist = dialect_stats['error_distribution']
     
     # Extract error counts (not rates)
     labels = []
@@ -290,29 +245,6 @@ def create_error_distribution_chart(
     return fig
 
 
-def get_dialect_statistics(
-    error_data: Dict[str, Any],
-    dialect: str
-) -> Optional[Dict[str, Any]]:
-    """
-    Extract detailed statistics for a specific dialect.
-    
-    Args:
-        error_data: Error analysis data for a model
-        dialect: Dialect code
-        
-    Returns:
-        Dictionary with statistics or None if not found
-    """
-    if 'dialect_analysis' not in error_data:
-        return None
-    
-    if dialect not in error_data['dialect_analysis']:
-        return None
-    
-    return error_data['dialect_analysis'][dialect]
-
-
 def create_confusion_pairs_table(
     dialect_stats: Dict[str, Any],
     top_n: int = 10
@@ -321,34 +253,30 @@ def create_confusion_pairs_table(
     Create DataFrame of top confusion pairs for display.
     
     Args:
-        dialect_stats: Statistics for specific dialect (from get_dialect_statistics)
+        dialect_stats: Statistics for specific dialect
         top_n: Number of top pairs to show
         
     Returns:
         DataFrame with columns ['Reference', 'Hypothesis', 'Count']
     """
-    if 'top_confusions' not in dialect_stats:
+    # Get raw confusion pairs using data loader
+    confusion_tuples = extract_confusion_pairs_raw(dialect_stats, top_n)
+    
+    if not confusion_tuples:
         return pd.DataFrame(columns=['Reference', 'Hypothesis', 'Count'])
     
-    confusion_pairs = dialect_stats['top_confusions']
-    
-    if not confusion_pairs:
-        return pd.DataFrame(columns=['Reference', 'Hypothesis', 'Count'])
-    
-    # confusion_pairs format: [[["ref", "hyp"], count], ...]
-    rows = []
-    for pair_data in confusion_pairs[:top_n]:
-        if len(pair_data) == 2 and len(pair_data[0]) == 2:
-            ref_word, hyp_word = pair_data[0]
-            count = pair_data[1]
-            rows.append({
-                'Reference': ref_word,
-                'Hypothesis': hyp_word,
-                'Count': count
-            })
+    # Convert to DataFrame
+    rows = [
+        {'Reference': ref, 'Hypothesis': hyp, 'Count': count}
+        for ref, hyp, count in confusion_tuples
+    ]
     
     return pd.DataFrame(rows)
 
+
+# ============================================================================
+# DAY 6 MAIN COMPONENT
+# ============================================================================
 
 def render_dialect_selector(
     available_dialects: List[str],
@@ -410,17 +338,17 @@ def render_per_dialect_analysis(
     # === Performance Metrics Section ===
     st.subheader(f"📊 Performance Metrics - {selected_dialect}")
     
-    # Get metrics for selected dialect
+    # Get metrics for selected dialect from main DataFrame
     dialect_data = df[df['dialect'] == selected_dialect]
     
     if dialect_data.empty:
         st.warning(f"No data available for {selected_dialect}")
         return
     
-    # Load error analysis to get true sample count
-    error_data_all = load_error_analysis_data(error_analysis_dir, selected_model)
+    # Load error analysis data using data loader utility
+    error_data_all = load_all_error_analyses(error_analysis_dir)
     
-    # Get first available model's error data if not specified
+    # Determine which model to display
     if selected_model and selected_model in error_data_all:
         error_data = error_data_all[selected_model]
         model_display = selected_model
@@ -431,10 +359,11 @@ def render_per_dialect_analysis(
         error_data = None
         model_display = None
     
-    # Try to get sample count from error analysis
+    # Get dialect statistics and true sample count
+    dialect_stats = None
     true_sample_count = None
     if error_data:
-        dialect_stats = get_dialect_statistics(error_data, selected_dialect)
+        dialect_stats = extract_dialect_statistics(error_data, selected_dialect)
         if dialect_stats and 'sample_count' in dialect_stats:
             true_sample_count = dialect_stats['sample_count']
     
@@ -457,11 +386,10 @@ def render_per_dialect_analysis(
             st.metric("BLEU", f"{avg_bleu:.2f}")
     
     with col4:
-        # Use true sample count from error analysis if available
+        # Display true sample count from error analysis
         if true_sample_count is not None:
             st.metric("Samples", f"{true_sample_count}")
         else:
-            # Fallback: show that count is unavailable
             st.metric("Samples", "N/A")
             st.caption("⚠️ Run error analysis to see sample count")
     
@@ -483,7 +411,6 @@ def render_per_dialect_analysis(
     
     st.caption(f"Analyzing: **{model_display}**")
     
-    # Get dialect statistics (already fetched above, but keep for clarity)
     if not dialect_stats:
         st.warning(f"No error analysis data found for {selected_dialect}")
         return
