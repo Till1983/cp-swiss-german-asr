@@ -7,7 +7,7 @@ from utils.data_loader import get_available_results
 from utils.data_loader import combine_model_results
 from components.sidebar import render_sidebar
 from components.model_comparison import compare_models, _get_performance_category
-from components.dialect_breakdown import create_dialect_comparison, create_aggregate_comparison
+from components.dialect_breakdown import create_dialect_comparison, create_aggregate_comparison, render_per_dialect_analysis
 from components.data_table import display_data_table, display_summary_statistics, download_filtered_data
 from components.statistics_panel import render_metrics_definitions
 from components.plotly_charts import create_wer_by_dialect_chart, create_metric_comparison_chart
@@ -88,6 +88,9 @@ filtered_df, selected_metric = render_sidebar(df)
 def prepare_chart_data(dataframe, metric: str) -> dict:
     """
     Transform DataFrame to format expected by plotly_charts functions.
+    
+    This function is cached to avoid recomputing the same transformations
+    when filters change but data remains the same.
     
     Args:
         dataframe: Filtered DataFrame with model, dialect, and metric columns
@@ -263,6 +266,19 @@ with tab2:
         ).format({selected_metric.upper(): "{:.2f}"})
         
         st.dataframe(styled_dialect, use_container_width=True, hide_index=True)
+        
+        # ============================================================
+        # DAY 6: PER-DIALECT ANALYSIS WITH ERROR BREAKDOWN
+        # ============================================================
+        st.divider()
+        
+        # Render the comprehensive per-dialect analysis view
+        render_per_dialect_analysis(
+            df=filtered_df,
+            error_analysis_dir="results/error_analysis",
+            selected_model=selected_model
+        )
+        
     else:
         st.warning("No data available with current filters.")
 
@@ -324,7 +340,7 @@ with tab4:
     st.header("🔍 Error Analysis & Sample Inspection")
     
     st.info("""
-    **Coming in Days 6-7**: This tab will provide detailed error analysis including:
+    **Coming in Day 7**: This tab will provide detailed error analysis including:
     
     📊 **Features to be implemented:**
     - **Worst-performing samples** with aligned reference/hypothesis comparison
