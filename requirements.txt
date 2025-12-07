@@ -33,6 +33,7 @@ sacrebleu==2.2.1
 
 # Testing
 pytest==8.0.0
+httpx>=0.23.0,<0.28.0  # Required for FastAPI TestClient
 
 # Utilities
 python-dotenv>=1.0.0
