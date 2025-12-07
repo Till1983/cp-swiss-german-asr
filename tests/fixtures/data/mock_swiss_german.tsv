@@ -1,0 +1,4 @@
+client_id	path	sentence	up_votes	down_votes	age	gender	accent	audio_path
+client_001	sample_be_1.wav	Herzlich willkommen in Bern	5	0	35	male	BE	/app/tests/fixtures/audio/sample_be_1.wav
+client_002	sample_zh_2.wav	Hallo zusammen	3	0	28	female	ZH	/app/tests/fixtures/audio/sample_zh_2.wav
+client_003	sample_vs_3.wav	Wie geht es dir	4	0	42	male	VS	/app/tests/fixtures/audio/sample_vs_3.wav

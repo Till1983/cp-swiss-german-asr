@@ -1,0 +1,35 @@
+{
+  "model": "whisper-tiny",
+  "overall_wer": 28.5,
+  "overall_cer": 12.3,
+  "overall_bleu": 65.7,
+  "per_dialect_wer": {"BE": 25.2, "ZH": 30.1, "VS": 35.8},
+  "per_dialect_cer": {"BE": 12.0, "ZH": 13.0, "VS": 18.0},
+  "per_dialect_bleu": {"BE": 70.0, "ZH": 65.0, "VS": 60.0},
+  "samples": [
+    {
+      "audio_path": "sample_be_1.wav",
+      "reference": "Herzlich willkommen in Bern",
+      "hypothesis": "Herzlich willkommen in Bern",
+      "dialect": "BE",
+      "wer": 0.0,
+      "cer": 0.0
+    },
+    {
+      "audio_path": "sample_zh_2.wav",
+      "reference": "Hallo zusammen",
+      "hypothesis": "Hallo zusamen",
+      "dialect": "ZH",
+      "wer": 50.0,
+      "cer": 7.14
+    },
+    {
+      "audio_path": "sample_vs_3.wav",
+      "reference": "Wie geht es dir",
+      "hypothesis": "Wie get es dir",
+      "dialect": "VS",
+      "wer": 25.0,
+      "cer": 6.67
+    }
+  ]
+}

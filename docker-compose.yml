@@ -34,15 +34,65 @@ services:
 
   test:
     build: .
-    command: ["python", "-m", "pytest", "tests/"]
+    command: ["python", "-m", "pytest", "tests/", "-v"]
     volumes:
-      - ./data:/app/data            
+      - ./data:/app/data
       - ./src:/app/src
       - ./tests:/app/tests
+      - ./models:/app/models
+      - ./results:/app/results
       - huggingface-cache:/home/appuser/.cache/huggingface
     environment:
       - PYTHONPATH=/app
       - HF_TOKEN=${HF_TOKEN}
+
+  test-unit:
+    build: .
+    command: ["python", "-m", "pytest", "tests/unit/", "-v", "-m", "unit"]
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+    environment:
+      - PYTHONPATH=/app
+
+  test-integration:
+    build: .
+    command: ["python", "-m", "pytest", "tests/integration/", "-v", "-m", "integration"]
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - ./models:/app/models
+      - huggingface-cache:/home/appuser/.cache/huggingface
+    environment:
+      - PYTHONPATH=/app
+      - HF_TOKEN=${HF_TOKEN}
+
+  test-e2e:
+    build: .
+    command: ["python", "-m", "pytest", "tests/e2e/", "-v", "-m", "e2e"]
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - ./models:/app/models
+      - ./results:/app/results
+      - huggingface-cache:/home/appuser/.cache/huggingface
+    environment:
+      - PYTHONPATH=/app
+      - HF_TOKEN=${HF_TOKEN}
+
+  test-coverage:
+    build: .
+    command: ["python", "-m", "pytest", "tests/", "--cov=src", "--cov-report=html", "--cov-report=term"]
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - ./htmlcov:/app/htmlcov
+      - huggingface-cache:/home/appuser/.cache/huggingface
+    environment:
+      - PYTHONPATH=/app
 
 volumes:
   huggingface-cache:
