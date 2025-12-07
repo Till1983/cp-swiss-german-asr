@@ -273,7 +273,9 @@ tests/e2e/test_api_workflow.py::TestAPIWorkflow::test_api_input_validation PASSE
 tests/unit/utils/test_logging_config.py::TestSetupLogger::test_logger_file_encoding_utf8 PASSED
 tests/unit/utils/test_logging_config.py::TestSetupLogger::test_multiple_loggers_independent PASSED
 tests/unit/utils/test_logging_config.py::TestSetupLogger::test_logger_without_file PASSED
-======================== 267 passed, 8 warnings in 17.40s ========================
+...
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 267 passed, 7 warnings in 19.94s ========================
 ```
 
 ## Dashboard
