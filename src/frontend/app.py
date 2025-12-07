@@ -7,7 +7,7 @@ from utils.data_loader import get_available_results
 from utils.data_loader import combine_model_results
 from components.sidebar import render_sidebar
 from components.model_comparison import compare_models, _get_performance_category
-from components.dialect_breakdown import create_dialect_comparison, create_aggregate_comparison, render_per_dialect_analysis
+from components.dialect_breakdown import create_aggregate_comparison, render_per_dialect_analysis
 from components.data_table import display_data_table, display_summary_statistics, download_filtered_data
 from components.statistics_panel import render_metrics_definitions
 from components.plotly_charts import create_wer_by_dialect_chart, create_metric_comparison_chart

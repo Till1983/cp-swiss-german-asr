@@ -90,9 +90,12 @@ def get_available_error_analyses(
         
         return results
         
-    except Exception as e:
-        st.warning(f"Error scanning error analysis directory: {e}")
+    except FileNotFoundError as e:
+        st.warning(f"Error analysis directory not found: {e}")
         return []
+    except Exception as e:
+        st.error(f"Unexpected error scanning error analysis directory: {e}")
+        raise
 
 
 def load_all_error_analyses(
