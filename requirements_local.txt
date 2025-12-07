@@ -1,0 +1,52 @@
+# requirements_local.txt - Fast CPU-only builds for local development
+# Build time: ~3-5 minutes (vs 15+ minutes with CUDA packages)
+
+# Core API
+fastapi==0.115.0
+uvicorn==0.32.0
+
+# Frontend
+streamlit==1.40.0
+plotly==5.24.0
+kaleido>=0.2.1
+
+# Data & ML - CPU-ONLY versions (much faster to install)
+numpy>=1.26.0,<2.0.0
+pandas>=2.0.0
+
+# PyTorch CPU-only (70% smaller and faster to install)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.6.0+cpu
+torchaudio==2.6.0+cpu
+torchvision==0.21.0+cpu
+
+# Transformers (same version, but benefits from CPU-only PyTorch)
+transformers==4.54.1
+datasets==2.19.1
+accelerate==0.26.1
+
+# Audio processing
+librosa==0.10.1
+pydub==0.25.1
+soundfile>=0.12.1
+
+# ASR models - still functional for CPU inference
+openai-whisper==20250625
+pyctcdecode==0.5.0
+kenlm==0.3.0
+jq==1.6
+
+# Evaluation metrics
+jiwer>=3.0.0, <4.0.0
+sacrebleu==2.2.1
+
+# Testing
+pytest==8.0.0
+pytest-cov==4.1.0  # Add coverage support
+pytest-mock==3.12.0  # Add mocking support
+httpx>=0.23.0,<0.28.0
+
+# Utilities
+python-dotenv>=1.0.0
+evaluate>=0.4.3
+hf_transfer>=0.1.8

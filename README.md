@@ -264,15 +264,18 @@ The test suite validates:
 All tests should pass:
 ```
 ======================== test session starts ========================
-collected 91 items
+collected 267 items
 
-tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_exact_match PASSED
-tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_complete_mismatch PASSED
-tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_partial_match PASSED
+tests/e2e/test_api_workflow.py::TestAPIWorkflow::test_complete_api_evaluation_flow PASSED
+tests/e2e/test_api_workflow.py::TestAPIWorkflow::test_api_multiple_model_types PASSED
+tests/e2e/test_api_workflow.py::TestAPIWorkflow::test_api_input_validation PASSED
 ...
-tests/test_evaluation.py::TestSwissGermanRealistic::test_bleu_partial_swiss_german_match PASSED
-
-======================== 91 passed in 1.06s ========================
+tests/unit/utils/test_logging_config.py::TestSetupLogger::test_logger_file_encoding_utf8 PASSED
+tests/unit/utils/test_logging_config.py::TestSetupLogger::test_multiple_loggers_independent PASSED
+tests/unit/utils/test_logging_config.py::TestSetupLogger::test_logger_without_file PASSED
+...
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 267 passed, 7 warnings in 19.94s ========================
 ```
 
 ## Dashboard
