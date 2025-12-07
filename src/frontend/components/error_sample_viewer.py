@@ -5,10 +5,10 @@ Provides interactive viewing of worst-performing samples with word-level
 alignment visualization and error highlighting.
 """
 
+import html
 import streamlit as st
 import pandas as pd
-from typing import Optional, Dict, Any, List, Tuple
-from pathlib import Path
+from typing import Optional, Dict, List
 
 from utils.error_data_loader import get_worst_samples_path, load_worst_samples
 
@@ -118,18 +118,22 @@ def render_alignment_comparison(
         error_type = item['type']
         color = ERROR_COLORS.get(error_type, '#FFFFFF')
         
+        # Escape HTML to prevent XSS
+        ref_word_escaped = html.escape(ref_word)
+        hyp_word_escaped = html.escape(hyp_word)
+        
         # Calculate word width (use max of ref/hyp for alignment)
         width = max(len(ref_word), len(hyp_word), 4) * 8  # 8px per char approx
         
         # Reference word
         if ref_word != '*****':
-            ref_html += f"<span style='background-color: {color}; padding: 2px 4px; margin: 0 2px; display: inline-block; min-width: {width}px; text-align: center;'>{ref_word}</span>"
+            ref_html += f"<span style='background-color: {color}; padding: 2px 4px; margin: 0 2px; display: inline-block; min-width: {width}px; text-align: center;'>{ref_word_escaped}</span>"
         else:
             ref_html += f"<span style='padding: 2px 4px; margin: 0 2px; display: inline-block; min-width: {width}px; text-align: center; color: #CCCCCC;'>-----</span>"
         
         # Hypothesis word
         if hyp_word != '*****':
-            hyp_html += f"<span style='background-color: {color}; padding: 2px 4px; margin: 0 2px; display: inline-block; min-width: {width}px; text-align: center;'>{hyp_word}</span>"
+            hyp_html += f"<span style='background-color: {color}; padding: 2px 4px; margin: 0 2px; display: inline-block; min-width: {width}px; text-align: center;'>{hyp_word_escaped}</span>"
         else:
             hyp_html += f"<span style='padding: 2px 4px; margin: 0 2px; display: inline-block; min-width: {width}px; text-align: center; color: #CCCCCC;'>-----</span>"
         
@@ -180,6 +184,11 @@ def render_sample_navigation(
     Returns:
         Current sample index (0-based)
     """
+    # Handle edge case of zero samples
+    if total_samples == 0:
+        st.warning("No samples available for navigation")
+        return 0
+    
     # Initialize session state
     if current_key not in st.session_state:
         st.session_state[current_key] = 0
@@ -308,18 +317,14 @@ def render_worst_samples_viewer(
     csv_path = get_worst_samples_path(selected_model, error_analysis_dir)
     
     if not csv_path:
-        st.info(f"""
-        **No worst samples data available for {selected_model}.**
-        
-        To generate error analysis with worst samples, run:
-```bash
-        docker compose run --rm api python scripts/analyze_errors.py
-```
-        
+        st.info(f"**No worst samples data available for {selected_model}.**\n\n"
+                "To generate error analysis with worst samples, run:")
+        st.code("docker compose run --rm api python scripts/analyze_errors.py", language="bash")
+        st.markdown("""
         This will create:
-        - `analysis_{selected_model}.json` - Full error analysis
-        - `worst_samples_{selected_model}.csv` - Worst performing samples
-        """)
+        - `analysis_{model}.json` - Full error analysis
+        - `worst_samples_{model}.csv` - Worst performing samples
+        """.replace("{model}", selected_model))
         return
     
     # Load worst samples

@@ -1,5 +1,3 @@
-from typing import Dict, List, Optional
-
 """
 Plotly Charts Module for Swiss German ASR Evaluation Dashboard
 
@@ -7,6 +5,7 @@ This module provides visualization functions for ASR evaluation metrics
 using Plotly for interactive charts.
 """
 
+from typing import Dict, List, Optional
 import plotly.graph_objects as go
 
 
@@ -215,7 +214,7 @@ def create_metric_comparison_chart(
     title: Optional[str] = None,
     height: int = 500,
     show_legend: bool = True,
-    use_performance_colors: bool = False,  # NEW PARAMETER
+    use_performance_colors: bool = False,
 ) -> go.Figure:
     """
     Create a grouped bar chart for any metric by dialect for multiple models.
