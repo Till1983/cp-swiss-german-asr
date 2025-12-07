@@ -250,8 +250,25 @@ class ASREvaluator:
         print(f"✅ Evaluation complete!")
         print(f"Finished at: {end_time.strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"Total duration: {timedelta(seconds=int(total_duration))}")
-        print(f"Average: {total_duration/len(results):.2f}s/sample")
+        if results:
+            print(f"Average: {total_duration/len(results):.2f}s/sample")
+        else:
+            print("No successful transcriptions")
         print(f"{'='*60}\n")
+
+        # If no results, return early with zeroed metrics
+        if not results:
+            return {
+                'overall_wer': 0.0,
+                'overall_cer': 0.0,
+                'overall_bleu': 0.0,
+                'per_dialect_wer': {},
+                'per_dialect_cer': {},
+                'per_dialect_bleu': {},
+                'total_samples': 0,
+                'failed_samples': failed_samples,
+                'samples': []
+            }
 
         # Calculate aggregate metrics (unchanged)
         overall_wer = sum(r['wer'] for r in results) / len(results)

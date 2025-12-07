@@ -376,9 +376,11 @@ class TestASREvaluatorEdgeCases:
         evaluator._get_transcription = Mock()
 
         with patch('src.evaluation.evaluator.FHNW_SWISS_GERMAN_ROOT', temp_dir):
-            # This should handle empty data gracefully
-            # The actual behavior depends on implementation
-            pass
+            result = evaluator.evaluate_dataset(str(metadata))
+
+        # Should handle empty data gracefully
+        assert result['total_samples'] == 0
+        assert result['failed_samples'] == 0
 
     @pytest.mark.unit
     def test_handles_transcription_failure(self, temp_dir):
@@ -399,5 +401,38 @@ class TestASREvaluatorEdgeCases:
         with patch('src.evaluation.evaluator.FHNW_SWISS_GERMAN_ROOT', temp_dir):
             result = evaluator.evaluate_dataset(str(metadata))
 
-        # Should count as failed sample
-        assert result['failed_samples'] >= 1
+        # Should count as failed sample and handle gracefully
+        assert result['failed_samples'] == 1
+        assert result['total_samples'] == 0  # No successful results
+        assert result['overall_wer'] == 0.0  # Default/safe value when no results
+
+    @pytest.mark.unit
+    def test_partial_transcription_failure(self, temp_dir):
+        """Test evaluator with mix of successful and failed transcriptions."""
+        from src.evaluation.evaluator import ASREvaluator
+
+        # Setup metadata with 3 samples
+        metadata = temp_dir / "test.tsv"
+        metadata.write_text("path\tsentence\taccent\ntest1.wav\tHello\tBE\ntest2.wav\tWorld\tZH\ntest3.wav\tFoo\tBE\n")
+        audio_dir = temp_dir / "clips"
+        audio_dir.mkdir()
+        (audio_dir / "test1.wav").touch()
+        (audio_dir / "test2.wav").touch()
+        (audio_dir / "test3.wav").touch()
+
+        evaluator = ASREvaluator()
+        evaluator.model = Mock()
+        # Fail on test2.wav, succeed on others
+        evaluator._get_transcription = Mock(side_effect=[
+            "Hello",
+            Exception("Transcription failed"),
+            "Foo"
+        ])
+
+        with patch('src.evaluation.evaluator.FHNW_SWISS_GERMAN_ROOT', temp_dir):
+            result = evaluator.evaluate_dataset(str(metadata))
+
+        # Should process 2 successful and 1 failed
+        assert result['total_samples'] == 2
+        assert result['failed_samples'] == 1
+        assert result['overall_wer'] >= 0.0

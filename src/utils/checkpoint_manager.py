@@ -1,4 +1,3 @@
-from src.utils.checkpoint_manager import CheckpointManager
 import os
 import json
 import shutil
