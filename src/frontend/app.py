@@ -339,33 +339,11 @@ with tab3:  # Detailed Metrics
 with tab4:
     st.header("🔍 Error Analysis & Sample Inspection")
     
-    st.info("""
-    **Coming in Day 7**: This tab will provide detailed error analysis including:
+    # Import the error sample viewer
+    from components.error_sample_viewer import render_worst_samples_viewer
     
-    📊 **Features to be implemented:**
-    - **Worst-performing samples** with aligned reference/hypothesis comparison
-    - **Color-coded error highlighting** (substitutions, deletions, insertions)
-    - **Per-dialect confusion patterns** showing common word substitution errors
-    - **Interactive sample navigation** with prev/next buttons
-    - **Statistical error distribution** breakdown by error type
-    
-    ⚙️ **Requirements:**
-    - Error analysis outputs from `scripts/analyze_errors.py`
-    - Files: `analysis_*.json` and `worst_samples_*.csv`
-    
-    💡 **Tip:** Run error analysis with:
-```bash
-    docker compose run --rm api python scripts/analyze_errors.py
-```
-    """)
-    
-    # Show placeholder for future implementation
-    st.markdown("---")
-    st.markdown("### Preview: Sample Error Alignment")
-    st.code("""
-    REF:  das    ist    ein    test
-    HYP:  das    isch   ei     test   extra
-    TYPE: ✓      ✗      ✗      ✓      +
-    
-    Legend: ✓ = Correct | ✗ = Substitution | - = Deletion | + = Insertion
-    """, language="text")
+    # Render the worst samples viewer
+    render_worst_samples_viewer(
+        error_analysis_dir="results/error_analysis",
+        selected_model=selected_model
+    )
