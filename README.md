@@ -275,7 +275,7 @@ tests/unit/utils/test_logging_config.py::TestSetupLogger::test_multiple_loggers_
 tests/unit/utils/test_logging_config.py::TestSetupLogger::test_logger_without_file PASSED
 ...
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======================== 267 passed, 7 warnings in 19.94s ========================
+======================== 363 passed, 9 warnings in 17.24s ========================
 ```
 
 ## Dashboard
