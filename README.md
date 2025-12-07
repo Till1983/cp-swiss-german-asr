@@ -264,7 +264,7 @@ The test suite validates:
 All tests should pass:
 ```
 ======================== test session starts ========================
-collected 267 items
+collected 363 items
 
 tests/e2e/test_api_workflow.py::TestAPIWorkflow::test_complete_api_evaluation_flow PASSED
 tests/e2e/test_api_workflow.py::TestAPIWorkflow::test_api_multiple_model_types PASSED
