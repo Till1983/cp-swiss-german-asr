@@ -82,7 +82,7 @@ The main dashboard provides an overview of ASR model performance across Swiss Ge
 ![Dialect Analysis](../images/dialect-analysis.png)
 
 Interactive dialect-specific performance visualization showing:
-- WER distribution across all Swiss German dialects
+- WER distribution across all Swiss German dialects. Use "Select Metric" in the sidebar to switch between WER, CER, and BLEU.
 - Color-coded quality scale (Excellent, Good, Poor)
 - Bar chart comparing WER percentages by dialect
 - Model selection and filtering options
