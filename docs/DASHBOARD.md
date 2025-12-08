@@ -79,7 +79,7 @@ The main dashboard provides an overview of ASR model performance across Swiss Ge
 - Summary statistics table with mean, standard deviation, min, and max values
 
 ### Dialect Analysis
-![Dialect Analysis](../screenshots/dialect-analysis.png)
+![Dialect Analysis](../images/dialect-analysis.png)
 
 Interactive dialect-specific performance visualization showing:
 - WER distribution across all Swiss German dialects
@@ -88,7 +88,7 @@ Interactive dialect-specific performance visualization showing:
 - Model selection and filtering options
 
 ### Per-Dialect Analysis
-![Per-Dialect Analysis](../screenshots/per-dialect-analysis.png)
+![Per-Dialect Analysis](../images/per-dialect-analysis.png)
 
 Detailed analysis view for individual dialects (e.g., ZH - Zurich):
 - Selected dialect dropdown
@@ -97,7 +97,7 @@ Detailed analysis view for individual dialects (e.g., ZH - Zurich):
 - Sample count for the dialect
 
 ### Error Analysis
-![Error Analysis](../screenshots/error-analysis.png)
+![Error Analysis](../images/error-analysis.png)
 
 Comprehensive error breakdown visualization featuring:
 - Error type distribution pie chart (Substitutions, Insertions, Deletions)
@@ -106,7 +106,7 @@ Comprehensive error breakdown visualization featuring:
 - Standard deviation metrics
 
 ### Detailed Metrics
-![Detailed Metrics](../screenshots/detailed-metrics.png)
+![Detailed Metrics](../images/detailed-metrics.png)
 
 Word Error Rate comparison across dialects:
 - Bar chart showing WER percentage by dialect
@@ -114,7 +114,7 @@ Word Error Rate comparison across dialects:
 - Horizontal dialect distribution view
 
 ### Sample Inspection - Filter View
-![Sample Inspection Filter](../screenshots/sample-inspection-01.png)
+![Sample Inspection Filter](../images/sample-inspection-01.png)
 
 Sample prediction inspection interface with:
 - Model selection dropdown
@@ -125,7 +125,7 @@ Sample prediction inspection interface with:
 - Sample pagination (e.g., "1 of 86")
 
 ### Sample Inspection - Detail View
-![Sample Inspection Detail](../screenshots/sample-inspection-02.png)
+![Sample Inspection Detail](../images/sample-inspection-02.png)
 
 Individual sample analysis showing:
 - Performance metrics (WER: 200.00%, CER: 77.27%, BLEU: 4.37)
