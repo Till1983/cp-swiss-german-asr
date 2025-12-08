@@ -69,16 +69,74 @@ docker compose up dashboard
 ## Screenshots
 
 ### Main Dashboard View
-*[Screenshot placeholder - Add main dashboard overview]*
+![Main Dashboard](../screenshots/main-dashboard-view.png)
 
-### Model Comparison
-*[Screenshot placeholder - Add model comparison chart]*
+The main dashboard provides an overview of ASR model performance across Swiss German dialects, featuring:
+- Model selection dropdown
+- Dialect filter buttons (AG, BE, BL, FR, GL, GR, LU, NW, SG, SH, SO, SZ, TG, UR, VS, ZG, ZH)
+- Metric selection (WER, CER, BLEU)
+- Average performance metrics display
+- Summary statistics table with mean, standard deviation, min, and max values
 
-### Dialect Breakdown
-*[Screenshot placeholder - Add dialect breakdown visualization]*
+### Dialect Analysis
+![Dialect Analysis](../screenshots/dialect-analysis.png)
 
-### Data Table
-*[Screenshot placeholder - Add data table view]*
+Interactive dialect-specific performance visualization showing:
+- WER distribution across all Swiss German dialects
+- Color-coded quality scale (Excellent, Good, Poor)
+- Bar chart comparing WER percentages by dialect
+- Model selection and filtering options
+
+### Per-Dialect Analysis
+![Per-Dialect Analysis](../screenshots/per-dialect-analysis.png)
+
+Detailed analysis view for individual dialects (e.g., ZH - Zurich):
+- Selected dialect dropdown
+- Performance metrics specific to the chosen dialect
+- WER, CER, and BLEU scores
+- Sample count for the dialect
+
+### Error Analysis
+![Error Analysis](../screenshots/error-analysis.png)
+
+Comprehensive error breakdown visualization featuring:
+- Error type distribution pie chart (Substitutions, Insertions, Deletions)
+- Top confusion pairs table showing reference vs. hypothesis word mismatches
+- Statistical summary with mean WER, mean CER, and total samples
+- Standard deviation metrics
+
+### Detailed Metrics
+![Detailed Metrics](../screenshots/detailed-metrics.png)
+
+Word Error Rate comparison across dialects:
+- Bar chart showing WER percentage by dialect
+- Model comparison legend
+- Horizontal dialect distribution view
+
+### Sample Inspection - Filter View
+![Sample Inspection Filter](../screenshots/sample-inspection-01.png)
+
+Sample prediction inspection interface with:
+- Model selection dropdown
+- Dialect filters (all Swiss German variants)
+- Minimum WER threshold slider (0.00 to 200.00)
+- Sample count display
+- Navigation controls (Prev/Next buttons)
+- Sample pagination (e.g., "1 of 86")
+
+### Sample Inspection - Detail View
+![Sample Inspection Detail](../screenshots/sample-inspection-02.png)
+
+Individual sample analysis showing:
+- Performance metrics (WER: 200.00%, CER: 77.27%, BLEU: 4.37)
+- Dialect identifier (SO)
+- Error breakdown with visual indicators:
+    - 🔴 Substitutions: 4
+    - 🔵 Insertions: 6
+    - 🟡 Deletions: 0
+- Full text comparison with reference and hypothesis
+- Word-level alignment showing insertion (+), substitution (✗), and correct (✓) markers
+- Color-coded word highlighting (correct/green, substitution/pink, insertion/blue)
 
 ## Usage Guide
 
@@ -96,7 +154,7 @@ The dashboard consists of a sidebar for filtering and multiple visualization com
 
 1. Use the sidebar to select specific models, dialects, or date ranges
 2. Filters apply globally across all visualizations
-3. Reset filters using the reset button in the sidebar
+3. Reset filters using the "Clear All" in the "Select Dialects" multi-select box
 
 ### Interpreting Charts
 
@@ -117,10 +175,7 @@ The dashboard is built with modular components:
 
 ## Known Limitations
 
-- Large datasets may cause slower initial load times
-- Real-time data updates require manual refresh
 - Some visualizations may not render optimally on mobile devices
-- Maximum file upload size is limited by Streamlit defaults (provisional feature)
 
 ## Troubleshooting
 
