@@ -69,7 +69,7 @@ docker compose up dashboard
 ## Screenshots
 
 ### Main Dashboard View
-![Main Dashboard](../screenshots/main-dashboard-view.png)
+![Main Dashboard](images/main-dashboard-view.png)
 
 The main dashboard provides an overview of ASR model performance across Swiss German dialects, featuring:
 - Model selection dropdown
