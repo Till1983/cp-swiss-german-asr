@@ -25,6 +25,12 @@ MODEL_REGISTRY = {
     "whisper-large-v2": {"type": "whisper", "name": "large-v2"},
     "whisper-large-v3": {"type": "whisper", "name": "large-v3"},  # pinned version: identical to "whisper-large"
     "whisper-large-v3-turbo": {"type": "whisper", "name": "large-v3-turbo"},
+
+    # Hugging Face community Whisper model
+    "whisper-sg-large-v2-notebotIE": {
+        "type": "whisper-hf",
+        "name": "notebotIE/whisper-large-v2-swiss-german",
+    },
     
     # Wav2Vec2 models
     ## German models
