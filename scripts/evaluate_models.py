@@ -34,7 +34,7 @@ MODEL_REGISTRY = {
 
    "whisper-large-swiss": {
         "type": "whisper-hf",
-        "name": "jempf/whisper-large-swiss-german",
+        "name": "jempf/whisper-large-swiss",
     },
 
     "whisper-small-swiss": {
