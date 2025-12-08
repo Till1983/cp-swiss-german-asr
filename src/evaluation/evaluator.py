@@ -127,7 +127,11 @@ class ASREvaluator:
             input_features = inputs.input_features.to(self.device)
 
             with torch.no_grad():
-                predicted_ids = self.model.generate(input_features)
+                predicted_ids = self.model.generate(
+                    input_features,
+                    language="de",
+                    task="transcribe",
+                )
 
             transcription = self.processor.batch_decode(
                 predicted_ids, skip_special_tokens=True
