@@ -3,10 +3,7 @@ from pathlib import Path
 from typing import List  # Added for type hints
 import plotly.graph_objects as go
 import plotly.io as pio
-from utils.data_loader import load_data
-from utils.data_loader import get_available_results
-from utils.data_loader import combine_model_results
-from utils.data_loader import combine_multiple_models
+from utils.data_loader import get_available_results, combine_multiple_models
 from components.sidebar import render_sidebar
 from components.model_comparison import compare_models, _get_performance_category
 from components.dialect_breakdown import create_aggregate_comparison, render_per_dialect_analysis
