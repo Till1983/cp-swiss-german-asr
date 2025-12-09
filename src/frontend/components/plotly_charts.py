@@ -106,6 +106,7 @@ def create_wer_by_dialect_chart(
     data: Dict[str, Dict[str, float]],
     dialects: Optional[List[str]] = None,
     title: str = "Word Error Rate by Dialect and Model",
+    metric_name: str = "WER",
     height: int = 500,
     show_legend: bool = True,
 ) -> go.Figure:
@@ -118,6 +119,7 @@ def create_wer_by_dialect_chart(
         dialects: Optional list of dialect codes to display. If None, uses all dialects
                   found in the data.
         title: Chart title
+        metric_name: Name of the metric for hover template (e.g., "WER", "CER", "BLEU")
         height: Chart height in pixels
         show_legend: Whether to show the legend
         
@@ -147,6 +149,12 @@ def create_wer_by_dialect_chart(
             all_dialects.update(model_data.keys())
         dialects = sorted(list(all_dialects))
     
+    # Determine hover format based on metric
+    if metric_name.upper() in ["WER", "CER"]:
+        value_format = ":.2f}%"
+    else:
+        value_format = ":.2f}"
+    
     # Create traces for each model
     traces = []
     for model_name, model_data in data.items():
@@ -163,7 +171,7 @@ def create_wer_by_dialect_chart(
             hovertemplate=(
                 "Model: %{fullData.name}<br>"
                 "Dialect: %{x}<br>"
-                "WER: %{y:.2f}%<extra></extra>"
+                f"{metric_name}: %{{y{value_format}<extra></extra>"
             ),
         )
         traces.append(trace)
@@ -241,10 +249,13 @@ def create_metric_comparison_chart(
     # Determine y-axis label based on metric
     if metric_name.upper() in ["WER", "CER"]:
         yaxis_title = f"{metric_name} (%)"
+        value_format = ":.2f}"
     elif metric_name.upper() == "BLEU":
         yaxis_title = f"{metric_name} Score"
+        value_format = ":.2f}"
     else:
         yaxis_title = metric_name
+        value_format = ":.2f}"
     
     # If performance colors requested and single model, use special coloring
     if use_performance_colors and len(data) == 1:
@@ -271,7 +282,7 @@ def create_metric_comparison_chart(
                 textposition='outside',
                 hovertemplate=(
                     "<b>%{x}</b><br>" +
-                    f"{metric_name}: %{{y:.2f}}<br>" +
+                    f"{metric_name}: %{{y{value_format}<br>" +
                     "Performance: %{customdata}<br>" +
                     "<extra></extra>"
                 ),
@@ -295,6 +306,7 @@ def create_metric_comparison_chart(
         data=data,
         dialects=dialects,
         title=title,
+        metric_name=metric_name,  # Pass metric_name to fix hover template
         height=height,
         show_legend=show_legend,
     )
