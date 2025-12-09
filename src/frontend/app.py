@@ -1,5 +1,6 @@
 import streamlit as st
 from pathlib import Path
+from typing import List  # Added for type hints
 import plotly.graph_objects as go
 import plotly.io as pio
 from utils.data_loader import load_data
@@ -63,7 +64,7 @@ if not available_models:
     st.warning("No evaluation results found. Please run the evaluation script first.")
     st.stop()
 
-# Model selection - NOW MULTI-SELECT
+# Model selection - Multi-select for comparison
 st.sidebar.header("Model Selection")
 selected_models = st.sidebar.multiselect(
     "Choose models to compare:",
@@ -72,16 +73,22 @@ selected_models = st.sidebar.multiselect(
     help="Select one or more models to analyze and compare"
 )
 
+# Show selection summary
+if len(selected_models) > 1:
+    st.sidebar.success(f"✅ Comparing {len(selected_models)} models")
+elif len(selected_models) == 1:
+    st.sidebar.info(f"📊 Analyzing: {selected_models[0]}")
+
 # Validate selection
 if not selected_models:
-    st.warning("Please select at least one model to analyze.")
+    st.warning("⚠️ Please select at least one model to analyze.")
     st.stop()
 
 # Load data for all selected models
 try:
     df = combine_multiple_models(selected_models, available_models)
 except ValueError as e:
-    st.error(f"Failed to load model data: {e}")
+    st.error(f"❌ Failed to load model data: {e}")
     st.stop()
 
 if df.empty:
@@ -118,14 +125,69 @@ def prepare_chart_data(dataframe, metric: str) -> dict:
                 zip(model_data['dialect'], model_data[metric])
             )
     else:
-        # Single model case - should not happen anymore, but keep as fallback
+        # Single model case - should not happen with new implementation, but keep as fallback
         chart_data['Unknown Model'] = dict(
             zip(dialect_df['dialect'], dialect_df[metric])
         )
     
     return chart_data
 
-# Tab structure placeholder
+
+def abbreviate_model_name(model_name: str, max_length: int = 15) -> str:
+    """
+    Abbreviate model name for file naming.
+    
+    Args:
+        model_name: Full model name
+        max_length: Maximum length of abbreviated name
+        
+    Returns:
+        Abbreviated model name
+    """
+    # Common abbreviations
+    abbreviations = {
+        'whisper-': 'w-',
+        'wav2vec2-': 'w2v2-',
+        'large-v3-turbo': 'lv3t',
+        'large-v3': 'lv3',
+        'large-v2': 'lv2',
+        'large': 'lg',
+        'medium': 'md',
+        'small': 'sm',
+        'base': 'bs',
+        'tiny': 'tn',
+        'german-with-lm': 'de-lm',
+        'german': 'de',
+    }
+    
+    abbreviated = model_name
+    for full, abbr in abbreviations.items():
+        abbreviated = abbreviated.replace(full, abbr)
+    
+    return abbreviated[:max_length]
+
+
+def create_download_filename(selected_models: List[str], suffix: str = "overview") -> str:
+    """
+    Create a clean filename for downloads.
+    
+    Args:
+        selected_models: List of selected model names
+        suffix: File suffix (e.g., "overview", "detailed")
+        
+    Returns:
+        Filename string without extension
+    """
+    if len(selected_models) == 1:
+        return f"{selected_models[0]}_{suffix}"
+    elif len(selected_models) <= 3:
+        abbreviated = "_".join([abbreviate_model_name(m) for m in selected_models])
+        return f"{abbreviated}_{suffix}"
+    else:
+        return f"multi_model_{len(selected_models)}x_{suffix}"
+
+
+# Tab structure
 st.markdown("---")
 tab1, tab2, tab3, tab4 = st.tabs([
     "📊 Overview",
@@ -135,7 +197,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 with tab1:  # Overview
-    st.header("Overview")
+    st.header("📊 Overview")
     
     # Render metrics definitions contextually
     render_metrics_definitions()
@@ -173,9 +235,9 @@ with tab1:  # Overview
     dialect_only_df = filtered_df[filtered_df['dialect'] != 'OVERALL']
     display_summary_statistics(dialect_only_df)
     
-    # Add download button
-    models_str = "_".join(selected_models) if len(selected_models) <= 3 else "multi_model"
-    download_filtered_data(filtered_df, filename_prefix=f"{models_str}_overview")
+    # Add download button with improved filename
+    download_filename = create_download_filename(selected_models, "overview")
+    download_filtered_data(filtered_df, filename_prefix=download_filename)
     
     st.divider()
     st.subheader("Full Results Table")
@@ -187,8 +249,8 @@ with tab1:  # Overview
         height=400
     )
 
-with tab2:
-    st.header("Dialect Analysis")
+with tab2:  # Dialect Analysis
+    st.header("🗺️ Dialect Analysis")
     
     # Show metrics by dialect
     if not filtered_df.empty:
@@ -198,14 +260,14 @@ with tab2:
         has_model_column = 'model' in filtered_df.columns
         multiple_models = has_model_column and filtered_df['model'].nunique() > 1
         
-        # Use new plotly_charts for dialect comparison
+        # Use plotly_charts for dialect comparison
         if multiple_models:
             st.subheader("Model Comparison Across Dialects")
             
             # Prepare data for plotly_charts
             chart_data = prepare_chart_data(filtered_df, selected_metric)
             
-            # Use new create_metric_comparison_chart
+            # Create multi-model comparison chart
             fig_dialect = create_metric_comparison_chart(
                 data=chart_data,
                 metric_name=selected_metric.upper(),
@@ -232,7 +294,7 @@ with tab2:
             st.dataframe(styled_comparison, use_container_width=True)
             st.divider()
         
-        # Create color-coded bar chart for selected metric using new component
+        # Create color-coded bar chart for selected metric
         st.subheader(f"{selected_metric.upper()} Distribution")
         st.markdown("""
         **Quality Scale:** 
@@ -276,12 +338,12 @@ with tab2:
         st.dataframe(styled_dialect, use_container_width=True, hide_index=True)
         
         # ============================================================
-        # DAY 6: PER-DIALECT ANALYSIS WITH ERROR BREAKDOWN
+        # PER-DIALECT ANALYSIS WITH ERROR BREAKDOWN
         # ============================================================
         st.divider()
         
         # Render the comprehensive per-dialect analysis view
-        # Note: For multi-model, we'll show analysis for the first selected model
+        # Note: For multi-model, we show analysis for the first selected model
         primary_model = selected_models[0] if selected_models else None
         if primary_model:
             if len(selected_models) > 1:
@@ -296,9 +358,9 @@ with tab2:
         st.warning("No data available with current filters.")
 
 with tab3:  # Detailed Metrics
-    st.header("Detailed Metrics")
+    st.header("📈 Detailed Metrics")
     
-    # Add WER by dialect chart using new component
+    # Add WER by dialect chart
     if not filtered_df.empty and 'wer' in filtered_df.columns:
         st.subheader("WER Comparison by Dialect")
         wer_chart_data = prepare_chart_data(filtered_df, 'wer')
@@ -346,11 +408,11 @@ with tab3:  # Detailed Metrics
         rows_per_page=50
     )
     
-    # Add download
-    models_str = "_".join(selected_models) if len(selected_models) <= 3 else "multi_model"
-    download_filtered_data(filtered_df, filename_prefix=f"{models_str}_detailed")
+    # Add download with improved filename
+    download_filename = create_download_filename(selected_models, "detailed")
+    download_filtered_data(filtered_df, filename_prefix=download_filename)
 
-with tab4:
+with tab4:  # Sample Predictions
     st.header("🔍 Error Analysis & Sample Inspection")
     
     # Import the error sample viewer

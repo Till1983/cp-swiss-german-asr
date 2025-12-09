@@ -163,40 +163,59 @@ def combine_multiple_models(
     all_model_data = []
     failed_models = []
     
+    # Define required columns for validation
+    REQUIRED_COLUMNS = {'dialect', 'wer', 'cer', 'bleu'}
+    
     for model_name in selected_models:
         if model_name not in available_models:
-            st.warning(f"Model '{model_name}' not found in available results")
+            st.warning(f"⚠️ Model '{model_name}' not found in available results")
             failed_models.append(model_name)
             continue
         
         model_files = available_models[model_name]
         
         try:
-            if len(model_files) == 1:
-                # Single result file - load directly and add model column
-                df = load_data(model_files[0]['csv_path'])
-                df['model'] = model_name
-                all_model_data.append(df)
-            else:
-                # Multiple result files for same model - combine them
-                combined_df = combine_model_results(model_files)
-                all_model_data.append(combined_df)
+            # Use only most recent evaluation if multiple exist
+            if len(model_files) > 1:
+                st.info(
+                    f"ℹ️ Model '{model_name}' has {len(model_files)} evaluation runs. "
+                    f"Using most recent: {model_files[0]['timestamp']}"
+                )
+                # Keep only the first (most recent) file
+                model_files = [model_files[0]]
+            
+            # Load the data
+            df = load_data(model_files[0]['csv_path'])
+            df['model'] = model_name
+            
+            # Validate schema
+            if not REQUIRED_COLUMNS.issubset(df.columns):
+                missing_cols = REQUIRED_COLUMNS - set(df.columns)
+                st.warning(
+                    f"⚠️ Model '{model_name}' missing required columns: {missing_cols}. Skipping."
+                )
+                failed_models.append(model_name)
+                continue
+            
+            all_model_data.append(df)
                 
         except (FileNotFoundError, ValueError, IOError) as e:
-            st.warning(f"Failed to load data for model '{model_name}': {e}")
+            st.warning(f"❌ Failed to load data for model '{model_name}': {e}")
             failed_models.append(model_name)
             continue
     
     if not all_model_data:
+        # Improved error message with actionable guidance
         raise ValueError(
-            f"No valid models could be loaded. "
-            f"Failed models: {', '.join(failed_models)}"
+            f"Failed to load any of the {len(selected_models)} selected model(s). "
+            f"Failed models: {', '.join(failed_models)}. "
+            f"Ensure evaluation results exist in results/metrics/ directory."
         )
     
     if failed_models:
         st.info(
-            f"Successfully loaded {len(all_model_data)} model(s). "
-            f"Failed: {len(failed_models)} ({', '.join(failed_models)})"
+            f"✅ Successfully loaded {len(all_model_data)} model(s). "
+            f"⚠️ Failed: {len(failed_models)} ({', '.join(failed_models)})"
         )
     
     # Combine all model DataFrames
