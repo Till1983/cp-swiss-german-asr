@@ -5,6 +5,7 @@ import plotly.io as pio
 from utils.data_loader import load_data
 from utils.data_loader import get_available_results
 from utils.data_loader import combine_model_results
+from utils.data_loader import combine_multiple_models
 from components.sidebar import render_sidebar
 from components.model_comparison import compare_models, _get_performance_category
 from components.dialect_breakdown import create_aggregate_comparison, render_per_dialect_analysis
@@ -62,23 +63,29 @@ if not available_models:
     st.warning("No evaluation results found. Please run the evaluation script first.")
     st.stop()
 
-# Model selection
+# Model selection - NOW MULTI-SELECT
 st.sidebar.header("Model Selection")
-selected_model = st.sidebar.selectbox(
-    "Choose a model to analyze:",
+selected_models = st.sidebar.multiselect(
+    "Choose models to compare:",
     options=list(available_models.keys()),
-    index=0
+    default=[list(available_models.keys())[0]],  # Default to first model
+    help="Select one or more models to analyze and compare"
 )
 
-# Load selected model data
-model_files = available_models[selected_model]
-if len(model_files) == 1:
-    df = load_data(model_files[0]['csv_path'])  # Access csv_path from dict
-else:
-    df = combine_model_results(model_files)
+# Validate selection
+if not selected_models:
+    st.warning("Please select at least one model to analyze.")
+    st.stop()
+
+# Load data for all selected models
+try:
+    df = combine_multiple_models(selected_models, available_models)
+except ValueError as e:
+    st.error(f"Failed to load model data: {e}")
+    st.stop()
 
 if df.empty:
-    st.error("No data available for the selected model.")
+    st.error("No data available for the selected models.")
     st.stop()
 
 # Apply sidebar filters
@@ -111,8 +118,8 @@ def prepare_chart_data(dataframe, metric: str) -> dict:
                 zip(model_data['dialect'], model_data[metric])
             )
     else:
-        # Single model case - use selected_model as key
-        chart_data[selected_model] = dict(
+        # Single model case - should not happen anymore, but keep as fallback
+        chart_data['Unknown Model'] = dict(
             zip(dialect_df['dialect'], dialect_df[metric])
         )
     
@@ -133,7 +140,7 @@ with tab1:  # Overview
     # Render metrics definitions contextually
     render_metrics_definitions()
     
-    # Display aggregate comparison only when comparing multiple models
+    # Display aggregate comparison when comparing multiple models
     if 'model' in filtered_df.columns and filtered_df['model'].nunique() > 1:
         st.subheader("Model Comparison")
         fig_agg = create_aggregate_comparison(
@@ -167,7 +174,8 @@ with tab1:  # Overview
     display_summary_statistics(dialect_only_df)
     
     # Add download button
-    download_filtered_data(filtered_df, filename_prefix=f"{selected_model}_overview")
+    models_str = "_".join(selected_models) if len(selected_models) <= 3 else "multi_model"
+    download_filtered_data(filtered_df, filename_prefix=f"{models_str}_overview")
     
     st.divider()
     st.subheader("Full Results Table")
@@ -186,12 +194,12 @@ with tab2:
     if not filtered_df.empty:
         st.subheader(f"{selected_metric.upper()} by Dialect")
         
-        # Check if we have multiple models OR multiple timestamps for the same model
+        # Check if we have multiple models
         has_model_column = 'model' in filtered_df.columns
         multiple_models = has_model_column and filtered_df['model'].nunique() > 1
         
         # Use new plotly_charts for dialect comparison
-        if has_model_column and (multiple_models or len(model_files) > 1):
+        if multiple_models:
             st.subheader("Model Comparison Across Dialects")
             
             # Prepare data for plotly_charts
@@ -273,11 +281,16 @@ with tab2:
         st.divider()
         
         # Render the comprehensive per-dialect analysis view
-        render_per_dialect_analysis(
-            df=filtered_df,
-            error_analysis_dir="results/error_analysis",
-            selected_model=selected_model
-        )
+        # Note: For multi-model, we'll show analysis for the first selected model
+        primary_model = selected_models[0] if selected_models else None
+        if primary_model:
+            if len(selected_models) > 1:
+                st.info(f"📊 Showing detailed dialect analysis for: **{primary_model}**")
+            render_per_dialect_analysis(
+                df=filtered_df,
+                error_analysis_dir="results/error_analysis",
+                selected_model=primary_model
+            )
         
     else:
         st.warning("No data available with current filters.")
@@ -334,7 +347,8 @@ with tab3:  # Detailed Metrics
     )
     
     # Add download
-    download_filtered_data(filtered_df, filename_prefix=f"{selected_model}_detailed")
+    models_str = "_".join(selected_models) if len(selected_models) <= 3 else "multi_model"
+    download_filtered_data(filtered_df, filename_prefix=f"{models_str}_detailed")
 
 with tab4:
     st.header("🔍 Error Analysis & Sample Inspection")
@@ -342,8 +356,14 @@ with tab4:
     # Import the error sample viewer
     from components.error_sample_viewer import render_worst_samples_viewer
     
-    # Render the worst samples viewer
-    render_worst_samples_viewer(
-        error_analysis_dir="results/error_analysis",
-        selected_model=selected_model
-    )
+    # Show analysis for the first selected model
+    primary_model = selected_models[0] if selected_models else None
+    if primary_model:
+        if len(selected_models) > 1:
+            st.info(f"📊 Showing error analysis for: **{primary_model}**")
+        
+        # Render the worst samples viewer
+        render_worst_samples_viewer(
+            error_analysis_dir="results/error_analysis",
+            selected_model=primary_model
+        )

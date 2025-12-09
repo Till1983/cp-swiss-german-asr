@@ -95,13 +95,14 @@ def get_available_results(results_base_path: str = "results/metrics") -> Dict[st
 
 def combine_model_results(result_files: List[Dict[str, str]]) -> pd.DataFrame:
     """
-    Combine multiple model results into a single DataFrame for comparison.
+    Combine multiple result files for the SAME model into a single DataFrame.
+    This is used when a single model has multiple timestamp entries.
     
     Args:
         result_files: List of dictionaries with 'model_name' and 'csv_path'
         
     Returns:
-        Combined DataFrame with model_name column added
+        Combined DataFrame with model column added
         
     Raises:
         ValueError: If no valid results could be loaded
@@ -140,3 +141,69 @@ def combine_model_results(result_files: List[Dict[str, str]]) -> pd.DataFrame:
     combined_df = combined_df[cols]
     
     return combined_df
+
+
+def combine_multiple_models(
+    selected_models: List[str],
+    available_models: Dict[str, List[Dict[str, str]]]
+) -> pd.DataFrame:
+    """
+    Combine data from multiple models into a single DataFrame for comparison.
+    
+    Args:
+        selected_models: List of model names to load
+        available_models: Dictionary mapping model names to their result files
+        
+    Returns:
+        Combined DataFrame with 'model' column
+        
+    Raises:
+        ValueError: If no valid models could be loaded
+    """
+    all_model_data = []
+    failed_models = []
+    
+    for model_name in selected_models:
+        if model_name not in available_models:
+            st.warning(f"Model '{model_name}' not found in available results")
+            failed_models.append(model_name)
+            continue
+        
+        model_files = available_models[model_name]
+        
+        try:
+            if len(model_files) == 1:
+                # Single result file - load directly and add model column
+                df = load_data(model_files[0]['csv_path'])
+                df['model'] = model_name
+                all_model_data.append(df)
+            else:
+                # Multiple result files for same model - combine them
+                combined_df = combine_model_results(model_files)
+                all_model_data.append(combined_df)
+                
+        except (FileNotFoundError, ValueError, IOError) as e:
+            st.warning(f"Failed to load data for model '{model_name}': {e}")
+            failed_models.append(model_name)
+            continue
+    
+    if not all_model_data:
+        raise ValueError(
+            f"No valid models could be loaded. "
+            f"Failed models: {', '.join(failed_models)}"
+        )
+    
+    if failed_models:
+        st.info(
+            f"Successfully loaded {len(all_model_data)} model(s). "
+            f"Failed: {len(failed_models)} ({', '.join(failed_models)})"
+        )
+    
+    # Combine all model DataFrames
+    final_df = pd.concat(all_model_data, ignore_index=True)
+    
+    # Ensure model column is first
+    cols = ['model'] + [col for col in final_df.columns if col != 'model']
+    final_df = final_df[cols]
+    
+    return final_df
