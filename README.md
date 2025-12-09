@@ -1,300 +1,359 @@
-# cp-swiss-german-asr
-Comparative ASR for Swiss‑German dialects: reproducible Docker pipeline, baseline Whisper inference, fine‑tuned Whisper‑medium & wav2vec2 models, per‑canton error analysis, Streamlit dashboard, and scripts for data preparation, training, and evaluation. Ready for replication on modest hardware.
+# Swiss German ASR Evaluation Platform
+
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
+[![Docker](https://img.shields.io/badge/docker-required-blue.svg)](https://www.docker.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+> **Comparative ASR evaluation for Swiss German dialects:** Reproducible Docker pipeline with baseline Whisper inference, fine-tuned Wav2Vec2 models, per-canton error analysis, and interactive Streamlit dashboard.
+
+---
 
 ## Table of Contents
 
-- [Setup with Docker](#setup-with-docker)
-- [Data Pipeline](#data-pipeline)
-- [Evaluation API](#evaluation-api)
-- [Running Model Evaluation](#running-model-evaluation)
+- [Quick Start](#quick-start)
+- [What You'll See](#what-youll-see)
+- [System Components](#system-components)
+- [Running Evaluations](#running-evaluations)
 - [Error Analysis](#error-analysis)
 - [Testing](#testing)
-- [Dashboard](#dashboard)
+- [Data Pipeline](#data-pipeline)
+- [Troubleshooting](#troubleshooting)
+- [Citation](#citation)
 
-## Setup with Docker
+---
 
-1. **Prerequisites**
-    - Docker and Docker Compose installed
-    - Git to clone the repository
+## Quick Start
 
-2. **Quick Start**
-    ```bash
-    docker compose up
-    ```
+### Prerequisites (5 minutes)
 
-    This will:
-    - Build the Python 3.11 environment
-    - Install required dependencies (PyTorch, Whisper, FastAPI)
-    - Start the API server on port 8000
+- **Docker Desktop** installed ([download](https://www.docker.com/products/docker-desktop))
+- **Git** for cloning the repository
+- **10GB** free disk space
+- **8GB** RAM available
 
-3. **API Endpoints**
-    - Health check: `GET /health`
-    - Model loading: `GET /load-model`
-    - Root endpoint: `GET /`
+### One-Command Setup (2 minutes)
 
-4. **Development**
-    The Docker setup includes:
-    - Volume mounts for `./data` and `./src`
-    - Automatic reload with uvicorn
-    - Non-root user for security
-    - Health checks every 30s
-
-## Data Pipeline
-
-### Download Dataset
-1. Download FHNW's All Swiss German Dialects Test Corpus [here](https://cs.technik.fhnw.ch/i4ds-datasets).
-2. Extract to `data/raw/fhnw-swiss-german-corpus/`
-
-### Prepare Data Splits
 ```bash
-docker compose run --rm api python scripts/prepare_scripts.py
+# Clone repository
+git clone https://github.com/Till1983/cp-swiss-german-asr.git
+cd cp-swiss-german-asr
+
+# Start dashboard (downloads dependencies on first run)
+docker compose up dashboard
 ```
 
-This will create:
-- `data/metadata/train.tsv` (70% of data)
-- `data/metadata/val.tsv` (15% of data)
-- `data/metadata/test.tsv` (15% of data)
+**Wait for:** `Streamlit app started` message, then open your browser.
 
-Each TSV contains: `client_id`, `path`, `sentence`, `up_votes`, `down_votes`, `age`, `gender`, `accent`, `audio_path`
+### Access the Application
 
-### Verify Data Loading
+**📊 Dashboard:** http://localhost:8501
+- Interactive visualizations of evaluation results
+- Multi-model comparison (Whisper, Wav2Vec2)
+- Per-dialect performance breakdown
+- Error analysis with word-level alignment
+
+**📚 API Documentation:** http://localhost:8000/docs
+- Swagger UI for FastAPI endpoints
+- Test evaluation endpoints interactively
+
+**⚠️ First Start:** Initial setup downloads model weights (~2GB). Subsequent starts take <30 seconds.
+
+---
+
+## What You'll See
+
+The dashboard displays **pre-computed evaluation results** from multiple ASR models across Swiss German dialects:
+
+### Key Metrics
+- **WER** (Word Error Rate): Lower is better, measures word-level accuracy
+- **CER** (Character Error Rate): Lower is better, measures character-level accuracy
+- **BLEU**: Higher is better (0-100), measures translation quality
+
+### Visualizations
+1. **Model Comparison:** Side-by-side WER/CER/BLEU across all models
+2. **Dialect Analysis:** Per-canton performance breakdown (BE, ZH, AG, etc.)
+3. **Error Patterns:** Confusion matrices and systematic error identification
+4. **Sample Inspection:** Word-level alignment visualization for error analysis
+
+### Data Source
+All results are loaded from the `results/metrics/` directory - **no computation happens during dashboard viewing**. This ensures fast, reproducible access to evaluation data.
+
+---
+
+## System Components
+
+### Dashboard (Streamlit)
+Interactive web interface for exploring evaluation results.
+
 ```bash
-docker compose run --rm api python -c "import pandas as pd
-train = pd.read_csv('/app/data/metadata/train.tsv', sep='\t')
-print(f'Loaded {len(train)} training samples')
-print(train.head())"
+docker compose up dashboard
 ```
 
-## Evaluation API
+Access at http://localhost:8501
 
-Run ASR model evaluation on Swiss German test set.
+**Features:**
+- Model performance comparison
+- Dialect breakdown analysis
+- Interactive Plotly charts
+- Error sample viewer with audio playback
+- Downloadable CSV exports
 
-### Example Request
+### API (FastAPI)
+RESTful API for programmatic model evaluation.
 
-For Whisper small model evaluation on 10 samples:
 ```bash
-curl -X POST http://localhost:8000/api/evaluate \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model_type": "whisper", 
-    "model": "small",                                
-    "limit": 10
-  }'
+docker compose up api
 ```
 
-For wav2vec2 model evaluation on full test set:
+Access at http://localhost:8000
+
+**Endpoints:**
+- `GET /health` - Health check
+- `GET /load-model` - Load ASR model into memory
+- `POST /api/evaluate` - Run evaluation on test set
+
+### Testing Suite
+Comprehensive unit, integration, and end-to-end tests.
+
 ```bash
-curl -X POST http://localhost:8000/api/evaluate \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model_type": "wav2vec2",
-    "model": "facebook/wav2vec2-large-xlsr-53-german",
-    "limit": 100
-  }'
+# Run all tests
+docker compose run --rm test
+
+# Run specific test categories
+docker compose run --rm test-unit          # Fast unit tests
+docker compose run --rm test-integration   # Integration tests
+docker compose run --rm test-e2e          # End-to-end tests
+docker compose run --rm test-coverage     # With coverage report
 ```
 
-### Response Fields
-- `model`: Name of the evaluated ASR model
-- `total_samples`: Number of audio samples processed
-- `overall_wer`: Word Error Rate across all dialects (percentage, 0-100)
-- `overall_cer`: Character Error Rate across all dialects (percentage, 0-100)
-- `overall_bleu`: BLEU score across all dialects (0-100, higher is better)
-- `per_dialect_wer`: Dictionary mapping each dialect/canton to its WER (percentage, 0-100)
-- `per_dialect_cer`: Dictionary mapping each dialect/canton to its CER (percentage, 0-100)
-- `per_dialect_bleu`: Dictionary mapping each dialect/canton to its BLEU score (0-100, higher is better)
+---
 
-**Note:** WER and CER are returned as percentages (0-100), where lower values indicate better accuracy. BLEU is also scaled to 0-100, where higher values indicate better translation quality.
+## Running Evaluations
 
+### Batch Model Evaluation
 
-**Tip:** Use the `limit` parameter for quick testing with a subset of the test set.
+Evaluate multiple ASR models on the Swiss German test set:
 
-## Running Model Evaluation
-
-Batch evaluation script for comparing multiple ASR models on the Swiss German test set.
-
-### Usage
-
-**Evaluate multiple models (default: whisper-base and wav2vec2-german):**
 ```bash
+# Evaluate default models (whisper-base, wav2vec2-german)
 docker compose run --rm api python scripts/evaluate_models.py
-```
 
-**Evaluate a single model:**
-```bash
-docker compose run --rm api python scripts/evaluate_models.py --models whisper-base
-```
+# Evaluate specific models
+docker compose run --rm api python scripts/evaluate_models.py \
+  --models whisper-small whisper-medium wav2vec2-german
 
-**Evaluate specific models:**
-```bash
-docker compose run --rm api python scripts/evaluate_models.py --models whisper-small whisper-medium wav2vec2-german
-```
-
-**Quick test with sample limit:**
-```bash
+# Quick test with sample limit
 docker compose run --rm api python scripts/evaluate_models.py --limit 10
 ```
 
 ### Available Models
 
-- **Whisper:** `whisper-tiny`, `whisper-base`, `whisper-small`, `whisper-medium`, `whisper-large`, `whisper-large-v2`, `whisper-large-v3`
-- **Wav2Vec2:** `wav2vec2-german`, `wav2vec2-base`, `wav2vec2-large`
+**Whisper:** `whisper-tiny`, `whisper-base`, `whisper-small`, `whisper-medium`, `whisper-large`, `whisper-large-v2`, `whisper-large-v3`
 
-### Output
+**Wav2Vec2:** `wav2vec2-german`, `wav2vec2-base`, `wav2vec2-large`
 
-Results are saved to `results/metrics/YYYYMMDD_HHMMSS/` with:
-- `{model}_results.json` - Full metrics including per-sample predictions
-- `{model}_results.csv` - Summary metrics table
+### Output Structure
 
-Example output structure:
+Results are saved to `results/metrics/YYYYMMDD_HHMMSS/`:
+
 ```
-results/metrics/20251105_110723/
-├── whisper-medium_results.json
-├── whisper-medium_results.csv
+results/metrics/20241209_143022/
+├── whisper-medium_results.json    # Full metrics + per-sample predictions
+├── whisper-medium_results.csv     # Summary metrics table
 ├── wav2vec2-german_results.json
 └── wav2vec2-german_results.csv
 ```
 
-The script prints a summary table comparing WER, CER, BLEU scores, and sample counts across all evaluated models.
+### API Evaluation
+
+Alternatively, use the FastAPI endpoint:
+
+```bash
+curl -X POST http://localhost:8000/api/evaluate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model_type": "whisper",
+    "model": "small",
+    "limit": 10
+  }'
+```
+
+**Response includes:**
+- `overall_wer`, `overall_cer`, `overall_bleu`
+- `per_dialect_wer`, `per_dialect_cer`, `per_dialect_bleu`
+- `total_samples` processed
+
+**Note:** WER and CER are percentages (0-100, lower is better). BLEU is 0-100 (higher is better).
+
+---
 
 ## Error Analysis
 
-Detailed error analysis to understand ASR failure modes through alignment-based categorization, dialect-specific patterns, and worst-sample inspection.
-
-### Run Error Analysis
-
-After running model evaluations, analyze error patterns:
+Analyze error patterns and identify worst-performing samples:
 
 ```bash
 docker compose run --rm api python scripts/analyze_errors.py \
-  --input_dir results/metrics \
+  --input_dir results/metrics/20241209_143022 \
   --output_dir results/error_analysis \
-  --top_percent 0.1
+  --top_percent 0.10
 ```
 
-**Parameters:**
-- `--input_dir`: Directory containing `*_results.json` files (default: `results/metrics`)
-- `--output_dir`: Directory for analysis outputs (default: `results/error_analysis`)
-- `--top_percent`: Fraction of worst-performing samples to extract (default: 0.1 for 10%)
+**Generates:**
+- `worst_samples.json` - Top 10% highest-WER samples
+- `error_statistics.json` - Confusion patterns and error type distributions
+- Per-dialect error breakdowns
 
-### Output Structure
+**View in Dashboard:**
+Navigate to the "Sample Predictions" tab to interactively explore:
+- Word-level alignment (correct/substitution/insertion/deletion)
+- Error type distributions (pie charts)
+- Confusion pairs (most common word errors)
 
-Analysis results are saved to `results/error_analysis/YYYYMMDD_HHMMSS/`:
+---
 
-```
-results/error_analysis/20251203_112924/
-├── analysis_whisper-large-v3.json          # Hierarchical error analysis
-├── worst_samples_whisper-large-v3.csv      # High-error samples for inspection
-├── analysis_wav2vec2-german.json
-├── worst_samples_wav2vec2-german.csv
-└── model_comparison_summary.json           # Cross-model comparison
-```
+## Data Pipeline
 
-**Key Files:**
+### Download Dataset
 
-- **`analysis_*.json`** – Detailed breakdown including:
-  - Error type distribution (substitution/deletion/insertion rates)
-  - Per-dialect performance and confusion patterns
-  - Aligned reference/hypothesis pairs for worst samples
-  
-- **`worst_samples_*.csv`** – Spreadsheet view of high-error utterances with alignment visualizations
+1. Download FHNW's All Swiss German Dialects Test Corpus [here](https://cs.technik.fhnw.ch/i4ds-datasets)
+2. Extract to `data/raw/fhnw-swiss-german-corpus/`
 
-- **`model_comparison_summary.json`** – High-level metrics across all analyzed models
-
-### Methodology
-
-For detailed technical documentation on error categorization, threshold selection, and alignment algorithms, see [ERROR_ANALYSIS_METHODOLOGY.md](docs/ERROR_ANALYSIS_METHODOLOGY.md).
-
-Key concepts:
-- **Error Types:** Substitutions (wrong word), deletions (missing word), insertions (extra word)
-- **Worst-N% Threshold:** Top 10% by WER for efficient error pattern discovery
-- **Dialect Breakdown:** Separate error analysis for each Swiss German dialect/canton
-- **Confusion Pairs:** Most common word substitution errors within each dialect
-
-## Testing
-
-Run the test suite to verify metrics calculations (WER, CER, BLEU) and evaluation logic.
-
-### Running All Tests
+### Prepare Data Splits
 
 ```bash
-docker compose run --rm api python -m pytest tests/ -v
+docker compose run --rm api python scripts/prepare_scripts.py
 ```
 
-### Running Specific Test Classes
+Creates train/val/test splits:
+- `data/metadata/train.tsv` (70%)
+- `data/metadata/val.tsv` (15%)
+- `data/metadata/test.tsv` (15%)
 
-**Test WER calculations:**
-```bash
-docker compose run --rm api python -m pytest tests/test_evaluation.py::TestCalculateWER -v
-```
+**TSV Format:** `client_id | path | sentence | up_votes | down_votes | age | gender | accent | audio_path`
 
-**Test CER calculations:**
-```bash
-docker compose run --rm api python -m pytest tests/test_evaluation.py::TestCalculateCER -v
-```
-
-**Test batch metrics:**
-```bash
-docker compose run --rm api python -m pytest tests/test_evaluation.py::TestBatchWER -v
-```
-
-### Running Individual Tests
+### Verify Data Loading
 
 ```bash
-docker compose run --rm api python -m pytest tests/test_evaluation.py::TestCalculateWER::test_calculate_wer_exact_match -v
+docker compose run --rm api python -c "
+import pandas as pd
+train = pd.read_csv('/app/data/metadata/train.tsv', sep='\t')
+print(f'Loaded {len(train)} training samples')
+print(train.head())
+"
 ```
 
-### Coverage Report
+---
 
-Generate a test coverage report:
+## Troubleshooting
+
+### Dashboard Won't Start
+
+**Issue:** Docker container fails to start
+
+**Solutions:**
+- Verify Docker Desktop is running: `docker --version`
+- Check port availability: `lsof -i :8501` (kill process if occupied)
+- Review logs: `docker compose logs dashboard`
+
+### Port Conflict (8501 in use)
+
+**Issue:** Port 8501 already in use
+
+**Solutions:**
+
+**Option 1:** Change port in `docker-compose.yml`:
+```yaml
+dashboard:
+  ports:
+    - "8502:8501"  # Change 8501 to 8502
+```
+
+**Option 2:** Use alternative port via command line:
 ```bash
-docker compose run --rm api python -m pytest tests/ --cov=src/evaluation --cov-report=term-missing
+docker compose run --rm -p 8502:8501 dashboard
 ```
 
-### What Is Tested
+Then access at http://localhost:8502
 
-The test suite validates:
-- **WER (Word Error Rate):** Exact matches, partial matches, empty strings, case sensitivity
-- **CER (Character Error Rate):** Character-level edit distance calculations
-- **BLEU Score:** Translation quality metrics for ASR outputs
-- **Batch Processing:** Aggregated metrics across multiple samples
-- **Edge Cases:** Empty inputs, mismatched lengths, complete mismatches
+### Slow First Start
 
-### Expected Output
+**Issue:** Initial startup takes 5+ minutes
 
-All tests should pass:
+**Explanation:** First run downloads:
+- Model weights (~2GB) from HuggingFace
+- Python dependencies
+- Dataset processing
+
+**Solution:** Wait for completion. Subsequent starts are <30 seconds (cached).
+
+### No Data in Dashboard
+
+**Issue:** Dashboard shows "No evaluation results found"
+
+**Solutions:**
+- Verify `results/metrics/` directory contains evaluation files
+- Run evaluation: `docker compose run --rm api python scripts/evaluate_models.py`
+- Check file permissions: `ls -la results/metrics/`
+
+### Memory Issues
+
+**Issue:** Docker reports out of memory
+
+**Solutions:**
+- Increase Docker memory limit (Docker Desktop → Settings → Resources → Memory)
+- Recommend: 8GB minimum, 16GB optimal
+- Reduce concurrent models being evaluated
+
+### API Returns 404
+
+**Issue:** API endpoints return 404 Not Found
+
+**Solutions:**
+- Ensure API service is running: `docker compose up api`
+- Verify URL: http://localhost:8000 (not 8501)
+- Check API logs: `docker compose logs api`
+
+### Browser Compatibility
+
+**Issue:** Dashboard doesn't display correctly
+
+**Solutions:**
+- Use modern browser (Chrome, Firefox, Edge, Safari)
+- Clear browser cache
+- Disable browser extensions
+- Try incognito/private mode
+
+---
+
+## Citation
+
+If you use this work, please cite:
+
+```bibtex
+@thesis{ermold2024swissgerman,
+  author = {Ermold, Till},
+  title = {Comparative Evaluation of ASR Models for Swiss German Dialects},
+  school = {CODE University of Applied Sciences Berlin},
+  year = {2024},
+  type = {Bachelor's Thesis}
+}
 ```
-======================== test session starts ========================
-collected 363 items
 
-tests/e2e/test_api_workflow.py::TestAPIWorkflow::test_complete_api_evaluation_flow PASSED
-tests/e2e/test_api_workflow.py::TestAPIWorkflow::test_api_multiple_model_types PASSED
-tests/e2e/test_api_workflow.py::TestAPIWorkflow::test_api_input_validation PASSED
-...
-tests/unit/utils/test_logging_config.py::TestSetupLogger::test_logger_file_encoding_utf8 PASSED
-tests/unit/utils/test_logging_config.py::TestSetupLogger::test_multiple_loggers_independent PASSED
-tests/unit/utils/test_logging_config.py::TestSetupLogger::test_logger_without_file PASSED
-...
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======================== 363 passed, 9 warnings in 17.24s ========================
-```
+---
 
-## Dashboard
+## License
 
-For detailed dashboard documentation, see [DASHBOARD.md](docs/DASHBOARD.md).
+MIT License - see [LICENSE](LICENSE) for details.
 
-### Quick Start
+---
 
-```bash
-docker compose run --rm -p 8501:8501 dashboard
-```
+## Contact
 
-Access the dashboard at `http://localhost:8501`
+**Author:** Till Ermold  
+**Email:** till.ermold@code.berlin  
+**Institution:** CODE University of Applied Sciences Berlin
 
-### Features
+---
 
-- **Model Performance Comparison:** Compare WER, CER, and BLEU scores across different ASR models
-- **Dialect Breakdown:** Analyze performance by Swiss German canton/dialect
-- **Interactive Visualizations:** Explore metrics with dynamic charts and filters
-- **Data Table View:** Browse detailed evaluation results in tabular format
-- **Filtering:** Filter by model, dialect, or custom date ranges
-
+**Last Updated:** December 9, 2024  
+**Version:** 2.0 (Multi-Model Comparison Support)
