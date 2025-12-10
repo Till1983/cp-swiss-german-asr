@@ -9,6 +9,7 @@ from components.model_comparison import compare_models, _get_performance_categor
 from components.dialect_breakdown import create_aggregate_comparison, render_per_dialect_analysis
 from components.data_table import display_data_table, display_summary_statistics, download_filtered_data
 from components.statistics_panel import render_metrics_definitions
+from components.terminology_panel import render_terminology_definitions
 from components.plotly_charts import create_wer_by_dialect_chart, create_metric_comparison_chart
 
 # Configure Plotly theme to match Streamlit
@@ -412,6 +413,9 @@ with tab3:  # Detailed Metrics
 with tab4:  # Sample Predictions
     st.header("🔍 Error Analysis & Sample Inspection")
     
+    # Render terminology definitions for context: Reference, Hypothesis, Word-Level Alignment
+    render_terminology_definitions()
+
     # Import the error sample viewer
     from components.error_sample_viewer import render_worst_samples_viewer
     
