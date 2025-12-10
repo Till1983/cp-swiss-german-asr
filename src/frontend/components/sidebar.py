@@ -57,11 +57,9 @@ def render_sidebar(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
     # Calculate counts
     model_count = df['model'].nunique() if 'model' in df.columns else 1
     
-    # FIX 1: Separate real dialects from OVERALL
     real_dialects = [d for d in selected_dialects if d != 'OVERALL']
     dialect_count = len(real_dialects)
     
-    # FIX 2: Show data dimensions instead of misleading "samples"
     dialect_text = f"🗣️ Dialects: {dialect_count}"
     if 'OVERALL' in selected_dialects:
         dialect_text += " (+ OVERALL)"
