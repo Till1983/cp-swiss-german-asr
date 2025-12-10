@@ -10,7 +10,6 @@ cp-swiss-german-asr/
 ├── .gitignore
 ├── Dockerfile
 ├── LICENSE
-├── PROJECT-STRUCTURE.md                          
 ├── README.md
 ├── configs/
 │   └── training/
@@ -19,8 +18,10 @@ cp-swiss-german-asr/
 │       └── wav2vec2_config.yml
 ├── docker-compose.yml
 ├── main.py
+├── pytest.ini
 ├── requirements.txt
 ├── requirements_blackwell.txt
+├── requirements_local.txt
 ├── .vscode/
 │   └── settings.json
 ├── data/                # gitignored (the entire directory - large files)
@@ -86,7 +87,6 @@ cp-swiss-german-asr/
 │           ├── README_columns.txt
 │           └── clips/
 ├── docs/
-│   ├── ANALYSIS_NOTES.md
 │   ├── DASHBOARD.md
 │   ├── ERROR_ANALYSIS_METHODOLOGY.md
 │   ├── GPU_COMPATIBILITY.md
@@ -189,9 +189,22 @@ cp-swiss-german-asr/
 │   ├── 20251113_172257/
 │   ├── 20251113_180429/
 │   └── 20251113_181410/
-├── logs/
+├── images/
+│   ├── detailed-metrics.png
+│   ├── dialect-analysis.png
+│   ├── error-analysis.png
+│   ├── main-dashboard-view.png
+│   ├── multi-model-comparison-detailed-metrics.png
+│   ├── multi-model-comparison-dialect-analysis.png
+│   ├── multi-model-comparison-overview.png
+│   ├── per-dialect-analysis.png
+│   ├── sample-inspection-01.png
+│   ├── sample-inspection-02.png
+│   ├── sidebar-complete.png
+│   └── sidebar-model-selection-dropdown-menu.png
+├── logs/                # gitignored (*.log files)
 │   └── evaluation.log
-├── personal-notes/     # gitignored (the entire directory - personal notes)
+├── personal-notes/      # gitignored (the entire directory - personal notes)
 │   ├── week01_days1-2_docker_local_setup.md
 │   ├── week01_days3-4_data_pipeline.md
 │   ├── week01_days5-7_minimal_fastapi_and_analysis.md
@@ -204,8 +217,23 @@ cp-swiss-german-asr/
 │   ├── error_analysis/
 │   │   ├── ANALYSIS_NOTES.md
 │   │   ├── error_analysis_config.yml
-│   │   ├── .ipynb_checkpoints/
-│   │   └── 20251203_112924/
+│   │   ├── 20251203_112924/
+│   │   │   ├── README.txt
+│   │   │   ├── analysis_wav2vec2-1b-german-cv11.json
+│   │   │   ├── analysis_wav2vec2-german-with-lm.json
+│   │   │   ├── analysis_whisper-large-v2.json
+│   │   │   ├── analysis_whisper-large-v3-turbo.json
+│   │   │   ├── analysis_whisper-large-v3.json
+│   │   │   ├── analysis_whisper-medium.json
+│   │   │   ├── model_comparison_summary.json
+│   │   │   ├── worst_samples_wav2vec2-1b-german-cv11.csv
+│   │   │   ├── worst_samples_wav2vec2-german-with-lm.csv
+│   │   │   ├── worst_samples_whisper-large-v2.csv
+│   │   │   ├── worst_samples_whisper-large-v3-turbo.csv
+│   │   │   ├── worst_samples_whisper-large-v3.csv
+│   │   │   └── worst_samples_whisper-medium.csv
+│   │   └── bleu_integration_20251204_201238/
+│   │       ├── README.txt
 │   │       ├── analysis_wav2vec2-1b-german-cv11.json
 │   │       ├── analysis_wav2vec2-german-with-lm.json
 │   │       ├── analysis_whisper-large-v2.json
@@ -219,56 +247,20 @@ cp-swiss-german-asr/
 │   │       ├── worst_samples_whisper-large-v3-turbo.csv
 │   │       ├── worst_samples_whisper-large-v3.csv
 │   │       └── worst_samples_whisper-medium.csv
-│   ├── metrics/
-│   │   ├── .ipynb_checkpoints/
-│   │   ├── 20251113_210648/
-│   │   │   ├── whisper-large-v3-turbo_results.csv
-│   │   │   ├── whisper-large-v3-turbo_results.json
-│   │   │   ├── whisper-small_results.csv
-│   │   │   └── whisper-small_results.json
-│   │   ├── 20251113_214357/
-│   │   │   ├── wav2vec2-german_results.csv
-│   │   │   ├── wav2vec2-german_results.json
-│   │   │   ├── wav2vec2-multi-56_results.csv
-│   │   │   └── wav2vec2-multi-56_results.json
-│   │   ├── 20251113_215305/
-│   │   │   ├── mms-1b-all_results.csv
-│   │   │   ├── mms-1b-all_results.json
-│   │   │   ├── mms-1b-l1107_results.csv
-│   │   │   └── mms-1b-l1107_results.json
-│   │   ├── 20251113_221929/
-│   │   │   ├── whisper-base_results.csv
-│   │   │   ├── whisper-base_results.json
-│   │   │   ├── whisper-tiny_results.csv
-│   │   │   └── whisper-tiny_results.json
-│   │   ├── 20251114_072930/
-│   │   │   ├── whisper-large_results.csv
-│   │   │   ├── whisper-large_results.json
-│   │   │   ├── whisper-large-v2_results.csv
-│   │   │   ├── whisper-large-v2_results.json
-│   │   │   ├── whisper-large-v3_results.csv
-│   │   │   └── whisper-large-v3_results.json
-│   │   ├── 20251114_113817/
-│   │   │   ├── whisper-medium_results.csv
-│   │   │   └── whisper-medium_results.json
-│   │   ├── 20251122_210804/
-│   │   │   ├── wav2vec2-german-with-lm_results.csv
-│   │   │   ├── wav2vec2-german-with-lm_results.json
-│   │   │   ├── wav2vec2-german_results.csv
-│   │   │   └── wav2vec2-german_results.json
-│   │   └── 20251202_171718/
-│   │       ├── wav2vec2-1b-german-cv11_results.csv
-│   │       ├── wav2vec2-1b-german-cv11_results.json
-│   │       ├── wav2vec2-german-with-lm_results.csv
-│   │       ├── wav2vec2-german-with-lm_results.json
-│   │       ├── whisper-large-v2_results.csv
-│   │       ├── whisper-large-v2_results.json
-│   │       ├── whisper-large-v3_results.csv
-│   │       ├── whisper-large-v3_results.json
-│   │       ├── whisper-large-v3-turbo_results.csv
-│   │       ├── whisper-large-v3-turbo_results.json
-│   │       ├── whisper-medium_results.csv
-│   │       └── whisper-medium_results.json
+│   └── metrics/
+│       └── 20251202_171718/
+│           ├── wav2vec2-1b-german-cv11_results.csv
+│           ├── wav2vec2-1b-german-cv11_results.json
+│           ├── wav2vec2-german-with-lm_results.csv
+│           ├── wav2vec2-german-with-lm_results.json
+│           ├── whisper-large-v2_results.csv
+│           ├── whisper-large-v2_results.json
+│           ├── whisper-large-v3_results.csv
+│           ├── whisper-large-v3_results.json
+│           ├── whisper-large-v3-turbo_results.csv
+│           ├── whisper-large-v3-turbo_results.json
+│           ├── whisper-medium_results.csv
+│           └── whisper-medium_results.json
 ├── scripts/
 │   ├── adapt_on_cloud.sh
 │   ├── analyze_errors.py
@@ -288,12 +280,12 @@ cp-swiss-german-asr/
 ├── src/
 │   ├── __init__.py
 │   ├── config.py
-│   ├── __pycache__/
+│   ├── __pycache__/         # gitignored
 │   ├── backend/
 │   │   ├── __init__.py
 │   │   ├── endpoints.py
 │   │   ├── models.py
-│   │   └── __pycache__/
+│   │   └── __pycache__/     # gitignored
 │   ├── data/
 │   │   ├── __init__.py
 │   │   ├── collator.py
@@ -302,27 +294,33 @@ cp-swiss-german-asr/
 │   │   └── splitter.py
 │   ├── evaluation/
 │   │   ├── __init__.py
+│   │   ├── error_analyzer.py
 │   │   ├── evaluator.py
+│   │   ├── evaluator.py.backup_pre_ssh_fix
 │   │   ├── metrics.py
-│   │   └── __pycache__/
+│   │   └── __pycache__/     # gitignored
 │   ├── frontend/
 │   │   ├── app.py
 │   │   ├── components/
 │   │   │   ├── __init__.py
 │   │   │   ├── data_table.py
 │   │   │   ├── dialect_breakdown.py
+│   │   │   ├── error_sample_viewer.py
 │   │   │   ├── model_comparison.py
+│   │   │   ├── plotly_charts.py
 │   │   │   ├── sidebar.py
 │   │   │   ├── statistics_panel.py
-│   │   │   └── __pycache__/
+│   │   │   ├── terminology_panel.py
+│   │   │   └── __pycache__/  # gitignored
 │   │   └── utils/
 │   │       ├── __init__.py
 │   │       ├── data_loader.py
-│   │       └── __pycache__/
+│   │       ├── error_data_loader.py
+│   │       └── __pycache__/  # gitignored
 │   ├── models/
 │   │   ├── mms_model.py
 │   │   ├── wav2vec2_model.py
-│   │   └── __pycache__/
+│   │   └── __pycache__/      # gitignored
 │   ├── training/
 │   │   └── trainer.py
 │   └── utils/
@@ -333,6 +331,55 @@ cp-swiss-german-asr/
 │       └── logging_config.py
 └── tests/
     ├── __init__.py
-    ├── test_evaluation.py
-    └── __pycache__/
+    ├── conftest.py
+    ├── README.md
+    ├── __pycache__/          # gitignored
+    ├── e2e/
+    │   ├── __init__.py
+    │   ├── conftest.py
+    │   ├── test_api_workflow.py
+    │   └── test_evaluation_workflow.py
+    ├── fixtures/
+    │   ├── __init__.py
+    │   ├── audio/
+    │   │   ├── sample_be_1.wav
+    │   │   ├── sample_vs_3.wav
+    │   │   └── sample_zh_2.wav
+    │   └── data/
+    │       ├── mock_results.json
+    │       └── mock_swiss_german.tsv
+    ├── integration/
+    │   ├── __init__.py
+    │   ├── conftest.py
+    │   ├── test_backend_endpoints.py
+    │   ├── test_data_pipeline.py
+    │   └── test_model_evaluation.py
+    └── unit/
+        ├── __init__.py
+        ├── conftest.py
+        ├── __pycache__/      # gitignored
+        ├── backend/
+        │   ├── __init__.py
+        │   └── test_pydantic_models.py
+        ├── data_tests/
+        │   ├── __init__.py
+        │   ├── test_collator.py
+        │   ├── test_loader.py
+        │   ├── test_preprocessor.py
+        │   └── test_splitter.py
+        ├── evaluation/
+        │   ├── __init__.py
+        │   ├── test_error_analyzer.py
+        │   ├── test_evaluator.py
+        │   └── test_metrics.py
+        ├── model_tests/
+        │   ├── __init__.py
+        │   ├── test_mms_model.py
+        │   └── test_wav2vec2_model.py
+        └── utils/
+            ├── __init__.py
+            ├── test_audio_utils.py
+            ├── test_checkpoint_manager.py
+            ├── test_file_utils.py
+            └── test_logging_config.py
 ```
