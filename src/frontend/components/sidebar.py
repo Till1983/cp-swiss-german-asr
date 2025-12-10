@@ -25,22 +25,12 @@ def filter_dataframe(
 
 
 def render_sidebar(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
-    """
-    Render sidebar with filtering and metric selection options.
+    """Render sidebar with filtering and metric selection options."""
     
-    Args:
-        df: DataFrame with results data
-        
-    Returns:
-        Tuple of (filtered_df, selected_metric)
-    """
     st.sidebar.header("Filters & Settings")
     
-    # Get unique values for filters
+    # Get unique values
     available_dialects = sorted(df['dialect'].unique())
-    
-    # NOTE: Model selection is now handled in app.py main sidebar (multiselect)
-    # Removed duplicate "Select Models" filter to avoid confusion
     
     # Dialect selection
     selected_dialects = st.sidebar.multiselect(
@@ -58,22 +48,29 @@ def render_sidebar(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
         help="Choose which metric to visualize"
     )
     
-    # Filter the dataframe (only by dialect now, models are filtered in app.py)
+    # Filter dataframe
     filtered_df = filter_dataframe(df, selected_dialects)
     
     # Show filtering information
     st.sidebar.divider()
     
-    # Get model count - handle both single and multi-model cases
-    model_count = 1
-    if 'model' in df.columns:
-        model_count = df['model'].nunique()
+    # Calculate counts
+    model_count = df['model'].nunique() if 'model' in df.columns else 1
+    
+    # FIX 1: Separate real dialects from OVERALL
+    real_dialects = [d for d in selected_dialects if d != 'OVERALL']
+    dialect_count = len(real_dialects)
+    
+    # FIX 2: Show data dimensions instead of misleading "samples"
+    dialect_text = f"🗣️ Dialects: {dialect_count}"
+    if 'OVERALL' in selected_dialects:
+        dialect_text += " (+ OVERALL)"
     
     st.sidebar.info(
         f"**Filtered Results:**\n\n"
-        f"📊 Total samples: {len(filtered_df)}\n\n"
         f"🤖 Models: {model_count}\n\n"
-        f"🗣️ Dialects: {len(selected_dialects)}"
+        f"{dialect_text}\n\n"
+        f"📊 Data points: {len(filtered_df)}"  # Changed from "Total samples"
     )
     
     return filtered_df, selected_metric.lower()
