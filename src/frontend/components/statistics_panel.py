@@ -1,5 +1,10 @@
 import streamlit as st
 
+"""
+Statistics Panel Component for Swiss German ASR Dashboard
+Provides clear explanations of key ASR metrics used throughout the dashboard.
+"""
+
 def render_metrics_definitions():
     """
     Render an expandable section with metrics definitions, formulas, and explanations.

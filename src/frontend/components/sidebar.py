@@ -4,24 +4,19 @@ import pandas as pd
 
 def filter_dataframe(
     df: pd.DataFrame,
-    selected_models: List[str],
     selected_dialects: List[str]
 ) -> pd.DataFrame:
     """
-    Filter DataFrame based on selected models and dialects.
+    Filter DataFrame based on selected dialects.
     
     Args:
-        df: DataFrame with model and dialect columns
-        selected_models: List of model names to include
+        df: DataFrame with dialect column
         selected_dialects: List of dialect codes to include
         
     Returns:
         Filtered DataFrame
     """
     filtered_df = df.copy()
-    
-    if selected_models:
-        filtered_df = filtered_df[filtered_df['model'].isin(selected_models)]
     
     if selected_dialects:
         filtered_df = filtered_df[filtered_df['dialect'].isin(selected_dialects)]
@@ -30,28 +25,12 @@ def filter_dataframe(
 
 
 def render_sidebar(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
-    """
-    Render sidebar with filtering and metric selection options.
+    """Render sidebar with filtering and metric selection options."""
     
-    Args:
-        df: DataFrame with results data
-        
-    Returns:
-        Tuple of (filtered_df, selected_metric)
-    """
     st.sidebar.header("Filters & Settings")
     
-    # Get unique values for filters
-    available_models = sorted(df['model'].unique()) if 'model' in df.columns else []
+    # Get unique values
     available_dialects = sorted(df['dialect'].unique())
-    
-    # Model selection
-    selected_models = st.sidebar.multiselect(
-        "Select Models",
-        options=available_models,
-        default=available_models,
-        help="Choose which models to display"
-    )
     
     # Dialect selection
     selected_dialects = st.sidebar.multiselect(
@@ -69,16 +48,27 @@ def render_sidebar(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
         help="Choose which metric to visualize"
     )
     
-    # Filter the dataframe
-    filtered_df = filter_dataframe(df, selected_models, selected_dialects)
+    # Filter dataframe
+    filtered_df = filter_dataframe(df, selected_dialects)
     
     # Show filtering information
     st.sidebar.divider()
+    
+    # Calculate counts
+    model_count = df['model'].nunique() if 'model' in df.columns else 1
+    
+    real_dialects = [d for d in selected_dialects if d != 'OVERALL']
+    dialect_count = len(real_dialects)
+    
+    dialect_text = f"🗣️ Dialects: {dialect_count}"
+    if 'OVERALL' in selected_dialects:
+        dialect_text += " (+ OVERALL)"
+    
     st.sidebar.info(
         f"**Filtered Results:**\n\n"
-        f"📊 Total samples: {len(filtered_df)}\n\n"
-        f"🤖 Models: {len(selected_models)}\n\n"
-        f"🗣️ Dialects: {len(selected_dialects)}"
+        f"🤖 Models: {model_count}\n\n"
+        f"{dialect_text}\n\n"
+        f"📊 Data points: {len(filtered_df)}"  # Changed from "Total samples"
     )
     
     return filtered_df, selected_metric.lower()

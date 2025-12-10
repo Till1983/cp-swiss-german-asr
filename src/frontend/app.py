@@ -1,15 +1,15 @@
 import streamlit as st
 from pathlib import Path
+from typing import List
 import plotly.graph_objects as go
 import plotly.io as pio
-from utils.data_loader import load_data
-from utils.data_loader import get_available_results
-from utils.data_loader import combine_model_results
+from utils.data_loader import get_available_results, combine_multiple_models
 from components.sidebar import render_sidebar
 from components.model_comparison import compare_models, _get_performance_category
 from components.dialect_breakdown import create_aggregate_comparison, render_per_dialect_analysis
 from components.data_table import display_data_table, display_summary_statistics, download_filtered_data
 from components.statistics_panel import render_metrics_definitions
+from components.terminology_panel import render_terminology_definitions
 from components.plotly_charts import create_wer_by_dialect_chart, create_metric_comparison_chart
 
 # Configure Plotly theme to match Streamlit
@@ -62,23 +62,35 @@ if not available_models:
     st.warning("No evaluation results found. Please run the evaluation script first.")
     st.stop()
 
-# Model selection
+# Model selection - Multi-select for comparison
 st.sidebar.header("Model Selection")
-selected_model = st.sidebar.selectbox(
-    "Choose a model to analyze:",
+selected_models = st.sidebar.multiselect(
+    "Choose models to compare:",
     options=list(available_models.keys()),
-    index=0
+    default=[list(available_models.keys())[0]],  # Default to first model
+    help="Select one or more models to analyze and compare"
 )
 
-# Load selected model data
-model_files = available_models[selected_model]
-if len(model_files) == 1:
-    df = load_data(model_files[0]['csv_path'])  # Access csv_path from dict
-else:
-    df = combine_model_results(model_files)
+# Show selection summary
+if len(selected_models) > 1:
+    st.sidebar.success(f"✅ Comparing {len(selected_models)} models")
+elif len(selected_models) == 1:
+    st.sidebar.info(f"📊 Analyzing: {selected_models[0]}")
+
+# Validate selection
+if not selected_models:
+    st.warning("⚠️ Please select at least one model to analyze.")
+    st.stop()
+
+# Load data for all selected models
+try:
+    df = combine_multiple_models(selected_models, available_models)
+except ValueError as e:
+    st.error(f"❌ Failed to load model data: {e}")
+    st.stop()
 
 if df.empty:
-    st.error("No data available for the selected model.")
+    st.error("No data available for the selected models.")
     st.stop()
 
 # Apply sidebar filters
@@ -111,14 +123,69 @@ def prepare_chart_data(dataframe, metric: str) -> dict:
                 zip(model_data['dialect'], model_data[metric])
             )
     else:
-        # Single model case - use selected_model as key
-        chart_data[selected_model] = dict(
+        # Single model case - should not happen with new implementation, but keep as fallback
+        chart_data['Unknown Model'] = dict(
             zip(dialect_df['dialect'], dialect_df[metric])
         )
     
     return chart_data
 
-# Tab structure placeholder
+
+def abbreviate_model_name(model_name: str, max_length: int = 15) -> str:
+    """
+    Abbreviate model name for file naming.
+    
+    Args:
+        model_name: Full model name
+        max_length: Maximum length of abbreviated name
+        
+    Returns:
+        Abbreviated model name
+    """
+    # Common abbreviations
+    abbreviations = {
+        'whisper-': 'w-',
+        'wav2vec2-': 'w2v2-',
+        'large-v3-turbo': 'lv3t',
+        'large-v3': 'lv3',
+        'large-v2': 'lv2',
+        'large': 'lg',
+        'medium': 'md',
+        'small': 'sm',
+        'base': 'bs',
+        'tiny': 'tn',
+        'german-with-lm': 'de-lm',
+        'german': 'de',
+    }
+    
+    abbreviated = model_name
+    for full, abbr in abbreviations.items():
+        abbreviated = abbreviated.replace(full, abbr)
+    
+    return abbreviated[:max_length]
+
+
+def create_download_filename(selected_models: List[str], suffix: str = "overview") -> str:
+    """
+    Create a clean filename for downloads.
+    
+    Args:
+        selected_models: List of selected model names
+        suffix: File suffix (e.g., "overview", "detailed")
+        
+    Returns:
+        Filename string without extension
+    """
+    if len(selected_models) == 1:
+        return f"{selected_models[0]}_{suffix}"
+    elif len(selected_models) <= 3:
+        abbreviated = "_".join([abbreviate_model_name(m) for m in selected_models])
+        return f"{abbreviated}_{suffix}"
+    else:
+        return f"multi_model_{len(selected_models)}x_{suffix}"
+
+
+# Tab structure
 st.markdown("---")
 tab1, tab2, tab3, tab4 = st.tabs([
     "📊 Overview",
@@ -128,12 +195,12 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 with tab1:  # Overview
-    st.header("Overview")
+    st.header("📊 Overview")
     
     # Render metrics definitions contextually
     render_metrics_definitions()
     
-    # Display aggregate comparison only when comparing multiple models
+    # Display aggregate comparison when comparing multiple models
     if 'model' in filtered_df.columns and filtered_df['model'].nunique() > 1:
         st.subheader("Model Comparison")
         fig_agg = create_aggregate_comparison(
@@ -166,8 +233,9 @@ with tab1:  # Overview
     dialect_only_df = filtered_df[filtered_df['dialect'] != 'OVERALL']
     display_summary_statistics(dialect_only_df)
     
-    # Add download button
-    download_filtered_data(filtered_df, filename_prefix=f"{selected_model}_overview")
+    # Add download button with improved filename
+    download_filename = create_download_filename(selected_models, "overview")
+    download_filtered_data(filtered_df, filename_prefix=download_filename)
     
     st.divider()
     st.subheader("Full Results Table")
@@ -179,25 +247,25 @@ with tab1:  # Overview
         height=400
     )
 
-with tab2:
-    st.header("Dialect Analysis")
+with tab2:  # Dialect Analysis
+    st.header("🗺️ Dialect Analysis")
     
     # Show metrics by dialect
     if not filtered_df.empty:
         st.subheader(f"{selected_metric.upper()} by Dialect")
         
-        # Check if we have multiple models OR multiple timestamps for the same model
+        # Check if we have multiple models
         has_model_column = 'model' in filtered_df.columns
         multiple_models = has_model_column and filtered_df['model'].nunique() > 1
         
-        # Use new plotly_charts for dialect comparison
-        if has_model_column and (multiple_models or len(model_files) > 1):
+        # Use plotly_charts for dialect comparison
+        if multiple_models:
             st.subheader("Model Comparison Across Dialects")
             
             # Prepare data for plotly_charts
             chart_data = prepare_chart_data(filtered_df, selected_metric)
             
-            # Use new create_metric_comparison_chart
+            # Create multi-model comparison chart
             fig_dialect = create_metric_comparison_chart(
                 data=chart_data,
                 metric_name=selected_metric.upper(),
@@ -224,7 +292,7 @@ with tab2:
             st.dataframe(styled_comparison, use_container_width=True)
             st.divider()
         
-        # Create color-coded bar chart for selected metric using new component
+        # Create color-coded bar chart for selected metric
         st.subheader(f"{selected_metric.upper()} Distribution")
         st.markdown("""
         **Quality Scale:** 
@@ -268,24 +336,29 @@ with tab2:
         st.dataframe(styled_dialect, use_container_width=True, hide_index=True)
         
         # ============================================================
-        # DAY 6: PER-DIALECT ANALYSIS WITH ERROR BREAKDOWN
+        # PER-DIALECT ANALYSIS WITH ERROR BREAKDOWN
         # ============================================================
         st.divider()
         
         # Render the comprehensive per-dialect analysis view
-        render_per_dialect_analysis(
-            df=filtered_df,
-            error_analysis_dir="results/error_analysis",
-            selected_model=selected_model
-        )
+        # Note: For multi-model, we show analysis for the first selected model
+        primary_model = selected_models[0] if selected_models else None
+        if primary_model:
+            if len(selected_models) > 1:
+                st.info(f"📊 Showing detailed dialect analysis for: **{primary_model}**")
+            render_per_dialect_analysis(
+                df=filtered_df,
+                error_analysis_dir="results/error_analysis",
+                selected_model=primary_model
+            )
         
     else:
         st.warning("No data available with current filters.")
 
 with tab3:  # Detailed Metrics
-    st.header("Detailed Metrics")
+    st.header("📈 Detailed Metrics")
     
-    # Add WER by dialect chart using new component
+    # Add WER by dialect chart
     if not filtered_df.empty and 'wer' in filtered_df.columns:
         st.subheader("WER Comparison by Dialect")
         wer_chart_data = prepare_chart_data(filtered_df, 'wer')
@@ -333,17 +406,27 @@ with tab3:  # Detailed Metrics
         rows_per_page=50
     )
     
-    # Add download
-    download_filtered_data(filtered_df, filename_prefix=f"{selected_model}_detailed")
+    # Add download with improved filename
+    download_filename = create_download_filename(selected_models, "detailed")
+    download_filtered_data(filtered_df, filename_prefix=download_filename)
 
-with tab4:
+with tab4:  # Sample Predictions
     st.header("🔍 Error Analysis & Sample Inspection")
     
+    # Render terminology definitions for context: Reference, Hypothesis, Word-Level Alignment
+    render_terminology_definitions()
+
     # Import the error sample viewer
     from components.error_sample_viewer import render_worst_samples_viewer
     
-    # Render the worst samples viewer
-    render_worst_samples_viewer(
-        error_analysis_dir="results/error_analysis",
-        selected_model=selected_model
-    )
+    # Show analysis for the first selected model
+    primary_model = selected_models[0] if selected_models else None
+    if primary_model:
+        if len(selected_models) > 1:
+            st.info(f"📊 Showing error analysis for: **{primary_model}**")
+        
+        # Render the worst samples viewer
+        render_worst_samples_viewer(
+            error_analysis_dir="results/error_analysis",
+            selected_model=primary_model
+        )

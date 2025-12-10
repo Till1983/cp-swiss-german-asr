@@ -17,7 +17,8 @@ import pandas as pd
 from pathlib import Path
 from typing import Dict, Optional
 from datetime import datetime, timedelta
-from tqdm import tqdm  # ← ADD THIS IMPORT
+from tqdm import tqdm  
+from transformers import WhisperProcessor, WhisperForConditionalGeneration 
 from src.evaluation import metrics
 from src.models.wav2vec2_model import Wav2Vec2Model
 from src.models.mms_model import MMSModel
@@ -29,13 +30,13 @@ class ASREvaluator:
         Initialize the ASR Evaluator.
         
         Args:
-            model_type: 'whisper', 'wav2vec2', or 'mms'
+            model_type: 'whisper', 'whisper-hf', 'wav2vec2', or 'mms'
             model_name: Model identifier
             device: Device string
             lm_path: Optional path to KenLM file
         """
-        if model_type not in ["whisper", "wav2vec2", "mms"]:
-            raise ValueError(f"model_type must be 'whisper', 'wav2vec2', or 'mms', got: {model_type}")
+        if model_type not in ["whisper", "whisper-hf", "wav2vec2", "mms"]:
+            raise ValueError(f"model_type must be 'whisper', 'whisper-hf', 'wav2vec2', or 'mms', got: {model_type}")
 
         self.model_type = model_type
         self.model_name = model_name
@@ -45,6 +46,7 @@ class ASREvaluator:
             else ("mps" if torch.backends.mps.is_available() else "cpu")
         )
         self.model = None
+        self.processor = None  # ← used by wav2vec2/mms/whisper-hf if needed
 
     def load_model(self):
         """Load the appropriate model."""
@@ -55,6 +57,17 @@ class ASREvaluator:
                 print("Model loaded successfully.")
             except Exception as e:
                 raise RuntimeError(f"Failed to load Whisper model: {e}") from e
+
+        elif self.model_type == "whisper-hf":
+            print(f"Loading Hugging Face Whisper model '{self.model_name}' on {self.device}...")
+            try:
+                self.processor = WhisperProcessor.from_pretrained(self.model_name)
+                self.model = WhisperForConditionalGeneration.from_pretrained(self.model_name)
+                self.model.to(self.device)
+                self.model.eval()
+                print("HF Whisper model loaded successfully.")
+            except Exception as e:
+                raise RuntimeError(f"Failed to load HF Whisper model: {e}") from e
 
         elif self.model_type == "wav2vec2":
             # ✅ FIX: Wav2Vec2Model.__init__() handles all loading
@@ -98,6 +111,33 @@ class ASREvaluator:
                 fp16=False            # UNCONDITIONAL FP32 for reproducibility
             )
             return result['text']
+
+        elif self.model_type == "whisper-hf":
+            if self.model is None or self.processor is None:
+                raise RuntimeError("HF Whisper model not loaded. Call load_model() first.")
+
+            # reuse whisper's audio loader → 16 kHz mono float32 numpy array
+            audio = whisper.load_audio(str(audio_path))
+
+            inputs = self.processor(
+                audio,
+                sampling_rate=16000,
+                return_tensors="pt"
+            )
+            input_features = inputs.input_features.to(self.device)
+
+            with torch.no_grad():
+                predicted_ids = self.model.generate(
+                    input_features,
+                    language="de",
+                    task="transcribe",
+                )
+
+            transcription = self.processor.batch_decode(
+                predicted_ids, skip_special_tokens=True
+            )[0].strip()
+            return transcription
+
         elif self.model_type in ["wav2vec2", "mms"]:
             # ✅ FIX: Wav2Vec2Model/MMSModel.transcribe() returns Dict[str, str]
             # Must extract 'text' key to get the actual transcription string
