@@ -8,21 +8,23 @@ The Swiss German ASR Dashboard is a Streamlit-based web application for visualiz
 
 - [Overview](#overview)
 - [Installation](#installation)
-    - [Requirements](#requirements)
-    - [Quick Start](#quick-start)
+  - [Requirements](#requirements)
+  - [Quick Start](#quick-start)
 - [Screenshots](#screenshots)
-    - [Main Dashboard View](#main-dashboard-view)
-    - [Multi-Model Comparison - Overview](#multi-model-comparison---overview)
-    - [Multi-Model Comparison - Dialect Analysis](#multi-model-comparison---dialect-analysis)
-    - [Dialect Analysis - Single Model](#dialect-analysis---single-model)
-    - [Per-Dialect Analysis](#per-dialect-analysis)
-    - [Error Analysis](#error-analysis)
-    - [Detailed Metrics](#detailed-metrics)
-    - [Sample Inspection](#sample-inspection)
+  - [Main Dashboard View](#main-dashboard-view)
+  - [Sidebar Overview](#sidebar-overview)
+  - [Sidebar Model Selection Dropdown](#sidebar-model-selection-dropdown)
+  - [Multi-Model Comparison - Overview](#multi-model-comparison---overview)
+  - [Multi-Model Comparison - Dialect Analysis](#multi-model-comparison---dialect-analysis)
+  - [Dialect Analysis - Single Model](#dialect-analysis---single-model)
+  - [Per-Dialect Analysis](#per-dialect-analysis)
+  - [Error Analysis](#error-analysis)
+  - [Detailed Metrics](#detailed-metrics)
+  - [Sample Inspection](#sample-inspection)
 - [Usage Guide](#usage-guide)
-    - [Navigation](#navigation)
-    - [Using Filters](#using-filters)
-    - [Interpreting Charts](#interpreting-charts)
+  - [Navigation](#navigation)
+  - [Using Filters](#using-filters)
+  - [Interpreting Charts](#interpreting-charts)
 - [Components](#components)
 - [Known Limitations](#known-limitations)
 - [Troubleshooting](#troubleshooting)
@@ -56,14 +58,14 @@ docker compose up dashboard
 4. **Explore the dashboard:**
    - Select one or more models from the sidebar multiselect (e.g., "whisper-small", "whisper-medium")
    - Use filters to narrow results:
-     - **Models:** Compare multiple models simultaneously
-     - **Dialects:** Focus on specific Swiss German variants
-     - **Metric:** Switch between WER, CER, or BLEU
+   - **Models:** Compare multiple models simultaneously
+   - **Dialects:** Focus on specific Swiss German variants
+   - **Metric:** Switch between WER, CER, or BLEU
    - Navigate tabs:
-     - **Overview:** Aggregate metrics and summary statistics
-     - **Dialect Analysis:** Per-canton performance breakdown
-     - **Detailed Metrics:** Comprehensive metric visualizations
-     - **Sample Predictions:** Error analysis and sample inspection
+   - **Overview:** Aggregate metrics and summary statistics
+   - **Dialect Analysis:** Per-canton performance breakdown
+   - **Detailed Metrics:** Comprehensive metric visualizations
+   - **Sample Predictions:** Error analysis and sample inspection
 
 5. To stop the dashboard, press `CTRL + C` in the terminal
 
@@ -85,7 +87,60 @@ The Overview tab provides aggregate performance metrics at a glance:
 
 ---
 
-### 2. Multi-Model Comparison - Overview Tab
+### 2. Sidebar Overview
+![Sidebar Complete](../images/sidebar-complete.png)
+
+**Location:** Left panel visible across all dashboard tabs
+
+**Key Components:**
+- **Title:** "Swiss German ASR Evaluation Dashboard"
+- **Help Icon:** Info button (?) for contextual help
+- **Model Selection Section:** "Choose models to compare" dropdown
+  - Currently selected: whisper-large-v3 (displayed in red pill)
+  - Dropdown indicator showing expandable menu
+  - Clear button (×) to remove selection
+- **Filters & Settings Section:** Collapsible panel containing:
+  - **Select Dialects:** Multi-select with 17 Swiss German variants (AG, BE, BL, FR, GL, GR, LU, NW, SG, SH, SO, SZ, TG, UR, VS, ZG, ZH)
+  - **Select Metric:** Radio button group for WER, CER, BLEU selection
+- **Color Scheme:** Dark background with white text, red accent pills for selections
+- **Responsive Width:** Adapts to screen size while maintaining readability
+
+**Use Case:** The sidebar is the primary control interface for the entire dashboard. All filtering, model selection, and metric choices originate here. Users interact with this panel on every page view.
+
+---
+
+### 3. Sidebar Model Selection Dropdown
+![Sidebar Model Selection Dropdown](../images/sidebar-model-selection-dropdown-menu.png)
+
+**Location:** Sidebar | **Section:** "Choose models to compare"
+
+**Dropdown Features:**
+- **Currently Selected:** whisper-large-v3 (displayed in red pill with × close button)
+- **Available Models Listed:**
+  - wav2vec2-german-with-lm
+  - whisper-medium
+  - whisper-large-v3-turbo
+  - whisper-large-v2
+  - wav2vec2-1b-german-cv11
+  - (scrollable list for additional models)
+- **Multi-Select Capability:** Check multiple boxes to compare 2-4 models simultaneously
+- **Search/Filter:** Textbox at top allows filtering model names (not shown in this view)
+- **Dropdown Toggle:** Down arrow (▼) indicates expandable state
+
+**Interaction Pattern:**
+1. Click dropdown to expand available models
+2. Select 1 model for single-model analysis
+3. Select 2-4 models for multi-model comparison mode
+4. Selected models appear as red pills above dropdown
+5. Click × on pill to deselect individual model
+
+**Key Insight:** This is the primary entry point for analysis mode selection. Single vs. multi-model comparison is determined entirely by number of selections here.
+
+**Use Case:** Model selection is the first decision users make. The dropdown interface supports both focused single-model analysis and comparative multi-model evaluation workflows.
+
+---
+
+### 4. Multi-Model Comparison - Overview Tab
 ![Multi-Model Comparison Overview](../images/multi-model-comparison-overview.png)
 
 **Tab:** Overview | **Models:** whisper-medium, whisper-large-v2, whisper-large-v3, whisper-large-v3-turbo
@@ -110,7 +165,7 @@ The Overview tab provides aggregate performance metrics at a glance:
 
 ---
 
-### 3. Multi-Model Comparison - Dialect Analysis Tab ⭐ RECOMMENDED
+### 5. Multi-Model Comparison - Dialect Analysis Tab ⭐ RECOMMENDED
 ![Multi-Model Comparison Dialect](../images/multi-model-comparison-dialect-analysis.png)
 
 **Tab:** Dialect Analysis | **Models:** whisper-medium, whisper-large-v2, whisper-large-v3, whisper-large-v3-turbo
@@ -141,7 +196,7 @@ The Overview tab provides aggregate performance metrics at a glance:
 
 ---
 
-### 4. Dialect Analysis - Single Model WER Distribution
+### 6. Dialect Analysis - Single Model WER Distribution
 ![Dialect Analysis](../images/dialect-analysis.png)
 
 **Tab:** Dialect Analysis | **Model:** whisper-medium (single model mode)
@@ -155,13 +210,13 @@ The Overview tab provides aggregate performance metrics at a glance:
 - All 17 Swiss German dialects displayed
 - Numeric WER labels on each bar for precise values
 
-**Comparison to Multi-Model View:** Same data as Screenshot 3 but simplified for single-model analysis. Color coding helps identify problem areas without cross-model clutter.
+**Comparison to Multi-Model View:** Same data as Screenshot 5 but simplified for single-model analysis. Color coding helps identify problem areas without cross-model clutter.
 
 **Use Case:** Detailed single-model analysis to identify dialect-specific challenges for targeted improvements.
 
 ---
 
-### 5. Per-Dialect Analysis - Deep Dive (Zurich)
+### 7. Per-Dialect Analysis - Deep Dive (Zurich)
 ![Per-Dialect Analysis](../images/per-dialect-analysis.png)
 
 **Tab:** Dialect Analysis (scrolled down) | **Model:** whisper-medium | **Selected Dialect:** ZH (Zurich)
@@ -192,14 +247,14 @@ The Overview tab provides aggregate performance metrics at a glance:
 
 ---
 
-### 6. Error Analysis - Confusion Pattern Breakdown
+### 8. Error Analysis - Confusion Pattern Breakdown
 ![Error Analysis](../images/error-analysis.png)
 
 **Tab:** Dialect Analysis (scrolled down) | **Model:** whisper-large-v2 | **Dialect:** ZH
 
 **Alternative View:** Same per-dialect analysis feature, different model.
 
-**Comparison to Screenshot 5:**
+**Comparison to Screenshot 7:**
 - **Similar error distribution:** 76.7% substitutions vs 77.7% (whisper-medium)
 - **Different confusion pairs:** Shows model-specific error patterns
   - "große" → "grosse" (Swiss spelling variant)
@@ -210,7 +265,7 @@ The Overview tab provides aggregate performance metrics at a glance:
 
 ---
 
-### 7. Detailed Metrics - Cross-Dialect Comparison
+### 9. Detailed Metrics - Cross-Dialect Comparison
 ![Detailed Metrics](../images/detailed-metrics.png)
 
 **Tab:** Detailed Metrics | **Model:** whisper-large-v3 (single model)
@@ -227,7 +282,7 @@ The Overview tab provides aggregate performance metrics at a glance:
 
 ---
 
-### 8. Sample Inspection - Worst-Performing Samples Filter
+### 10. Sample Inspection - Worst-Performing Samples Filter
 ![Sample Inspection Filter](../images/sample-inspection-01.png)
 
 **Tab:** Sample Predictions | **Model:** whisper-large-v3-turbo
@@ -246,7 +301,7 @@ The Overview tab provides aggregate performance metrics at a glance:
 
 ---
 
-### 9. Sample Inspection - Word-Level Alignment Visualization
+### 11. Sample Inspection - Word-Level Alignment Visualization
 ![Sample Inspection Detail](../images/sample-inspection-02.png)
 
 **Tab:** Sample Predictions | **Sample:** 1 of 86 | **Dialect:** SO (Solothurn)
