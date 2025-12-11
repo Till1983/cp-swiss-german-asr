@@ -77,6 +77,18 @@ class TestValidateAudioFile:
         # The function expects str, so we pass str(Path)
         assert validate_audio_file(str(sample_audio_path)) is True
 
+    @pytest.mark.unit
+    @patch('librosa.get_duration')
+    @patch('src.utils.audio_utils.Path')
+    def test_validate_audio_file_exception_returns_false(self, mock_path, mock_duration, sample_audio_path):
+        """Test that exceptions inside validate_audio_file return False."""
+        # Force Path() constructor inside validate_audio_file to raise
+        mock_path.side_effect = Exception("Path failure")
+
+        result = validate_audio_file(str(sample_audio_path))
+
+        assert result is False
+
 
 class TestGetAudioDuration:
     """Test suite for get_audio_duration function."""

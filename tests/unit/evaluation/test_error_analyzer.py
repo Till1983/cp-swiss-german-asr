@@ -389,3 +389,70 @@ class TestErrorAnalyzer:
         assert 'ZH' in analysis
         assert analysis['BE']['sample_count'] == 1
         assert analysis['ZH']['sample_count'] == 1
+
+    def test_get_alignment_leftover_words_after_substitution(self, analyzer):
+        """Test alignment with unequal word counts after applying substitutions."""
+        # This tests lines 82-87 in error_analyzer.py
+        # When ref and hyp have different lengths after processing substitutions
+        ref = "a b c d e"
+        hyp = "a b c"  # Missing 'd e'
+        
+        alignment = analyzer.get_alignment(ref, hyp)
+        
+        # Should have correct matches for a, b, c, then deletions for d, e
+        types = [item['type'] for item in alignment]
+        assert types.count('correct') == 3
+        assert types.count('deletion') == 2
+        
+        # Verify the deletion items
+        deletions = [item for item in alignment if item['type'] == 'deletion']
+        assert len(deletions) == 2
+        assert deletions[0]['ref'] == 'd'
+        assert deletions[1]['ref'] == 'e'
+        
+    def test_get_alignment_leftover_insertions_after_substitution(self, analyzer):
+        """Test alignment with extra hyp words after applying substitutions."""
+        # This also tests lines 82-87 (the elif h branch)
+        ref = "a b c"
+        hyp = "a b c d e"  # Extra 'd e'
+        
+        alignment = analyzer.get_alignment(ref, hyp)
+        
+        # Should have correct matches for a, b, c, then insertions for d, e
+        types = [item['type'] for item in alignment]
+        assert types.count('correct') == 3
+        assert types.count('insertion') == 2
+        
+        # Verify the insertion items
+        insertions = [item for item in alignment if item['type'] == 'insertion']
+        assert len(insertions) == 2
+        assert insertions[0]['hyp'] == 'd'
+        assert insertions[1]['hyp'] == 'e'
+
+    def test_get_alignment_substitute_branch_with_mock(self, analyzer, monkeypatch):
+        """Force substitute alignment with uneven lengths to hit deletion/ insertion paths."""
+
+        class DummyChunk:
+            def __init__(self, type_, r_start, r_end, h_start, h_end):
+                self.type = type_
+                self.ref_start_idx = r_start
+                self.ref_end_idx = r_end
+                self.hyp_start_idx = h_start
+                self.hyp_end_idx = h_end
+
+        class DummyOut:
+            def __init__(self):
+                self.references = [["a", "b", "c"]]
+                self.hypotheses = [["x", "y", "z"]]
+                self.alignments = [[
+                    DummyChunk('substitute', 0, 2, 0, 1),  # deletion leftover
+                    DummyChunk('substitute', 2, 3, 1, 3),  # insertion leftover
+                ]]
+
+        monkeypatch.setattr('src.evaluation.error_analyzer.jiwer.process_words', lambda r, h: DummyOut())
+
+        alignment = analyzer.get_alignment("abc", "xyz")
+
+        types = [item['type'] for item in alignment]
+        assert 'deletion' in types
+        assert 'insertion' in types

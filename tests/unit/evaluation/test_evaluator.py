@@ -1,6 +1,7 @@
 """Unit tests for ASR evaluator module."""
 import pytest
 from pathlib import Path
+from datetime import datetime, timedelta
 from unittest.mock import Mock, patch, MagicMock
 import pandas as pd
 import torch
@@ -436,6 +437,172 @@ class TestASREvaluatorEvaluateDataset:
 
         # Should only process 3 samples
         assert result['total_samples'] <= 3
+
+    @pytest.mark.unit
+    def test_whisper_hf_requires_loaded_model(self, temp_dir):
+        """_get_transcription should raise when HF whisper not loaded."""
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper-hf", model_name="tiny")
+        with pytest.raises(RuntimeError, match="HF Whisper model not loaded"):
+            evaluator._get_transcription(temp_dir / "dummy.wav")
+
+    @pytest.mark.unit
+    def test_get_transcription_unknown_model_type(self, temp_dir):
+        """_get_transcription should raise for unknown model_type."""
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.model_type = "unknown"
+        with pytest.raises(ValueError, match="Unknown model_type"):
+            evaluator._get_transcription(temp_dir / "dummy.wav")
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.pd.read_csv')
+    def test_evaluate_dataset_read_failure(self, mock_read_csv, temp_dir):
+        """evaluate_dataset should wrap read_csv failures."""
+        mock_read_csv.side_effect = Exception("read fail")
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.model = Mock()
+        # Ensure metadata path exists so FileNotFoundError is not raised first
+        meta_path = temp_dir / "meta.tsv"
+        meta_path.write_text("path\tsentence\taccent\nfile.wav\tHi\tBE\n")
+
+        with pytest.raises(ValueError, match="Failed to read metadata file"):
+            evaluator.evaluate_dataset(str(meta_path))
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.tqdm')
+    def test_evaluate_dataset_audio_path_outside_base(self, mock_tqdm, temp_dir):
+        """Audio_path outside base should be skipped and counted failed."""
+        class DummyTQDM:
+            def __init__(self, iterable, **kwargs):
+                self.iterable = list(iterable)
+            def __iter__(self):
+                return iter(self.iterable)
+            def close(self):
+                pass
+        mock_tqdm.side_effect = lambda iterable, **kwargs: DummyTQDM(iterable, **kwargs)
+
+        # metadata with audio_path column
+        outside_path = temp_dir.parent / "outside.wav"
+        metadata = temp_dir / "meta.tsv"
+        # Include required path column so evaluate_dataset passes validation
+        metadata.write_text(f"path\taudio_path\tsentence\taccent\nfile.wav\t{outside_path}\tHello\tBE\n")
+
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.model = Mock()
+        evaluator._get_transcription = Mock(return_value="hyp")
+
+        result = evaluator.evaluate_dataset(str(metadata), audio_base_path=temp_dir / "clips")
+
+        assert result['failed_samples'] == 1
+        assert result['total_samples'] == 0  # results list empty
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.tqdm')
+    def test_evaluate_dataset_missing_audio_file_under_base(self, mock_tqdm, temp_dir):
+        """Missing audio file in base path should increment failed_samples."""
+        class DummyTQDM:
+            def __init__(self, iterable, **kwargs):
+                self.iterable = list(iterable)
+            def __iter__(self):
+                return iter(self.iterable)
+            def close(self):
+                pass
+        mock_tqdm.side_effect = lambda iterable, **kwargs: DummyTQDM(iterable, **kwargs)
+
+        clips_dir = temp_dir / "clips"
+        clips_dir.mkdir()
+        metadata = temp_dir / "meta2.tsv"
+        metadata.write_text("path\tsentence\taccent\nmissing.wav\tHello\tBE\n")
+
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.model = Mock()
+        evaluator._get_transcription = Mock(return_value="hyp")
+
+        result = evaluator.evaluate_dataset(str(metadata), audio_base_path=clips_dir)
+
+        assert result['failed_samples'] == 1
+        assert result['total_samples'] == 0
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.tqdm')
+    def test_evaluate_dataset_path_outside_base_without_audio_path_column(self, mock_tqdm, temp_dir):
+        """path column resolving outside base should be counted as failed."""
+        class DummyTQDM:
+            def __init__(self, iterable, **kwargs):
+                self.iterable = list(iterable)
+            def __iter__(self):
+                return iter(self.iterable)
+            def close(self):
+                pass
+        mock_tqdm.side_effect = lambda iterable, **kwargs: DummyTQDM(iterable, **kwargs)
+
+        # path column points to file outside audio_base_path
+        outside_path = temp_dir.parent / "far.wav"
+        metadata = temp_dir / "meta3.tsv"
+        metadata.write_text(f"path\tsentence\taccent\n{outside_path}\tHi\tBE\n")
+
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.model = Mock()
+        evaluator._get_transcription = Mock(return_value="hyp")
+
+        with patch('pathlib.Path.relative_to', side_effect=ValueError):
+            result = evaluator.evaluate_dataset(str(metadata), audio_base_path=temp_dir / "clips")
+
+        assert result['failed_samples'] == 1
+        assert result['total_samples'] == 0
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.datetime')
+    @patch('src.evaluation.evaluator.tqdm')
+    def test_progress_logging_every_ten_samples(self, mock_tqdm, mock_datetime, temp_dir, capsys):
+        """Test evaluate_dataset prints progress every 10 samples."""
+        from src.evaluation.evaluator import ASREvaluator
+
+        # Prepare deterministic datetime values (fixed to avoid StopIteration)
+        base_time = datetime(2024, 1, 1, 0, 0, 0)
+        mock_datetime.now.return_value = base_time
+
+        class DummyTQDM:
+            def __init__(self, iterable, **kwargs):
+                self.iterable = list(iterable)
+            def __iter__(self):
+                return iter(self.iterable)
+            def close(self):
+                pass
+
+        mock_tqdm.side_effect = lambda iterable, **kwargs: DummyTQDM(iterable, **kwargs)
+
+        # Create metadata with 10 samples
+        audio_dir = temp_dir / "clips"
+        audio_dir.mkdir()
+        rows = ["path\tsentence\taccent"]
+        for i in range(10):
+            filename = f"audio_{i}.wav"
+            rows.append(f"{filename}\tSentence {i}\tBE")
+            (audio_dir / filename).touch()
+        metadata = temp_dir / "metadata.tsv"
+        metadata.write_text("\n".join(rows))
+
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.model = Mock()
+        evaluator._get_transcription = Mock(return_value="hyp")
+
+        with patch('src.evaluation.evaluator.FHNW_SWISS_GERMAN_ROOT', temp_dir), \
+             patch('src.evaluation.evaluator.metrics.calculate_wer', return_value=0.0), \
+             patch('src.evaluation.evaluator.metrics.calculate_cer', return_value=0.0), \
+             patch('src.evaluation.evaluator.metrics.calculate_bleu_score', return_value=0.0), \
+             patch('src.evaluation.evaluator.metrics.batch_cer', return_value={'overall_cer': 0.0}), \
+             patch('src.evaluation.evaluator.metrics.batch_bleu', return_value={'overall_bleu': 0.0}):
+            evaluator.evaluate_dataset(str(metadata))
+
+        captured = capsys.readouterr()
+
+        assert "Processed 10/10 samples" in captured.out
 
 
 class TestASREvaluatorMetricsCalculation:

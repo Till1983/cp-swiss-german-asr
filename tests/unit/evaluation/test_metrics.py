@@ -129,6 +129,11 @@ class TestBatchCER:
         result = batch_cer(references, hypotheses)
         assert result["overall_cer"] == 0.0
         assert result["per_sample_cer"] == []
+
+    def test_batch_cer_length_mismatch(self):
+        """Should raise when references and hypotheses lengths differ."""
+        with pytest.raises(ValueError):
+            batch_cer(["a"], [])
     
     def test_batch_cer_multiple_samples(self):
         """Test batch CER with multiple samples"""
@@ -148,6 +153,11 @@ class TestBatchBLEU:
         result = batch_bleu(references, hypotheses)
         assert result["overall_bleu"] == 0.0
         assert result["per_sample_bleu"] == []
+
+    def test_batch_bleu_length_mismatch(self):
+        """Should raise when references and hypotheses lengths differ."""
+        with pytest.raises(ValueError):
+            batch_bleu(["a"], [])
     
     def test_batch_bleu_exact_match(self):
         """BLEU should be 100 for exact matches"""

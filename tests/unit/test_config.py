@@ -1,6 +1,7 @@
 """Unit tests for config module."""
 import pytest
 import os
+import runpy
 from pathlib import Path
 from unittest.mock import patch
 from src.config import (
@@ -85,6 +86,30 @@ class TestEnvironmentConfiguration:
     def test_is_auto_detected_boolean(self):
         """Test that IS_AUTO_DETECTED is a boolean."""
         assert isinstance(IS_AUTO_DETECTED, bool)
+
+    @pytest.mark.unit
+    def test_invalid_environment_defaults_to_local(self):
+        """Test that invalid ENVIRONMENT value defaults to 'local'."""
+        with patch.dict(os.environ, {"ENVIRONMENT": "invalid_env"}):
+            # Re-import to trigger environment validation
+            import importlib
+            import src.config as config_module
+            importlib.reload(config_module)
+            
+            # Should default to 'local' when invalid
+            assert config_module.ENVIRONMENT == "local"
+            # Explicit env value keeps IS_AUTO_DETECTED False
+            assert config_module.IS_AUTO_DETECTED is False
+            
+            # Clean up by reloading again without the patch
+            importlib.reload(config_module)
+
+    @pytest.mark.unit
+    def test_config_main_entrypoint_runs(self, capsys):
+        """Running config as __main__ should not raise and should print checks."""
+        runpy.run_module("src.config", run_name="__main__")
+        out = capsys.readouterr().out
+        assert "Configuration Check" in out
 
 
 class TestPathConfiguration:
