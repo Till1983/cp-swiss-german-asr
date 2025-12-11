@@ -358,6 +358,10 @@ Current status:
 - Coverage: 100%
 - Explicitly tested: checkpoint directory naming with epoch/step/val loss, `save_model()` invocation, `trainer_state.json` creation
 
+### Model Wrapper Import Guards
+
+Wav2Vec2/MMS model wrappers hit ~97% coverage; only untested lines are import-guard warnings for optional `pyctcdecode`/LM paths. These are low risk and covered by the primary code paths.
+
 ### Future Improvements
 
 If mocking becomes easier (e.g., HuggingFace provides test utilities), we can:
@@ -381,11 +385,13 @@ If mocking becomes easier (e.g., HuggingFace provides test utilities), we can:
 - Execution time < 1ms
 
 **Add integration test if:**
+
 - Testing interaction between 2+ components
 - Requires real file system or processors
 - Execution time 100ms-1s
 
 **Add e2e test if:**
+
 - Testing complete user workflow
 - Involves API endpoints or CLI commands
 - Execution time 1-10s
@@ -394,7 +400,7 @@ If mocking becomes easier (e.g., HuggingFace provides test utilities), we can:
 
 Follow the naming convention:
 
-```
+```text
 tests/
 ├── unit/
 │   └── module_name/
@@ -489,6 +495,7 @@ addopts =
 **Issue:** Test fails locally but passes in CI
 
 **Solutions:**
+
 - Check file path assumptions (absolute vs relative)
 - Verify Docker volume mounts: `docker compose config`
 - Ensure test data fixtures are committed to Git
@@ -497,6 +504,7 @@ addopts =
 **Issue:** Flaky test (passes sometimes, fails other times)
 
 **Solutions:**
+
 - Look for race conditions (threading, async)
 - Check for random number generation without seeded fixtures
 - Verify cleanup in teardown (temp files, mock state)
@@ -507,6 +515,7 @@ addopts =
 **Issue:** Coverage report shows missed lines but test runs them
 
 **Solutions:**
+
 - Check if code is in `except` block (may not execute)
 - Verify all branches tested (if/else, try/except)
 - Look for early returns or short-circuits
@@ -515,6 +524,7 @@ addopts =
 **Issue:** Coverage report missing files
 
 **Solutions:**
+
 - Ensure `__init__.py` exists in all packages
 - Check `pytest.ini` source paths: `--cov=src`
 - Verify files aren't in `.coveragerc` exclude list
@@ -525,6 +535,7 @@ addopts =
 **Issue:** Fixture not found
 
 **Solutions:**
+
 - Check fixture is defined in `conftest.py`
 - Verify fixture scope (function/module/session)
 - Ensure test imports fixture correctly
@@ -539,9 +550,9 @@ addopts =
 ```python
 @pytest.fixture
 def temp_file():
-        f = open("temp.txt", "w")
-        yield f
-        f.close()  # Cleanup runs after test
+    f = open("temp.txt", "w")
+    yield f
+    f.close()  # Cleanup runs after test
 ```
 
 - Check for exceptions in test (may skip cleanup)
