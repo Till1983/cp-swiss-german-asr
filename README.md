@@ -332,7 +332,7 @@ Then access at http://localhost:8502
 If you use this work, please cite:
 
 ```bibtex
-@thesis{ermold2024swissgerman,
+@thesis{ermold2025swissgerman,
   author = {Ermold, Till},
   title = {Comparative Evaluation of ASR Models for Swiss German Dialects},
   school = {CODE University of Applied Sciences Berlin},
