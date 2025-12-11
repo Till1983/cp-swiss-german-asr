@@ -97,6 +97,7 @@ cp-swiss-german-asr/
 │   ├── PROJECT-STRUCTURE.md
 │   ├── RUNPOD_POD_PERSISTENCE.md
 │   ├── RUNPOD_WORKFLOW.md
+│   ├── TESTING.md
 │   └── TRAINING_WORKFLOW.md
 ├── early-experiments/       # gitignored (the entire directory - large files)
 │   ├── 20251104_152716/
@@ -357,6 +358,7 @@ cp-swiss-german-asr/
     └── unit/
         ├── __init__.py
         ├── conftest.py
+        ├── test_config.py
         ├── __pycache__/      # gitignored
         ├── backend/
         │   ├── __init__.py
@@ -372,10 +374,16 @@ cp-swiss-german-asr/
         │   ├── test_error_analyzer.py
         │   ├── test_evaluator.py
         │   └── test_metrics.py
+        ├── frontend/
+        │   ├── __init__.py
+        │   └── test_data_loader.py
         ├── model_tests/
         │   ├── __init__.py
         │   ├── test_mms_model.py
         │   └── test_wav2vec2_model.py
+        ├── training/
+        │   ├── __init__.py
+        │   └── test_trainer.py
         └── utils/
             ├── __init__.py
             ├── test_audio_utils.py
