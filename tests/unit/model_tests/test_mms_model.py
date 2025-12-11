@@ -188,6 +188,23 @@ class TestMMSModelTranscribe:
         result = mock_mms_model.transcribe(audio_file)
         assert "text" in result
 
+    @pytest.mark.unit
+    @patch('torchaudio.load')
+    def test_transcribe_uses_greedy_decoding_as_fallback(self, mock_torchaudio, mock_mms_model, temp_dir):
+        """Test transcribe falls back to greedy decoding without LM."""
+        audio_file = temp_dir / "test.wav"
+        audio_file.touch()
+
+        # Mock audio
+        waveform = torch.randn(1, 16000)
+        mock_torchaudio.return_value = (waveform, 16000)
+
+        result = mock_mms_model.transcribe(audio_file)
+
+        # Should use greedy decoding (batch_decode was called)
+        assert mock_mms_model.processor.batch_decode.called
+        assert result["text"] == "transcribed text"
+
 
 class TestMMSModelDecoderInit:
     """Test MMSModel decoder initialization."""
@@ -246,9 +263,152 @@ class TestMMSModelDecoderInit:
 
         assert model.decoder == mock_decoder
 
+    @pytest.mark.unit
+    @patch('src.models.mms_model.AutoProcessor')
+    @patch('src.models.mms_model.Wav2Vec2ForCTC')
+    @patch('src.models.mms_model._HAS_PYCTCDECODE', True)
+    def test_decoder_warns_when_lm_not_found(self, mock_model_class, mock_processor_class, capsys):
+        """Test initialization warns when LM file not found."""
+        mock_processor_class.from_pretrained.return_value = Mock()
+        mock_model = Mock()
+        mock_model_class.from_pretrained.return_value = mock_model
+
+        from src.models.mms_model import MMSModel
+        MMSModel(lm_path="/nonexistent/lm.arpa")
+
+        captured = capsys.readouterr()
+        assert "Warning" in captured.out or "lm" in captured.out.lower()
+
+    @pytest.mark.unit
+    @patch('src.models.mms_model.AutoProcessor')
+    @patch('src.models.mms_model.Wav2Vec2ForCTC')
+    @patch('src.models.mms_model.Path')
+    def test_decoder_validates_lm_path_exists(self, mock_path, mock_model_class, mock_processor_class):
+        """Test initialization checks if LM path exists."""
+        mock_processor_class.from_pretrained.return_value = Mock()
+        mock_model = Mock()
+        mock_model_class.from_pretrained.return_value = mock_model
+
+        # Mock Path to return False for exists()
+        mock_path_instance = MagicMock()
+        mock_path_instance.exists.return_value = False
+        mock_path.return_value = mock_path_instance
+
+        from src.models.mms_model import MMSModel
+        model = MMSModel(lm_path="/path/to/lm.arpa")
+
+        # Decoder should not be initialized
+        assert model.decoder is None
+
 
 class TestMMSModelEdgeCases:
     """Test edge cases for MMSModel."""
+
+    @pytest.mark.unit
+    def test_import_error_sets_has_pyctcdecode_false(self, monkeypatch):
+        """Simulate missing pyctcdecode without reloading the module."""
+        from src.models import mms_model
+
+        with patch.object(mms_model, "_HAS_PYCTCDECODE", False):
+            assert mms_model._HAS_PYCTCDECODE is False
+
+    @pytest.mark.unit
+    def test_import_error_handling(self):
+        """Test that module handles missing pyctcdecode gracefully."""
+        from src.models import mms_model
+        assert hasattr(mms_model, '_HAS_PYCTCDECODE')
+        assert isinstance(mms_model._HAS_PYCTCDECODE, bool)
+
+    @pytest.mark.unit
+    @patch('src.models.mms_model.AutoProcessor')
+    @patch('src.models.mms_model.Wav2Vec2ForCTC')
+    @patch('src.models.mms_model._HAS_PYCTCDECODE', False)
+    def test_init_decoder_without_pyctcdecode(self, mock_model_class, mock_processor_class, temp_dir):
+        """Test _init_decoder returns early when pyctcdecode not available."""
+        lm_file = temp_dir / "test.arpa"
+        lm_file.write_text("dummy")
+        
+        mock_processor_class.from_pretrained.return_value = Mock()
+        mock_model_class.from_pretrained.return_value = Mock()
+        
+        from src.models.mms_model import MMSModel
+        model = MMSModel(model_name="facebook/mms-1b-all", lm_path=str(lm_file))
+        
+        # Decoder should remain None when pyctcdecode unavailable
+        model._init_decoder()
+        assert model.decoder is None
+
+    @pytest.mark.unit
+    @patch('src.models.mms_model.AutoProcessor')
+    @patch('src.models.mms_model.Wav2Vec2ForCTC')
+    @patch('src.models.mms_model._HAS_PYCTCDECODE', True)
+    @patch('src.models.mms_model.build_ctcdecoder', side_effect=Exception("boom"))
+    def test_init_decoder_falls_back_on_failure(self, mock_decoder, mock_model_class, mock_processor_class, temp_dir):
+        """_init_decoder should fall back to greedy when decoder build fails."""
+        lm_file = temp_dir / "fail.arpa"
+        lm_file.write_text("dummy")
+
+        mock_processor = Mock()
+        mock_processor.tokenizer.get_vocab.return_value = {"a": 0}
+        mock_processor_class.from_pretrained.return_value = mock_processor
+
+        mock_model = Mock()
+        mock_model.to.return_value = mock_model
+        mock_model.eval.return_value = mock_model
+        mock_model_class.from_pretrained.return_value = mock_model
+
+        from src.models.mms_model import MMSModel
+        model = MMSModel(model_name="facebook/mms-1b-all", lm_path=str(lm_file))
+
+        # Force decoder init path to hit exception
+        model._init_decoder()
+
+        assert model.decoder is None
+
+    @pytest.mark.unit
+    @patch('src.models.mms_model.AutoProcessor')
+    @patch('src.models.mms_model.Wav2Vec2ForCTC')
+    @patch('src.models.mms_model._HAS_PYCTCDECODE', True)
+    @patch('src.models.mms_model.build_ctcdecoder')
+    @patch('torchaudio.load')
+    def test_transcribe_reinits_decoder_on_first_call(self, mock_audio, mock_decoder, mock_model_class, mock_processor_class, temp_dir):
+        """Test that decoder is initialized on first transcribe call with LM."""
+        lm_file = temp_dir / "test.arpa"
+        lm_file.write_text("dummy")
+        audio_file = temp_dir / "test.wav"
+        audio_file.touch()
+        
+        mock_processor = Mock()
+        mock_processor.tokenizer.get_vocab.return_value = {"a": 0, "b": 1}
+        mock_processor.return_value = {"input_values": torch.randn(1, 16000)}
+        mock_processor_class.from_pretrained.return_value = mock_processor
+        
+        mock_model = Mock()
+        mock_logits = Mock()
+        mock_logits.argmax.return_value = torch.tensor([[0, 1]])
+        mock_logits.squeeze.return_value.cpu.return_value.numpy.return_value = [[0.1, 0.2]]
+        mock_model.return_value.logits = mock_logits
+        mock_model.to.return_value = mock_model
+        mock_model.eval.return_value = mock_model
+        mock_model_class.from_pretrained.return_value = mock_model
+        
+        mock_decoder_instance = Mock()
+        mock_decoder_instance.decode.return_value = "decoded"
+        mock_decoder.return_value = mock_decoder_instance
+        
+        mock_audio.return_value = (torch.randn(1, 16000), 16000)
+        mock_processor.batch_decode.return_value = ["text"]
+        
+        from src.models.mms_model import MMSModel
+        model = MMSModel(model_name="facebook/mms-1b-all", lm_path=str(lm_file))
+        
+        # Manually set decoder to None to test re-init path
+        model.decoder = None
+
+        model.transcribe(audio_file)
+
+        # Decoder should be initialized and used
+        assert mock_decoder.called
 
     @pytest.mark.unit
     @patch('src.models.mms_model.AutoProcessor')

@@ -45,17 +45,21 @@ class TestAudioDataCollatorCTCCall:
         """Create a mock processor for testing."""
         processor = Mock()
 
-        # Mock pad method for input_values
+        # Mock pad method for input_values - simpler version
         def mock_pad(inputs, **kwargs):
-            input_values = torch.tensor(inputs["input_values"])
-            # Pad to max length in batch
-            max_len = max(len(x) for x in inputs["input_values"])
-            padded = torch.zeros(len(inputs["input_values"]), max_len)
-            attention_mask = torch.zeros(len(inputs["input_values"]), max_len)
-            for i, x in enumerate(inputs["input_values"]):
-                padded[i, :len(x)] = torch.tensor(x)
-                attention_mask[i, :len(x)] = 1
-            return {"input_values": padded, "attention_mask": attention_mask}
+            if "input_values" in inputs:
+                # Pad input values
+                return {
+                    "input_values": torch.randn(len(inputs["input_values"]), 100),
+                    "attention_mask": torch.ones(len(inputs["input_values"]), 100)
+                }
+            elif "input_ids" in inputs:
+                # Pad labels
+                return {
+                    "input_ids": torch.randint(0, 100, (len(inputs["input_ids"]), 50)),
+                    "attention_mask": torch.ones(len(inputs["input_ids"]), 50)
+                }
+            return {}
 
         processor.pad = Mock(side_effect=mock_pad)
 
@@ -147,3 +151,27 @@ class TestGetProcessorForModel:
         processor = get_processor_for_model(model_type, model_name)
 
         mock_whisper.from_pretrained.assert_called_once_with(expected_call)
+
+
+class TestAudioDataCollatorCTCEdgeCases:
+    """Edge case tests for AudioDataCollatorCTC."""
+
+    @pytest.mark.unit
+    @patch('src.data.collator.Wav2Vec2Processor')
+    def test_get_processor_handles_all_types(self, mock_wav2vec2):
+        """Test processor getter works for all supported model types."""
+        mock_wav2vec2.from_pretrained.return_value = Mock()
+
+        # Test each type
+        from src.data.collator import get_processor_for_model
+        
+        processor_wav2vec2 = get_processor_for_model("wav2vec2", "model_name")
+        assert processor_wav2vec2 is not None
+
+        with patch('src.data.collator.WhisperProcessor') as mock_whisper:
+            mock_whisper.from_pretrained.return_value = Mock()
+            processor_whisper = get_processor_for_model("whisper", "base")
+            assert processor_whisper is not None
+
+        processor_mms = get_processor_for_model("mms", "facebook/mms-1b-all")
+        assert processor_mms is not None

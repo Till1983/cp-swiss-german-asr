@@ -295,6 +295,29 @@ class TestCheckpointManagerRemove:
 
         assert not ckpt_path.exists()
 
+    @pytest.mark.unit
+    def test_remove_checkpoint_handles_file_deletion_error(self, temp_dir, mock_checkpoint_metrics):
+        """Test removing checkpoint handles exception when deleting file fails."""
+        from src.utils.checkpoint_manager import CheckpointManager
+
+        manager = CheckpointManager(task_name="remove_error_test")
+        ckpt_path = temp_dir / "error_delete.pt"
+        ckpt_path.touch()
+        manager.register_checkpoint(
+            checkpoint_path=ckpt_path,
+            metrics=mock_checkpoint_metrics
+        )
+
+        # Mock os.remove to raise an exception
+        with patch('os.remove') as mock_remove:
+            mock_remove.side_effect = OSError("Permission denied")
+            
+            # Should not raise, just log the error
+            manager.remove_checkpoint("error_delete.pt", delete_file=True)
+            
+            # Checkpoint should still be removed from registry
+            assert "error_delete.pt" not in manager.get_registry()
+
 
 class TestCheckpointManagerUpdateMetrics:
     """Test CheckpointManager update_metrics method."""

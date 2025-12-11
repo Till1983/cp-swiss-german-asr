@@ -84,6 +84,35 @@ class TestWav2Vec2ModelInit:
 
         assert model.processor == mock_processor
 
+    @pytest.mark.unit
+    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
+    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
+    def test_initialization_device_cuda(self, mock_model_class, mock_processor_class):
+        """Test model initialization detects CUDA device."""
+        mock_processor_class.from_pretrained.return_value = Mock()
+        mock_model = Mock()
+        mock_model_class.from_pretrained.return_value = mock_model
+
+        with patch('torch.cuda.is_available', return_value=True):
+            from src.models.wav2vec2_model import Wav2Vec2Model
+            model = Wav2Vec2Model()
+            assert model.device == "cuda"
+
+    @pytest.mark.unit
+    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
+    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
+    def test_initialization_device_cpu(self, mock_model_class, mock_processor_class):
+        """Test model initialization falls back to CPU."""
+        mock_processor_class.from_pretrained.return_value = Mock()
+        mock_model = Mock()
+        mock_model_class.from_pretrained.return_value = mock_model
+
+        with patch('torch.cuda.is_available', return_value=False):
+            with patch('torch.backends.mps.is_available', return_value=False):
+                from src.models.wav2vec2_model import Wav2Vec2Model
+                model = Wav2Vec2Model()
+                assert model.device == "cpu"
+
 
 class TestWav2Vec2ModelTranscribe:
     """Test Wav2Vec2Model transcribe method."""
@@ -154,6 +183,48 @@ class TestWav2Vec2ModelTranscribe:
         result = mock_wav2vec2_model.transcribe(audio_file)
         assert "text" in result
 
+    @pytest.mark.unit
+    @patch('torchaudio.load')
+    def test_transcribe_handles_audio_load_error(self, mock_torchaudio, mock_wav2vec2_model, temp_dir):
+        """Test transcribe handles audio load errors."""
+        audio_file = temp_dir / "test.wav"
+        audio_file.touch()
+
+        mock_torchaudio.side_effect = Exception("Audio load failed")
+
+        with pytest.raises(ValueError, match="Failed to load audio"):
+            mock_wav2vec2_model.transcribe(audio_file)
+
+    @pytest.mark.unit
+    @patch('torchaudio.load')
+    def test_transcribe_rejects_empty_audio(self, mock_torchaudio, mock_wav2vec2_model, temp_dir):
+        """Test transcribe rejects empty audio."""
+        audio_file = temp_dir / "test.wav"
+        audio_file.touch()
+
+        # Mock empty audio
+        empty_waveform = torch.zeros((1, 0))
+        mock_torchaudio.return_value = (empty_waveform, 16000)
+
+        with pytest.raises(ValueError, match="Audio file is empty"):
+            mock_wav2vec2_model.transcribe(audio_file)
+
+    @pytest.mark.unit
+    @patch('torchaudio.load')
+    def test_transcribe_uses_greedy_decoding_as_fallback(self, mock_torchaudio, mock_wav2vec2_model, temp_dir):
+        """Test transcribe falls back to greedy decoding without LM."""
+        audio_file = temp_dir / "test.wav"
+        audio_file.touch()
+
+        # Mock audio
+        waveform = torch.randn(1, 16000)
+        mock_torchaudio.return_value = (waveform, 16000)
+
+        result = mock_wav2vec2_model.transcribe(audio_file)
+
+        # Should use greedy decoding (batch_decode was called)
+        assert mock_wav2vec2_model.processor.batch_decode.called
+        assert result["text"] == "transcribed text"
 
 class TestWav2Vec2ModelDecoderInit:
     """Test Wav2Vec2Model decoder initialization."""
@@ -191,9 +262,131 @@ class TestWav2Vec2ModelDecoderInit:
 
         assert model.decoder is None
 
+    @pytest.mark.unit
+    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
+    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
+    @patch('src.models.wav2vec2_model._HAS_PYCTCDECODE', True)
+    @patch('src.models.wav2vec2_model.build_ctcdecoder')
+    def test_decoder_init_with_valid_lm(self, mock_decoder, mock_model_class, mock_processor_class, temp_dir):
+        """Test decoder initializes successfully with valid LM file."""
+        # Create LM file
+        lm_file = temp_dir / "test.arpa"
+        lm_file.write_text("dummy lm content")
+
+        mock_processor = Mock()
+        mock_processor.tokenizer.get_vocab.return_value = {"a": 0, "b": 1}
+        mock_processor_class.from_pretrained.return_value = mock_processor
+        mock_model_class.from_pretrained.return_value = Mock()
+        
+        mock_decoder_instance = Mock()
+        mock_decoder.return_value = mock_decoder_instance
+
+        from src.models.wav2vec2_model import Wav2Vec2Model
+        model = Wav2Vec2Model(
+            model_name="facebook/wav2vec2-base",
+            lm_path=str(lm_file)
+        )
+
+        # Decoder should be initialized
+        assert model.decoder is not None
+        mock_decoder.assert_called_once()
+
+    @pytest.mark.unit
+    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
+    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
+    @patch('src.models.wav2vec2_model._HAS_PYCTCDECODE', True)
+    @patch('src.models.wav2vec2_model.build_ctcdecoder')
+    def test_decoder_falls_back_on_build_failure(self, mock_decoder, mock_model_class, mock_processor_class, temp_dir):
+        """Test decoder falls back to None when build_ctcdecoder fails."""
+        # Create LM file
+        lm_file = temp_dir / "test.arpa"
+        lm_file.write_text("dummy lm content")
+
+        mock_processor = Mock()
+        mock_processor.tokenizer.get_vocab.return_value = {"a": 0, "b": 1}
+        mock_processor_class.from_pretrained.return_value = mock_processor
+        mock_model_class.from_pretrained.return_value = Mock()
+        
+        # Make decoder build fail
+        mock_decoder.side_effect = Exception("Decoder build failed")
+
+        from src.models.wav2vec2_model import Wav2Vec2Model
+        model = Wav2Vec2Model(
+            model_name="facebook/wav2vec2-base",
+            lm_path=str(lm_file)
+        )
+
+        # Should fall back to None gracefully
+        assert model.decoder is None
+
+    @pytest.mark.unit
+    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
+    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
+    @patch('src.models.wav2vec2_model._HAS_PYCTCDECODE', True)
+    @patch('src.models.wav2vec2_model.build_ctcdecoder')
+    @patch('torchaudio.load')
+    def test_transcribe_with_decoder(self, mock_torchaudio, mock_decoder_builder, mock_model_class, mock_processor_class, temp_dir):
+        """Test transcribe uses decoder when available."""
+        # Setup LM file
+        lm_file = temp_dir / "test.arpa"
+        lm_file.write_text("dummy lm content")
+
+        # Setup mocks
+        mock_processor = Mock()
+        mock_processor.tokenizer.get_vocab.return_value = {"a": 0, "b": 1}
+        mock_processor.return_value = {"input_values": torch.randn(1, 16000)}
+        mock_processor_class.from_pretrained.return_value = mock_processor
+        
+        mock_model = Mock()
+        mock_logits = Mock()
+        mock_logits.squeeze.return_value.cpu.return_value.numpy.return_value = [[0.1, 0.2]]
+        mock_model.return_value.logits = mock_logits
+        mock_model.to.return_value = mock_model
+        mock_model.eval.return_value = mock_model
+        mock_model_class.from_pretrained.return_value = mock_model
+        
+        mock_decoder = Mock()
+        mock_decoder.decode.return_value = "decoded with lm"
+        mock_decoder_builder.return_value = mock_decoder
+
+        # Mock audio loading
+        audio_file = temp_dir / "test.wav"
+        audio_file.touch()
+        waveform = torch.randn(1, 16000)
+        mock_torchaudio.return_value = (waveform, 16000)
+
+        from src.models.wav2vec2_model import Wav2Vec2Model
+        model = Wav2Vec2Model(
+            model_name="facebook/wav2vec2-base",
+            lm_path=str(lm_file)
+        )
+
+        result = model.transcribe(audio_file)
+
+        # Should use decoder
+        mock_decoder.decode.assert_called_once()
+        assert result["text"] == "decoded with lm"
+
 
 class TestWav2Vec2ModelEdgeCases:
     """Test edge cases for Wav2Vec2Model."""
+
+    @pytest.mark.unit
+    def test_import_error_handling(self):
+        """Test that module handles missing pyctcdecode gracefully."""
+        # This tests the import error handling at module level (lines 12-13)
+        # The _HAS_PYCTCDECODE flag should be set based on import success
+        from src.models import wav2vec2_model
+        assert hasattr(wav2vec2_model, '_HAS_PYCTCDECODE')
+        assert isinstance(wav2vec2_model._HAS_PYCTCDECODE, bool)
+
+    @pytest.mark.unit
+    def test_import_error_sets_has_pyctcdecode_false(self):
+        """Simulate missing pyctcdecode without reloading the module."""
+        from src.models import wav2vec2_model
+
+        with patch.object(wav2vec2_model, "_HAS_PYCTCDECODE", False):
+            assert wav2vec2_model._HAS_PYCTCDECODE is False
 
     @pytest.mark.unit
     @patch('src.models.wav2vec2_model.Wav2Vec2Processor')

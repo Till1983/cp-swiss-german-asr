@@ -126,6 +126,8 @@ docker compose run --rm test-e2e          # End-to-end tests
 docker compose run --rm test-coverage     # With coverage report
 ```
 
+For detailed explanation of the testing framework, see [TESTING.md](docs/TESTING.md).
+
 ---
 
 ## Running Evaluations
@@ -330,11 +332,11 @@ Then access at http://localhost:8502
 If you use this work, please cite:
 
 ```bibtex
-@thesis{ermold2024swissgerman,
+@thesis{ermold2025swissgerman,
   author = {Ermold, Till},
   title = {Comparative Evaluation of ASR Models for Swiss German Dialects},
   school = {CODE University of Applied Sciences Berlin},
-  year = {2024},
+  year = {2025},
   type = {Bachelor's Thesis}
 }
 ```
@@ -355,5 +357,5 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Last Updated:** December 9, 2024  
+**Last Updated:** December 11, 2025  
 **Version:** 2.0 (Multi-Model Comparison Support)

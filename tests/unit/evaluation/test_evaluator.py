@@ -1,8 +1,10 @@
 """Unit tests for ASR evaluator module."""
 import pytest
 from pathlib import Path
+from datetime import datetime
 from unittest.mock import Mock, patch, MagicMock
 import pandas as pd
+import torch
 
 
 class TestASREvaluatorInit:
@@ -151,6 +153,62 @@ class TestASREvaluatorLoadModel:
         with pytest.raises(RuntimeError, match="Failed to load Whisper model"):
             evaluator.load_model()
 
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.WhisperProcessor')
+    @patch('src.evaluation.evaluator.WhisperForConditionalGeneration')
+    def test_load_whisper_hf_model(self, mock_model_class, mock_processor_class):
+        """Test loading Hugging Face Whisper model."""
+        mock_processor = Mock()
+        mock_model = Mock()
+        mock_processor_class.from_pretrained.return_value = mock_processor
+        mock_model_class.from_pretrained.return_value = mock_model
+
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper-hf", model_name="openai/whisper-tiny")
+        evaluator.load_model()
+
+        mock_processor_class.from_pretrained.assert_called_once()
+        mock_model_class.from_pretrained.assert_called_once()
+        assert evaluator.processor is not None
+        assert evaluator.model is not None
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.WhisperProcessor')
+    @patch('src.evaluation.evaluator.WhisperForConditionalGeneration')
+    def test_load_whisper_hf_failure_raises_runtime_error(self, mock_model_class, mock_processor_class):
+        """Test loading HF Whisper model raises error on failure."""
+        mock_processor_class.from_pretrained.side_effect = Exception("HF load failed")
+
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper-hf", model_name="openai/whisper-tiny")
+
+        with pytest.raises(RuntimeError, match="Failed to load HF Whisper model"):
+            evaluator.load_model()
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.Wav2Vec2Model')
+    def test_load_wav2vec2_failure_raises_runtime_error(self, mock_wav2vec2_class):
+        """Test loading Wav2Vec2 model raises error on failure."""
+        mock_wav2vec2_class.side_effect = Exception("Wav2Vec2 load failed")
+
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="wav2vec2", model_name="test")
+
+        with pytest.raises(RuntimeError, match="Failed to load Wav2Vec2 model"):
+            evaluator.load_model()
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.MMSModel')
+    def test_load_mms_failure_raises_runtime_error(self, mock_mms_class):
+        """Test loading MMS model raises error on failure."""
+        mock_mms_class.side_effect = Exception("MMS load failed")
+
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="mms", model_name="test")
+
+        with pytest.raises(RuntimeError, match="Failed to load MMS model"):
+            evaluator.load_model()
+
 
 class TestASREvaluatorTranscribe:
     """Test ASREvaluator _get_transcription method."""
@@ -210,6 +268,63 @@ class TestASREvaluatorTranscribe:
         result = evaluator._get_transcription(sample_audio_path)
 
         assert result == "mms text"
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.WhisperProcessor')
+    @patch('src.evaluation.evaluator.WhisperForConditionalGeneration')
+    @patch('whisper.load_audio')
+    def test_transcribe_whisper_hf(self, mock_audio, mock_model_class, mock_processor_class, sample_audio_path):
+        """Test transcription with Hugging Face Whisper model."""
+        import numpy as np
+        
+        # Setup mocks
+        mock_audio_data = np.random.randn(16000).astype(np.float32)
+        mock_audio.return_value = mock_audio_data
+        
+        mock_processor = Mock()
+        # Create a proper object with input_features attribute
+        mock_inputs = Mock()
+        mock_input_features = torch.randn(1, 80, 3000)  # Typical whisper input shape
+        mock_input_features_device = Mock()
+        mock_input_features_device.to = Mock(return_value=mock_input_features)
+        mock_inputs.input_features = mock_input_features_device
+        
+        mock_processor.return_value = mock_inputs
+        mock_processor.batch_decode.return_value = ["whisper hf text"]
+        mock_processor_class.from_pretrained.return_value = mock_processor
+        
+        mock_model = Mock()
+        mock_predicted_ids = torch.tensor([[1, 2, 3]])
+        mock_model.generate.return_value = mock_predicted_ids
+        mock_model.to.return_value = mock_model
+        mock_model.eval.return_value = mock_model
+        mock_model_class.from_pretrained.return_value = mock_model
+        
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper-hf", model_name="openai/whisper-tiny")
+        evaluator.load_model()
+
+        result = evaluator._get_transcription(sample_audio_path)
+
+        assert result == "whisper hf text"
+        mock_model.generate.assert_called_once()
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.Wav2Vec2Model')
+    def test_transcribe_wav2vec2_returns_string(self, mock_wav2vec2_class, sample_audio_path):
+        """Test transcription returns string from Wav2Vec2 dict result."""
+        mock_model = Mock()
+        # Test fallback when dict doesn't have 'text' key
+        mock_model.transcribe.return_value = "plain string"
+        mock_wav2vec2_class.return_value = mock_model
+
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="wav2vec2", model_name="test")
+        evaluator.load_model()
+
+        result = evaluator._get_transcription(sample_audio_path)
+
+        assert result == "plain string"
 
 
 class TestASREvaluatorEvaluateDataset:
@@ -322,6 +437,172 @@ class TestASREvaluatorEvaluateDataset:
 
         # Should only process 3 samples
         assert result['total_samples'] <= 3
+
+    @pytest.mark.unit
+    def test_whisper_hf_requires_loaded_model(self, temp_dir):
+        """_get_transcription should raise when HF whisper not loaded."""
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper-hf", model_name="tiny")
+        with pytest.raises(RuntimeError, match="HF Whisper model not loaded"):
+            evaluator._get_transcription(temp_dir / "dummy.wav")
+
+    @pytest.mark.unit
+    def test_get_transcription_unknown_model_type(self, temp_dir):
+        """_get_transcription should raise for unknown model_type."""
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.model_type = "unknown"
+        with pytest.raises(ValueError, match="Unknown model_type"):
+            evaluator._get_transcription(temp_dir / "dummy.wav")
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.pd.read_csv')
+    def test_evaluate_dataset_read_failure(self, mock_read_csv, temp_dir):
+        """evaluate_dataset should wrap read_csv failures."""
+        mock_read_csv.side_effect = Exception("read fail")
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.model = Mock()
+        # Ensure metadata path exists so FileNotFoundError is not raised first
+        meta_path = temp_dir / "meta.tsv"
+        meta_path.write_text("path\tsentence\taccent\nfile.wav\tHi\tBE\n")
+
+        with pytest.raises(ValueError, match="Failed to read metadata file"):
+            evaluator.evaluate_dataset(str(meta_path))
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.tqdm')
+    def test_evaluate_dataset_audio_path_outside_base(self, mock_tqdm, temp_dir):
+        """Audio_path outside base should be skipped and counted failed."""
+        class DummyTQDM:
+            def __init__(self, iterable, **kwargs):
+                self.iterable = list(iterable)
+            def __iter__(self):
+                return iter(self.iterable)
+            def close(self):
+                pass
+        mock_tqdm.side_effect = lambda iterable, **kwargs: DummyTQDM(iterable, **kwargs)
+
+        # metadata with audio_path column
+        outside_path = temp_dir.parent / "outside.wav"
+        metadata = temp_dir / "meta.tsv"
+        # Include required path column so evaluate_dataset passes validation
+        metadata.write_text(f"path\taudio_path\tsentence\taccent\nfile.wav\t{outside_path}\tHello\tBE\n")
+
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.model = Mock()
+        evaluator._get_transcription = Mock(return_value="hyp")
+
+        result = evaluator.evaluate_dataset(str(metadata), audio_base_path=temp_dir / "clips")
+
+        assert result['failed_samples'] == 1
+        assert result['total_samples'] == 0  # results list empty
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.tqdm')
+    def test_evaluate_dataset_missing_audio_file_under_base(self, mock_tqdm, temp_dir):
+        """Missing audio file in base path should increment failed_samples."""
+        class DummyTQDM:
+            def __init__(self, iterable, **kwargs):
+                self.iterable = list(iterable)
+            def __iter__(self):
+                return iter(self.iterable)
+            def close(self):
+                pass
+        mock_tqdm.side_effect = lambda iterable, **kwargs: DummyTQDM(iterable, **kwargs)
+
+        clips_dir = temp_dir / "clips"
+        clips_dir.mkdir()
+        metadata = temp_dir / "meta2.tsv"
+        metadata.write_text("path\tsentence\taccent\nmissing.wav\tHello\tBE\n")
+
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.model = Mock()
+        evaluator._get_transcription = Mock(return_value="hyp")
+
+        result = evaluator.evaluate_dataset(str(metadata), audio_base_path=clips_dir)
+
+        assert result['failed_samples'] == 1
+        assert result['total_samples'] == 0
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.tqdm')
+    def test_evaluate_dataset_path_outside_base_without_audio_path_column(self, mock_tqdm, temp_dir):
+        """path column resolving outside base should be counted as failed."""
+        class DummyTQDM:
+            def __init__(self, iterable, **kwargs):
+                self.iterable = list(iterable)
+            def __iter__(self):
+                return iter(self.iterable)
+            def close(self):
+                pass
+        mock_tqdm.side_effect = lambda iterable, **kwargs: DummyTQDM(iterable, **kwargs)
+
+        # path column points to file outside audio_base_path
+        outside_path = temp_dir.parent / "far.wav"
+        metadata = temp_dir / "meta3.tsv"
+        metadata.write_text(f"path\tsentence\taccent\n{outside_path}\tHi\tBE\n")
+
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.model = Mock()
+        evaluator._get_transcription = Mock(return_value="hyp")
+
+        with patch('pathlib.Path.relative_to', side_effect=ValueError):
+            result = evaluator.evaluate_dataset(str(metadata), audio_base_path=temp_dir / "clips")
+
+        assert result['failed_samples'] == 1
+        assert result['total_samples'] == 0
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.datetime')
+    @patch('src.evaluation.evaluator.tqdm')
+    def test_progress_logging_every_ten_samples(self, mock_tqdm, mock_datetime, temp_dir, capsys):
+        """Test evaluate_dataset prints progress every 10 samples."""
+        from src.evaluation.evaluator import ASREvaluator
+
+        # Prepare deterministic datetime values (fixed to avoid StopIteration)
+        base_time = datetime(2024, 1, 1, 0, 0, 0)
+        mock_datetime.now.return_value = base_time
+
+        class DummyTQDM:
+            def __init__(self, iterable, **kwargs):
+                self.iterable = list(iterable)
+            def __iter__(self):
+                return iter(self.iterable)
+            def close(self):
+                pass
+
+        mock_tqdm.side_effect = lambda iterable, **kwargs: DummyTQDM(iterable, **kwargs)
+
+        # Create metadata with 10 samples
+        audio_dir = temp_dir / "clips"
+        audio_dir.mkdir()
+        rows = ["path\tsentence\taccent"]
+        for i in range(10):
+            filename = f"audio_{i}.wav"
+            rows.append(f"{filename}\tSentence {i}\tBE")
+            (audio_dir / filename).touch()
+        metadata = temp_dir / "metadata.tsv"
+        metadata.write_text("\n".join(rows))
+
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.model = Mock()
+        evaluator._get_transcription = Mock(return_value="hyp")
+
+        with patch('src.evaluation.evaluator.FHNW_SWISS_GERMAN_ROOT', temp_dir), \
+             patch('src.evaluation.evaluator.metrics.calculate_wer', return_value=0.0), \
+             patch('src.evaluation.evaluator.metrics.calculate_cer', return_value=0.0), \
+             patch('src.evaluation.evaluator.metrics.calculate_bleu_score', return_value=0.0), \
+             patch('src.evaluation.evaluator.metrics.batch_cer', return_value={'overall_cer': 0.0}), \
+             patch('src.evaluation.evaluator.metrics.batch_bleu', return_value={'overall_bleu': 0.0}):
+            evaluator.evaluate_dataset(str(metadata))
+
+        captured = capsys.readouterr()
+
+        assert "Processed 10/10 samples" in captured.out
 
 
 class TestASREvaluatorMetricsCalculation:
