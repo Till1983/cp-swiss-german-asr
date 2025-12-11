@@ -1,7 +1,7 @@
 """Unit tests for ASR evaluator module."""
 import pytest
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime
 from unittest.mock import Mock, patch, MagicMock
 import pandas as pd
 import torch

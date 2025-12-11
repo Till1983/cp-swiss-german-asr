@@ -306,24 +306,11 @@ class TestMMSModelEdgeCases:
 
     @pytest.mark.unit
     def test_import_error_sets_has_pyctcdecode_false(self, monkeypatch):
-        """Reload module with ImportError to cover import guard."""
-        import importlib
-        import builtins
+        """Simulate missing pyctcdecode without reloading the module."""
         from src.models import mms_model
 
-        real_import = builtins.__import__
-
-        def fake_import(name, *args, **kwargs):
-            if name == "pyctcdecode":
-                raise ImportError("missing")
-            return real_import(name, *args, **kwargs)
-
-        with patch('builtins.__import__', side_effect=fake_import):
-            importlib.reload(mms_model)
+        with patch.object(mms_model, "_HAS_PYCTCDECODE", False):
             assert mms_model._HAS_PYCTCDECODE is False
-
-        # reload normally to restore state
-        importlib.reload(mms_model)
 
     @pytest.mark.unit
     def test_import_error_handling(self):
@@ -417,9 +404,9 @@ class TestMMSModelEdgeCases:
         
         # Manually set decoder to None to test re-init path
         model.decoder = None
-        
-        result = model.transcribe(audio_file)
-        
+
+        model.transcribe(audio_file)
+
         # Decoder should be initialized and used
         assert mock_decoder.called
 

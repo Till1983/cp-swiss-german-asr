@@ -90,19 +90,19 @@ class TestEnvironmentConfiguration:
     @pytest.mark.unit
     def test_invalid_environment_defaults_to_local(self):
         """Test that invalid ENVIRONMENT value defaults to 'local'."""
+        import importlib
+        import src.config as config_module
+
         with patch.dict(os.environ, {"ENVIRONMENT": "invalid_env"}):
-            # Re-import to trigger environment validation
-            import importlib
-            import src.config as config_module
             importlib.reload(config_module)
-            
+
             # Should default to 'local' when invalid
             assert config_module.ENVIRONMENT == "local"
             # Explicit env value keeps IS_AUTO_DETECTED False
             assert config_module.IS_AUTO_DETECTED is False
-            
-            # Clean up by reloading again without the patch
-            importlib.reload(config_module)
+
+        # Clean up by reloading after env is restored
+        importlib.reload(config_module)
 
     @pytest.mark.unit
     def test_config_main_entrypoint_runs(self, capsys):

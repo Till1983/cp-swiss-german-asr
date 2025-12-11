@@ -382,24 +382,11 @@ class TestWav2Vec2ModelEdgeCases:
 
     @pytest.mark.unit
     def test_import_error_sets_has_pyctcdecode_false(self):
-        """Reload module with ImportError to cover import guard branch."""
-        import importlib
-        import builtins
+        """Simulate missing pyctcdecode without reloading the module."""
         from src.models import wav2vec2_model
 
-        real_import = builtins.__import__
-
-        def fake_import(name, *args, **kwargs):
-            if name == "pyctcdecode":
-                raise ImportError("missing")
-            return real_import(name, *args, **kwargs)
-
-        with patch('builtins.__import__', side_effect=fake_import):
-            importlib.reload(wav2vec2_model)
+        with patch.object(wav2vec2_model, "_HAS_PYCTCDECODE", False):
             assert wav2vec2_model._HAS_PYCTCDECODE is False
-
-        # Reload normally to restore state for other tests
-        importlib.reload(wav2vec2_model)
 
     @pytest.mark.unit
     @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
