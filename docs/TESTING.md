@@ -9,6 +9,7 @@
 - [Test Structure](#test-structure)
 - [Coverage Philosophy](#coverage-philosophy)
 - [Running Tests](#running-tests)
+- [Current Coverage Status](#current-coverage-status)
 - [Known Coverage Gaps](#known-coverage-gaps)
 - [Adding New Tests](#adding-new-tests)
 - [Troubleshooting Tests](#troubleshooting-tests)
@@ -40,6 +41,7 @@ tests/unit/
 ```
 
 **Example:** Testing WER calculation:
+
 ```python
 def test_calculate_wer_exact_match():
     """Perfect match should yield 0% WER."""
@@ -48,6 +50,7 @@ def test_calculate_wer_exact_match():
 ```
 
 **Best Practices:**
+
 - One logical assertion per test
 - Descriptive test names: `test_<function>_<condition>_<expected_outcome>`
 - Use fixtures for repeated setup
@@ -58,12 +61,14 @@ def test_calculate_wer_exact_match():
 **Purpose:** Validate interactions between multiple components.
 
 **Characteristics:**
+
 - Medium execution time (100ms-1s per test)
 - Real dependencies (processors, file systems)
 - Tests data flow through multiple layers
 - Validates integration boundaries
 
 **Structure:**
+
 ```
 tests/integration/
 ├── test_backend_endpoints.py    # API endpoint behavior
@@ -72,6 +77,7 @@ tests/integration/
 ```
 
 **Example:** Data pipeline integration:
+
 ```python
 def test_load_and_preprocess_audio():
     """Test audio loading flows into preprocessing correctly."""
@@ -84,6 +90,7 @@ def test_load_and_preprocess_audio():
 ```
 
 **Best Practices:**
+
 - Use real fixtures (audio files, TSV metadata)
 - Test boundary conditions (empty datasets, malformed files)
 - Validate end-to-end data transformations
@@ -94,12 +101,14 @@ def test_load_and_preprocess_audio():
 **Purpose:** Validate complete user workflows from start to finish.
 
 **Characteristics:**
+
 - Slowest execution (1-10s per test)
 - Tests full system behavior
 - Validates user-facing APIs
 - Uses production-like configurations
 
 **Structure:**
+
 ```
 tests/e2e/
 ├── test_api_workflow.py          # API evaluation endpoint flows
@@ -107,6 +116,7 @@ tests/e2e/
 ```
 
 **Example:** Complete API evaluation flow:
+
 ```python
 def test_complete_api_evaluation_flow():
     """Test full evaluation from API request to results."""
@@ -122,6 +132,7 @@ def test_complete_api_evaluation_flow():
 ```
 
 **Best Practices:**
+
 - Mock heavyweight operations (GPU inference) with realistic outputs
 - Test error handling and validation
 - Verify response schemas
@@ -136,6 +147,7 @@ def test_complete_api_evaluation_flow():
 **Overall Target:** 99%+ (excluding intentional gaps)
 
 **Per-Module Targets:**
+
 - **Critical paths:** 100% (metrics, evaluators, model wrappers)
 - **Business logic:** 100% (data loading, preprocessing, API endpoints)
 - **Utilities:** 95%+ (logging, file I/O, checkpoint management)
@@ -146,19 +158,19 @@ def test_complete_api_evaluation_flow():
 Coverage targets are based on failure impact:
 
 1. **High Risk (100% required):**
-   - Metric calculations (WER, CER, BLEU)
-   - Model transcription logic
-   - Error analysis algorithms
-   - API validation and error handling
+    - Metric calculations (WER, CER, BLEU)
+    - Model transcription logic
+    - Error analysis algorithms
+    - API validation and error handling
 
 2. **Medium Risk (95%+ required):**
-   - Data loading and preprocessing
-   - File I/O utilities
-   - Configuration management
+    - Data loading and preprocessing
+    - File I/O utilities
+    - Configuration management
 
 3. **Lower Risk (Integration-tested acceptable):**
-   - Heavy external dependencies (HuggingFace processors)
-   - Visualization code (dashboard rendering)
+    - Heavy external dependencies (HuggingFace processors)
+    - Visualization code (dashboard rendering)
 
 ### Why Not 100% Everywhere?
 
@@ -209,6 +221,7 @@ start htmlcov/index.html  # Windows
 ```
 
 **Report shows:**
+
 - Line coverage per module
 - Missed lines highlighted in red
 - Branch coverage for conditionals
@@ -227,8 +240,35 @@ GitHub Actions runs the full test suite on every push:
 ```
 
 **Coverage thresholds enforced:**
+
 - Overall: 95%
 - Per-file: 90% (with documented exceptions)
+
+---
+
+## Current Coverage Status
+
+Coverage is generated automatically and should not be hand-maintained in the repo. To see up-to-date metrics and missed lines:
+
+```bash
+docker compose run --rm test-coverage
+open htmlcov/index.html  # macOS
+```
+
+Targets and philosophy:
+
+- Overall target: 97%+ (100% on critical paths)
+- Business logic (data loading, preprocessing, API): 100%
+- Utilities (logging, file I/O): 95%+
+- Heavy external integrations validated via integration/e2e tests
+
+Recent improvements (Dec 2025):
+
+- Added comprehensive unit tests for `src/frontend/utils/data_loader.py` and `src/training/trainer.py`
+- Total tests: 463; overall coverage ~97%
+- HTML coverage report generated at `htmlcov/index.html`
+
+Note: Coverage figures are expected to change as the codebase evolves; rely on the generated report rather than static documentation.
 
 ---
 
@@ -274,27 +314,40 @@ mock_processor.pad.return_value = {
 **How It's Validated:**
 
 ✅ **Integration tests** exercise the collator with real processors:
+
 - `test_data_pipeline.py::test_load_and_preprocess_audio`
 - `test_model_evaluation.py::test_wav2vec2_evaluator_flow`
 - `test_model_evaluation.py::test_mms_evaluator_flow`
 
 ✅ **E2E tests** validate end-to-end data flow through collator:
+
 - `test_evaluation_workflow.py::test_full_workflow_mocked`
 
 ✅ **Unit tests** cover testable parts:
+
 - Initialization and configuration
 - `get_processor_for_model()` function
 - Error handling for unsupported models
 
 **Conclusion:** The 68% coverage is acceptable because:
+
 1. Critical logic (processor selection, configuration) is covered
 2. Integration tests validate real-world behavior
 3. Adding unit tests would require brittle, high-fidelity mocks
 4. Risk is low: HuggingFace processors are well-tested upstream
 
+### Frontend Data Loader (contextual message paths)
+
+Some branches in `src/frontend/utils/data_loader.py` are primarily Streamlit UI messaging (warnings/info when scanning directories or skipping invalid models). These are low-risk pathways and are exercised indirectly; full unit coverage would require asserting Streamlit side-effects. We prioritize testing data correctness and error handling over UI messages.
+
+### Trainer Checkpoint Naming
+
+`src/training/trainer.py` includes custom checkpoint naming in `_save_checkpoint`. Full verification requires the real HuggingFace `Trainer` save flow. Unit tests cover logging, argument handling, and metrics persistence; the save path logic is validated in integration runs.
+
 ### Future Improvements
 
 If mocking becomes easier (e.g., HuggingFace provides test utilities), we can:
+
 - Add unit tests for padding edge cases
 - Test label masking logic independently
 - Validate attention mask generation
@@ -308,6 +361,7 @@ If mocking becomes easier (e.g., HuggingFace provides test utilities), we can:
 ### Step 1: Choose Test Type
 
 **Add unit test if:**
+
 - Testing a pure function (no I/O, no dependencies)
 - Validating single class method in isolation
 - Execution time < 1ms
@@ -465,14 +519,17 @@ addopts =
 **Issue:** Fixture cleanup not running
 
 **Solutions:**
+
 - Use `yield` instead of `return` for teardown:
-  ```python
-  @pytest.fixture
-  def temp_file():
-      f = open("temp.txt", "w")
-      yield f
-      f.close()  # Cleanup runs after test
-  ```
+
+```python
+@pytest.fixture
+def temp_file():
+        f = open("temp.txt", "w")
+        yield f
+        f.close()  # Cleanup runs after test
+```
+
 - Check for exceptions in test (may skip cleanup)
 - Verify fixture scope matches test needs
 
@@ -480,12 +537,12 @@ addopts =
 
 ## References
 
-- **Pytest Documentation:** https://docs.pytest.org/
-- **Coverage.py:** https://coverage.readthedocs.io/
+- **Pytest Documentation:** <https://docs.pytest.org/>
+- **Coverage.py:** <https://coverage.readthedocs.io/>
 - **Testing Best Practices:** [Martin Fowler - Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html)
-- **Mocking Guide:** https://docs.python.org/3/library/unittest.mock.html
+- **Mocking Guide:** <https://docs.python.org/3/library/unittest.mock.html>
 
 ---
 
 **Last Updated:** December 11, 2025  
-**Maintainer:** Till Ermold (till.ermold@code.berlin)
+**Maintainer:** Till Ermold (<till.ermold@code.berlin>)
