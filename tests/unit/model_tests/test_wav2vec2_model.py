@@ -84,6 +84,35 @@ class TestWav2Vec2ModelInit:
 
         assert model.processor == mock_processor
 
+    @pytest.mark.unit
+    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
+    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
+    def test_initialization_device_cuda(self, mock_model_class, mock_processor_class):
+        """Test model initialization detects CUDA device."""
+        mock_processor_class.from_pretrained.return_value = Mock()
+        mock_model = Mock()
+        mock_model_class.from_pretrained.return_value = mock_model
+
+        with patch('torch.cuda.is_available', return_value=True):
+            from src.models.wav2vec2_model import Wav2Vec2Model
+            model = Wav2Vec2Model()
+            assert model.device == "cuda"
+
+    @pytest.mark.unit
+    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
+    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
+    def test_initialization_device_cpu(self, mock_model_class, mock_processor_class):
+        """Test model initialization falls back to CPU."""
+        mock_processor_class.from_pretrained.return_value = Mock()
+        mock_model = Mock()
+        mock_model_class.from_pretrained.return_value = mock_model
+
+        with patch('torch.cuda.is_available', return_value=False):
+            with patch('torch.backends.mps.is_available', return_value=False):
+                from src.models.wav2vec2_model import Wav2Vec2Model
+                model = Wav2Vec2Model()
+                assert model.device == "cpu"
+
 
 class TestWav2Vec2ModelTranscribe:
     """Test Wav2Vec2Model transcribe method."""
@@ -154,6 +183,48 @@ class TestWav2Vec2ModelTranscribe:
         result = mock_wav2vec2_model.transcribe(audio_file)
         assert "text" in result
 
+    @pytest.mark.unit
+    @patch('torchaudio.load')
+    def test_transcribe_handles_audio_load_error(self, mock_torchaudio, mock_wav2vec2_model, temp_dir):
+        """Test transcribe handles audio load errors."""
+        audio_file = temp_dir / "test.wav"
+        audio_file.touch()
+
+        mock_torchaudio.side_effect = Exception("Audio load failed")
+
+        with pytest.raises(ValueError, match="Failed to load audio"):
+            mock_wav2vec2_model.transcribe(audio_file)
+
+    @pytest.mark.unit
+    @patch('torchaudio.load')
+    def test_transcribe_rejects_empty_audio(self, mock_torchaudio, mock_wav2vec2_model, temp_dir):
+        """Test transcribe rejects empty audio."""
+        audio_file = temp_dir / "test.wav"
+        audio_file.touch()
+
+        # Mock empty audio
+        empty_waveform = torch.zeros((1, 0))
+        mock_torchaudio.return_value = (empty_waveform, 16000)
+
+        with pytest.raises(ValueError, match="Audio file is empty"):
+            mock_wav2vec2_model.transcribe(audio_file)
+
+    @pytest.mark.unit
+    @patch('torchaudio.load')
+    def test_transcribe_uses_greedy_decoding_as_fallback(self, mock_torchaudio, mock_wav2vec2_model, temp_dir):
+        """Test transcribe falls back to greedy decoding without LM."""
+        audio_file = temp_dir / "test.wav"
+        audio_file.touch()
+
+        # Mock audio
+        waveform = torch.randn(1, 16000)
+        mock_torchaudio.return_value = (waveform, 16000)
+
+        result = mock_wav2vec2_model.transcribe(audio_file)
+
+        # Should use greedy decoding (batch_decode was called)
+        assert mock_wav2vec2_model.processor.batch_decode.called
+        assert result["text"] == "transcribed text"
 
 class TestWav2Vec2ModelDecoderInit:
     """Test Wav2Vec2Model decoder initialization."""

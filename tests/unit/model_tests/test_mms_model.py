@@ -188,6 +188,23 @@ class TestMMSModelTranscribe:
         result = mock_mms_model.transcribe(audio_file)
         assert "text" in result
 
+    @pytest.mark.unit
+    @patch('torchaudio.load')
+    def test_transcribe_uses_greedy_decoding_as_fallback(self, mock_torchaudio, mock_mms_model, temp_dir):
+        """Test transcribe falls back to greedy decoding without LM."""
+        audio_file = temp_dir / "test.wav"
+        audio_file.touch()
+
+        # Mock audio
+        waveform = torch.randn(1, 16000)
+        mock_torchaudio.return_value = (waveform, 16000)
+
+        result = mock_mms_model.transcribe(audio_file)
+
+        # Should use greedy decoding (batch_decode was called)
+        assert mock_mms_model.processor.batch_decode.called
+        assert result["text"] == "transcribed text"
+
 
 class TestMMSModelDecoderInit:
     """Test MMSModel decoder initialization."""
@@ -245,6 +262,43 @@ class TestMMSModelDecoderInit:
         model = MMSModel(lm_path=str(lm_file))
 
         assert model.decoder == mock_decoder
+
+    @pytest.mark.unit
+    @patch('src.models.mms_model.AutoProcessor')
+    @patch('src.models.mms_model.Wav2Vec2ForCTC')
+    @patch('src.models.mms_model._HAS_PYCTCDECODE', True)
+    def test_decoder_warns_when_lm_not_found(self, mock_model_class, mock_processor_class, capsys):
+        """Test initialization warns when LM file not found."""
+        mock_processor_class.from_pretrained.return_value = Mock()
+        mock_model = Mock()
+        mock_model_class.from_pretrained.return_value = mock_model
+
+        from src.models.mms_model import MMSModel
+        MMSModel(lm_path="/nonexistent/lm.arpa")
+
+        captured = capsys.readouterr()
+        assert "Warning" in captured.out or "lm" in captured.out.lower()
+
+    @pytest.mark.unit
+    @patch('src.models.mms_model.AutoProcessor')
+    @patch('src.models.mms_model.Wav2Vec2ForCTC')
+    @patch('src.models.mms_model.Path')
+    def test_decoder_validates_lm_path_exists(self, mock_path, mock_model_class, mock_processor_class):
+        """Test initialization checks if LM path exists."""
+        mock_processor_class.from_pretrained.return_value = Mock()
+        mock_model = Mock()
+        mock_model_class.from_pretrained.return_value = mock_model
+
+        # Mock Path to return False for exists()
+        mock_path_instance = MagicMock()
+        mock_path_instance.exists.return_value = False
+        mock_path.return_value = mock_path_instance
+
+        from src.models.mms_model import MMSModel
+        model = MMSModel(lm_path="/path/to/lm.arpa")
+
+        # Decoder should not be initialized
+        assert model.decoder is None
 
 
 class TestMMSModelEdgeCases:

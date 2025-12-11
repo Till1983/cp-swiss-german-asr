@@ -147,3 +147,27 @@ class TestGetProcessorForModel:
         processor = get_processor_for_model(model_type, model_name)
 
         mock_whisper.from_pretrained.assert_called_once_with(expected_call)
+
+
+class TestAudioDataCollatorCTCEdgeCases:
+    """Edge case tests for AudioDataCollatorCTC."""
+
+    @pytest.mark.unit
+    @patch('src.data.collator.Wav2Vec2Processor')
+    def test_get_processor_handles_all_types(self, mock_wav2vec2):
+        """Test processor getter works for all supported model types."""
+        mock_wav2vec2.from_pretrained.return_value = Mock()
+
+        # Test each type
+        from src.data.collator import get_processor_for_model
+        
+        processor_wav2vec2 = get_processor_for_model("wav2vec2", "model_name")
+        assert processor_wav2vec2 is not None
+
+        with patch('src.data.collator.WhisperProcessor') as mock_whisper:
+            mock_whisper.from_pretrained.return_value = Mock()
+            processor_whisper = get_processor_for_model("whisper", "base")
+            assert processor_whisper is not None
+
+        processor_mms = get_processor_for_model("mms", "facebook/mms-1b-all")
+        assert processor_mms is not None
