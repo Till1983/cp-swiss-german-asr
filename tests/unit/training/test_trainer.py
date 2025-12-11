@@ -5,6 +5,7 @@ Tests custom trainer classes and callbacks for ASR model training.
 """
 
 import tempfile
+from pathlib import Path
 from unittest.mock import patch, MagicMock
 from src.training.trainer import (
     CatastrophicForgettingCallback,
@@ -237,6 +238,43 @@ class TestProjectTrainer:
                     
                     # Check logging calls
                     assert mock_logger.info.call_count >= 2
+
+    def test_save_checkpoint_writes_expected_files(self):
+        """Test custom checkpoint naming and file writes in _save_checkpoint."""
+        # Mock Trainer.__init__ to avoid real initialization
+        with patch('src.training.trainer.Trainer.__init__', return_value=None):
+            trainer = ProjectTrainer(
+                model=MagicMock(),
+                args=MagicMock(),
+                run_name="ckpt_run"
+            )
+            # Prepare args and state
+            class DummyState:
+                def __init__(self):
+                    self.epoch = 2
+                    self.global_step = 500
+                def save_to_json(self, path):
+                    # Simulate writing
+                    Path(path).parent.mkdir(parents=True, exist_ok=True)
+                    Path(path).write_text('{"ok": true}')
+
+            trainer.args = MagicMock()
+            trainer.args.output_dir = str(Path.cwd() / "tmp_ckpts")
+            trainer.state = DummyState()
+
+            # Spy on save_model
+            with patch.object(trainer, 'save_model', return_value=None) as mock_save_model:
+                # Call with metrics including eval_loss
+                trainer._save_checkpoint(model=MagicMock(), trial=None, metrics={"eval_loss": 0.1234})
+                # Verify save_model called once
+                assert mock_save_model.call_count == 1
+                # Check that checkpoint dir exists with expected pattern
+                base = Path(trainer.args.output_dir)
+                # Find created folder
+                created = list(base.glob("checkpoint-epoch2-step500-valloss0.1234"))
+                assert len(created) == 1
+                # Trainer state JSON should exist
+                assert (created[0] / "trainer_state.json").exists()
     
     def test_output_dir_uses_run_name(self):
         """Test that output directory includes the run name."""

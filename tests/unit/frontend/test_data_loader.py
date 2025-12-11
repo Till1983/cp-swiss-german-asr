@@ -89,11 +89,20 @@ class TestGetAvailableResults:
     """Tests for get_available_results function."""
     
     def test_get_available_results_empty_directory(self):
-        """Test with empty results directory."""
+        """Test with empty existing results directory (no warning)."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            with patch('src.frontend.utils.data_loader.st'):
+            with patch('src.frontend.utils.data_loader.st') as mock_st:
                 results = get_available_results(str(tmpdir))
                 assert results == {}
+                # Directory exists, so no missing-dir warning
+                mock_st.warning.assert_not_called()
+
+    def test_get_available_results_missing_directory_warns(self):
+        """Test with missing results directory triggers warning."""
+        with patch('src.frontend.utils.data_loader.st') as mock_st:
+            results = get_available_results("/nonexistent/results/path")
+            assert results == {}
+            mock_st.warning.assert_called()
     
     def test_get_available_results_with_files(self):
         """Test retrieving available result files."""
@@ -108,9 +117,11 @@ class TestGetAvailableResults:
             )
             (results_dir / "whisper-small_results.json").write_text('{"config": "test"}')
             
-            with patch('src.frontend.utils.data_loader.st'):
+            with patch('src.frontend.utils.data_loader.st') as mock_st:
                 results = get_available_results(tmpdir)
                 assert 'whisper-small' in results
+                # No errors expected
+                mock_st.error.assert_not_called()
 
 
 class TestCombineModelResults:
@@ -265,11 +276,13 @@ class TestCombineMultipleModels:
                 ]
             }
             
-            with patch('src.frontend.utils.data_loader.st'):
+            with patch('src.frontend.utils.data_loader.st') as mock_st:
                 with patch('src.frontend.utils.data_loader.st.cache_data', lambda x: x):
                     df = combine_multiple_models(['whisper-small'], available_models)
                     # Should use most recent (first in list)
                     assert df.iloc[0]['wer'] == 0.15
+                    # Info message about multiple evaluations
+                    mock_st.info.assert_called()
         finally:
             Path(temp_path1).unlink()
             Path(temp_path2).unlink()
@@ -292,12 +305,14 @@ class TestCombineMultipleModels:
                 'complete-model': [{'model_name': 'complete-model', 'csv_path': temp_path2, 'json_path': None, 'timestamp': '20251229_100000'}]
             }
             
-            with patch('src.frontend.utils.data_loader.st'):
+            with patch('src.frontend.utils.data_loader.st') as mock_st:
                 with patch('src.frontend.utils.data_loader.st.cache_data', lambda x: x):
                     df = combine_multiple_models(['incomplete-model', 'complete-model'], available_models)
                     # Should only have complete-model
                     assert len(df) == 1
                     assert df.iloc[0]['model'] == 'complete-model'
+                    # Warning issued for missing columns
+                    mock_st.warning.assert_called()
         finally:
             Path(temp_path1).unlink()
             Path(temp_path2).unlink()
@@ -310,7 +325,9 @@ class TestCombineMultipleModels:
             ]
         }
         
-        with patch('src.frontend.utils.data_loader.st'):
+        with patch('src.frontend.utils.data_loader.st') as mock_st:
             with patch('src.frontend.utils.data_loader.st.cache_data', lambda x: x):
                 with pytest.raises(ValueError, match="Failed to load any of the"):
                     combine_multiple_models(['broken-model'], available_models)
+                # Should log a warning about failure
+                mock_st.warning.assert_called()

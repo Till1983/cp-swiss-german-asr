@@ -340,9 +340,23 @@ mock_processor.pad.return_value = {
 
 Some branches in `src/frontend/utils/data_loader.py` are primarily Streamlit UI messaging (warnings/info when scanning directories or skipping invalid models). These are low-risk pathways and are exercised indirectly; full unit coverage would require asserting Streamlit side-effects. We prioritize testing data correctness and error handling over UI messages.
 
+
+Current status:
+
+- Coverage: ~91%
+- Explicitly tested: file existence/error handling, schema validation, multi-timestamp selection, aggregation correctness
+- Intentionally untested: purely presentational `st.info`/`st.warning` summary lines (low-value, UI-only)
+
+
 ### Trainer Checkpoint Naming
 
 `src/training/trainer.py` includes custom checkpoint naming in `_save_checkpoint`. Full verification requires the real HuggingFace `Trainer` save flow. Unit tests cover logging, argument handling, and metrics persistence; the save path logic is validated in integration runs.
+
+
+Current status:
+
+- Coverage: 100%
+- Explicitly tested: checkpoint directory naming with epoch/step/val loss, `save_model()` invocation, `trainer_state.json` creation
 
 ### Future Improvements
 
