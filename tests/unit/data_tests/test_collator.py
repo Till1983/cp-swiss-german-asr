@@ -45,17 +45,21 @@ class TestAudioDataCollatorCTCCall:
         """Create a mock processor for testing."""
         processor = Mock()
 
-        # Mock pad method for input_values
+        # Mock pad method for input_values - simpler version
         def mock_pad(inputs, **kwargs):
-            input_values = torch.tensor(inputs["input_values"])
-            # Pad to max length in batch
-            max_len = max(len(x) for x in inputs["input_values"])
-            padded = torch.zeros(len(inputs["input_values"]), max_len)
-            attention_mask = torch.zeros(len(inputs["input_values"]), max_len)
-            for i, x in enumerate(inputs["input_values"]):
-                padded[i, :len(x)] = torch.tensor(x)
-                attention_mask[i, :len(x)] = 1
-            return {"input_values": padded, "attention_mask": attention_mask}
+            if "input_values" in inputs:
+                # Pad input values
+                return {
+                    "input_values": torch.randn(len(inputs["input_values"]), 100),
+                    "attention_mask": torch.ones(len(inputs["input_values"]), 100)
+                }
+            elif "input_ids" in inputs:
+                # Pad labels
+                return {
+                    "input_ids": torch.randint(0, 100, (len(inputs["input_ids"]), 50)),
+                    "attention_mask": torch.ones(len(inputs["input_ids"]), 50)
+                }
+            return {}
 
         processor.pad = Mock(side_effect=mock_pad)
 
