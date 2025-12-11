@@ -126,6 +126,8 @@ docker compose run --rm test-e2e          # End-to-end tests
 docker compose run --rm test-coverage     # With coverage report
 ```
 
+For detailed explanation of the testing framework, see [TESTING.md](docs/TESTING.md).
+
 ---
 
 ## Running Evaluations
