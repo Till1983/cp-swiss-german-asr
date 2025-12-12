@@ -111,3 +111,137 @@ def mock_checkpoint_metrics() -> Dict[str, float]:
         "cer": 12.3,
         "bleu": 65.0
     }
+
+
+@pytest.fixture
+def mock_error_analysis_data() -> Dict:
+    """Mock error analysis data structure."""
+    return {
+        "aggregate_stats": {
+            "mean_wer": 28.5,
+            "median_wer": 27.0,
+            "std_wer": 12.3,
+            "mean_cer": 14.2,
+            "mean_bleu": 65.8
+        },
+        "error_distribution_percent": {
+            "substitution": 60.0,
+            "deletion": 25.0,
+            "insertion": 10.0,
+            "correct": 5.0
+        },
+        "dialect_analysis": {
+            "BE": {
+                "sample_count": 50,
+                "mean_wer": 25.0,
+                "std_wer": 10.5,
+                "mean_cer": 12.0,
+                "mean_bleu": 70.0,
+                "std_bleu": 8.5,
+                "error_distribution": {
+                    "substitution": 30,
+                    "deletion": 12,
+                    "insertion": 5,
+                    "correct": 3,
+                    "sub_rate": 0.6,
+                    "del_rate": 0.24,
+                    "ins_rate": 0.1
+                },
+                "top_confusions": [
+                    [["ist", "isch"], 15],
+                    [["das", "dasch"], 10]
+                ]
+            },
+            "ZH": {
+                "sample_count": 45,
+                "mean_wer": 30.0,
+                "std_wer": 11.0,
+                "mean_cer": 15.5,
+                "mean_bleu": 62.0,
+                "std_bleu": 9.2,
+                "error_distribution": {
+                    "substitution": 28,
+                    "deletion": 10,
+                    "insertion": 7,
+                    "correct": 0,
+                    "sub_rate": 0.62,
+                    "del_rate": 0.22,
+                    "ins_rate": 0.16
+                },
+                "top_confusions": [
+                    [["haben", "hend"], 12]
+                ]
+            }
+        }
+    }
+
+
+@pytest.fixture
+def mock_model_results_csv(temp_dir) -> str:
+    """Create a mock model results CSV file."""
+    import pandas as pd
+
+    csv_data = pd.DataFrame({
+        "dialect": ["BE", "ZH", "VS", "OVERALL"],
+        "wer": [25.0, 30.0, 28.0, 27.5],
+        "cer": [12.0, 15.0, 14.0, 13.5],
+        "bleu": [70.0, 65.0, 68.0, 67.5]
+    })
+
+    csv_path = temp_dir / "test_results.csv"
+    csv_data.to_csv(csv_path, index=False)
+
+    return str(csv_path)
+
+
+@pytest.fixture
+def sample_dialects() -> List[str]:
+    """Common Swiss German dialect codes."""
+    return ["BE", "ZH", "BS", "LU", "SG", "AG", "GR", "VS"]
+
+
+@pytest.fixture
+def mock_batch_results() -> Dict:
+    """Mock batch evaluation results."""
+    return {
+        "overall_wer": 28.5,
+        "overall_cer": 14.2,
+        "overall_bleu": 67.8,
+        "per_sample_wer": [0.0, 25.0, 50.0, 100.0],
+        "per_sample_cer": [0.0, 12.5, 25.0, 50.0],
+        "per_sample_bleu": [100.0, 75.0, 50.0, 0.0]
+    }
+
+
+@pytest.fixture
+def mock_worst_samples_data() -> List[Dict]:
+    """Mock worst performing samples."""
+    return [
+        {
+            "dialect": "BE",
+            "wer": 85.0,
+            "cer": 65.0,
+            "bleu": 20.0,
+            "reference": "das ist ein sehr langer text mit vielen worten",
+            "hypothesis": "das isch en lang text",
+            "audio_file": "be_sample_1.wav"
+        },
+        {
+            "dialect": "ZH",
+            "wer": 90.0,
+            "cer": 70.0,
+            "bleu": 15.0,
+            "reference": "grüezi mitenand wie geht es euch",
+            "hypothesis": "gruezi",
+            "audio_file": "zh_sample_1.wav"
+        },
+        {
+            "dialect": "VS",
+            "wer": 82.0,
+            "cer": 62.0,
+            "bleu": 25.0,
+            "reference": "walliser dialekt ist sehr schwierig",
+            "hypothesis": "walliser sehr schwer",
+            "audio_file": "vs_sample_1.wav"
+        }
+    ]
