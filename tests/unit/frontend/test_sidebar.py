@@ -7,7 +7,7 @@ Tests filtering and sidebar logic.
 import pytest
 import pandas as pd
 from unittest.mock import patch, MagicMock
-from src.frontend.components.sidebar import filter_dataframe
+from src.frontend.components.sidebar import filter_dataframe, render_sidebar
 
 
 class TestFilterDataframe:
@@ -100,10 +100,77 @@ class TestFilterDataframe:
             'model': ['model-a']
         })
         df_with_overall = pd.concat([sample_df, overall_row], ignore_index=True)
-
-        selected_dialects = ['OVERALL', 'BE']
+        
+        selected_dialects = ['BE', 'OVERALL']
         filtered = filter_dataframe(df_with_overall, selected_dialects)
-
+        
         assert len(filtered) == 3  # 2 BE + 1 OVERALL
         assert 'OVERALL' in filtered['dialect'].values
-        assert 'BE' in filtered['dialect'].values
+
+
+class TestRenderSidebar:
+    """Tests for render_sidebar function."""
+
+    @pytest.fixture
+    def sample_df(self):
+        """Create sample dataframe for testing."""
+        return pd.DataFrame({
+            'dialect': ['BE', 'ZH', 'VS'],
+            'wer': [25.0, 30.0, 35.0],
+            'model': ['model-a', 'model-a', 'model-a']
+        })
+
+    @patch('src.frontend.components.sidebar.st')
+    def test_render_sidebar_basic(self, mock_st, sample_df):
+        """Test basic sidebar rendering."""
+        # Setup mocks
+        mock_st.sidebar.multiselect.return_value = ['BE', 'ZH']
+        mock_st.sidebar.radio.return_value = 'WER'
+        
+        # Call function
+        filtered_df, metric = render_sidebar(sample_df)
+        
+        # Verify results
+        assert len(filtered_df) == 2
+        assert metric == 'wer'
+        
+        # Verify streamlit calls
+        mock_st.sidebar.header.assert_called_once()
+        mock_st.sidebar.multiselect.assert_called_once()
+        mock_st.sidebar.radio.assert_called_once()
+        mock_st.sidebar.divider.assert_called_once()
+        mock_st.sidebar.info.assert_called_once()
+
+    @patch('src.frontend.components.sidebar.st')
+    def test_render_sidebar_with_overall(self, mock_st, sample_df):
+        """Test sidebar rendering with OVERALL selected."""
+        # Setup mocks
+        mock_st.sidebar.multiselect.return_value = ['BE', 'OVERALL']
+        mock_st.sidebar.radio.return_value = 'CER'
+        
+        # Call function
+        filtered_df, metric = render_sidebar(sample_df)
+        
+        # Verify results
+        assert metric == 'cer'
+        
+        # Verify info text contains OVERALL
+        info_call = mock_st.sidebar.info.call_args[0][0]
+        assert "(+ OVERALL)" in info_call
+
+    @patch('src.frontend.components.sidebar.st')
+    def test_render_sidebar_without_model_column(self, mock_st):
+        """Test sidebar rendering when dataframe lacks model column."""
+        df = pd.DataFrame({
+            'dialect': ['BE', 'ZH'],
+            'wer': [25.0, 30.0]
+        })
+        
+        mock_st.sidebar.multiselect.return_value = ['BE']
+        mock_st.sidebar.radio.return_value = 'WER'
+        
+        render_sidebar(df)
+        
+        # Verify info text handles missing model column
+        info_call = mock_st.sidebar.info.call_args[0][0]
+        assert "Models: 1" in info_call

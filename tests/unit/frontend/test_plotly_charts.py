@@ -9,8 +9,10 @@ from src.frontend.components.plotly_charts import (
     get_performance_category,
     get_performance_color,
     create_wer_by_dialect_chart,
+    create_metric_comparison_chart,
     PERFORMANCE_COLORS,
-    PERFORMANCE_THRESHOLDS
+    PERFORMANCE_THRESHOLDS,
+    MODEL_COLORS
 )
 
 
@@ -90,6 +92,14 @@ class TestGetPerformanceCategory:
         # WER boundary at 50
         assert get_performance_category(50.0, 'wer') == 'poor'
         assert get_performance_category(49.999, 'wer') == 'good'
+
+    def test_out_of_bounds_values(self):
+        """Test values outside defined ranges (should return 'poor')."""
+        # BLEU 100.0 is excluded by (50, 100) range, so it falls through
+        assert get_performance_category(100.0, 'bleu') == 'poor'
+        
+        # Negative values fall through
+        assert get_performance_category(-1.0, 'wer') == 'poor'
 
 
 class TestGetPerformanceColor:
@@ -283,6 +293,31 @@ class TestCreateWerByDialectChart:
         assert len(fig.data) == 1
 
 
+    def test_create_chart_non_percentage_metric(self, sample_data):
+        """Test creating chart with a metric that isn't a percentage (no % sign)."""
+        fig = create_wer_by_dialect_chart(
+            sample_data,
+            metric_name="SCORE"
+        )
+        assert fig is not None
+        # Check hover template doesn't have % at the end of the value
+        # The template is constructed as: f"{metric_name}: %{{y{value_format}<extra></extra>"
+        # So we look for "SCORE: %{y:.2f}<"
+        for trace in fig.data:
+            assert "SCORE: %{y:.2f}<" in trace.hovertemplate
+
+    def test_create_chart_known_model_color(self):
+        """Test that known models get their assigned colors."""
+        # Add a known model to the data
+        data = {'whisper-large-v3': {'BE': 10.0}}
+        fig = create_wer_by_dialect_chart(data)
+        
+        # Check that the color matches the defined constant
+        expected_color = MODEL_COLORS['whisper-large-v3']
+        assert fig.data[0].marker.color == expected_color
+
+
+
 class TestPerformanceThresholds:
     """Tests to verify performance threshold definitions."""
 
@@ -338,3 +373,133 @@ class TestPerformanceThresholds:
         for color in PERFORMANCE_COLORS.values():
             assert color.startswith('#')
             assert len(color) == 7  # #RRGGBB format
+
+
+class TestCreateMetricComparisonChart:
+    """Tests for create_metric_comparison_chart function."""
+
+    @pytest.fixture
+    def sample_data(self):
+        """Create sample data for testing."""
+        return {
+            'model-a': {'BE': 25.0, 'ZH': 30.0},
+            'model-b': {'BE': 28.0, 'ZH': 32.0}
+        }
+
+    def test_create_basic_chart(self, sample_data):
+        """Test creating a basic comparison chart."""
+        fig = create_metric_comparison_chart(sample_data)
+        assert fig is not None
+        assert len(fig.data) == 2
+        assert fig.layout.title.text == "WER by Dialect and Model"
+
+    def test_create_chart_custom_metric(self, sample_data):
+        """Test creating chart with custom metric."""
+        fig = create_metric_comparison_chart(
+            sample_data,
+            metric_name="BLEU",
+            title="BLEU Scores"
+        )
+        assert fig is not None
+        assert fig.layout.title.text == "BLEU Scores"
+        assert fig.layout.yaxis.title.text == "BLEU Score"
+
+    def test_create_chart_bleu_lowercase(self, sample_data):
+        """Test creating chart with BLEU metric in lowercase."""
+        fig = create_metric_comparison_chart(
+            sample_data,
+            metric_name="bleu"
+        )
+        assert fig is not None
+        assert fig.layout.yaxis.title.text == "bleu Score"
+
+
+    def test_create_chart_cer(self, sample_data):
+        """Test creating chart with CER metric."""
+        fig = create_metric_comparison_chart(
+            sample_data,
+            metric_name="CER"
+        )
+        assert fig is not None
+        assert fig.layout.yaxis.title.text == "CER (%)"
+
+    def test_create_chart_unknown_metric(self, sample_data):
+        """Test creating chart with unknown metric."""
+        fig = create_metric_comparison_chart(
+            sample_data,
+            metric_name="UNKNOWN"
+        )
+        assert fig is not None
+        assert fig.layout.yaxis.title.text == "UNKNOWN"
+
+    def test_performance_colors_single_model(self):
+        """Test performance coloring with single model."""
+        data = {
+            'model-a': {'BE': 10.0, 'ZH': 40.0, 'VS': 60.0}
+        }
+        fig = create_metric_comparison_chart(
+            data,
+            use_performance_colors=True,
+            metric_name="WER"
+        )
+        
+        assert fig is not None
+        assert len(fig.data) == 1
+        trace = fig.data[0]
+        
+        # Check that colors are different (excellent, good, poor)
+        colors = trace.marker.color
+        assert len(colors) == 3
+        assert len(set(colors)) == 3  # Should have 3 different colors
+        
+        # Check custom data (categories)
+        categories = trace.customdata
+        assert 'Excellent' in categories
+        assert 'Good' in categories
+        assert 'Poor' in categories
+
+    def test_performance_colors_multiple_models(self, sample_data):
+        """Test performance coloring fallback with multiple models."""
+        # Should fall back to standard chart
+        fig = create_metric_comparison_chart(
+            sample_data,
+            use_performance_colors=True
+        )
+        
+        assert fig is not None
+        assert len(fig.data) == 2  # Standard grouped bar chart
+
+    def test_performance_colors_with_missing_values(self):
+        """Test performance coloring with missing values."""
+        data = {
+            'model-a': {'BE': 10.0, 'ZH': None}
+        }
+        fig = create_metric_comparison_chart(
+            data,
+            use_performance_colors=True
+        )
+        
+        assert fig is not None
+        trace = fig.data[0]
+        colors = trace.marker.color
+        
+        # Missing value should have fallback color
+        assert colors[1] == '#CCCCCC'
+        assert trace.customdata[1] == 'N/A'
+
+    def test_performance_colors_explicit_dialects(self):
+        """Test performance coloring with explicit dialects list."""
+        data = {
+            'model-a': {'BE': 10.0, 'ZH': 40.0, 'VS': 60.0}
+        }
+        dialects = ['BE', 'VS']
+        fig = create_metric_comparison_chart(
+            data,
+            dialects=dialects,
+            use_performance_colors=True
+        )
+        
+        assert fig is not None
+        trace = fig.data[0]
+        assert len(trace.x) == 2
+        assert 'ZH' not in trace.x
