@@ -15,7 +15,7 @@
 - [System Components](#system-components)
 - [Running Evaluations](#running-evaluations)
 - [Error Analysis](#error-analysis)
-- [Testing](#testing)
+- [Testing Suite](#testing-suite)
 - [Data Pipeline](#data-pipeline)
 - [Troubleshooting](#troubleshooting)
 - [Citation](#citation)
@@ -357,5 +357,5 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Last Updated:** December 11, 2025  
+**Last Updated:** December 12, 2025  
 **Version:** 2.0 (Multi-Model Comparison Support)
