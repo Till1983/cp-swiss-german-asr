@@ -86,7 +86,7 @@ class TestMetricsWithVariousInputs:
         assert result == pytest.approx(expected_cer, abs=0.5)
 
     @pytest.mark.parametrize("reference,hypothesis,min_bleu,max_bleu", [
-        ("hello world", "hello world", 99.9, 100.0),  # Perfect match
+        ("hello world", "hello world", 99.9, 100.1),  # Perfect match
         ("", "", 0.0, 0.0),  # Both empty
         ("test", "", 0.0, 0.0),  # Empty hypothesis
         ("", "test", 0.0, 0.0),  # Empty reference

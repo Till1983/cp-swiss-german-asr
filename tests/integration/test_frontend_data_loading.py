@@ -408,11 +408,15 @@ class TestEndToEndFrontendDataFlow:
         # Try to load a model that doesn't exist along with one that does
         with patch('src.frontend.utils.data_loader.st') as mock_st:
             with patch('src.frontend.utils.data_loader.st.cache_data', lambda x: x):
-                with pytest.raises(ValueError):
-                    combine_multiple_models(
-                        ["whisper-small", "nonexistent-model"],
-                        available_results
-                    )
+                # Should not raise, but skip the missing model
+                df = combine_multiple_models(
+                    ["whisper-small", "nonexistent-model"],
+                    available_results
+                )
+                
+                assert not df.empty
+                assert "whisper-small" in df['model'].values
+                assert "nonexistent-model" not in df['model'].values
 
     @pytest.mark.integration
     def test_timestamp_ordering(self, temp_dir):

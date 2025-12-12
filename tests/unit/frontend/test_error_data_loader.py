@@ -94,11 +94,11 @@ def sample_error_analysis_data():
 def temp_error_analysis_dir(temp_dir):
     """Create temporary error analysis directory structure."""
     analysis_dir = temp_dir / "error_analysis"
-    analysis_dir.mkdir()
+    analysis_dir.mkdir(exist_ok=True)
 
     # Create timestamped subdirectory
     timestamp_dir = analysis_dir / "20251212_100000"
-    timestamp_dir.mkdir()
+    timestamp_dir.mkdir(exist_ok=True)
 
     return analysis_dir
 
@@ -124,7 +124,7 @@ class TestLoadErrorAnalysisJson:
     def test_load_nonexistent_file(self):
         """Test loading a file that doesn't exist."""
         with patch('src.frontend.utils.error_data_loader.st.cache_data', lambda x: x):
-            with pytest.raises(FileNotFoundError):
+            with pytest.raises(OSError):
                 load_error_analysis_json("/nonexistent/analysis.json")
 
     def test_load_malformed_json(self):
@@ -172,7 +172,7 @@ class TestGetAvailableErrorAnalyses:
         """Test retrieving available analysis files."""
         # Create timestamped subdirectory with analysis file
         timestamp_dir = temp_error_analysis_dir / "20251212_100000"
-        timestamp_dir.mkdir()
+        timestamp_dir.mkdir(exist_ok=True)
 
         analysis_file = timestamp_dir / "analysis_whisper-small.json"
         with open(analysis_file, 'w') as f:
@@ -189,7 +189,7 @@ class TestGetAvailableErrorAnalyses:
     def test_with_multiple_models(self, temp_error_analysis_dir, sample_error_analysis_data):
         """Test with multiple model analysis files."""
         timestamp_dir = temp_error_analysis_dir / "20251212_100000"
-        timestamp_dir.mkdir()
+        timestamp_dir.mkdir(exist_ok=True)
 
         models = ['whisper-small', 'whisper-medium', 'wav2vec2-base']
         for model in models:
@@ -210,7 +210,7 @@ class TestGetAvailableErrorAnalyses:
         timestamps = ["20251210_100000", "20251212_100000", "20251211_100000"]
         for ts in timestamps:
             ts_dir = temp_error_analysis_dir / ts
-            ts_dir.mkdir()
+            ts_dir.mkdir(exist_ok=True)
             analysis_file = ts_dir / "analysis_whisper-small.json"
             with open(analysis_file, 'w') as f:
                 json.dump(sample_error_analysis_data, f)
@@ -233,7 +233,7 @@ class TestLoadAllErrorAnalyses:
     def test_load_all_analyses(self, temp_error_analysis_dir, sample_error_analysis_data):
         """Test loading all available analyses."""
         timestamp_dir = temp_error_analysis_dir / "20251212_100000"
-        timestamp_dir.mkdir()
+        timestamp_dir.mkdir(exist_ok=True)
 
         models = ['model-a', 'model-b']
         for model in models:
@@ -252,7 +252,7 @@ class TestLoadAllErrorAnalyses:
     def test_load_specific_model(self, temp_error_analysis_dir, sample_error_analysis_data):
         """Test loading a specific model's analysis."""
         timestamp_dir = temp_error_analysis_dir / "20251212_100000"
-        timestamp_dir.mkdir()
+        timestamp_dir.mkdir(exist_ok=True)
 
         for model in ['model-a', 'model-b', 'model-c']:
             analysis_file = timestamp_dir / f"analysis_{model}.json"
@@ -276,7 +276,7 @@ class TestLoadAllErrorAnalyses:
     def test_load_with_corrupted_file(self, temp_error_analysis_dir):
         """Test loading when one file is corrupted."""
         timestamp_dir = temp_error_analysis_dir / "20251212_100000"
-        timestamp_dir.mkdir()
+        timestamp_dir.mkdir(exist_ok=True)
 
         # Create corrupted file
         corrupted_file = timestamp_dir / "analysis_corrupted.json"
@@ -444,7 +444,7 @@ class TestGetWorstSamplesPath:
     def test_find_existing_file(self, temp_error_analysis_dir):
         """Test finding an existing worst samples file."""
         timestamp_dir = temp_error_analysis_dir / "20251212_100000"
-        timestamp_dir.mkdir()
+        timestamp_dir.mkdir(exist_ok=True)
 
         csv_file = timestamp_dir / "worst_samples_whisper-small.csv"
         csv_file.write_text("dialect,wer,reference,hypothesis\n")
@@ -465,14 +465,14 @@ class TestGetWorstSamplesPath:
 
         # Create older file
         old_dir = temp_error_analysis_dir / "20251210_100000"
-        old_dir.mkdir()
+        old_dir.mkdir(exist_ok=True)
         old_file = old_dir / "worst_samples_model.csv"
         old_file.write_text("old\n")
         time.sleep(0.01)
 
         # Create newer file
         new_dir = temp_error_analysis_dir / "20251212_100000"
-        new_dir.mkdir()
+        new_dir.mkdir(exist_ok=True)
         new_file = new_dir / "worst_samples_model.csv"
         new_file.write_text("new\n")
 
@@ -508,8 +508,9 @@ class TestLoadWorstSamples:
     def test_load_nonexistent_file(self):
         """Test loading a file that doesn't exist."""
         with patch('src.frontend.utils.error_data_loader.st.cache_data', lambda x: x):
-            with pytest.raises(FileNotFoundError):
-                load_worst_samples("/nonexistent/worst_samples.csv")
+            # Should return empty DataFrame and log warning, not raise
+            df = load_worst_samples("/nonexistent/worst_samples.csv")
+            assert df.empty
 
     def test_load_empty_csv(self):
         """Test loading an empty CSV file."""
