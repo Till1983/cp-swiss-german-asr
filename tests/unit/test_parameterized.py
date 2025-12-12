@@ -52,7 +52,7 @@ class TestMetricsWithVariousInputs:
         ("hello world", "hello world", 0.0),  # Perfect match
         ("hello world", "hello earth", 50.0),  # 1 substitution out of 2 = 50%
         ("hello world", "hello", 50.0),  # 1 deletion out of 2 = 50%
-        ("hello", "hello world", 100.0),  # 1 insertion
+        ("hello", "hello world", 100.0),  # 1 insertion; reference has 1 word, so WER = 1/1 = 100%
         ("", "", 0.0),  # Both empty
         ("test", "", 100.0),  # Empty hypothesis
         ("the cat sat on the mat", "the cat sat on the mat", 0.0),  # Longer perfect match

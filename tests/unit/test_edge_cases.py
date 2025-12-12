@@ -199,9 +199,9 @@ class TestMetricsEdgeCases:
         reference = "!!!"
         hypothesis = "???"
 
-        # After normalization, both become empty
+        # Our normalization keeps punctuation; tokens differ, so 100% WER
         result = calculate_wer(reference, hypothesis)
-        assert result == 100.0  # Both empty after normalization
+        assert result == 100.0
 
     @pytest.mark.unit
     def test_wer_with_numbers_only(self):

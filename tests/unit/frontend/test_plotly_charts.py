@@ -95,7 +95,7 @@ class TestGetPerformanceCategory:
 
     def test_out_of_bounds_values(self):
         """Test values outside defined ranges (should return 'poor')."""
-        # BLEU 100.0 is excluded by (50, 100) range, so it falls through
+        # BLEU 100.0 is not included in the "excellent" range (50, 100); the upper bound is exclusive.
         assert get_performance_category(100.0, 'bleu') == 'poor'
         
         # Negative values fall through

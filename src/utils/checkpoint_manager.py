@@ -178,6 +178,8 @@ class CheckpointManager:
             try:
                 os.remove(entry["path"])
             except Exception:
+                # Intentionally ignore delete errors (e.g., file missing or locked).
+                # Registry state remains consistent; file cleanup is best-effort.
                 pass
 
     def update_metrics(self, ckpt_name: str, metrics: Dict[str, float]):

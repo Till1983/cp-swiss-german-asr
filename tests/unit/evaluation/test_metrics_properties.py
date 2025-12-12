@@ -99,6 +99,7 @@ class TestWERProperties:
         assume("ŉ" not in text)  # Latin small letter n preceded by apostrophe causes issues
         assume("ı" not in text)  # Latin small letter dotless i causes issues
         assume("ǰ" not in text)  # Latin small letter j with caron causes issues
+        assume("ſ" not in text)  # Latin small letter long s maps differently in casing
 
         wer_lower = calculate_wer(text.lower(), text.upper())
         assert wer_lower == 0.0

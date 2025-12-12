@@ -226,8 +226,8 @@ class TestGetAvailableErrorAnalyses:
             # The actual sorting is by file mtime, so we just check all are present
             assert set(paths) == set(timestamps)
 
-    def test_with_alternative_filename_format(self, temp_error_analysis_dir, sample_error_analysis_data):
-        """Test that files not starting with 'analysis_' are NOT discovered by rglob."""
+    def test_rglob_filters_non_analysis_files(self, temp_error_analysis_dir, sample_error_analysis_data):
+        """Ensure rglob('analysis_*.json') only discovers 'analysis_*' files."""
         timestamp_dir = temp_error_analysis_dir / "20251212_100000"
         timestamp_dir.mkdir(exist_ok=True)
 

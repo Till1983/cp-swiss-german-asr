@@ -123,8 +123,8 @@ class TestGetAvailableResults:
                 # No errors expected
                 mock_st.error.assert_not_called()
 
-    def test_get_available_results_with_non_directory_file(self):
-        """Test that non-directory files in results path are skipped."""
+    def test_get_available_results_skips_files_and_finds_valid_dirs(self):
+        """Skips non-directory files and still finds valid result directories."""
         with tempfile.TemporaryDirectory() as tmpdir:
             # Create a regular file (not directory) in results path
             results_path = Path(tmpdir)
