@@ -226,6 +226,51 @@ class TestGetAvailableErrorAnalyses:
             # The actual sorting is by file mtime, so we just check all are present
             assert set(paths) == set(timestamps)
 
+    def test_with_alternative_filename_format(self, temp_error_analysis_dir, sample_error_analysis_data):
+        """Test that files not starting with 'analysis_' are NOT discovered by rglob."""
+        timestamp_dir = temp_error_analysis_dir / "20251212_100000"
+        timestamp_dir.mkdir(exist_ok=True)
+
+        # Create a file without 'analysis_' prefix
+        # This file should NOT be discovered because rglob searches for "analysis_*.json"
+        custom_file = timestamp_dir / "custom_model_name.json"
+        with open(custom_file, 'w') as f:
+            json.dump(sample_error_analysis_data, f)
+
+        # Create a proper analysis file
+        analysis_file = timestamp_dir / "analysis_model1.json"
+        with open(analysis_file, 'w') as f:
+            json.dump(sample_error_analysis_data, f)
+
+        with patch('src.frontend.utils.error_data_loader.st'):
+            results = get_available_error_analyses(str(temp_error_analysis_dir))
+            
+            # Should only find the analysis_*.json file, not the custom one
+            assert len(results) == 1
+            assert results[0]['model_name'] == 'model1'
+
+    def test_file_not_found_during_scan(self, temp_error_analysis_dir):
+        """Test graceful handling when directory is removed during scan."""
+        with patch('src.frontend.utils.error_data_loader.st') as mock_st:
+            # Mock rglob to raise FileNotFoundError
+            with patch('pathlib.Path.rglob', side_effect=FileNotFoundError("Directory removed")):
+                results = get_available_error_analyses(str(temp_error_analysis_dir))
+                assert results == []
+                mock_st.warning.assert_called_once()
+                warning_msg = mock_st.warning.call_args[0][0]
+                assert "not found" in warning_msg
+
+    def test_unexpected_exception_during_scan(self, temp_error_analysis_dir):
+        """Test that unexpected exceptions are properly raised."""
+        with patch('src.frontend.utils.error_data_loader.st') as mock_st:
+            # Mock rglob to raise an unexpected exception
+            with patch('pathlib.Path.rglob', side_effect=PermissionError("Access denied")):
+                with pytest.raises(PermissionError):
+                    get_available_error_analyses(str(temp_error_analysis_dir))
+                mock_st.error.assert_called_once()
+                error_msg = mock_st.error.call_args[0][0]
+                assert "Unexpected error" in error_msg
+
 
 class TestLoadAllErrorAnalyses:
     """Tests for load_all_error_analyses function."""

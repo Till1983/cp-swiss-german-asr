@@ -123,6 +123,39 @@ class TestGetAvailableResults:
                 # No errors expected
                 mock_st.error.assert_not_called()
 
+    def test_get_available_results_with_non_directory_file(self):
+        """Test that non-directory files in results path are skipped."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Create a regular file (not directory) in results path
+            results_path = Path(tmpdir)
+            (results_path / "not_a_directory.txt").write_text("ignore me")
+            
+            # Create a valid directory with results
+            results_dir = results_path / "20251229_100000"
+            results_dir.mkdir()
+            (results_dir / "whisper-small_results.csv").write_text(
+                "dialect,wer,cer,bleu\nZurich,0.15,0.08,0.65\n"
+            )
+            
+            with patch('src.frontend.utils.data_loader.st') as mock_st:
+                results = get_available_results(str(results_path))
+                # Should only find the valid directory, not the file
+                assert 'whisper-small' in results
+                assert len(results) == 1
+                mock_st.error.assert_not_called()
+
+    def test_get_available_results_scan_exception(self):
+        """Test exception handling during directory scanning."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            with patch('src.frontend.utils.data_loader.st') as mock_st:
+                # Mock Path.iterdir() to raise an exception
+                with patch('pathlib.Path.iterdir', side_effect=PermissionError("Access denied")):
+                    results = get_available_results(tmpdir)
+                    assert results == {}
+                    mock_st.error.assert_called_once()
+                    error_message = mock_st.error.call_args[0][0]
+                    assert "Error scanning results directory" in error_message
+
 
 class TestCombineModelResults:
     """Tests for combine_model_results function."""
@@ -189,6 +222,17 @@ class TestCombineModelResults:
                     assert df.iloc[0]['model'] == 'valid-model'
         finally:
             Path(temp_path).unlink()
+
+    def test_combine_with_all_files_invalid(self):
+        """Test that ValueError is raised when no valid results can be loaded."""
+        with patch('src.frontend.utils.data_loader.st'):
+            with patch('src.frontend.utils.data_loader.st.cache_data', lambda x: x):
+                result_files = [
+                    {'model_name': 'invalid-model-1', 'csv_path': '/nonexistent/path1.csv'},
+                    {'model_name': 'invalid-model-2', 'csv_path': '/nonexistent/path2.csv'}
+                ]
+                with pytest.raises(ValueError, match="No valid results could be loaded"):
+                    combine_model_results(result_files)
 
 
 class TestCombineMultipleModels:
@@ -331,3 +375,42 @@ class TestCombineMultipleModels:
                     combine_multiple_models(['broken-model'], available_models)
                 # Should log a warning about failure
                 mock_st.warning.assert_called()
+
+    def test_combine_with_missing_columns_in_one_model(self):
+        """Test that models with missing required columns are skipped with warning."""
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f1:
+            # Valid model with all columns
+            f1.write("dialect,wer,cer,bleu\n")
+            f1.write("Zurich,0.15,0.08,0.65\n")
+            temp_path1 = f1.name
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f2:
+            # Invalid model missing 'bleu' column
+            f2.write("dialect,wer,cer\n")
+            f2.write("Bern,0.18,0.10\n")
+            temp_path2 = f2.name
+        
+        try:
+            available_models = {
+                'valid-model': [
+                    {'model_name': 'valid-model', 'csv_path': temp_path1, 'json_path': None, 'timestamp': '20251229_100000'}
+                ],
+                'incomplete-model': [
+                    {'model_name': 'incomplete-model', 'csv_path': temp_path2, 'json_path': None, 'timestamp': '20251229_100000'}
+                ]
+            }
+            
+            with patch('src.frontend.utils.data_loader.st') as mock_st:
+                with patch('src.frontend.utils.data_loader.st.cache_data', lambda x: x):
+                    df = combine_multiple_models(['incomplete-model', 'valid-model'], available_models)
+                    # Should only have valid-model
+                    assert len(df) == 1
+                    assert df.iloc[0]['model'] == 'valid-model'
+                    # Check that warning was issued for the failed load
+                    assert mock_st.warning.called
+                    warning_message = str(mock_st.warning.call_args_list[0])
+                    assert 'incomplete-model' in warning_message
+                    assert 'Failed to load' in warning_message
+        finally:
+            Path(temp_path1).unlink()
+            Path(temp_path2).unlink()
