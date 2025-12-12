@@ -336,16 +336,25 @@ mock_processor.pad.return_value = {
 3. Adding unit tests would require brittle, high-fidelity mocks
 4. Risk is low: HuggingFace processors are well-tested upstream
 
-### Frontend Data Loader (contextual message paths)
+### Frontend Utilities (100% Coverage Achieved)
 
-Some branches in `src/frontend/utils/data_loader.py` are primarily Streamlit UI messaging (warnings/info when scanning directories or skipping invalid models). These are low-risk pathways and are exercised indirectly; full unit coverage would require asserting Streamlit side-effects. We prioritize testing data correctness and error handling over UI messages.
+**Files:** `src/frontend/utils/data_loader.py`, `src/frontend/utils/error_data_loader.py`, `src/frontend/utils/sidebar.py`, `src/frontend/utils/plotly_charts.py`
 
+**Status:** All frontend utilities now have 100% test coverage, including:
 
-Current status:
+- File existence and error handling
+- Schema validation
+- Multi-timestamp selection
+- Aggregation correctness
+- Exception paths
+- Edge cases (missing columns, invalid files, directory scanning errors)
 
-- Coverage: ~91%
-- Explicitly tested: file existence/error handling, schema validation, multi-timestamp selection, aggregation correctness
-- Intentionally untested: purely presentational `st.info`/`st.warning` summary lines (low-value, UI-only)
+**Test Coverage:**
+
+- All data loading paths validated
+- Error handling comprehensively tested
+- Streamlit mocking implemented for UI components
+- Both successful and failure scenarios covered
 
 
 ### Trainer Checkpoint Naming
@@ -358,9 +367,47 @@ Current status:
 - Coverage: 100%
 - Explicitly tested: checkpoint directory naming with epoch/step/val loss, `save_model()` invocation, `trainer_state.json` creation
 
-### Model Wrapper Import Guards
+### Model Wrapper Import Guards (97% Coverage - Intentional Gap)
 
-Wav2Vec2/MMS model wrappers hit ~97% coverage; only untested lines are import-guard warnings for optional `pyctcdecode`/LM paths. These are low risk and covered by the primary code paths.
+**Files:** `src/models/mms_model.py`, `src/models/wav2vec2_model.py`
+
+**Current Coverage:** 97% (2 lines missed per file)
+
+**Missed Lines:** Lines 11-13 in both files (ImportError handling for optional `pyctcdecode` dependency)
+
+**Code:**
+
+```python
+try:
+    from pyctcdecode import BeamSearchDecoderCTC
+    HAS_PYCTCDECODE = True
+except ImportError:
+    HAS_PYCTCDECODE = False
+    BeamSearchDecoderCTC = None
+```
+
+**Rationale:**
+
+1. **Optional Dependency:** `pyctcdecode` is required only for language model-based beam search decoding, not for basic transcription
+2. **Testing Challenges:**
+   - Requires uninstalling package in test environment (brittle)
+   - Alternative: Mock the import system (creates false confidence)
+   - Best practice: Import guards are validated through integration tests
+
+3. **Risk Assessment:** Low risk because:
+   - Primary transcription paths work without pyctcdecode
+   - ImportError handler is defensive (sets safe defaults)
+   - Integration tests validate both paths (with/without LM)
+   - HuggingFace's own tests cover the library
+
+4. **Validation Strategy:**
+   - ✅ **Unit tests:** Cover all model methods when pyctcdecode is available (97% of code)
+   - ✅ **Integration tests:** Exercise transcription with and without language models
+   - ✅ **Manual testing:** Verified behavior when package is not installed
+
+**Conclusion:** The 97% coverage is acceptable because the missed lines are defensive import guards for optional functionality. Testing them would require anti-patterns (mocking import system) without meaningful risk reduction.
+
+**Alternative Considered:** Could achieve 100% by refactoring imports into a separate testable function, but this adds complexity without providing value. The current pattern follows Python best practices for optional dependencies.
 
 ### Future Improvements
 
