@@ -3,11 +3,26 @@ from typing import List, Optional, Dict, Any
 import json
 from pathlib import Path
 from src.backend.models import EvaluateRequest, EvaluateResponse
-from src.evaluation.evaluator import ASREvaluator
+from src.backend.model_cache import get_model_cache
 from scripts.evaluate_models import MODEL_REGISTRY
 from src.config import RESULTS_DIR
 
 router = APIRouter()
+
+
+@router.get("/cache/info")
+async def cache_info():
+    """Return diagnostics for the model cache."""
+    cache = get_model_cache()
+    return cache.info()
+
+
+@router.post("/cache/clear")
+async def cache_clear():
+    """Clear all cached evaluators."""
+    cache = get_model_cache()
+    cache.clear()
+    return {"status": "ok", "message": "Cache cleared"}
 
 @router.post("/evaluate", response_model=EvaluateResponse)
 async def evaluate_model(request: EvaluateRequest):
@@ -23,14 +38,13 @@ async def evaluate_model(request: EvaluateRequest):
     try:
         test_set_path = "data/metadata/test.tsv"
         
-        # Create evaluator instance with requested model type and name
-        evaluator = ASREvaluator(
+        # Fetch evaluator from LRU cache (loads if missing)
+        cache = get_model_cache()
+        evaluator = cache.get(
             model_type=request.model_type,
-            model_name=request.model
+            model_name=request.model,
+            lm_path=None
         )
-        
-        # Load the model
-        evaluator.load_model()
         
         # Evaluate the dataset
         results = evaluator.evaluate_dataset(
