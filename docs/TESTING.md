@@ -787,5 +787,5 @@ def temp_file():
 
 ---
 
-**Last Updated:** December 11, 2025  
+**Last Updated:** December 14, 2025  
 **Maintainer:** Till Ermold (<till.ermold@code.berlin>)
