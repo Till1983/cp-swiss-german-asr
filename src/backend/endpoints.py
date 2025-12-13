@@ -1,6 +1,11 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Query
+from typing import List, Optional, Dict, Any
+import json
+from pathlib import Path
 from src.backend.models import EvaluateRequest, EvaluateResponse
 from src.evaluation.evaluator import ASREvaluator
+from scripts.evaluate_models import MODEL_REGISTRY
+from src.config import RESULTS_DIR
 
 router = APIRouter()
 
@@ -51,3 +56,186 @@ async def evaluate_model(request: EvaluateRequest):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error during evaluation: {str(e)}"
         )
+    
+@router.get("/models")
+async def get_models():
+    """
+    Get list of available ASR models and their metadata from the registry.
+    """
+    try:
+        # Import MODEL_REGISTRY locally to avoid circular imports or path issues
+        # This relies on scripts.evaluate_models being importable from the project root
+
+        models = {}
+        for key, config in MODEL_REGISTRY.items():
+            models[key] = {
+                "type": config.get("type"),
+                "display_name": key.replace("-", " ").title(),
+                "description": f"Model: {config.get('name')}",
+                "supports_lm": "lm_path" in config
+            }
+        return models
+    except ImportError as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to load model registry: {str(e)}"
+        )
+
+@router.get("/results")
+async def get_results():
+    """
+    Get list of all available evaluation results.
+    """
+    metrics_dir = RESULTS_DIR / "metrics"
+    if not metrics_dir.exists():
+        return []
+
+    results = []
+    # Iterate over timestamp directories
+    for timestamp_dir in metrics_dir.iterdir():
+        if not timestamp_dir.is_dir():
+            continue
+            
+        # Check for result files in the timestamp directory
+        for result_file in timestamp_dir.glob("*_results.json"):
+            model_name = result_file.name.replace("_results.json", "")
+            results.append({
+                "model": model_name,
+                "timestamp": timestamp_dir.name,
+                "path": str(result_file.relative_to(RESULTS_DIR))
+            })
+    
+    # Sort by timestamp descending
+    results.sort(key=lambda x: x["timestamp"], reverse=True)
+    return results
+
+@router.get("/results/{model}")
+async def get_model_results(
+    model: str, 
+    timestamp: Optional[str] = Query(None)
+):
+    """
+    Get evaluation results for a specific model.
+    """
+    metrics_dir = RESULTS_DIR / "metrics"
+    
+    if timestamp:
+        result_file = metrics_dir / timestamp / f"{model}_results.json"
+        if not result_file.exists():
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Results not found for model '{model}' at timestamp '{timestamp}'"
+            )
+    else:
+        # Find most recent result
+        if not metrics_dir.exists():
+             raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No results directory found"
+            )
+            
+        timestamps = sorted(
+            [d for d in metrics_dir.iterdir() if d.is_dir()],
+            key=lambda x: x.name,
+            reverse=True
+        )
+        
+        result_file = None
+        for ts_dir in timestamps:
+            candidate = ts_dir / f"{model}_results.json"
+            if candidate.exists():
+                result_file = candidate
+                break
+        
+        if not result_file:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"No results found for model '{model}'"
+            )
+
+    try:
+        with open(result_file, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error reading result file: {str(e)}"
+        )
+
+@router.get("/results/{model}/{dialect}")
+async def get_model_dialect_results(
+    model: str,
+    dialect: str,
+    timestamp: Optional[str] = Query(None)
+):
+    """
+    Get dialect-specific evaluation results for a model.
+    """
+    metrics_dir = RESULTS_DIR / "metrics"
+    
+    if timestamp:
+        result_file = metrics_dir / timestamp / f"{model}_results.json"
+        if not result_file.exists():
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Results not found for model '{model}' at timestamp '{timestamp}'"
+            )
+    else:
+        if not metrics_dir.exists():
+             raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No results directory found"
+            )
+            
+        timestamps = sorted(
+            [d for d in metrics_dir.iterdir() if d.is_dir()],
+            key=lambda x: x.name,
+            reverse=True
+        )
+        
+        result_file = None
+        for ts_dir in timestamps:
+            candidate = ts_dir / f"{model}_results.json"
+            if candidate.exists():
+                result_file = candidate
+                break
+        
+        if not result_file:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"No results found for model '{model}'"
+            )
+
+    try:
+        with open(result_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            
+        # Check if dialect exists in metrics
+        results = data.get("results", {})
+        per_dialect_wer = results.get("per_dialect_wer", {})
+        
+        if dialect not in per_dialect_wer:
+             raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Dialect '{dialect}' not found in results for model '{model}'"
+            )
+            
+        # Filter samples
+        all_samples = results.get("samples", [])
+        dialect_samples = [s for s in all_samples if s.get("dialect") == dialect]
+        
+        return {
+            "samples": dialect_samples,
+            "overall_wer": results.get("per_dialect_wer", {}).get(dialect),
+            "overall_cer": results.get("per_dialect_cer", {}).get(dialect),
+            "overall_bleu": results.get("per_dialect_bleu", {}).get(dialect)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error processing results: {str(e)}"
+        )
+    
