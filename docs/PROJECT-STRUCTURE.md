@@ -24,6 +24,9 @@ cp-swiss-german-asr/
 ├── requirements_local.txt
 ├── .vscode/
 │   └── settings.json
+├── .streamlit/
+│   ├── config.toml
+│   └── secrets.toml.example
 ├── data/                # gitignored (the entire directory - large files)
 │   ├── README.md
 │   ├── metadata/
@@ -87,6 +90,7 @@ cp-swiss-german-asr/
 │           ├── README_columns.txt
 │           └── clips/
 ├── docs/
+│   ├── COVERAGE_IMPROVEMENTS.md
 │   ├── DASHBOARD.md
 │   ├── ERROR_ANALYSIS_METHODOLOGY.md
 │   ├── GPU_COMPATIBILITY.md
@@ -97,6 +101,7 @@ cp-swiss-german-asr/
 │   ├── PROJECT-STRUCTURE.md
 │   ├── RUNPOD_POD_PERSISTENCE.md
 │   ├── RUNPOD_WORKFLOW.md
+│   ├── TEST_IMPROVEMENTS_SUMMARY.md
 │   ├── TESTING.md
 │   └── TRAINING_WORKFLOW.md
 ├── early-experiments/       # gitignored (the entire directory - large files)
@@ -285,6 +290,7 @@ cp-swiss-german-asr/
 │   ├── backend/
 │   │   ├── __init__.py
 │   │   ├── endpoints.py
+│   │   ├── model_cache.py
 │   │   ├── models.py
 │   │   └── __pycache__/     # gitignored
 │   ├── data/
@@ -302,6 +308,7 @@ cp-swiss-german-asr/
 │   │   └── __pycache__/     # gitignored
 │   ├── frontend/
 │   │   ├── app.py
+│   │   ├── requirements.txt
 │   │   ├── components/
 │   │   │   ├── __init__.py
 │   │   │   ├── data_table.py
@@ -354,14 +361,19 @@ cp-swiss-german-asr/
     │   ├── conftest.py
     │   ├── test_backend_endpoints.py
     │   ├── test_data_pipeline.py
+    │   ├── test_error_analysis_pipeline.py
+    │   ├── test_frontend_data_loading.py
     │   └── test_model_evaluation.py
     └── unit/
         ├── __init__.py
         ├── conftest.py
         ├── test_config.py
+        ├── test_edge_cases.py
+        ├── test_parameterized.py
         ├── __pycache__/      # gitignored
         ├── backend/
         │   ├── __init__.py
+        │   ├── test_model_cache.py
         │   └── test_pydantic_models.py
         ├── data_tests/
         │   ├── __init__.py
@@ -373,10 +385,14 @@ cp-swiss-german-asr/
         │   ├── __init__.py
         │   ├── test_error_analyzer.py
         │   ├── test_evaluator.py
-        │   └── test_metrics.py
+        │   ├── test_metrics.py
+        │   └── test_metrics_properties.py
         ├── frontend/
         │   ├── __init__.py
-        │   └── test_data_loader.py
+        │   ├── test_data_loader.py
+        │   ├── test_error_data_loader.py
+        │   ├── test_plotly_charts.py
+        │   └── test_sidebar.py
         ├── model_tests/
         │   ├── __init__.py
         │   ├── test_mms_model.py
