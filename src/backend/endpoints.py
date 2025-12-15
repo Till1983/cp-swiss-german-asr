@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Query
-from typing import List, Optional, Dict, Any
+from typing import Optional
 import json
+import re
 from pathlib import Path
 from src.backend.models import EvaluateRequest, EvaluateResponse
 from src.backend.model_cache import get_model_cache
@@ -8,6 +9,57 @@ from scripts.evaluate_models import MODEL_REGISTRY
 from src.config import RESULTS_DIR
 
 router = APIRouter()
+
+def validate_safe_path_component(component: str, name: str):
+    """
+    Validate that a path component is safe (alphanumeric, hyphens, underscores).
+    Prevents path traversal attacks.
+    """
+    if not component or not re.match(r"^[a-zA-Z0-9_-]+$", component):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid {name}: must contain only alphanumeric characters, hyphens, and underscores"
+        )
+
+def get_result_file(model: str, timestamp: Optional[str] = None) -> Path:
+    """
+    Get the path to the result file for a given model and optional timestamp.
+    Handles validation and finding the most recent result if timestamp is not provided.
+    """
+    metrics_dir = RESULTS_DIR / "metrics"
+    validate_safe_path_component(model, "model")
+    
+    if timestamp:
+        validate_safe_path_component(timestamp, "timestamp")
+        result_file = metrics_dir / timestamp / f"{model}_results.json"
+        if not result_file.exists():
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Results not found for model '{model}' at timestamp '{timestamp}'"
+            )
+        return result_file
+    else:
+        if not metrics_dir.exists():
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No results directory found"
+            )
+            
+        timestamps = sorted(
+            [d for d in metrics_dir.iterdir() if d.is_dir()],
+            key=lambda x: x.name,
+            reverse=True
+        )
+        
+        for ts_dir in timestamps:
+            candidate = ts_dir / f"{model}_results.json"
+            if candidate.exists():
+                return candidate
+        
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No results found for model '{model}'"
+        )
 
 
 @router.get("/cache/info")
@@ -131,41 +183,7 @@ async def get_model_results(
     """
     Get evaluation results for a specific model.
     """
-    metrics_dir = RESULTS_DIR / "metrics"
-    
-    if timestamp:
-        result_file = metrics_dir / timestamp / f"{model}_results.json"
-        if not result_file.exists():
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Results not found for model '{model}' at timestamp '{timestamp}'"
-            )
-    else:
-        # Find most recent result
-        if not metrics_dir.exists():
-             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="No results directory found"
-            )
-            
-        timestamps = sorted(
-            [d for d in metrics_dir.iterdir() if d.is_dir()],
-            key=lambda x: x.name,
-            reverse=True
-        )
-        
-        result_file = None
-        for ts_dir in timestamps:
-            candidate = ts_dir / f"{model}_results.json"
-            if candidate.exists():
-                result_file = candidate
-                break
-        
-        if not result_file:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"No results found for model '{model}'"
-            )
+    result_file = get_result_file(model, timestamp)
 
     try:
         with open(result_file, "r", encoding="utf-8") as f:
@@ -185,40 +203,7 @@ async def get_model_dialect_results(
     """
     Get dialect-specific evaluation results for a model.
     """
-    metrics_dir = RESULTS_DIR / "metrics"
-    
-    if timestamp:
-        result_file = metrics_dir / timestamp / f"{model}_results.json"
-        if not result_file.exists():
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Results not found for model '{model}' at timestamp '{timestamp}'"
-            )
-    else:
-        if not metrics_dir.exists():
-             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="No results directory found"
-            )
-            
-        timestamps = sorted(
-            [d for d in metrics_dir.iterdir() if d.is_dir()],
-            key=lambda x: x.name,
-            reverse=True
-        )
-        
-        result_file = None
-        for ts_dir in timestamps:
-            candidate = ts_dir / f"{model}_results.json"
-            if candidate.exists():
-                result_file = candidate
-                break
-        
-        if not result_file:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"No results found for model '{model}'"
-            )
+    result_file = get_result_file(model, timestamp)
 
     try:
         with open(result_file, "r", encoding="utf-8") as f:
@@ -229,7 +214,7 @@ async def get_model_dialect_results(
         per_dialect_wer = results.get("per_dialect_wer", {})
         
         if dialect not in per_dialect_wer:
-             raise HTTPException(
+            raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Dialect '{dialect}' not found in results for model '{model}'"
             )
@@ -252,4 +237,3 @@ async def get_model_dialect_results(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error processing results: {str(e)}"
         )
-    
