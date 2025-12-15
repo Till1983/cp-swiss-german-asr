@@ -1,6 +1,6 @@
 """Unit tests for ModelCache and get_model_cache."""
 import pytest
-from unittest.mock import Mock, MagicMock, patch
+from unittest.mock import Mock, patch
 from src.backend.model_cache import ModelCache, get_model_cache, _MODEL_CACHE
 
 

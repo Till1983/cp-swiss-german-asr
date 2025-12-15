@@ -7,7 +7,6 @@ import numpy as np
 import sys
 from types import ModuleType
 from types import SimpleNamespace
-import math
 
 # ---------------------------------------------------------------------------
 # Lightweight mocks for optional heavy deps (ensure availability during test
