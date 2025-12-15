@@ -2,6 +2,90 @@
 import pytest
 from typing import Dict, List
 import numpy as np
+import sys
+from types import ModuleType
+
+# Light-weight mocks for optional heavy deps used in training module
+if 'transformers' not in sys.modules:
+    transformers = ModuleType('transformers')
+    transformers.__path__ = []  # mark as package
+    trainer_utils = ModuleType('transformers.trainer_utils')
+    integrations = ModuleType('transformers.integrations')
+    # Provide expected constant used by trainer
+    setattr(trainer_utils, 'PREFIX_CHECKPOINT_DIR', 'checkpoint')
+    # Minimal classes used in training tests
+    class Trainer:  # type: ignore
+        def __init__(self, *args, **kwargs):
+            self.args = kwargs
+        def log_metrics(self, *args, **kwargs):
+            pass
+        def evaluate(self, *args, **kwargs):
+            return {}
+        def train(self, *args, **kwargs):
+            return {}
+        def save_model(self, *args, **kwargs):
+            pass
+    class TrainingArguments:  # type: ignore
+        def __init__(self, *args, **kwargs):
+            pass
+    class EarlyStoppingCallback:  # type: ignore
+        pass
+    class TrainerCallback:  # type: ignore
+        pass
+    class TensorBoardCallback:  # type: ignore
+        pass
+    class WandbCallback:  # type: ignore
+        pass
+    class Wav2Vec2Processor:  # type: ignore
+        def __init__(self, *args, **kwargs):
+            pass
+        @classmethod
+        def from_pretrained(cls, *args, **kwargs):
+            return cls()
+    class WhisperProcessor:  # type: ignore
+        def __init__(self, *args, **kwargs):
+            pass
+        @classmethod
+        def from_pretrained(cls, *args, **kwargs):
+            return cls()
+    class WhisperForConditionalGeneration:  # type: ignore
+        def __init__(self, *args, **kwargs):
+            pass
+    class Wav2Vec2ForCTC:  # type: ignore
+        def __init__(self, *args, **kwargs):
+            pass
+    class AutoProcessor:  # type: ignore
+        def __init__(self, *args, **kwargs):
+            pass
+    setattr(transformers, 'Trainer', Trainer)
+    setattr(transformers, 'TrainingArguments', TrainingArguments)
+    setattr(transformers, 'EarlyStoppingCallback', EarlyStoppingCallback)
+    setattr(transformers, 'TrainerCallback', TrainerCallback)
+    setattr(transformers, 'Wav2Vec2Processor', Wav2Vec2Processor)
+    setattr(transformers, 'WhisperProcessor', WhisperProcessor)
+    setattr(transformers, 'WhisperForConditionalGeneration', WhisperForConditionalGeneration)
+    setattr(transformers, 'Wav2Vec2ForCTC', Wav2Vec2ForCTC)
+    setattr(transformers, 'AutoProcessor', AutoProcessor)
+    setattr(integrations, 'TensorBoardCallback', TensorBoardCallback)
+    setattr(integrations, 'WandbCallback', WandbCallback)
+    sys.modules['transformers'] = transformers
+    sys.modules['transformers.trainer_utils'] = trainer_utils
+    sys.modules['transformers.integrations'] = integrations
+
+# Mock torch to avoid heavy import in unit tests
+if 'torch' not in sys.modules:
+    torch = ModuleType('torch')
+    backends = ModuleType('torch.backends')
+    mps = ModuleType('torch.backends.mps')
+    cuda = ModuleType('torch.cuda')
+    # Minimal API used in code
+    setattr(torch, 'cuda', cuda)
+    setattr(torch, 'backends', backends)
+    setattr(backends, 'mps', mps)
+    sys.modules['torch'] = torch
+    sys.modules['torch.backends'] = backends
+    sys.modules['torch.backends.mps'] = mps
+    sys.modules['torch.cuda'] = cuda
 
 
 @pytest.fixture

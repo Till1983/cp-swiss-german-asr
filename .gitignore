@@ -225,3 +225,6 @@ early-experiments/
 *.arpa
 *.bin
 *.gz
+
+# Streamlit secrets file
+.streamlit/secrets.toml

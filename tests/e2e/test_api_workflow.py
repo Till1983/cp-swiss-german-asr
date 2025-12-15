@@ -19,8 +19,8 @@ class TestAPIWorkflow:
         return TestClient(app)
 
     @pytest.mark.e2e
-    @patch('src.backend.endpoints.ASREvaluator')
-    def test_complete_api_evaluation_flow(self, mock_evaluator_class, client):
+    @patch('src.backend.endpoints.get_model_cache')
+    def test_complete_api_evaluation_flow(self, mock_get_cache, client):
         """Test complete API evaluation flow."""
         # Setup mock
         mock_evaluator = Mock()
@@ -34,7 +34,9 @@ class TestAPIWorkflow:
             "per_dialect_cer": {"BE": 10.0, "ZH": 13.0, "VS": 15.0},
             "per_dialect_bleu": {"BE": 72.0, "ZH": 67.0, "VS": 65.0}
         }
-        mock_evaluator_class.return_value = mock_evaluator
+        fake_cache = Mock()
+        fake_cache.get.return_value = mock_evaluator
+        mock_get_cache.return_value = fake_cache
 
         # Make request
         response = client.post(
@@ -63,8 +65,8 @@ class TestAPIWorkflow:
         assert data["per_dialect_wer"]["BE"] == 25.0
 
     @pytest.mark.e2e
-    @patch('src.backend.endpoints.ASREvaluator')
-    def test_api_multiple_model_types(self, mock_evaluator_class, client):
+    @patch('src.backend.endpoints.get_model_cache')
+    def test_api_multiple_model_types(self, mock_get_cache, client):
         """Test API with different model types."""
         mock_evaluator = Mock()
         mock_evaluator.evaluate_dataset.return_value = {
@@ -77,7 +79,9 @@ class TestAPIWorkflow:
             "per_dialect_cer": {"BE": 15.0},
             "per_dialect_bleu": {"BE": 65.0}
         }
-        mock_evaluator_class.return_value = mock_evaluator
+        fake_cache = Mock()
+        fake_cache.get.return_value = mock_evaluator
+        mock_get_cache.return_value = fake_cache
 
         model_configs = [
             {"model_type": "whisper", "model": "tiny"},
@@ -121,12 +125,14 @@ class TestAPIWorkflow:
         assert response.status_code == 422
 
     @pytest.mark.e2e
-    @patch('src.backend.endpoints.ASREvaluator')
-    def test_api_error_handling(self, mock_evaluator_class, client):
+    @patch('src.backend.endpoints.get_model_cache')
+    def test_api_error_handling(self, mock_get_cache, client):
         """Test API error handling."""
         mock_evaluator = Mock()
         mock_evaluator.load_model.side_effect = RuntimeError("Model not found")
-        mock_evaluator_class.return_value = mock_evaluator
+        fake_cache = Mock()
+        fake_cache.get.return_value = mock_evaluator
+        mock_get_cache.return_value = fake_cache
 
         response = client.post(
             "/api/evaluate",
@@ -152,8 +158,8 @@ class TestAPIResponseValidation:
         return TestClient(app)
 
     @pytest.mark.e2e
-    @patch('src.backend.endpoints.ASREvaluator')
-    def test_response_schema_validation(self, mock_evaluator_class, client):
+    @patch('src.backend.endpoints.get_model_cache')
+    def test_response_schema_validation(self, mock_get_cache, client):
         """Test that response matches expected schema."""
         from src.backend.models import EvaluateResponse
 
@@ -168,7 +174,9 @@ class TestAPIResponseValidation:
             "per_dialect_cer": {"BE": 12.0, "ZH": 16.0},
             "per_dialect_bleu": {"BE": 68.0, "ZH": 62.0}
         }
-        mock_evaluator_class.return_value = mock_evaluator
+        fake_cache = Mock()
+        fake_cache.get.return_value = mock_evaluator
+        mock_get_cache.return_value = fake_cache
 
         response = client.post(
             "/api/evaluate",
@@ -186,8 +194,8 @@ class TestAPIResponseValidation:
         assert response_obj.failed_samples == 2
 
     @pytest.mark.e2e
-    @patch('src.backend.endpoints.ASREvaluator')
-    def test_response_metric_ranges(self, mock_evaluator_class, client):
+    @patch('src.backend.endpoints.get_model_cache')
+    def test_response_metric_ranges(self, mock_get_cache, client):
         """Test that metrics are in expected ranges."""
         mock_evaluator = Mock()
         mock_evaluator.evaluate_dataset.return_value = {
@@ -200,7 +208,9 @@ class TestAPIResponseValidation:
             "per_dialect_cer": {"BE": 0.0},
             "per_dialect_bleu": {"BE": 100.0}
         }
-        mock_evaluator_class.return_value = mock_evaluator
+        fake_cache = Mock()
+        fake_cache.get.return_value = mock_evaluator
+        mock_get_cache.return_value = fake_cache
 
         response = client.post(
             "/api/evaluate",

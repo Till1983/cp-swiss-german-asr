@@ -50,6 +50,7 @@ services:
     build: .
     command: ["python", "-m", "pytest", "tests/unit/", "-v", "-m", "unit"]
     volumes:
+      - ./data:/app/data
       - ./src:/app/src
       - ./tests:/app/tests
     environment:
