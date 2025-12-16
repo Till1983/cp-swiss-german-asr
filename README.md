@@ -99,18 +99,63 @@ Access at http://localhost:8501
 - Downloadable CSV exports
 
 ### API (FastAPI)
-RESTful API for programmatic model evaluation.
+
+RESTful API for programmatic model evaluation and result browsing.
 
 ```bash
 docker compose up api
 ```
 
-Access at http://localhost:8000
+**Base URL:** http://localhost:8000  
+**Interactive Documentation:** http://localhost:8000/docs (Swagger UI with try-it-out)
 
-**Endpoints:**
-- `GET /health` - Health check
-- `GET /load-model` - Load ASR model into memory
+#### Core Endpoints
+
+**Model Evaluation:**
 - `POST /api/evaluate` - Run evaluation on test set
+  ```bash
+  curl -X POST http://localhost:8000/api/evaluate \
+    -H "Content-Type: application/json" \
+    -d '{"model_type": "whisper", "model": "small", "limit": 10}'
+  ```
+  
+**Result Browsing:**
+- `GET /api/results` - List all saved evaluation results
+- `GET /api/results/{model}` - Get latest results for specific model
+- `GET /api/results/{model}?timestamp=YYYYMMDD_HHMMSS` - Get results from specific run
+- `GET /api/results/{model}/{dialect}` - Filter results by dialect
+
+**Model Cache Management:**
+- `GET /api/cache/info` - Check loaded models and cache status
+- `POST /api/cache/clear` - Free GPU/CPU memory (clear all cached models)
+- `GET /api/models` - List all registered ASR models
+
+**System:**
+- `GET /health` - API health check
+- `GET /load-model` - Warm up default Whisper base model
+
+#### Cache Management
+
+The API caches loaded models to avoid repeated downloads. Use cache endpoints when:
+- **Before switching models:** `POST /api/cache/clear` to free GPU memory
+- **Debugging memory issues:** Check `GET /api/cache/info` for loaded models
+- **After extended idle:** Models remain cached until manually cleared
+
+**Example workflow:**
+```bash
+# Check what's cached
+curl http://localhost:8000/api/cache/info
+
+# Clear before loading large model
+curl -X POST http://localhost:8000/api/cache/clear
+
+# Run evaluation
+curl -X POST http://localhost:8000/api/evaluate \
+  -H "Content-Type: application/json" \
+  -d '{"model_type": "whisper", "model": "large-v3", "limit": 100}'
+```
+
+For detailed request/response schemas and interactive testing, use the Swagger documentation at `/docs`.
 
 ### Testing Suite
 Comprehensive unit, integration, and end-to-end tests.
@@ -168,7 +213,9 @@ results/metrics/20241209_143022/
 
 ### API Evaluation
 
-Alternatively, use the FastAPI endpoint:
+Alternatively, use the FastAPI endpoint programmatically. See the [API section](#api-fastapi) for complete endpoint documentation.
+
+**Quick example:**
 
 ```bash
 curl -X POST http://localhost:8000/api/evaluate \
@@ -180,10 +227,20 @@ curl -X POST http://localhost:8000/api/evaluate \
   }'
 ```
 
-**Response includes:**
-- `overall_wer`, `overall_cer`, `overall_bleu`
-- `per_dialect_wer`, `per_dialect_cer`, `per_dialect_bleu`
-- `total_samples` processed
+**Response structure:**
+```json
+{
+  "model": "small",
+  "total_samples": 10,
+  "failed_samples": 0,
+  "overall_wer": 28.5,
+  "overall_cer": 12.3,
+  "overall_bleu": 68.7,
+  "per_dialect_wer": {"BE": 25.0, "ZH": 30.0},
+  "per_dialect_cer": {"BE": 10.0, "ZH": 13.0},
+  "per_dialect_bleu": {"BE": 72.0, "ZH": 67.0}
+}
+```
 
 **Note:** WER and CER are percentages (0-100, lower is better). BLEU is 0-100 (higher is better).
 
@@ -357,5 +414,5 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Last Updated:** December 12, 2025  
-**Version:** 2.0 (Multi-Model Comparison Support)
+**Last Updated:** December 16, 2025  
+**Version:** 3.0 (Add Core API Endpoints)
