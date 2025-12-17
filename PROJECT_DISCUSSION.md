@@ -33,3 +33,114 @@ The project successfully met all exposé requirements:
 - ✅ Technical documentation (12 documents covering methodology, workflows, architecture, and testing)
 
 The evaluation framework provides a foundation for ASR model selection in Swiss German applications, with documented limitations including dialectal sample imbalance (6–203 samples per dialect) and zero-shot evaluation scope (no fine-tuning performed).
+
+
+## 2. Software Architecture & Technology Choices
+
+### 2.1 System Architecture
+
+The system follows a modular, service-oriented architecture with clear separation of concerns across four primary components:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          USER INTERACTION LAYER                              │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                    Streamlit Dashboard (Port 8501)                     │  │
+│  │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐   │  │
+│  │  │ Model Comparison │  │ Dialect Analysis │  │ Error Sample     │   │  │
+│  │  │ Visualizations   │  │ Breakdowns       │  │ Viewer           │   │  │
+│  │  └──────────────────┘  └──────────────────┘  └──────────────────┘   │  │
+│  │                                                                         │  │
+│  │  Responsibilities:                                                      │  │
+│  │  • Result visualization (Plotly charts, data tables)                   │  │
+│  │  • Multi-model comparison interface                                    │  │
+│  │  • Interactive dialect filtering                                       │  │
+│  │  • Word-level alignment display                                        │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      │ HTTP REST API
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          API & EVALUATION LAYER                              │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                      FastAPI Backend (Port 8000)                       │  │
+│  │  ┌────────────────┐  ┌────────────────┐  ┌────────────────────────┐  │  │
+│  │  │ Model Loading  │  │ Evaluation     │  │ Result Persistence    │  │  │
+│  │  │ & Caching      │  │ Endpoints      │  │ (JSON/CSV)            │  │  │
+│  │  └────────────────┘  └────────────────┘  └────────────────────────┘  │  │
+│  │                                                                         │  │
+│  │  Endpoints:                                                             │  │
+│  │  • POST /evaluate - Trigger model evaluation                           │  │
+│  │  • GET /results/{model} - Retrieve metrics                             │  │
+│  │  • GET /available-models - List model registry                         │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+│                                                                               │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                      Evaluation Pipeline                               │  │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────────┐  │  │
+│  │  │ ASR Evaluator   │  │ Metrics Module  │  │ Error Analyzer      │  │  │
+│  │  │ (evaluator.py)  │  │ (metrics.py)    │  │ (error_analyzer.py) │  │  │
+│  │  └─────────────────┘  └─────────────────┘  └─────────────────────┘  │  │
+│  │          │                      │                      │               │  │
+│  │          ├─ Whisper Models      ├─ WER calculation    ├─ Alignment   │  │
+│  │          └─ Wav2Vec2 Models     ├─ CER calculation    ├─ Error types │  │
+│  │                                 └─ BLEU calculation   └─ Confusion   │  │
+│  │                                                            patterns    │  │
+│  │  Responsibilities:                                                      │  │
+│  │  • Model inference (Whisper, Wav2Vec2)                                 │  │
+│  │  • Metric computation (WER, CER, BLEU)                                 │  │
+│  │  • Word-level alignment (jiwer)                                        │  │
+│  │  • Error categorization (substitution, deletion, insertion)            │  │
+│  │  • Per-dialect aggregation                                             │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      │ Reads from
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          DATA PROCESSING LAYER                               │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                         Data Pipeline                                  │  │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │  │
+│  │  │ DataLoader   │→ │ Preprocessor │→ │ Audio Utils  │→ │ Collator │  │  │
+│  │  │ (loader.py)  │  │ (preproc.py) │  │ (utils.py)   │  │ (.py)    │  │  │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────┘  │  │
+│  │                                                                         │  │
+│  │  Responsibilities:                                                      │  │
+│  │  • FHNW corpus loading (TSV → dataset)                                 │  │
+│  │  • Audio preprocessing (resampling, normalization)                     │  │
+│  │  • Text normalization (lowercasing, punctuation removal)               │  │
+│  │  • Batch collation for evaluation                                      │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      │ Reads from
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           STORAGE LAYER                                      │
+│                                                                               │
+│  data/raw/                    results/                   models/             │
+│  └─ fhnw-swiss-german-corpus/ ├─ metrics/               └─ (HuggingFace     │
+│     ├─ clips/*.flac            │  └─ 20251202_171718/        cache)          │
+│     └─ metadata/*.tsv          │     ├─ *_results.json                       │
+│                                │     └─ *_results.csv                         │
+│                                └─ error_analysis/                             │
+│                                   └─ 20251203_112924/                         │
+│                                      ├─ analysis_*.json                       │
+│                                      └─ worst_samples_*.csv                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Key Architectural Decisions:**
+
+1. **Separation of Concerns**: Dashboard, API, evaluation logic, and data processing are isolated, enabling independent testing and deployment.
+
+2. **Result Persistence**: All metrics are written to timestamped JSON/CSV files before visualization, allowing offline analysis and reproducibility.
+
+3. **Model Registry Pattern**: Centralized model configuration in `scripts/evaluate_models.py` with model type abstractions (Whisper, Wav2Vec2).
+
+4. **Stateless API**: FastAPI endpoints delegate to evaluation pipeline without maintaining session state, supporting horizontal scaling.
+
+5. **Docker Containerization**: All components packaged in unified Docker image with separate service definitions in `docker-compose.yml` for local/cloud deployment.
+
