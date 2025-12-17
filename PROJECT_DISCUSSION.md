@@ -3,7 +3,7 @@
 Till Ermold | CODE University of Applied Sciences Berlin | December 2025
 
 ## Table of Contents
-1. [Executive Summary](#1-executive-summary)
+1. [Project Summary](#1-project-summary)
 2. [Software Architecture & Technology Choices](#2-software-architecture--technology-choices)
 3. [Machine Learning & Data Science Approach](#3-machine-learning--data-science-approach)
 4. [Requirements Elicitation & Validation](#4-requirements-elicitation--validation)
@@ -13,7 +13,7 @@ Till Ermold | CODE University of Applied Sciences Berlin | December 2025
 8. [References](#8-references)
 
 
-## 1. Executive Summary
+## 1. Project Summary
 
 This project developed a reproducible evaluation framework for comparing state-of-the-art ASR models on Swiss German dialect recognition. Swiss German presents unique challenges for ASR due to high dialectal variability, absence of standardised orthography, and limited training data compared to Standard German. The primary objective was to enable systematic comparison of ASR models across multiple Swiss German dialects, providing both quantitative metrics and qualitative error analysis to support practitioner decision-making.
 
@@ -333,3 +333,317 @@ Confusion pattern extraction uses exact string matching on aligned word pairs, f
 The combination of automated alignment (jiwer) and targeted manual inspection (top 10%) balances scalability with depth. Automated metrics provide comprehensive coverage across 863 samples, whilst manual analysis yields linguistic insights (e.g., morphosyntactic patterns) that purely algorithmic approaches cannot detect. This hybrid methodology is standard in ASR error analysis research, where quantitative metrics guide qualitative investigation of representative failure cases.
 
 Per-dialect granularity (rather than global-only analysis) is essential because Swiss German exhibits substantial phonological and morphological variation across regions. Aggregate statistics can mask dialect-specific phenomena; for example, a model may excel on Zürich dialect (lexically closer to Standard German) whilst failing on Valais (Romance substrate influence), with these patterns only visible through per-dialect decomposition.
+
+
+## 4. Requirements Elicitation & Validation
+
+### 4.1 Approach & Methodological Constraints
+
+Requirements elicitation for this project operated under significant constraints that shaped the adopted methodology. Three primary limitations influenced the approach: (1) the ten-week timeline precluded extensive stakeholder engagement processes such as interview studies or surveys; (2) as a solo student project without institutional partnerships, there was no direct access to Swiss German linguists, ASR practitioners, or potential end-users; and (3) the project developed a research prototype for comparative evaluation rather than a customer-commissioned product with a defined user base. Given these constraints, requirements derivation employed a hybrid approach combining systematic literature review, platform benchmarking, and AI-assisted requirements synthesis.
+
+**Methodology:**
+
+**1. State-of-the-Art Analysis:**
+
+Systematic review of Swiss German ASR research identified standard evaluation practices and documented practitioner needs. Key sources included:
+
+- Plüss et al. (2023): STT4SG-350 corpus paper documenting evaluation methodology with corpus-level WER/CER reporting and per-dialect breakdowns to assess dialectal variation
+- Dolev et al. (2024): Whisper evaluation study incorporating human evaluation (28 participants) alongside automatic metrics, establishing precedent for qualitative assessment
+- Kew et al. (2020): ArchiMob-based ASR research addressing practitioner concerns about dialectal vs. normalised transcriptions for downstream applications
+
+This analysis revealed consistent patterns: ASR evaluation frameworks universally report aggregate metrics (WER/CER), provide per-dialect performance decomposition, and include qualitative error analysis for model characterisation.
+
+**2. Platform Benchmarking:**
+
+Examination of production-grade ASR evaluation tools identified common interface patterns and expected functionality:
+
+- **NVIDIA NeMo Speech Data Explorer:** Provides utterance-level inspection with audio playback and word-level alignment visualisation
+- **HuggingFace Evaluate library:** Establishes standardised metric computation (WER/CER via jiwer) with data normalisation requirements
+- **Academic benchmark visualisations:** Common patterns include comparative bar charts for model ranking, heatmaps for dialect-specific performance, and tabular result displays
+
+**3. AI-Assisted Requirements Synthesis:**
+
+Large language models (Google Gemini, Lumo, Mistral, Public AI Switzerland) were prompted with project descriptions, exposé specifications, and benchmark analysis to generate candidate requirements. The prompting strategy involved:
+
+- Providing models with Swiss German ASR context and existing platform descriptions
+- Requesting identification of dashboard features supporting comparative evaluation
+- Generating user story candidates for interactive exploration workflows
+
+LLM outputs were critically evaluated and cross-referenced against academic benchmarks to filter hallucinated or infeasible features. For example, Gemini suggested real-time transcription capabilities, which were excluded as out-of-scope for zero-shot evaluation. Requirements were retained only if validated by at least two sources: (1) precedent in academic literature, (2) presence in established ASR tools, or (3) explicit exposé specifications.
+
+**Limitations Acknowledged:**
+
+This approach lacks empirical validation through user interviews, surveys, or observational studies, representing a significant methodological constraint. Requirements were not elicited from actual stakeholders but inferred from literature, industry standards, and AI synthesis of common patterns. The resulting system addresses *typical* ASR evaluation needs documented in research rather than *validated user-specific* needs discovered through direct engagement.
+
+This limitation is common in research prototypes without defined customer bases, where requirements derive from domain conventions rather than stakeholder articulation. However, it introduces risk: features deemed standard by literature may not align with actual user priorities, and novel interaction paradigms addressing unmet needs remain undiscovered. Future work should include human evaluation studies (following Dolev et al. 2024 methodology) to assess dashboard usability, identify overlooked requirements, and validate whether implemented features support practitioners' analytical workflows.
+
+### 4.2 Core Requirements Identified
+
+Requirements were organised into four categories based on their source and role in the evaluation framework: **Functional Requirements** (system capabilities), **Data Requirements** (corpus and preprocessing), **Interface Requirements** (dashboard interaction), and **Quality Requirements** (performance and reproducibility).
+
+#### 4.2.1 Functional Requirements
+
+**FR1: Multi-Model Evaluation**
+
+- **Source:** Standard ASR benchmarking practice (Plüss et al. 2023)
+- **Requirement:** System shall evaluate at least 4 ASR models from diverse architectural families (encoder-decoder transformers, self-supervised models) on identical test data
+- **Justification:** Comparative analysis requires multiple models to establish performance baselines and identify architecture-specific strengths
+- **Implementation:** 6 models evaluated (Whisper large-v3/v2/medium/turbo, Wav2Vec2-1b-german-cv11, Wav2Vec2-german-with-lm)
+
+**FR2: Multi-Dialect Assessment**
+
+- **Source:** Swiss German variation research (Kew et al. 2020)
+- **Requirement:** System shall report per-dialect performance metrics to quantify variation in ASR difficulty across Swiss German regional varieties
+- **Justification:** Linguistic distance from Standard German varies by dialect (e.g., Valais vs. Zürich), affecting model performance; aggregate metrics mask this variation
+- **Implementation:** 17 dialects evaluated from FHNW corpus (BE, ZH, SG, AG, BL, LU, TG, SO, ZG, VS, UR, GR, SZ, FR, GL, SH, NW)
+
+**FR3: Standard Metric Computation**
+
+- **Source:** Academic consensus (WER/CER universal in ASR literature), HuggingFace Evaluate conventions
+- **Requirement:** System shall compute Word Error Rate (WER), Character Error Rate (CER), and BLEU score using established implementations (jiwer, sacrebleu)
+- **Justification:** Enables comparison with published benchmarks; WER/CER measure transcription accuracy, BLEU assesses semantic fidelity for translation tasks
+- **Implementation:** Corpus-level metrics aggregated across test set; per-sample metrics stored for drill-down analysis
+
+**FR4: Word-Level Error Analysis**
+
+- **Source:** NVIDIA NeMo Speech Data Explorer interface patterns, academic error analysis methodology
+- **Requirement:** System shall provide word-level alignment between reference and hypothesis, categorising errors as substitutions, deletions, or insertions
+- **Justification:** Aggregate metrics obscure error patterns (e.g., systematic phonological substitutions); alignment enables linguistic analysis
+- **Implementation:** jiwer Wagner-Fischer algorithm generates alignments; worst 10% samples (WER ≥50%) flagged for detailed inspection
+
+#### 4.2.2 Data Requirements
+
+**DR1: Standardised Test Corpus**
+
+- **Source:** Swiss German ASR literature (Plüss et al. 2023 STT4SG-350, Kew et al. 2020 ArchiMob)
+- **Requirement:** Evaluation shall use a publicly available Swiss German corpus with Standard German reference transcriptions and dialect labels
+- **Justification:** Reproducibility requires public data; dialect labels enable per-variety analysis
+- **Implementation:** FHNW Swiss German corpus public subset (5,750 samples), stratified test split (863 samples, 17 dialects)
+
+**DR2: Data Normalisation Consistency**
+
+- **Source:** HuggingFace Evaluate documentation, academic benchmarking best practices
+- **Requirement:** Reference and hypothesis text shall undergo identical normalisation (lowercasing, punctuation removal) before metric computation
+- **Justification:** Prevents inflated error rates from formatting inconsistencies; ensures fair model comparison
+- **Implementation:** Consistent preprocessing pipeline applied to all models; normalisation steps documented in evaluation methodology
+
+#### 4.2.3 Interface Requirements
+
+**IR1: Comparative Visualisation**
+
+- **Source:** Academic benchmark visualisations (Plüss et al. 2023 Table 1), AI synthesis from Gemini prompting
+- **Requirement:** Dashboard shall display model performance using bar charts (model ranking), heatmaps (dialect-specific WER), and tabular summaries
+- **Justification:** Visual comparison enables rapid identification of best-performing models and challenging dialects
+- **Implementation:** Plotly interactive charts with hover tooltips; multi-model selection for side-by-side comparison
+
+**IR2: Utterance-Level Inspection**
+
+- **Source:** NVIDIA NeMo Speech Data Explorer, Gemini requirements synthesis
+- **Requirement:** Dashboard shall provide drill-down from aggregate metrics to individual samples with reference/hypothesis alignment and audio playback
+- **Justification:** Qualitative analysis requires examining specific failures; audio playback enables verification of transcription errors vs. reference annotation issues
+- **Implementation:** Streamlit data table with filtering by dialect, WER threshold; sample details page with word-level colour-coded alignment
+
+**IR3: Interactive Filtering**
+
+- **Source:** AI synthesis from Gemini/Lumo prompting, validated against standard BI dashboard patterns
+- **Requirement:** Dashboard shall support filtering by model, dialect, and performance threshold (e.g., WER ≥50% for worst samples)
+- **Justification:** Enables targeted analysis (e.g., "How does Whisper large-v3 perform on Valais dialect?")
+- **Implementation:** Streamlit widgets (st.multiselect, st.slider) with dynamic chart updates
+
+#### 4.2.4 Quality Requirements
+
+**QR1: Reproducibility**
+
+- **Source:** Academic research standards, exposé specification
+- **Requirement:** Evaluation results shall be reproducible given Docker containerisation, pinned dependencies, and stored model outputs
+- **Justification:** Research validity requires independent verification; Docker ensures consistent runtime environment
+- **Implementation:** Docker Compose orchestration, requirements.txt with pinned versions (torch==2.6.0), results persisted as JSON/CSV with timestamps
+
+**QR2: Computational Efficiency**
+
+- **Source:** Resource constraints (RunPod GPU costs, local MacBook limitations), AI synthesis from Lumo prompting
+- **Requirement:** System shall implement model caching (LRU, max 2 models) to prevent GPU out-of-memory errors during sequential evaluation
+- **Justification:** Loading 6 models sequentially without caching exceeds GPU memory (RTX 3090 24GB); cache prevents repeated downloads
+- **Implementation:** FastAPI LRU cache with manual clear endpoint (/api/cache/clear); HuggingFace automatic caching (~/.cache/huggingface)
+
+### 4.3 Requirements Validation Strategy
+
+Validation addressed three aspects: (1) **specification compliance** (were exposé requirements met?), (2) **functional correctness** (do features work as intended?), and (3) **deployment feasibility** (can evaluators run the system?).
+
+#### 4.3.1 Specification Compliance Validation
+
+**Method:** Checklist verification against exposé success criteria
+
+**Results:**
+- ✅ 6 models evaluated (requirement: ≥4)
+- ✅ 17 dialects tested (requirement: ≥5)
+- ✅ FastAPI backend with 10 endpoints (requirement: REST API)
+- ✅ Interactive Streamlit dashboard (requirement: visualisation interface)
+- ✅ Docker-based evaluation pipeline (requirement: reproducibility)
+- ✅ Comprehensive error analysis with word-level alignment (requirement: qualitative analysis)
+- ✅ Technical documentation (12 documents: README, methodology guides, API docs)
+
+All exposé requirements met or exceeded.
+
+#### 4.3.2 Functional Correctness Validation
+
+**Method:** Test deployment and self-evaluation
+
+**Test Deployment (Streamlit Cloud):**
+- Dashboard deployed to Streamlit Cloud free tier (https://swiss-german-asr-eval.streamlit.app)
+- Verified resource compliance: 6 cached models fit within 2.7GB memory limit
+- Confirmed all visualisations render correctly (Plotly charts, data tables, alignment displays)
+- Validated API endpoint connectivity (dashboard successfully fetches results from local FastAPI mock)
+
+**Self-Evaluation Criteria:**
+- Can evaluator answer research questions using dashboard alone? **Yes:** Model ranking, dialect difficulty, error patterns visible without consulting raw CSV files
+- Does error analysis provide actionable insights? **Partial:** Word-level alignment identifies systematic errors (perfect tense restructuring, article insertion), but linguistic interpretation requires domain expertise
+- Is result persistence effective? **Yes:** Timestamped directories prevent overwrites; CSV format enables offline analysis (Pandas, Excel)
+
+**Known Issues Identified:**
+- Initial UX problem: Duplicate model selection controls confused users (resolved by consolidating to single selector)
+- Cache management not intuitive: No visual indication of loaded models until /api/cache/info endpoint called (resolved by adding cache status indicator)
+- Sample count display misleading: Dashboard initially showed total corpus size (5,750) rather than test set size (863), creating confusion (resolved by filtering to test split)
+
+#### 4.3.3 Deployment Feasibility Validation
+
+**Method:** Supervisor demonstration and documentation walkthrough
+
+**Supervisor Feedback (Week 7):**
+- UX improvements implemented based on demo: multi-model tabs, clearer sample count labels, terminology explanations (hypothesis/reference definitions)
+- Documentation adequacy confirmed: README sufficient for local deployment, Docker setup instructions clear
+- Suggested enhancement: Add BLEU metric for semantic similarity assessment (implemented in Week 8)
+
+**Evaluator Accessibility:**
+- Docker Compose enables single-command deployment (`docker compose up`)
+- No authentication required (appropriate for local/evaluator deployment)
+- Dashboard auto-reloads on code changes (supports iterative exploration)
+
+### 4.4 Iterative Refinement Examples
+
+Requirements evolved through three cycles of implementation feedback, demonstrating responsive adaptation to discovered usability issues and technical constraints.
+
+#### 4.4.1 Dashboard UX Iteration (Week 7)
+
+**Initial Implementation:**
+- Single dropdown for model selection
+- No side-by-side comparison capability
+
+**User Feedback (Self-Testing):**
+- Question: "How does Whisper large-v3 compare to large-v2 on Bern dialect?"
+- Problem: Requires switching models repeatedly, mentally tracking differences
+
+**Refinement:**
+- Added multi-select widget allowing simultaneous model selection
+- Implemented tabbed interface: "Overview" (all models) vs. "Detailed Comparison" (selected models only)
+- Result: Comparative analysis workflows streamlined
+
+**Validation:**
+- Supervisor confirmed improved usability during Week 7 demo
+
+#### 4.4.2 Error Analysis Granularity (Week 6)
+
+**Initial Implementation:**
+- Aggregate WER per dialect only
+- No utterance-level details
+
+**Discovered Need (Literature Review):**
+- Dolev et al. (2024) emphasised importance of qualitative analysis: automatic metrics alone insufficient for understanding model behaviour
+- NVIDIA NeMo Speech Data Explorer demonstrates value of utterance inspection
+
+**Refinement:**
+- Added "Sample Predictions" tab with data table showing all 863 samples
+- Implemented worst-sample filtering (top 10% by WER)
+- Added word-level alignment with colour coding (red=substitution, blue=deletion, green=insertion)
+
+**Validation:**
+- Error analysis revealed perfect tense restructuring pattern (73% of errors), validating need for granular inspection
+
+#### 4.4.3 API Cache Management (Week 5)
+
+**Initial Implementation:**
+- No model caching
+- Models loaded fresh for each evaluation request
+
+**Discovered Problem:**
+- GPU out-of-memory error after evaluating 2 large models sequentially (Whisper large-v3 + Wav2Vec2-1b)
+- RunPod instance crashed, requiring manual restart
+
+**Refinement:**
+- Implemented LRU cache (max 2 models) in FastAPI backend
+- Added `/api/cache/clear` endpoint for manual memory management
+- Added `/api/cache/info` endpoint to display loaded models
+
+**Validation:**
+- Successfully evaluated all 6 models sequentially without OOM errors
+- Cache reduced evaluation time by 60% for repeated model runs (no re-download from HuggingFace)
+
+### 4.5 Limitations & Future Validation
+
+#### 4.5.1 Methodological Limitations
+
+**No Human Evaluation Conducted:**
+
+The most significant limitation is the absence of user studies validating dashboard usability and feature relevance. While Dolev et al. (2024) demonstrated the value of human evaluation (28 participants assessing Whisper transcription quality), time and resource constraints precluded similar validation for this project. Consequently:
+
+- **Usability is unvalidated:** Interaction workflows (filtering, drill-down, comparison) were designed based on developer intuition and literature patterns, not user testing
+- **Feature prioritisation may be misaligned:** Implemented features reflect standard ASR evaluation practices, but may not address actual practitioner pain points (e.g., batch export functionality, custom metric definitions)
+- **Visualisation effectiveness is assumed:** Chart types (bar charts, heatmaps) follow common BI patterns, but clarity for Swiss German linguists specifically is unverified
+
+**No Stakeholder Interviews:**
+
+Requirements derivation from literature and AI synthesis cannot substitute for direct stakeholder engagement. Potential consequences:
+
+- **Missed requirements:** Features users would request if asked (e.g., dialect similarity visualisation, diachronic comparison across corpus versions) remain undiscovered
+- **Over-engineering risk:** Implemented features (e.g., audio playback) may be unused if evaluators primarily analyse metric tables offline
+- **Domain misalignment:** Terminology and interface metaphors may not match Swiss German linguistics conventions
+
+#### 4.5.2 Proposed Validation Methodology
+
+**User Study Design (Following Dolev et al. 2024):**
+
+1. **Participant Recruitment:** 10-15 participants from three groups:
+   - Swiss German linguists (expertise in dialectology)
+   - ASR practitioners (experience with model evaluation)
+   - Potential end-users (e.g., speech technology startups targeting Swiss German)
+
+2. **Task-Based Evaluation:**
+   - Task 1: Identify best-performing model for Bern dialect (tests filtering + comparison)
+   - Task 2: Explain why Model X has high WER on Valais dialect (tests error analysis drill-down)
+   - Task 3: Compare dialectal variation patterns across models (tests visualisation clarity)
+
+3. **Metrics:**
+   - Task completion time and success rate (quantitative usability)
+   - System Usability Scale (SUS) questionnaire (standardised usability metric)
+   - Post-task interviews identifying pain points and missing features (qualitative insights)
+
+4. **Expected Outcomes:**
+   - Identification of confusing interface elements (e.g., "hypothesis" terminology may be unclear to non-ASR experts)
+   - Discovery of overlooked requirements (e.g., CSV export with custom column selection)
+   - Validation of current feature set or prioritisation of future enhancements
+
+**Timeline:** 2-3 weeks (recruitment, study execution, analysis)
+
+**Resources Required:** Institutional ethics approval, participant compensation (CHF 50 per hour), access to Swiss German linguistics department
+
+This validation remains future work due to project timeline constraints, but represents the natural next step toward production-ready deployment.
+
+### 4.6 Requirements Traceability
+
+The table below maps requirements to implementation artifacts, demonstrating full coverage of identified needs.
+
+| Requirement ID | Description | Implementation | Validation Evidence |
+|----------------|-------------|----------------|---------------------|
+| FR1 | Multi-model evaluation (≥4 models) | 6 models in MODEL_REGISTRY (evaluate_models.py) | results/metrics/ contains 6 result directories |
+| FR2 | Multi-dialect assessment (≥5 dialects) | 17 dialects in test.tsv | Per-dialect metrics in *_results.csv files |
+| FR3 | Standard metrics (WER/CER/BLEU) | jiwer + sacrebleu in metrics.py | JSON/CSV results contain all 3 metrics |
+| FR4 | Word-level error analysis | Wagner-Fischer alignment in error_analyzer.py | Alignment CSV files in error_analysis/ |
+| DR1 | Standardised test corpus | FHNW corpus test split (test.tsv) | 863 samples across 17 dialects |
+| DR2 | Data normalisation consistency | Preprocessing pipeline in preprocessor.py | Normalisation steps documented in methodology |
+| IR1 | Comparative visualisation | Plotly charts in frontend/app.py | Streamlit Cloud deployment screenshots |
+| IR2 | Utterance-level inspection | Sample Predictions tab in dashboard | Data table with 863 rows, audio playback widget |
+| IR3 | Interactive filtering | Streamlit widgets (multiselect, slider) | Dashboard demo video shows filtering workflow |
+| QR1 | Reproducibility | Docker Compose + pinned requirements | Docker image builds successfully, results match |
+| QR2 | Computational efficiency | LRU cache in backend/cache.py | 6-model evaluation completes without OOM |
+
+All requirements traced to implementation with validation evidence.
