@@ -123,7 +123,7 @@ The system follows a modular, service-oriented architecture with clear separatio
 │  │  Responsibilities:                                                    │  │
 │  │  • FHNW corpus loading (TSV → dataset)                                │  │
 │  │  • Audio preprocessing (resampling, normalisation)                    │  │
-│  │  • Text normalization (lowercasing, punctuation removal)              │  │
+│  │  • Text normalisation (lowercasing, punctuation removal)              │  │
 │  │  • Batch collation for evaluation                                     │  │
 │  └───────────────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -301,7 +301,7 @@ Beyond aggregate metrics, the evaluation framework incorporates systematic error
 
 **Word-Level Alignment:**
 
-Error categorization employs the **Wagner-Fischer algorithm** implemented in the jiwer library, which computes minimum edit distance between hypothesis (model transcription) and reference (ground truth) at the word level. This alignment classifies each word as:
+Error categorisation employs the **Wagner-Fischer algorithm** implemented in the jiwer library, which computes minimum edit distance between hypothesis (model transcription) and reference (ground truth) at the word level. This alignment classifies each word as:
 
 - **Correct (C)**: Exact match between hypothesis and reference
 - **Substitution (S)**: Incorrect word predicted (e.g., "gross" → "groß")
@@ -655,3 +655,183 @@ Complete mapping of requirements to implementation and validation evidence:
 - **Tests:** Comprehensive test suite with 40+ test files across unit/integration/e2e categories
 
 **Note:** Streamlit Cloud deployment is planned but not yet executed (deployable from main branch in <5 minutes). Dashboard currently validated via local Docker deployment and screenshot documentation.
+
+
+## 5. Results & Key Findings
+
+### 5.1 Quantitative Model Comparison
+
+Evaluation on the held-out test set (863 samples across 17 Swiss German dialects) demonstrates a clear performance hierarchy, with OpenAI's Whisper architecture significantly outperforming Wav2Vec2 baselines. The `whisper-large-v2` model achieved the best overall performance across all metrics.
+
+| Model | WER (%) ↓ | CER (%) ↓ | BLEU ↑ | Parameters | Semantic Preservation* |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| **Whisper Large-v2** | **28.0** | **12.6** | **57.7** | 1.55B | **1.4%** |
+| Whisper Large-v3 | 29.5 | 13.7 | 56.3 | 1.55B | 2.1% |
+| Whisper Large-v3 Turbo | 30.9 | 14.2 | 54.0 | 809M | 1.7% |
+| Whisper Medium | 34.1 | 16.0 | 50.8 | 769M | 2.1% |
+| Wav2Vec2 (XLS-R 1B German CV11) | 72.4 | 29.4 | 14.9 | 1.0B | 0.7% |
+| Wav2Vec2 (German + LM) | 75.3 | 31.9 | 13.9 | 317M | 1.0% |
+
+***Semantic Preservation Rate:** Percentage of high-error samples (WER ≥50%) that nonetheless achieve high semantic similarity (BLEU ≥40%), indicating valid paraphrases rather than transcription failures. Calculated per-model from high-WER sample subset.*
+
+**Note:** Metrics represent mean per-sample values calculated across all 863 test samples. WER and CER computed at corpus level (aggregating errors before rate calculation); BLEU calculated per-sample then averaged.
+
+The substantial performance gap between Whisper models (28-34% WER, >50 BLEU) and Wav2Vec2 models (72-75% WER, <15 BLEU) spans approximately 44 percentage points absolute WER. Both Wav2Vec2 models were trained on German Common Voice data (1,700 hours), yet achieved less than half the accuracy of Whisper models on this Swiss German evaluation despite German-language specialization.
+
+#### 5.1.1 Model Version Comparison: Whisper v2 vs v3
+
+The newer Whisper large-v3 unexpectedly underperformed its predecessor by 1.5% absolute WER (29.5% vs 28.0%) despite identical architecture (1.55B parameters). BLEU scores showed similar degradation (56.3 vs 57.7, -1.4 points). Per-dialect analysis reveals v3's performance decline is not uniform across all Swiss German varieties:
+
+**V2 vs V3 Per-Dialect Performance:**
+
+| Dialect | n | V2 WER | V3 WER | Difference | Winner |
+|---------|--:|-------:|-------:|-----------:|--------|
+| **V3 Improvements:** |
+| Fribourg (FR)* | 7 | 37.0% | 34.4% | -2.6% | v3 |
+| Valais (VS) | 17 | 31.0% | 29.8% | -1.3% | v3 |
+| Solothurn (SO) | 36 | 34.9% | 34.8% | -0.02% | v3 |
+| **V2 Maintained Advantage:** |
+| Schwyz (SZ)* | 9 | 14.6% | 26.1% | +11.5% | v2 |
+| Graubünden (GR) | 12 | 11.3% | 17.2% | +5.9% | v2 |
+| Zug (ZG) | 30 | 39.7% | 46.3% | +6.6% | v2 |
+| Uri (UR) | 15 | 21.2% | 28.1% | +6.9% | v2 |
+| Glarus (GL)* | 6 | 5.8% | 10.7% | +4.9% | v2 |
+
+*Dialects marked with asterisk have n<10 samples; interpret with caution due to high variance.
+
+**Summary:** V2 wins on 13 of 17 dialects, v3 wins on 3 dialects, with 1 tie (Nidwalden, n=1). The v3 improvements are concentrated in three specific dialects (FR, VS, SO), whilst v2 maintains substantial advantages across the majority of Swiss German varieties, particularly in Eastern Switzerland dialects (SZ, GR, UR, GL). The causes of this non-uniform degradation pattern remain unclear without access to model training data or training procedures.
+
+#### 5.1.2 Efficiency Variant: Whisper Large-v3 Turbo
+
+Whisper large-v3-turbo, an efficiency-optimized variant with reduced parameters (809M vs 1.55B for large models), shows 2.9% absolute WER degradation (30.9% vs 28.0% for large-v2), representing a 10% relative WER increase. BLEU scores decrease by 3.7 points (54.0 vs 57.7), indicating semantic preservation remains relatively strong despite increased lexical errors. OpenAI documentation reports the turbo variant provides 8× faster inference than standard large models, though inference timing was not independently measured in this evaluation.
+
+### 5.2 Dialectal Performance Variation
+
+Performance varied substantially across the 17 evaluated Swiss German dialects. For whisper-large-v2 (best-performing model), WER ranged from 5.8% (Glarus) to 39.7% (Zug), a 33.9 percentage point absolute difference. However, sample sizes vary dramatically by dialect, affecting statistical confidence in reported metrics.
+
+**Sample Size Distribution:**
+
+- **HIGH confidence (n≥50):** 7 dialects — BE (203), ZH (144), SG (116), AG (108), BL (54), LU (51), TG (50)
+- **MEDIUM confidence (20≤n<50):** 2 dialects — SO (36), ZG (30)
+- **LOW confidence (10≤n<20):** 3 dialects — VS (17), UR (15), GR (12)
+- **VERY LOW confidence (n<10):** 5 dialects — SZ (9), FR (7), GL (6), SH (4), NW (1)
+
+As acknowledged in Section 3.4, dialects with fewer than 10 samples cannot support robust statistical inference due to high variance from limited data. The following analysis prioritizes dialects with sufficient sample sizes whilst reporting low-sample results with appropriate caveats.
+
+**Highest-Performing Dialects (whisper-large-v2):**
+
+1. **Glarus (GL)***: 5.8% WER, 0.8% CER, 90.2 BLEU (n=6)
+2. **Graubünden (GR)**: 11.3% WER, 5.0% CER, 73.3 BLEU (n=12)
+3. **Schwyz (SZ)***: 14.6% WER, 5.2% CER, 70.0 BLEU (n=9)
+4. **Uri (UR)**: 21.2% WER, 7.1% CER, 66.2 BLEU (n=15)
+5. **Zürich (ZH)**: 23.5% WER, 10.1% CER, 62.9 BLEU (n=144)
+
+*Asterisk indicates n<10; high variance likely.
+
+**Lowest-Performing Dialects (whisper-large-v2):**
+
+1. **Zug (ZG)**: 39.7% WER, 16.9% CER, 47.8 BLEU (n=30)
+2. **Fribourg (FR)***: 37.0% WER, 18.3% CER, 44.3 BLEU (n=7)
+3. **Solothurn (SO)**: 34.9% WER, 15.8% CER, 55.5 BLEU (n=36)
+4. **Schaffhausen (SH)***: 34.0% WER, 11.6% CER, 44.3 BLEU (n=4)
+5. **Valais (VS)**: 31.0% WER, 13.2% CER, 49.1 BLEU (n=17)
+
+*Asterisk indicates n<10; high variance likely.
+
+**Dialects with Statistically Robust Sample Sizes:**
+
+The three most populous dialects provide reliable performance estimates:
+
+- **Bern (BE)**: 29.9% WER, 13.9% CER, 56.8 BLEU (n=203)
+- **Zürich (ZH)**: 23.5% WER, 10.1% CER, 62.9 BLEU (n=144)
+- **St. Gallen (SG)**: 29.2% WER, 13.6% CER, 55.5 BLEU (n=116)
+
+Zürich demonstrates 6.4 percentage points lower WER than Bern and St. Gallen, representing a 21-27% relative WER reduction. The causes of this performance difference—whether linguistic, acoustic, or related to training data characteristics—cannot be determined from evaluation metrics alone and require systematic linguistic feature analysis.
+
+### 5.3 Error Analysis & Failure Modes
+
+Detailed error categorisation of whisper-large-v2 transcriptions reveals that **substitutions** are the dominant error type, accounting for approximately 19.0% of all words, followed by **insertions** (4.5%) and **deletions** (2.4%). The remaining 74.1% of words are correctly transcribed.
+
+**Error Type Distribution (whisper-large-v2):**
+
+- **Substitutions: 19.0%** — Incorrect word chosen (e.g., phonetically similar alternatives)
+- **Insertions: 4.5%** — Extra words added not present in reference
+- **Deletions: 2.4%** — Reference words omitted in hypothesis
+- **Correct: 74.1%** — Accurate transcription
+
+Error percentages sum to approximately 26%, with the remaining ~2% discrepancy to the overall 28.0% WER arising from corpus-level aggregation methodology (errors summed across all samples before rate calculation) versus per-sample averaging (errors computed per sample then averaged). This reflects the mathematical distinction between corpus-level WER—the primary metric reported—and mean per-sample error rates used for error type analysis.
+
+**Proportional Error Breakdown:**
+
+Of the ~26% total errors, substitutions comprise 73%, insertions 17%, and deletions 9%. This distribution indicates whisper-large-v2 rarely omits speech entirely (only 2.4% deletions) but frequently produces phonetically plausible yet lexically incorrect word choices.
+
+#### 5.3.1 Systematic Failure Patterns
+
+**Pattern 1: Morphosyntactic Restructuring**
+
+Analysis of high-WER samples identified systematic retention of Swiss German syntactic structures in Standard German output, particularly perfect tense constructions where Standard German conventionally uses simple past. The model transcribes Swiss German word order patterns directly into Standard German vocabulary, yielding grammatically divergent but semantically preserved hypotheses.
+
+**Example from evaluation data:**
+
+- **Reference:** "Danach arbeitete er als Rechtsanwalt in München." (Simple past, Standard German convention)
+- **Hypothesis:** "Nach dem hat er als Rechtsanwalt in München gearbeitet." (Perfect tense, Swiss German structure)
+- **Metrics:** WER=71.4%, CER=43.8%, BLEU=41.1
+- **Source:** Sample `8d889bf5-b9b6-427f-a69d-4ad51f9a10ba.flac`, Lucerne (LU) dialect
+
+This example demonstrates high WER (71.4%) due to lexical substitutions ("Danach"→"Nach dem"), word reordering, and auxiliary insertion ("hat...gearbeitet" vs "arbeitete"), yet achieves BLEU=41.1 (above the 40% semantic preservation threshold). The transcription accurately represents the temporal semantics (employment as lawyer in Munich) whilst failing to normalize syntactic structure to Standard German conventions.
+
+**Prevalence Quantification:**
+
+Of 863 total samples, 165 (19.1%) exhibited WER ≥50%, representing high-error cases. BLEU analysis of these 165 samples reveals:
+
+- **153 samples (92.7%)**: WER ≥50% AND BLEU <40% — Transcription failures with semantic loss
+- **12 samples (7.3%)**: WER ≥50% BUT BLEU ≥40% — Structural mismatches preserving meaning
+
+The 12 high-WER/high-BLEU samples include morphosyntactic restructuring cases (e.g., the "Danach" example above) and other valid paraphrases penalized by WER's word-order sensitivity. This 7.3% rate confirms that **high WER predominantly indicates genuine transcription failures** rather than systematically inflating errors due to structural paraphrasing. The semantic preservation rate (1.4% of all samples, 7.3% of high-WER samples) validates WER as an appropriate primary metric for Swiss German ASR evaluation.
+
+**Pattern 2: Observed Error Types in High-WER Samples**
+
+Manual inspection of worst-performing samples revealed recurring patterns:
+
+- **Dialectal article retention:** Swiss German definite articles (e.g., "de Peter") occasionally preserved in Standard German output ("der Peter") where standard omits articles
+- **Lexical substitutions:** Phonetically similar Standard German words substituted for dialectal terms
+- **Compound word segmentation:** Swiss German compound structures inconsistently normalized to Standard German conventions
+
+Systematic quantification of these pattern frequencies—including per-dialect breakdowns and linguistic feature correlation—was not conducted. These observations represent qualitative patterns requiring validation through controlled linguistic annotation.
+
+#### 5.3.2 High-WER Sample Characteristics
+
+The 165 high-WER samples (WER ≥50%, representing 19.1% of test set) concentrate model failures for detailed analysis. Distribution analysis:
+
+**By Semantic Preservation:**
+
+- **Genuine failures (BLEU <40):** 153 samples (92.7% of high-WER)
+- **Valid paraphrases (BLEU ≥40):** 12 samples (7.3% of high-WER)
+
+**By Dialect (High-WER Sample Concentration):**
+
+High-WER samples are not uniformly distributed across dialects. Dialects with highest concentration of failures include Zug (ZG), Fribourg (FR), and Solothurn (SO), corresponding to the lowest-performing dialects identified in Section 5.2. However, causal attribution—whether failures stem from dialectal linguistic features, audio quality variation, or training data characteristics—requires systematic feature analysis beyond the scope of this evaluation.
+
+### 5.4 Key Findings Summary
+
+Five primary findings emerge from the evaluation:
+
+**Finding 1: Whisper Architecture Outperforms German-Trained Wav2Vec2 by 2-3×**
+
+Whisper models achieve 28-34% WER on Swiss German→Standard German translation, outperforming German-trained Wav2Vec2 models (72-75% WER) by approximately 44 percentage points absolute WER. This performance gap persists despite Wav2Vec2's training on 1,700 hours of German Common Voice data with language model integration. The architectural difference—Whisper's encoder-decoder sequence-to-sequence design versus Wav2Vec2's acoustic-only modeling—correlates with this performance differential, though isolating the specific mechanisms (acoustic perception vs orthographic normalisation) would require phonetic-level analysis not conducted in this evaluation.
+
+**Finding 2: Model Version Updates Do Not Guarantee Uniform Performance Improvement**
+
+Whisper large-v3 underperformed large-v2 by 1.5% absolute WER overall (29.5% vs 28.0%) despite identical parameter count (1.55B) and updated training data. Per-dialect analysis reveals non-uniform degradation: v3 improved on 3 of 17 dialects (Fribourg -2.6%, Valais -1.3%, Solothurn -0.02%) whilst v2 maintained advantages on 13 dialects, with largest v2 wins on Schwyz (+11.5%), Graubünden (+5.9%), and Zug (+6.6%). This result demonstrates that model version recency does not reliably predict Swiss German ASR performance; empirical validation on dialectal test sets is necessary for model selection.
+
+**Finding 3: Dialectal Variation Spans 34 Percentage Points WER Range**
+
+Performance varies from 5.8% WER (Glarus, n=6) to 39.7% WER (Zug, n=30) for whisper-large-v2, a 6.8× relative difference. Among dialects with statistically robust sample sizes (n≥50), Zürich (23.5% WER, n=144) demonstrates 6.4 percentage points lower WER than Bern (29.9% WER, n=203) and St. Gallen (29.2% WER, n=116). This performance heterogeneity indicates Swiss German ASR quality varies substantially by regional variety, with causes requiring linguistic feature analysis to attribute confidently.
+
+**Finding 4: WER Validated as Reliable Primary Metric for Translation Tasks**
+
+BLEU integration analysis found that only 7.3% of high-WER samples (WER ≥50%) preserved semantic meaning (BLEU ≥40%), confirming high WER predominantly indicates genuine transcription failures rather than valid paraphrases penalized by word-order sensitivity. Of 165 high-error samples, 153 (92.7%) exhibited both high WER and low BLEU (<40%), representing true failures with semantic loss. The remaining 12 samples (7.3%) with high WER but high BLEU include morphosyntactic restructuring cases (e.g., perfect tense preservation) and other structural mismatches that maintain meaning. This 1.4% overall semantic preservation rate validates WER's reliability for Swiss German ASR evaluation despite the translation component of normalizing dialectal speech to Standard German text.
+
+**Finding 5: Substitutions Dominate Error Distribution at 73%**
+
+Error categorisation reveals 73% of errors are substitutions (incorrect word choices), with insertions (17%) and deletions (9%) comprising the remainder. The low deletion rate (2.4% of all words) indicates whisper-large-v2 rarely omits speech entirely. The high substitution rate (19.0% of all words) suggests the model's acoustic perception successfully detects spoken content but frequently selects incorrect Standard German orthography or lexical choices for Swiss German phonetic patterns. This error distribution profile suggests future improvements should target lexical selection and orthographic normalisation rather than acoustic signal processing.
