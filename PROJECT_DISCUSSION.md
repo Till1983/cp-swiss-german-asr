@@ -898,3 +898,66 @@ Future work recommendations are organised by implementation feasibility. Near-te
 - **Metric enrichment:** Incorporate pronunciation-aware metrics (phoneme error rate, phonological feature distance) and prosodic measures (pitch, duration, stress pattern preservation) alongside WER/CER/BLEU to separate acoustic perception errors from orthographic normalisation failures. Phonetic analysis would quantify whether Wav2Vec2's high WER stems from acoustic misperception or translation inadequacy, addressing the architectural comparison hypothesis explored in Section 5.4. Implementation requires phonetic transcription ground truth (IPA annotations) currently absent from FHNW corpus metadata.
 
 - **Real-time deployment optimisation:** Extend evaluation to streaming ASR scenarios with incremental transcription, voice activity detection integration, and adaptive model selection based on detected dialect. Production deployment studies should assess end-to-end system latency (audio capture → transcription → normalisation → display) and explore accuracy-latency trade-offs through model distillation, quantisation, and speculative decoding techniques. Such work bridges the gap between offline batch evaluation (this project's focus) and interactive application requirements.
+
+
+## 7. Conclusion & References
+
+### 7.1 Conclusion
+
+This project developed a reproducible evaluation framework for Swiss German ASR, comparing six state-of-the-art models across 17 dialects using a unified pipeline (FastAPI backend, Streamlit dashboard, Docker containerization). All exposé requirements were met: six models evaluated, seventeen dialects covered, ten API endpoints implemented, interactive dashboard deployed, and comprehensive technical documentation provided.
+
+Three primary findings emerged: (1) Whisper models outperform German-trained Wav2Vec2 by 2-3× (28-34% vs 72-75% WER), validating encoder-decoder architectures for dialectal translation tasks; (2) Whisper large-v2 unexpectedly outperforms large-v3 by 1.5% WER, demonstrating model version recency does not guarantee dialectal robustness; (3) only 7.3% of high-WER samples preserve semantic meaning (BLEU ≥40%), validating WER as a reliable primary metric despite word-order sensitivity.
+
+Key methodological learnings include: dialect-balanced sampling is critical for statistical validity (five dialects with n<10 samples showed high variance); complementary metrics are necessary (WER alone masks 7.3% of cases where semantics are preserved); strict dependency version pinning enables reproducibility across heterogeneous deployment environments.
+
+The framework's modular architecture enables immediate extensions: cross-corpus validation (STT4SG-350, SwissDial), user studies with Swiss German linguists, and domain adaptation experiments. This work provides practitioners with empirical evidence for model selection (prefer Whisper large-v2; accept 10% relative WER increase for turbo efficiency) and a reusable evaluation methodology extensible to other low-resource dialect scenarios.
+
+### 7.2 References
+
+**Research Publications:**
+
+[1] A. Radford et al., "Robust speech recognition via large-scale weak supervision," in *Proc. ICML*, 2023. [Online]. Available: https://arxiv.org/abs/2212.04356
+
+[2] A. Baevski, Y. Zhou, A. Mohamed, and M. Auli, "wav2vec 2.0: A framework for self-supervised learning of speech representations," in *Proc. NeurIPS*, 2020. [Online]. Available: https://arxiv.org/abs/2006.11477
+
+[3] K. Papineni, S. Roukos, T. Ward, and W.-J. Zhu, "BLEU: a method for automatic evaluation of machine translation," in *Proc. ACL*, 2002, pp. 311–318.
+
+[4] V. I. Levenshtein, "Binary codes capable of correcting deletions, insertions and reversals," *Soviet Physics Doklady*, vol. 10, no. 8, pp. 707–710, 1966.
+
+**Swiss German ASR Research:**
+
+[5] M. Plüss et al., "Swiss parliaments corpus, an automatically aligned Swiss German speech to Standard German text corpus," in *Proc. SwissText/KONVENS*, 2021. [Online]. Available: https://arxiv.org/abs/2104.03433
+
+[6] E. L. Dolev, V. Immer, and M. Perez-Ortiz, "Does Whisper understand Swiss German? An automatic, qualitative, and human evaluation," *arXiv preprint arXiv:2404.19310*, 2024.
+
+[7] T. Kew, A. Demus, J. Ebling, and M. Volk, "ASR for non-standardised languages with dialectal variation: The case of Swiss German," in *Proc. VarDial Workshop*, 2020.
+
+**Dataset:**
+
+[8] University of Applied Sciences Northwestern Switzerland (FHNW), "Swiss German Speech-to-Text Corpus (Public Subset)," Kaggle, 2023. [Online]. Available: https://www.kaggle.com/datasets/fhnwdatasolutions/swiss-german-corpus
+
+### 7.3 Software & Tools
+
+The following software frameworks and libraries were used in this project. Exact versions are specified in the project's `requirements.txt` file for reproducibility.
+
+**Deep Learning & ASR:**
+- PyTorch 2.6.0 (torch, torchaudio, torchvision) — https://pytorch.org
+- Hugging Face Transformers 4.54.1 — https://huggingface.co/transformers
+- Hugging Face Datasets 2.19.1 — https://huggingface.co/docs/datasets
+- Hugging Face Accelerate 0.26.1 — https://huggingface.co/docs/accelerate
+
+**Evaluation Metrics:**
+- jiwer 3.0.4 (WER/CER calculation) — https://github.com/jitsi/jiwer
+- sacrebleu 2.2.1 (BLEU implementation) — https://github.com/mjpost/sacrebleu
+
+**Web Framework & Visualization:**
+- FastAPI 0.115.0 — https://fastapi.tiangolo.com
+- Uvicorn 0.32.0 (ASGI server) — https://www.uvicorn.org
+- Streamlit 1.40.0 — https://streamlit.io
+- Plotly 5.24.0 — https://plotly.com/python
+
+**Audio Processing:**
+- librosa 0.10.1 — https://librosa.org
+
+**Additional Dependencies:**
+See `requirements.txt`, `requirements_blackwell.txt` and `requirements_local.txt` in project repository for complete dependency list with pinned versions.
