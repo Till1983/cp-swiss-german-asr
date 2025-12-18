@@ -716,7 +716,7 @@ Performance varied substantially across the 17 evaluated Swiss German dialects. 
 - **LOW confidence (10≤n<20):** 3 dialects — VS (17), UR (15), GR (12)
 - **VERY LOW confidence (n<10):** 5 dialects — SZ (9), FR (7), GL (6), SH (4), NW (1)
 
-As acknowledged in Section 3.4, dialects with fewer than 10 samples cannot support robust statistical inference due to high variance from limited data. The following analysis prioritizes dialects with sufficient sample sizes whilst reporting low-sample results with appropriate caveats.
+As acknowledged in Section 3.4, dialects with fewer than 10 samples cannot support robust statistical inference due to high variance from limited data. The following analysis prioritises dialects with sufficient sample sizes whilst reporting low-sample results with appropriate caveats.
 
 **Highest-Performing Dialects (whisper-large-v2):**
 
@@ -787,7 +787,7 @@ Of 863 total samples, 165 (19.1%) exhibited WER ≥50%, representing high-error 
 - **153 samples (92.7%)**: WER ≥50% AND BLEU <40% — Transcription failures with semantic loss
 - **12 samples (7.3%)**: WER ≥50% BUT BLEU ≥40% — Structural mismatches preserving meaning
 
-The 12 high-WER/high-BLEU samples include morphosyntactic restructuring cases (e.g., the "Danach" example above) and other valid paraphrases penalized by WER's word-order sensitivity. This 7.3% rate confirms that **high WER predominantly indicates genuine transcription failures** rather than systematically inflating errors due to structural paraphrasing. The semantic preservation rate (1.4% of all samples, 7.3% of high-WER samples) validates WER as an appropriate primary metric for Swiss German ASR evaluation.
+The 12 high-WER/high-BLEU samples include morphosyntactic restructuring cases (e.g., the "Danach" example above) and other valid paraphrases penalised by WER's word-order sensitivity. This 7.3% rate confirms that **high WER predominantly indicates genuine transcription failures** rather than systematically inflating errors due to structural paraphrasing. The semantic preservation rate (1.4% of all samples, 7.3% of high-WER samples) validates WER as an appropriate primary metric for Swiss German ASR evaluation.
 
 **Pattern 2: Observed Error Types in High-WER Samples**
 
@@ -830,7 +830,7 @@ Performance varies from 5.8% WER (Glarus, n=6) to 39.7% WER (Zug, n=30) for whis
 
 **Finding 4: WER Validated as Reliable Primary Metric for Translation Tasks**
 
-BLEU integration analysis found that only 7.3% of high-WER samples (WER ≥50%) preserved semantic meaning (BLEU ≥40%), confirming high WER predominantly indicates genuine transcription failures rather than valid paraphrases penalized by word-order sensitivity. Of 165 high-error samples, 153 (92.7%) exhibited both high WER and low BLEU (<40%), representing true failures with semantic loss. The remaining 12 samples (7.3%) with high WER but high BLEU include morphosyntactic restructuring cases (e.g., perfect tense preservation) and other structural mismatches that maintain meaning. This 1.4% overall semantic preservation rate validates WER's reliability for Swiss German ASR evaluation despite the translation component of normalizing dialectal speech to Standard German text.
+BLEU integration analysis found that only 7.3% of high-WER samples (WER ≥50%) preserved semantic meaning (BLEU ≥40%), confirming high WER predominantly indicates genuine transcription failures rather than valid paraphrases penalised by word-order sensitivity. Of 165 high-error samples, 153 (92.7%) exhibited both high WER and low BLEU (<40%), representing true failures with semantic loss. The remaining 12 samples (7.3%) with high WER but high BLEU include morphosyntactic restructuring cases (e.g., perfect tense preservation) and other structural mismatches that maintain meaning. This 1.4% overall semantic preservation rate validates WER's reliability for Swiss German ASR evaluation despite the translation component of normalizing dialectal speech to Standard German text.
 
 **Finding 5: Substitutions Dominate Error Distribution at 73%**
 
