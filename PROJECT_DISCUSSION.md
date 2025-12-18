@@ -115,10 +115,16 @@ The system follows a modular, service-oriented architecture with clear separatio
 │                          DATA PROCESSING LAYER                              │
 │  ┌───────────────────────────────────────────────────────────────────────┐  │
 │  │                         Data Pipeline                                 │  │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐   │  │
-│  │  │ DataLoader   │→ │ Preprocessor │→ │ Audio Utils  │→ │ Collator │   │  │
-│  │  │ (loader.py)  │  │ (preproc.py) │  │ (utils.py)   │  │ (.py)    │   │  │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────┘   │  │
+│  │  ┌─────────────────┐  ┌────────────────────┐  ┌────────────────────┐  │  │
+│  │  │ DataLoader      │  │ Preprocessor       │  │ Audio Utils        │  │  │
+│  │  │ (loader.py)     │→ │ (preprocessor.py)  │→ │ (audio_utils.py)   │  │  │
+│  │  └─────────────────┘  └────────────────────┘  └────────────────────┘  │  │
+│  │                              │                                        │  │
+│  │                              ▼                                        │  │
+│  │                      ┌────────────────┐                               │  │
+│  │                      │ Collator       │                               │  │
+│  │                      │ (collator.py)  │                               │  │
+│  │                      └────────────────┘                               │  │
 │  │                                                                       │  │
 │  │  Responsibilities:                                                    │  │
 │  │  • FHNW corpus loading (TSV → dataset)                                │  │
