@@ -224,7 +224,7 @@ Six state-of-the-art ASR models were selected to represent diversity across thre
 |-------|------------|--------------|---------------|---------------------|
 | **whisper-large-v2** | 1.55B | Encoder-decoder transformer | 680k hours multilingual (v2 dataset) | Established baseline for Whisper family; widely deployed in production systems. Enables comparison with v3 training data improvements. |
 | **whisper-large-v3** | 1.55B | Encoder-decoder transformer | 680k hours multilingual (v3 dataset, improved annotations) | Latest Whisper release; tests whether updated training data benefits Swiss German despite identical architecture to v2. |
-| **whisper-large-v3-turbo** | 809M | Optimized encoder-decoder (reduced decoder layers) | Same as large-v3 | Efficiency-optimized variant released November 2024. Evaluates OpenAI's claim of similar accuracy with 8× faster inference for resource-constrained deployment. |
+| **whisper-large-v3-turbo** | 809M | Optimised encoder-decoder (reduced decoder layers) | Same as large-v3 | Efficiency-optimised variant released November 2024. Evaluates OpenAI's claim of similar accuracy with 8× faster inference for resource-constrained deployment. |
 | **whisper-medium** | 769M | Encoder-decoder transformer | Same as large-v2/v3 | Resource-constrained baseline; tests performance degradation at ~50% parameter reduction. Smallest Whisper variant with documented reliability on low-resource languages (tiny/base/small excluded due to poor multilingual performance). |
 | **wav2vec2-xls-r-1b-german-cv11** | 1.0B | XLS-R 1B fine-tuned on German | 1,700 hours German Common Voice v11 | Large-scale German-trained model providing upper bound for Standard German ASR transferred to Swiss German. Tests hypothesis that German-specific training aids dialectal recognition. |
 | **wav2vec2-large-xlsr-53-german-with-lm** | 317M | XLSR-53 fine-tuned on German | 1,700 hours German Common Voice + 5-gram KenLM | Language model-enhanced decoding variant; isolates impact of explicit linguistic constraints vs pure neural prediction. Smallest model in evaluation set (resource-constrained comparison). |
@@ -703,7 +703,7 @@ The newer Whisper large-v3 unexpectedly underperformed its predecessor by 1.5% a
 
 #### 5.1.2 Efficiency Variant: Whisper Large-v3 Turbo
 
-Whisper large-v3-turbo, an efficiency-optimized variant with reduced parameters (809M vs 1.55B for large models), shows 2.9% absolute WER degradation (30.9% vs 28.0% for large-v2), representing a 10% relative WER increase. BLEU scores decrease by 3.7 points (54.0 vs 57.7), indicating semantic preservation remains relatively strong despite increased lexical errors. OpenAI documentation reports the turbo variant provides 8× faster inference than standard large models, though inference timing was not independently measured in this evaluation.
+Whisper large-v3-turbo, an efficiency-optimised variant with reduced parameters (809M vs 1.55B for large models), shows 2.9% absolute WER degradation (30.9% vs 28.0% for large-v2), representing a 10% relative WER increase. BLEU scores decrease by 3.7 points (54.0 vs 57.7), indicating semantic preservation remains relatively strong despite increased lexical errors. OpenAI documentation reports the turbo variant provides 8× faster inference than standard large models, though inference timing was not independently measured in this evaluation.
 
 ### 5.2 Dialectal Performance Variation
 
@@ -784,8 +784,8 @@ This example demonstrates high WER (71.4%) due to lexical substitutions ("Danach
 
 Of 863 total samples, 165 (19.1%) exhibited WER ≥50%, representing high-error cases. BLEU analysis of these 165 samples reveals:
 
-- **153 samples (92.7%)**: WER ≥50% AND BLEU <40% — Transcription failures with semantic loss
-- **12 samples (7.3%)**: WER ≥50% BUT BLEU ≥40% — Structural mismatches preserving meaning
+- **153 samples (92.7% of high-WER)**: WER ≥50% AND BLEU <40% — Transcription failures with semantic loss
+- **12 samples (7.3% of high-WER)**: WER ≥50% BUT BLEU ≥40% — Structural mismatches preserving meaning
 
 The 12 high-WER/high-BLEU samples include morphosyntactic restructuring cases (e.g., the "Danach" example above) and other valid paraphrases penalised by WER's word-order sensitivity. This 7.3% rate confirms that **high WER predominantly indicates genuine transcription failures** rather than systematically inflating errors due to structural paraphrasing. The semantic preservation rate (1.4% of all samples, 7.3% of high-WER samples) validates WER as an appropriate primary metric for Swiss German ASR evaluation.
 
@@ -822,11 +822,11 @@ Whisper models achieve 28-34% WER on Swiss German→Standard German translation,
 
 **Finding 2: Model Version Updates Do Not Guarantee Uniform Performance Improvement**
 
-Whisper large-v3 underperformed large-v2 by 1.5% absolute WER overall (29.5% vs 28.0%) despite identical parameter count (1.55B) and updated training data. Per-dialect analysis reveals non-uniform degradation: v3 improved on 3 of 17 dialects (Fribourg -2.6%, Valais -1.3%, Solothurn -0.02%) whilst v2 maintained advantages on 13 dialects, with largest v2 wins on Schwyz (+11.5%), Graubünden (+5.9%), and Zug (+6.6%). This result demonstrates that model version recency does not reliably predict Swiss German ASR performance; empirical validation on dialectal test sets is necessary for model selection.
+Whisper large-v3 underperformed large-v2 by 1.5% absolute WER (29.5% vs 28.0%) despite identical parameter count (1.55B) and updated training data. Per-dialect analysis reveals non-uniform degradation: v3 improved on 3 of 17 dialects (Fribourg -2.6%, Valais -1.3%, Solothurn -0.02%) whilst v2 maintained advantages on 13 dialects, with largest v2 wins on Schwyz (+11.5%), Graubünden (+5.9%), and Zug (+6.6%). This result demonstrates that model version recency does not reliably predict Swiss German ASR performance; empirical validation on dialectal test sets is necessary for model selection.
 
 **Finding 3: Dialectal Variation Spans 34 Percentage Points WER Range**
 
-Performance varies from 5.8% WER (Glarus, n=6) to 39.7% WER (Zug, n=30) for whisper-large-v2, a 6.8× relative difference. Among dialects with statistically robust sample sizes (n≥50), Zürich (23.5% WER, n=144) demonstrates 6.4 percentage points lower WER than Bern (29.9% WER, n=203) and St. Gallen (29.2% WER, n=116). This performance heterogeneity indicates Swiss German ASR quality varies substantially by regional variety, with causes requiring linguistic feature analysis to attribute confidently.
+Performance varies from 5.8% WER (Glarus, n=6) to 39.7% WER (Zug, n=30) for whisper-large-v2, a 6.8× relative difference. Among dialects with statistically robust sample sizes (n≥50), Zürich (23.5% WER, n=144) demonstrates 6.4 percentage points lower WER than Bern (29.9% WER, n=203) and St. Gallen (29.2% WER, n=116). The causes of this performance heterogeneity indicate Swiss German ASR quality varies substantially by regional variety, with causes requiring linguistic feature analysis to attribute confidently.
 
 **Finding 4: WER Validated as Reliable Primary Metric for Translation Tasks**
 
@@ -835,3 +835,66 @@ BLEU integration analysis found that only 7.3% of high-WER samples (WER ≥50%) 
 **Finding 5: Substitutions Dominate Error Distribution at 73%**
 
 Error categorisation reveals 73% of errors are substitutions (incorrect word choices), with insertions (17%) and deletions (9%) comprising the remainder. The low deletion rate (2.4% of all words) indicates whisper-large-v2 rarely omits speech entirely. The high substitution rate (19.0% of all words) suggests the model's acoustic perception successfully detects spoken content but frequently selects incorrect Standard German orthography or lexical choices for Swiss German phonetic patterns. This error distribution profile suggests future improvements should target lexical selection and orthographic normalisation rather than acoustic signal processing.
+
+
+## 6. Limitations & Future Work
+
+### 6.1 Limitations
+
+**Data & Corpus Constraints:**
+
+- **Dialect sample imbalance:** Dialect representation ranges from 1 to 203 samples (median: 30), constraining statistical confidence for low-resource dialects and inflating variance in per-dialect metrics. Five dialects (SZ, FR, GL, SH, NW) have fewer than 10 samples, precluding robust statistical inference as acknowledged in Section 3.4.
+
+- **Single-corpus evaluation:** All experiments rely on the FHNW Swiss German corpus public subset; generalisability to other Swiss German datasets (STT4SG-350, SwissDial, SDS-200) or varied recording conditions (spontaneous speech, telephony, noisy environments) remains unvalidated.
+
+**Methodological Constraints:**
+
+- **Zero-shot inference only:** Models were evaluated without domain adaptation or fine-tuning on Swiss German speech, limiting conclusions to out-of-the-box performance. Zero-shot evaluation represents typical deployment scenarios but does not quantify potential gains from Swiss German-specific training.
+
+- **Fixed metric set:** Evaluation uses WER, CER, and BLEU exclusively. Pronunciation-specific metrics (e.g., phoneme error rate), prosodic metrics, or perceptual quality measures were not applied, constraining insight into acoustic versus orthographic error sources and preventing systematic analysis of Swiss German phonological preservation versus Standard German normalisation trade-offs.
+
+- **No statistical significance testing:** Performance comparisons rely on descriptive statistics (mean WER/CER/BLEU) without hypothesis testing due to sample size imbalance across dialects (1-203 samples). Claims about model superiority (e.g., "v2 outperforms v3 by 1.5% WER") lack confidence intervals or p-values, limiting ability to distinguish genuine performance differences from statistical noise within the 863-sample test set.
+
+**Analysis Depth Constraints:**
+
+- **Limited linguistic annotation:** Error patterns (e.g., dialectal article retention, morphosyntactic restructuring, perfect tense preservation) are qualitatively described from manual inspection without systematic linguistic labelling, inter-annotator agreement validation, or quantitative pattern frequency measurement. Observed patterns represent hypotheses requiring controlled validation rather than statistically established findings.
+
+**System & Deployment Constraints:**
+
+- **Batch, offline processing only:** Real-time latency, streaming robustness, and resource usage under deployment conditions were not measured. Evaluation focuses on accuracy metrics (WER/CER/BLEU) without assessing inference time, memory footprint, or throughput—critical factors for production deployment in interactive applications (voice assistants, live transcription).
+
+- **Evaluation infrastructure limitations:** Results stored as timestamped JSON/CSV directories without systematic versioning, regression testing, or automated model comparison pipelines. Re-evaluation with updated models or datasets requires manual result inspection and comparison. Dashboard deployment constrained by Streamlit Cloud memory limits (2.7GB); enterprise deployment scenarios would require dedicated hosting infrastructure.
+
+**Requirements Engineering Constraints:**
+
+- **Requirements elicitation without user validation:** Dashboard requirements derived from literature review (Swiss German ASR research papers) and AI-assisted synthesis (LLM prompting for common ASR evaluation patterns) rather than direct stakeholder engagement through user interviews or surveys. Feature prioritisation and interface design lack empirical validation with Swiss German linguists, ASR practitioners, or potential end-users, limiting confidence that implemented functionality aligns with actual user needs and workflows. This methodological constraint is detailed in Section 4.5.
+
+### 6.2 Future Work
+
+Future work recommendations are organised by implementation feasibility. Near-term improvements require minimal additional resources, whilst long-term directions necessitate expanded datasets or multi-institutional collaboration.
+
+**Near-term Improvements (3-6 months, existing resources):**
+
+- **User validation studies:** Conduct usability evaluation with Swiss German linguists and ASR practitioners (target: 10-15 participants) using task-based assessment protocols. Tasks should include: (1) identify best-performing model for specific dialect, (2) explain high-WER sample failures using dashboard tools, (3) compare dialectal variation patterns across models. Collect System Usability Scale (SUS) scores and conduct post-task interviews to identify overlooked requirements, validate current feature set utility, and prioritise dashboard enhancements. This validation addresses the requirements elicitation limitation acknowledged in Section 4.5 and would inform production-ready deployment.
+
+- **Runtime benchmarking:** Measure inference throughput (samples/second), latency (time-to-first-token for streaming), and resource utilisation (GPU memory, CPU usage) for all evaluated models under both batch and real-time processing scenarios. Benchmarking should quantify the Whisper large-v3-turbo efficiency claims (OpenAI reports 8× speedup) and establish performance-accuracy trade-off curves to guide deployment decisions for resource-constrained environments.
+
+- **Evaluation automation:** Implement continuous integration pipeline with automated model evaluation on dataset updates, regression testing for performance monitoring across model versions, and systematic result versioning (e.g., DVC, MLflow). Automated evaluation would enable rapid assessment of newly released models (e.g., Whisper v4, updated Wav2Vec2 variants) and facilitate longitudinal performance tracking as Swiss German training data expands.
+
+**Medium-term Enhancements (6-12 months, requires expanded data):**
+
+- **Balance dialect coverage:** Expand the dataset for under-represented dialects (target: minimum 50 samples per dialect) through targeted data collection or augmentation to reduce variance in per-dialect estimates and enable statistically reliable comparisons. Alternatively, consolidate low-resource dialects into regional clusters based on established linguistic classifications (High Alemannic, Central Swiss German) to increase sample sizes whilst maintaining linguistic coherence.
+
+- **Cross-corpus validation:** Replicate evaluation on complementary Swiss German corpora to assess generalisability beyond FHNW characteristics (read parliamentary speech, studio recording quality). Candidate datasets include STT4SG-350 (343 hours, 7 dialects, read news texts), SwissDial (parallel multi-dialectal recordings), and SDS-200 (spontaneous conversational speech). Cross-corpus evaluation would identify whether observed performance patterns (Whisper architectural superiority, v2>v3 degradation, dialectal variation hierarchy) persist across recording conditions, speech styles (read vs spontaneous), and domain contexts.
+
+- **Statistical validation:** Conduct evaluation on larger, balanced Swiss German corpus (e.g., STT4SG-350 full set with 5,750 samples) enabling bootstrap confidence intervals, paired significance tests (Wilcoxon signed-rank, McNemar's test for error correlation), and power analysis. Report performance differences with 95% confidence intervals to distinguish statistically reliable findings from chance variation. Statistical testing would validate or refute claims of model superiority currently based on descriptive statistics alone.
+
+- **Structured linguistic analysis:** Apply systematic linguistic annotation to error samples with predefined taxonomies: (1) morphosyntactic categories (article insertion, tense restructuring, compound segmentation), (2) phonological substitution patterns (consonant shifts, vowel variation), (3) lexical error sources (dialectal vocabulary, code-switching, neologisms). Establish inter-annotator agreement (Cohen's kappa ≥0.7) through multi-coder validation. Quantitative pattern frequency measurement would replace qualitative observations with statistically validated error typologies, enabling targeted model improvement strategies.
+
+**Long-term Research Directions (multi-year, requires collaboration):**
+
+- **Domain adaptation studies:** Although fine-tuning was attempted during project Week 6 (vocabulary overwrite bug prevented successful completion), future work should revisit Swiss German-specific adaptation of top-performing models. Comparative studies should quantify zero-shot versus fine-tuned performance gains, isolating the contribution of architectural design (encoder-decoder) versus training data composition (multilingual pre-training) to observed Whisper superiority. Adaptation experiments require access to sufficient Swiss German training data (target: 100+ hours per dialect) and computational resources for distributed training.
+
+- **Metric enrichment:** Incorporate pronunciation-aware metrics (phoneme error rate, phonological feature distance) and prosodic measures (pitch, duration, stress pattern preservation) alongside WER/CER/BLEU to separate acoustic perception errors from orthographic normalisation failures. Phonetic analysis would quantify whether Wav2Vec2's high WER stems from acoustic misperception or translation inadequacy, addressing the architectural comparison hypothesis explored in Section 5.4. Implementation requires phonetic transcription ground truth (IPA annotations) currently absent from FHNW corpus metadata.
+
+- **Real-time deployment optimisation:** Extend evaluation to streaming ASR scenarios with incremental transcription, voice activity detection integration, and adaptive model selection based on detected dialect. Production deployment studies should assess end-to-end system latency (audio capture → transcription → normalisation → display) and explore accuracy-latency trade-offs through model distillation, quantisation, and speculative decoding techniques. Such work bridges the gap between offline batch evaluation (this project's focus) and interactive application requirements.
