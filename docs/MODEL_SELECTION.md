@@ -2,7 +2,7 @@
 
 ## Final Model Suite
 
-This document describes the six ASR models evaluated on the Swiss German test corpus (867 samples across 15 dialects).
+This document describes the six ASR models evaluated on the Swiss German test corpus (863 samples across 17 dialects).
 
 ### Whisper Models (OpenAI)
 
@@ -25,7 +25,7 @@ Zero-shot multilingual models trained on 680,000 hours of web data. All Whisper 
    - Role: Latest Whisper version comparison
 
 3. **whisper-large-v3-turbo** (809M parameters)
-   - Architecture: Optimized encoder-decoder with reduced decoder layers
+   - Architecture: Optimised encoder-decoder with reduced decoder layers
    - Evaluation approach: Zero-shot translation
    - Overall WER: 30.94%
    - Overall CER: 13.71%
