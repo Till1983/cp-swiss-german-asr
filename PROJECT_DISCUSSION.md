@@ -34,19 +34,6 @@ The project successfully met all exposé requirements:
 
 The evaluation framework provides a foundation for ASR model selection in Swiss German applications, with documented limitations including dialectal sample imbalance (1–203 samples per dialect) and zero-shot evaluation scope (no fine-tuning performed).
 
-**Success Criteria Achievement:**
-
-The project successfully met all exposé requirements:
-- ✅ 6 models evaluated (requirement: ≥4)
-- ✅ 17 dialects tested (requirement: ≥5)
-- ✅ FastAPI backend with 10 endpoints
-- ✅ Interactive Streamlit dashboard
-- ✅ Docker-based evaluation pipeline
-- ✅ Comprehensive error analysis with word-level alignment
-- ✅ Technical documentation (12 documents covering methodology, workflows, architecture, and testing)
-
-The evaluation framework provides a foundation for ASR model selection in Swiss German applications, with documented limitations including dialectal sample imbalance (1–203 samples per dialect) and zero-shot evaluation scope (no fine-tuning performed).
-
 
 ## 2. Software Architecture & Technology Choices
 
