@@ -257,7 +257,7 @@ The selected three-metric combination balances comprehensiveness (word-level, ch
 
 **Sample Size Documentation:**
 
-The evaluation was conducted on the test split of the FHNW Swiss German corpus, comprising **863 samples across 17 Swiss German dialects**. This test set was created using stratified sampling (70% train, 15% validation, 15% test) from the public subset of the corpus (total 5,750 samples), ensuring proportional dialect representation whilst maintaining statistical independence from training data. The distribution exhibits substantial imbalance reflecting real-world Swiss German dialect prevalence:
+The evaluation was conducted on the test split of the **All Swiss German Dialects Test Set** [8], provided by the University of Applied Sciences and Arts Northwestern Switzerland (FHNW). This dataset is referred to as the "FHNW corpus" throughout this document and in the project codebase for brevity. The test set comprises **863 samples across 17 Swiss German dialects**, created using stratified sampling (70% train, 15% validation, 15% test) from the public subset of the corpus (total 5,750 samples, 12.72 hours). This sampling strategy ensures proportional dialect representation whilst maintaining statistical independence from training data. The distribution exhibits substantial imbalance reflecting real-world Swiss German dialect prevalence:
 
 | Dialect | Samples | Dialect | Samples | Dialect | Samples |
 |---------|---------|---------|---------|---------|---------|
@@ -909,25 +909,31 @@ The framework's modular architecture enables immediate extensions: cross-corpus 
 
 **Research Publications:**
 
-[1] A. Radford et al., "Robust speech recognition via large-scale weak supervision," in *Proc. ICML*, 2023. [Online]. Available: https://arxiv.org/abs/2212.04356
+[1] A. Radford, J. W. Kim, T. Xu, G. Brockman, C. McLeavey, and I. Sutskever, "Robust speech recognition via large-scale weak supervision," in *Proc. ICML*, 2023. [Online]. Available: https://arxiv.org/abs/2212.04356
 
 [2] A. Baevski, Y. Zhou, A. Mohamed, and M. Auli, "wav2vec 2.0: A framework for self-supervised learning of speech representations," in *Proc. NeurIPS*, 2020. [Online]. Available: https://arxiv.org/abs/2006.11477
 
-[3] K. Papineni, S. Roukos, T. Ward, and W.-J. Zhu, "BLEU: a method for automatic evaluation of machine translation," in *Proc. ACL*, 2002, pp. 311–318.
+[3] K. Papineni, S. Roukos, T. Ward, and W.-J. Zhu, "BLEU: a method for automatic evaluation of machine translation," in *Proc. ACL*, 2002, pp. 311–318. DOI: 10.3115/1073083.1073135 [Online]. Available: https://aclanthology.org/P02-1040/
 
 [4] V. I. Levenshtein, "Binary codes capable of correcting deletions, insertions and reversals," *Soviet Physics Doklady*, vol. 10, no. 8, pp. 707–710, 1966.
 
 **Swiss German ASR Research:**
 
-[5] M. Plüss et al., "Swiss parliaments corpus, an automatically aligned Swiss German speech to Standard German text corpus," in *Proc. SwissText/KONVENS*, 2021. [Online]. Available: https://arxiv.org/abs/2104.03433
+[5] M. Plüss, L. Neukom, C. Scheller, and M. Vogel, "Swiss parliaments corpus, an automatically aligned Swiss German speech to Standard German text corpus," in *Proc. SwissText/KONVENS*, 2021. [Online]. Available: https://arxiv.org/abs/2010.02810
 
-[6] E. L. Dolev, V. Immer, and M. Perez-Ortiz, "Does Whisper understand Swiss German? An automatic, qualitative, and human evaluation," *arXiv preprint arXiv:2404.19310*, 2024.
+[6] M. Plüss, M. Hürlimann, M. Cuny, A. Stöckli, N. Kapotis, J. Hartmann, M. A. Ulasik, C. Scheller, Y. Schraner, A. Jain, J. Deriu, M. Cieliebak, and M. Vogel, "SDS-200: A Swiss German speech to Standard German text corpus," in *Proc. LREC*, 2022, pp. 3250–3256. [Online]. Available: https://aclanthology.org/2022.lrec-1.347
 
-[7] T. Kew, A. Demus, J. Ebling, and M. Volk, "ASR for non-standardised languages with dialectal variation: The case of Swiss German," in *Proc. VarDial Workshop*, 2020.
+[7] M. Plüss et al., "STT4SG-350: A speech corpus for all Swiss German dialect regions," *arXiv preprint*, 2023. [Note: Paper in preparation, cited as "Plüss et al. 2023" in multiple published works] [Online]. Available: https://aclanthology.org/2023.acl-short.150/
+
+[8] E. Dolev, C. Lutz, and N. Aepli, "Does Whisper understand Swiss German? An automatic, qualitative, and human evaluation," in *Proc. VarDial Workshop*, 2024, pp. 28–40. [Online]. Available: https://aclanthology.org/2024.vardial-1.3/
+
+[9] I. Nigmatulina, T. Kew, and T. Samardžić, "ASR for non-standardised languages with dialectal variation: The case of Swiss German," in *Proc. VarDial Workshop*, 2020, pp. 15–24. [Online]. Available: https://aclanthology.org/2020.vardial-1.2/
+
+[10] P. Dogan-Schönberger, J. Mäder, and T. Hofmann, "SwissDial: Parallel multidialectal corpus of spoken Swiss German," *arXiv preprint arXiv:2103.11401*, 2021. [Online]. Available: https://arxiv.org/abs/2103.11401
 
 **Dataset:**
 
-[8] University of Applied Sciences Northwestern Switzerland (FHNW), "Swiss German Speech-to-Text Corpus (Public Subset)," Kaggle, 2023. [Online]. Available: https://www.kaggle.com/datasets/fhnwdatasolutions/swiss-german-corpus
+[11] University of Applied Sciences and Arts Northwestern Switzerland (FHNW), "All Swiss German Dialects Test Set," Version 1.0, 2023. 5,750 utterances, 12.72 hours, 17 dialects. [Online]. Available: https://cs.technik.fhnw.ch/i4ds-datasets. Accessed: Oct. 2025. License: MIT.
 
 ### 7.3 Software & Tools
 
@@ -953,4 +959,4 @@ The following software frameworks and libraries were used in this project. Exact
 - librosa 0.10.1 — https://librosa.org
 
 **Additional Dependencies:**
-See `requirements.txt`, `requirements_blackwell.txt` and `requirements_local.txt` in project repository for complete dependency list with pinned versions.
+See `requirements.txt`, `requirements_blackwell.txt`, and `requirements_local.txt` in project repository for complete dependency list with pinned versions.
