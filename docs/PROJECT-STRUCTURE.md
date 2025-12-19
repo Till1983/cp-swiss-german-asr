@@ -18,6 +18,7 @@ cp-swiss-german-asr/
 │       └── wav2vec2_config.yml
 ├── docker-compose.yml
 ├── main.py
+├── PROJECT_DISCUSSION.md
 ├── pytest.ini
 ├── requirements.txt
 ├── requirements_blackwell.txt
