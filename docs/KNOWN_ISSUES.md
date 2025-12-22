@@ -250,22 +250,6 @@ This document tracks technical issues encountered during the Swiss German ASR pr
 
 ---
 
-## Remaining Work
-
-### Week 5 (Evaluation Phase)
-- [ ] Batch evaluation framework for multiple models
-- [ ] Swiss German test set preparation (5 dialects)
-- [ ] Evaluation metrics collection
-- [ ] Comparison: baseline vs Dutch-pretrained vs German-adapted
-
-### Future Improvements
-- [ ] Move EWC computation to CPU to free GPU memory (if needed for larger models)
-- [ ] Implement pre-filtered TSV generation script for reusable clean metadata
-- [ ] Add automatic checkpoint cleanup (keep best K by metric)
-- [ ] Create environment-specific docker-compose overrides
-
----
-
 ## References
 
 - [Wav2Vec2 Paper (Baevski et al. 2020)](https://arxiv.org/abs/2006.11477)
