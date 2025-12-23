@@ -89,14 +89,6 @@ pip install --upgrade \
 
 ### RTX 3090 (24 GB VRAM)
 
-**With CPU-based EWC (current configuration):**
-- Model: ~1.2 GB
-- Optimizer states: ~2.4 GB
-- Batch (4 samples): ~4.8 GB
-- EWC Fisher/old_params: ~2.4 GB (stored on GPU, computed on CPU)
-- Training activations: ~8-10 GB
-- **Total: ~19-21 GB** ✅ Fits in 24 GB
-
 **With GPU-based EWC (requires batch_size reduction):**
 - Model: ~1.2 GB
 - Optimizer states: ~2.4 GB
@@ -132,7 +124,7 @@ runpod:
   dataloader_num_workers: 8
 ```
 
-**EWC mode:** CPU-based (implemented in code)
+**EWC mode:**
 
 **Expected performance:**
 - Training time: 6-7 hours

@@ -30,7 +30,6 @@ Features:
 - Optimized dataset loading with smart file validation
 - Configurable data limits for efficient training
 - EWC implementation for catastrophic forgetting prevention
-- CPU-based EWC computation to save GPU memory
 
 Usage:
     python scripts/train_german_adaptation.py
@@ -102,7 +101,7 @@ TRAIN_ARGS = config["training"]
 TRAIN_ARGS["output_dir"] = str(OUTPUT_DIR)
 TRAIN_ARGS["logging_dir"] = str(OUTPUT_DIR / "logs")
 
-# ✅ FIX 1: Apply environment-specific RunPod configuration overrides
+# Apply environment-specific RunPod configuration overrides
 if os.environ.get('ENVIRONMENT') == 'runpod' and 'runpod' in config:
     logger.info("=" * 70)
     logger.info("APPLYING RUNPOD-SPECIFIC CONFIGURATION OVERRIDES")
@@ -142,8 +141,11 @@ class EWCTrainer(Trainer):
     """
     Hugging Face Trainer subclass implementing Elastic Weight Consolidation (EWC).
     Penalizes changes to important parameters to prevent catastrophic forgetting.
-    
-    ✅ FIX 2: CPU-based EWC computation to save GPU memory
+
+    Args:
+        ewc_lambda (float): Weight of the EWC penalty term.
+        fisher_dict (dict): Precomputed Fisher information for model parameters.
+        old_params (dict): Reference parameters from previous task.
     """
     def __init__(self, *args, ewc_lambda=0.4, fisher_dict=None, old_params=None, **kwargs):
         super().__init__(*args, **kwargs)
