@@ -274,15 +274,16 @@ Navigate to the "Sample Predictions" tab to interactively explore:
 
 ## Dataset
 
-This project uses the **All Swiss German Dialects Test Set** (Version 1.0, 2023) provided by the University of Applied Sciences and Arts Northwestern Switzerland (FHNW). The dataset contains 5,750 utterances across 17 Swiss German dialects (12.72 hours of audio).
+This project uses the **All Swiss German Dialects Test Set** (Version 1.0, 2023) provided by the University of Applied Sciences and Arts Northwestern Switzerland (FHNW). The dataset contains 5,750 utterances across 17 Swiss German dialects (12.72 hours of audio) collected via crowd-sourced recordings following Mozilla Common Voice protocols.
 
-**Note:** The dataset is referred to as the "FHNW corpus" in code and documentation for brevity.
+**Data Privacy Note**: Speaker identifiers are pseudonymised (`client_id`) with no linkage to personal identities in the public release. Metadata is limited to dialect region (canton level), following Swiss data protection standards.
 
 **Source:** [FHNW I4DS Datasets Portal](https://cs.technik.fhnw.ch/i4ds-datasets)  
 **License:** MIT  
 **Citation:**
 ```
 FHNW. (2023). All Swiss German Dialects Test Set (Version 1.0). 
+University of Applied Sciences and Arts Northwestern Switzerland.
 Available: https://cs.technik.fhnw.ch/i4ds-datasets
 ```
 
