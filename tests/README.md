@@ -97,7 +97,7 @@ pytest tests/ --cov=src --cov-report=html
 
 ## Test Markers
 
-Tests are organized with pytest markers:
+Tests are organised with pytest markers:
 
 - `@pytest.mark.unit` - Fast unit tests with no external dependencies
 - `@pytest.mark.integration` - Tests requiring data volumes or external services
@@ -184,7 +184,7 @@ from src.module import function_to_test
 class TestFunctionToTest:
     @pytest.mark.unit
     def test_basic_functionality(self):
-        """Test basic function behavior."""
+        """Test basic function behaviour."""
         result = function_to_test("input")
         assert result == "expected"
 

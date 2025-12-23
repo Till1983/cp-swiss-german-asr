@@ -64,7 +64,7 @@ Self-supervised speech recognition models trained on German Common Voice data. T
 
 ## Model Selection Rationale
 
-**Whisper models** were selected to establish zero-shot translation performance benchmarks across different model sizes. The inclusion of v2, v3, and v3-turbo variants enables analysis of training data updates and architectural optimizations.
+**Whisper models** were selected to establish zero-shot translation performance benchmarks across different model sizes. The inclusion of v2, v3, and v3-turbo variants enables analysis of training data updates and architectural optimisations.
 
 **Wav2Vec2 models** represent state-of-the-art German speech recognition, providing a comparison point for models trained on Standard German but evaluated on dialectal speech. The 1B and large-XLSR variants differ in scale and training approach, while language model integration tests decoding strategy impact.
 

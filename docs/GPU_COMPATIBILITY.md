@@ -16,8 +16,8 @@ This document outlines GPU compatibility requirements for the Swiss German ASR p
 
 | GPU Model | Architecture | VRAM | PyTorch Version | EWC Mode | Status |
 |-----------|-------------|------|----------------|----------|---------|
-| RTX 3090 | Ampere (sm_86) | 24 GB | 2.6.0+ | CPU | ✅ Tested |
-| RTX 4090 | Ada (sm_89) | 24 GB | 2.6.0+ | CPU | ✅ Compatible |
+| RTX 3090 | Ampere (sm_86) | 24 GB | 2.6.0+ | GPU | ✅ Tested |
+| RTX 4090 | Ada (sm_89) | 24 GB | 2.6.0+ | GPU | ✅ Compatible |
 
 ### Requires PyTorch Upgrade
 
@@ -144,7 +144,7 @@ runpod:
 
 **Expected performance:**
 - Training time: 6-7 hours
-- GPU utilization: 85-90%
+- GPU utilisation: 85-90%
 - VRAM usage: 18-21 GB / 24 GB
 
 ### For RTX 5090 (32 GB) - Requires PyTorch 2.8.0
@@ -162,7 +162,7 @@ runpod:
 
 **Expected performance:**
 - Training time: 4-6 hours
-- GPU utilization: 85-95%
+- GPU utilisation: 85-95%
 - VRAM usage: 24-28 GB / 32 GB
 
 ---
@@ -309,7 +309,7 @@ pip install --force-reinstall numpy==1.26.4
 
 ### Issue: Training still slow on RTX 5090
 
-**Check GPU utilization:**
+**Check GPU utilisation:**
 ```bash
 watch -n 1 nvidia-smi
 ```
@@ -319,7 +319,7 @@ watch -n 1 nvidia-smi
 - Memory-Usage: 24-28 GB / 32 GB
 - Power: 300-450W
 
-**If utilization is low (<50%):**
+**If utilisation is low (<50%):**
 1. Check if EWC is still using CPU (log should say "GPU-based EWC")
 2. Verify batch size is 8 (not 4)
 3. Check for I/O bottlenecks (increase num_workers)

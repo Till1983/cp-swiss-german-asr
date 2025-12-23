@@ -102,7 +102,7 @@ The Overview tab provides aggregate performance metrics at a glance:
 - **Filters & Settings Section:** Collapsible panel containing:
   - **Select Dialects:** Multi-select with 17 Swiss German variants (AG, BE, BL, FR, GL, GR, LU, NW, SG, SH, SO, SZ, TG, UR, VS, ZG, ZH)
   - **Select Metric:** Radio button group for WER, CER, BLEU selection
-- **Color Scheme:** Dark background with white text, red accent pills for selections
+- **Colour Scheme:** Dark background with white text, red accent pills for selections
 - **Responsive Width:** Adapts to screen size while maintaining readability
 
 **Use Case:** The sidebar is the primary control interface for the entire dashboard. All filtering, model selection, and metric choices originate here. Users interact with this panel on every page view.
@@ -157,7 +157,7 @@ The Overview tab provides aggregate performance metrics at a glance:
   - Average WER: 30.65%
   - Average CER: 13.79%
   - Average BLEU: 54.70
-- **Color-coded bars:** Simple blue bars for clear visual comparison
+- **Colour-coded bars:** Simple blue bars for clear visual comparison
 
 **How to Access:** Sidebar → "Choose models to compare" → Select 2-4 models
 
@@ -173,7 +173,7 @@ The Overview tab provides aggregate performance metrics at a glance:
 **THIS IS THE CORE COMPARATIVE ANALYSIS VIEW** - Essential for assessors to evaluate research contribution.
 
 **Top Section - Grouped Bar Chart:**
-- **WER by Dialect and Model** - 4 colors (green, orange, blue, light blue)
+- **WER by Dialect and Model** - 4 colours (green, orange, blue, light blue)
 - Shows all 17 dialects (AG, BE, BL, FR, GL, GR, LU, NW, SG, SH, SO, SZ, TG, UR, VS, ZG, ZH)
 - Grouped bars enable direct comparison: e.g., FR dialect shows 37-44% WER across models
 - **Key Findings Visible:**
@@ -181,7 +181,7 @@ The Overview tab provides aggregate performance metrics at a glance:
   - FR and SZ struggle most (39-44% WER)
   - Model differences most pronounced on difficult dialects (FR: 7% WER range)
 
-**Bottom Section - Color-Coded Comparison Table:**
+**Bottom Section - Colour-Coded Comparison Table:**
 - **Quality Scale:** 🟢 Green (Excellent: <25%), 🟡 Yellow (Good: 25-40%), White (Poor: >40%)
 - Precise WER values for each model × dialect combination
 - **OVERALL column:** Shows aggregate performance (whisper-large-v2: 26.37%, whisper-medium: 33.06%)
@@ -202,7 +202,7 @@ The Overview tab provides aggregate performance metrics at a glance:
 **Tab:** Dialect Analysis | **Model:** whisper-medium (single model mode)
 
 **Single-Model View Features:**
-- **Color-coded WER bars:** Performance-based coloring
+- **Colour-coded WER bars:** Performance-based colouring
   - 🟢 Green: Excellent (GL 15.00%, GR 21.97%, NW 25.00%)
   - 🟡 Yellow/Light: Good (most dialects 30-40%)
   - ⚪ White: Poor (FR 44.00%, SZ 40.84%)
@@ -210,7 +210,7 @@ The Overview tab provides aggregate performance metrics at a glance:
 - All 17 Swiss German dialects displayed
 - Numeric WER labels on each bar for precise values
 
-**Comparison to Multi-Model View:** Same data as Screenshot 5 but simplified for single-model analysis. Color coding helps identify problem areas without cross-model clutter.
+**Comparison to Multi-Model View:** Same data as Screenshot 5 but simplified for single-model analysis. Colour coding helps identify problem areas without cross-model clutter.
 
 **Use Case:** Detailed single-model analysis to identify dialect-specific challenges for targeted improvements.
 
@@ -270,7 +270,7 @@ The Overview tab provides aggregate performance metrics at a glance:
 
 **Tab:** Detailed Metrics | **Model:** whisper-large-v3 (single model)
 
-**Single-Model WER Visualization:**
+**Single-Model WER Visualisation:**
 - Consistent light blue bars for clean visual scanning
 - All 17 dialects with precise WER values
 - Identifies performance extremes:
@@ -301,7 +301,7 @@ The Overview tab provides aggregate performance metrics at a glance:
 
 ---
 
-### 11. Sample Inspection - Word-Level Alignment Visualization
+### 11. Sample Inspection - Word-Level Alignment Visualisation
 ![Sample Inspection Detail](../images/sample-inspection-02.png)
 
 **Tab:** Sample Predictions | **Sample:** 1 of 86 | **Dialect:** SO (Solothurn)
@@ -322,12 +322,12 @@ The Overview tab provides aggregate performance metrics at a glance:
 - **Semantic Meaning:** Both express "results are controversial" - hypothesis is paraphrase, not error
 
 **Word-Level Alignment (Critical Feature):**
-- **Color-coded alignment:**
+- **Colour-coded alignment:**
   - 🟢 Green: Correct matches ("ergebnisse", "umstritten")
   - 🔴 Pink: Substitutions ("allerdings" → "sagen", "diese" → "die")
   - 🔵 Blue: Insertions ("man", "muss", "aber", "auch", "sehr", "sind")
 - **Type Indicators:** + (insertion), ✗ (substitution), ✓ (correct)
-- **Legend:** Clear color key at bottom
+- **Legend:** Clear colour key at bottom
 
 **Technical Implementation:**
 - Wagner-Fischer alignment algorithm via `jiwer` library
@@ -381,18 +381,18 @@ The dashboard consists of a sidebar for filtering and four main tabs:
 
 ### Interpreting Charts
 
-**Color Coding:**
-- **Single-Model Views:** Performance-based colors
+**Colour Coding:**
+- **Single-Model Views:** Performance-based colours
   - 🟢 Green: WER/CER < 25% or BLEU > 60 (Excellent)
   - 🟡 Yellow: WER/CER 25-40% or BLEU 40-60 (Good)
   - 🔴 Red/White: WER/CER > 40% or BLEU < 40 (Poor)
-- **Multi-Model Views:** Model-specific colors (green, orange, blue, light blue)
+- **Multi-Model Views:** Model-specific colours (green, orange, blue, light blue)
 
 **Chart Types:**
 - **Grouped Bar Charts:** Compare models across dialects (multi-model mode)
 - **Single Bar Charts:** Compare dialects for one model (single-model mode)
 - **Pie Charts:** Error type distribution (substitution/insertion/deletion)
-- **Tables:** Precise numeric values with color-coded cells
+- **Tables:** Precise numeric values with colour-coded cells
 
 **Hover Tooltips:**
 - All Plotly charts support hover for detailed values
@@ -416,7 +416,7 @@ The dashboard is built with modular components:
 ## Known Limitations
 
 - **Multi-model error analysis:** Currently shows primary model (first selected) only in Sample Predictions tab
-- **Mobile optimization:** Some visualizations may not render optimally on mobile devices
+- **Mobile optimisation:** Some visualisations may not render optimally on mobile devices
 - **Large model count:** Selecting 5+ models may cause overlapping legends in charts
 - **Memory usage:** Loading 4+ models with full datasets requires ~2GB RAM
 
@@ -433,7 +433,7 @@ The dashboard is built with modular components:
 
 ### Data not loading
 
-**Issue**: No data appears in visualizations
+**Issue**: No data appears in visualisations
 
 **Solution**:
 - Verify data files are mounted correctly in `docker-compose.yml`

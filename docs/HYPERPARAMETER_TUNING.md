@@ -14,7 +14,7 @@ This document details the rationale, experimental process, and results for hyper
 - **Batch Size:** Default `16`, with `32` for high-memory environments (RunPod with batch_size=32, grad_accum=1).
 - **Epochs:** `10` in config, reduced to `5` in script for initial experiments.
 - **Dropout/Layerdrop:** Moderate values (`0.1`) to prevent overfitting.
-- **FP16:** Enabled for efficient GPU utilization.
+- **FP16:** Enabled for efficient GPU utilisation.
 - **Gradient Accumulation:** Used to simulate larger batch sizes on limited hardware.
 
 ### Experimental Process
@@ -104,7 +104,7 @@ Step | Train Loss | EWC Penalty
 - **Limited GPU Memory:** Reduce batch size further (`batch_size=2, grad_accum=8`) or move EWC computation to CPU.
 - **More Data Available:** Current 30k samples sufficient; more data won't significantly improve given base model knowledge.
 - **Faster Adaptation:** Not recommended - lower learning rate critical for EWC stability.
-- **Different GPU:** For A100 40GB, can use `batch_size=16, grad_accum=1` (faster training).
+- **Different GPU:** For RTX PRO 6000 96GB, can use `batch_size=16, grad_accum=1` (faster training).
 
 ### Trade-offs
 
@@ -196,8 +196,8 @@ runpod:
 **Memory-based batch size selection:**
 - **16 GB GPU:** `batch_size=2, grad_accum=8`
 - **24 GB GPU:** `batch_size=4, grad_accum=4` (current)
-- **40 GB GPU (A100):** `batch_size=8, grad_accum=2` or `batch_size=16, grad_accum=1`
-- **80 GB GPU (A100):** `batch_size=16, grad_accum=1` (fastest)
+- **32 GB GPU (RTX 5090):** `batch_size=8, grad_accum=2` or `batch_size=16, grad_accum=1`
+- **96 GB GPU (RTX PRO 6000):** `batch_size=16, grad_accum=1` (fastest)
 
 ---
 

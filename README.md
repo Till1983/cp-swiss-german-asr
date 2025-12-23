@@ -47,7 +47,7 @@ docker compose up dashboard
 ### Access the Application
 
 **📊 Dashboard:** http://localhost:8501
-- Interactive visualizations of evaluation results
+- Interactive visualisations of evaluation results
 - Multi-model comparison (Whisper, Wav2Vec2)
 - Per-dialect performance breakdown
 - Error analysis with word-level alignment
@@ -69,11 +69,11 @@ The dashboard displays **pre-computed evaluation results** from multiple ASR mod
 - **CER** (Character Error Rate): Lower is better, measures character-level accuracy
 - **BLEU**: Higher is better (0-100), measures translation quality
 
-### Visualizations
+### Visualisations
 1. **Model Comparison:** Side-by-side WER/CER/BLEU across all models
 2. **Dialect Analysis:** Per-canton performance breakdown (BE, ZH, AG, etc.)
 3. **Error Patterns:** Confusion matrices and systematic error identification
-4. **Sample Inspection:** Word-level alignment visualization for error analysis
+4. **Sample Inspection:** Word-level alignment visualisation for error analysis
 
 ### Data Source
 All results are loaded from the `results/metrics/` directory - **no computation happens during dashboard viewing**. This ensures fast, reproducible access to evaluation data.
@@ -248,7 +248,7 @@ curl -X POST http://localhost:8000/api/evaluate \
 
 ## Error Analysis
 
-Analyze error patterns and identify worst-performing samples:
+Analyse error patterns and identify worst-performing samples:
 
 ```bash
 docker compose run --rm api python scripts/analyze_errors.py \
@@ -429,5 +429,5 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Last Updated:** December 16, 2025  
+**Last Updated:** December 23, 2025  
 **Version:** 3.0 (Add Core API Endpoints)

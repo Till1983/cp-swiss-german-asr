@@ -21,7 +21,7 @@ This document provides comprehensive technical documentation of the error analys
 
 ## 1. Overview
 
-The error analysis pipeline transforms raw ASR evaluation results (reference/hypothesis pairs with WER/CER scores) into actionable insights about model behavior. The analysis identifies:
+The error analysis pipeline transforms raw ASR evaluation results (reference/hypothesis pairs with WER/CER scores) into actionable insights about model behaviour. The analysis identifies:
 
 - **Error type distributions**: Substitutions, deletions, and insertions
 - **High-error samples**: Worst-performing utterances for qualitative inspection
@@ -88,7 +88,7 @@ Compared to Reference: "ich gehe heute in die stadt"
 ---
 
 #### Wav2Vec2 Models: Speech Recognition/Transcription
-**Task:** Automatic Speech Recognition (with implicit normalization pressure)  
+**Task:** Automatic Speech Recognition (with implicit normalisation pressure)  
 **Input:** Swiss German audio (spoken dialectal German)  
 **Output:** Mixed German text (dialectal features + Standard German elements)  
 **Reference:** Standard German text
@@ -112,7 +112,7 @@ Compared to Reference: "ich gehe heute in die stadt"
 - Translation failures (wrong lexical choice)
 - Grammatical construction mismatches (tense/aspect)
 - Valid translation variants counted as errors
-- Conscious choice by the speaker to rephrase (dialectal influence or creative license on the part of the speaker), not model error
+- Conscious choice by the speaker to rephrase (dialectal influence or creative licence on the part of the speaker), not model error
 
 **Wav2Vec2 errors may indicate:**
 - Acoustic recognition failures (wrong phonemes heard)
@@ -123,9 +123,9 @@ Compared to Reference: "ich gehe heute in die stadt"
 
 | Metric | Whisper Interpretation | Wav2Vec2 Interpretation |
 |--------|----------------------|------------------------|
-| **WER** | Translation quality to Standard German | Recognition accuracy + dialect normalization |
+| **WER** | Translation quality to Standard German | Recognition accuracy + dialect normalisation |
 | **Substitution** | Wrong word choice OR valid translation variant | Phonetic confusion OR dialectal lexicon |
-| **Deletion** | Translation omission | Failed to hear/recognize word |
+| **Deletion** | Translation omission | Failed to hear/recognise word |
 | **Insertion** | Over-generation/hallucination | Extra transcribed sounds |
 
 #### 3. Confusion Pairs Reveal Different Patterns
@@ -163,15 +163,15 @@ Despite evaluating different tasks, the error analysis remains rigorous because:
 1. **Consistent Reference Standard:** All models are evaluated against the same Standard German references, enabling direct comparison of "how close did each model get to Standard German output?"
 
 2. **Complementary Insights:** Comparing translation vs. transcription models reveals:
-   - Which approach (translate vs. recognize-then-normalize) works better for Swiss German
-   - Whether dialectal pronunciation features are preserved or normalized
-   - Relative difficulty of acoustic modeling vs. translation for low-resource dialects
+  - Which approach (translate vs. recognise-then-normalise) works better for Swiss German
+  - Whether dialectal pronunciation features are preserved or normalised
+  - Relative difficulty of acoustic modelling vs. translation for low-resource dialects
 
 3. **Practical Relevance:** Real-world Swiss German ASR applications need Standard German output regardless of the underlying approach, making this evaluation framework practically meaningful.
 
 ### Reference Material
 
-For detailed discussion of different model behaviors:
+For detailed discussion of different model behaviours:
 - **Whisper translation:** Project Exposé, Plüss et al. (2023)
 - **Wav2Vec2 recognition:** Analysis Notes (results/error_analysis/ANALYSIS_NOTES.md)
 - **Human evaluation:** Project Exposé (4.36/5.0 meaning retention for Whisper)
@@ -186,7 +186,7 @@ Word-level alignment between reference and hypothesis texts is computed using th
 ```python
 # Core alignment extraction (from error_analyzer.py)
 def get_alignment(self, reference: str, hypothesis: str) -> List[Dict[str, Optional[str]]]:
-    # Normalize inputs using consistent preprocessing
+    # Normalise inputs using consistent preprocessing
     ref_norm = _normalize_text(reference)
     hyp_norm = _normalize_text(hypothesis)
     
@@ -213,16 +213,16 @@ def get_alignment(self, reference: str, hypothesis: str) -> List[Dict[str, Optio
 | **Deletion** | Reference word missing from hypothesis | `{'type': 'deletion', 'ref': 'word', 'hyp': None}` |
 | **Insertion** | Extra word in hypothesis not in reference | `{'type': 'insertion', 'ref': None, 'hyp': 'word'}` |
 
-### 2.3 Text Normalization
+### 2.3 Text Normalisation
 
-Before alignment, texts undergo normalization via `_normalize_text()` from `src/evaluation/metrics.py`:
+Before alignment, texts undergo normalisation via `_normalize_text()` from `src/evaluation/metrics.py`:
 
 - Convert to lowercase
 - Remove punctuation (configurable)
 - Collapse multiple whitespace
 - Strip leading/trailing whitespace
 
-**Note:** Normalization is applied identically to both reference and hypothesis, ensuring consistent comparison across all model types (Whisper, Wav2Vec2, and future models).
+**Note:** Normalisation is applied identically to both reference and hypothesis, ensuring consistent comparison across all model types (Whisper, Wav2Vec2, and future models).
 
 ### 2.4 Handling Complex Substitutions
 
@@ -655,7 +655,7 @@ TYPE: C      S      C      C      D      C
 
 **WER:** 33.33% (2 errors / 6 words)
 
-**Analysis:** Model preserved dialectal verb form "gang" instead of normalizing to Standard German "gehe". Also failed to recognize article "die". This pattern shows Wav2Vec2 tends to transcribe what it acoustically hears rather than normalizing to Standard German.
+**Analysis:** Model preserved dialectal verb form "gang" instead of normalising to Standard German "gehe". Also failed to recognise article "die". This pattern shows Wav2Vec2 tends to transcribe what it acoustically hears rather than normalising to Standard German.
 
 ---
 
@@ -678,7 +678,7 @@ TYPE: C      S      S      S      C      D
 
 **WER:** 66.67% (4 errors / 6 words)
 
-**Analysis:** Multiple recognition failures - "ist" → "ich" (phonetic confusion), "ein" → "es" (article error), preserved Swiss German "guets" instead of normalizing to "gutes", failed to recognize "gewesen" completely. Shows Wav2Vec2's difficulty with Swiss German phonetics and lack of Standard German normalization.
+**Analysis:** Multiple recognition failures - "ist" → "ich" (phonetic confusion), "ein" → "es" (article error), preserved Swiss German "guets" instead of normalising to "gutes", failed to recognise "gewesen" completely. Shows Wav2Vec2's difficulty with Swiss German phonetics and lack of Standard German normalisation.
 
 ---
 
@@ -719,7 +719,7 @@ TYPE: S           S      S      S           S           I    I     I     I
 
 **WER:** 129% (9 errors / 7 reference words = more errors than reference length)
 
-**Analysis:** Complete semantic paraphrase - Wav2Vec2 produced a grammatically correct Standard German sentence with similar meaning but completely different wording. This illustrates the fundamental challenge: the model recognized the audio and generated plausible German text, but not the specific words in the reference. This is common in Swiss German ASR where the model has learned German language patterns but lacks Swiss-German-to-Standard-German translation capability.
+**Analysis:** Complete semantic paraphrase - Wav2Vec2 produced a grammatically correct Standard German sentence with similar meaning but completely different wording. This illustrates the fundamental challenge: the model recognised the audio and generated plausible German text, but not the specific words in the reference. This is common in Swiss German ASR where the model has learned German language patterns but lacks Swiss-German-to-Standard-German translation capability.
 
 ---
 
@@ -733,7 +733,7 @@ TYPE: S           S      S      S           S           I    I     I     I
 
 **Wav2Vec2 (Recognition Task):**
 1. Often preserves dialectal pronunciation features ("gang" vs "gehe")
-2. Struggles with Standard German normalization
+2. Struggles with Standard German normalisation
 3. Much higher error rates (72-75% WER) due to dialect/standard mismatch
 4. May produce semantically valid German that differs from reference wording
 5. Lacks translation capability - attempts transcription of dialectal speech
@@ -750,12 +750,12 @@ Alignments operate at word level, not sub-word or phoneme level. This means:
 - **Compound word errors** are treated as single units (e.g., "Bahnhof" → "Banhof" is one substitution, not a character-level edit)
 - **Morphological variations** (e.g., "laufen" vs "läuft") are substitutions, not partial matches
 
-### 7.2 Normalization Effects
+### 7.2 Normalisation Effects
 
-Text normalization (lowercase, punctuation removal) can:
+Text normalisation (lowercase, punctuation removal) can:
 
 - **Mask capitalization errors**: "Berlin" → "berlin" is treated as correct
-- **Conflate punctuation variants**: "Hallo!" vs "Hallo" are identical after normalization
+- **Conflate punctuation variants**: "Hallo!" vs "Hallo" are identical after normalisation
 
 ### 7.3 Reference Quality Dependency
 
@@ -775,7 +775,7 @@ WER and CER have different interpretations depending on the model type:
 - Should be complemented with human evaluation
 
 **For Recognition Models (Wav2Vec2):**
-- WER measures recognition accuracy + implicit normalization
+- WER measures recognition accuracy + implicit normalisation
 - Penalizes correct dialectal transcriptions
 - Does not distinguish between acoustic errors and dialect preservation
 

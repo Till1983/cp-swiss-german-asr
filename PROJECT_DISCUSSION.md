@@ -48,7 +48,7 @@ The system follows a modular, service-oriented architecture with clear separatio
 │  │                    Streamlit Dashboard (Port 8501)                    │  │
 │  │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐     │  │
 │  │  │ Model Comparison │  │ Dialect Analysis │  │ Error Sample     │     │  │
-│  │  │ Visualizations   │  │ Breakdowns       │  │ Viewer           │     │  │
+│  │  │ Visualisations   │  │ Breakdowns       │  │ Viewer           │     │  │
 │  │  └──────────────────┘  └──────────────────┘  └──────────────────┘     │  │
 │  │                                                                       │  │
 │  │  Responsibilities:                                                    │  │
@@ -82,7 +82,7 @@ The system follows a modular, service-oriented architecture with clear separatio
 │  │  │ ASR Evaluator   │  │ Metrics Module  │  │ Error Analyzer      │    │  │
 │  │  │ (evaluator.py)  │  │ (metrics.py)    │  │ (error_analyzer.py) │    │  │
 │  │  └─────────────────┘  └─────────────────┘  └─────────────────────┘    │  │
-│  │          │                      │                      │              │  │
+│  │          │                      │                     │               │  │
 │  │          ├─ Whisper Models      ├─ WER calculation    ├─ Alignment    │  │
 │  │          └─ Wav2Vec2 Models     ├─ CER calculation    ├─ Error types  │  │
 │  │                                 └─ BLEU calculation   └─ Confusion    │  │
@@ -191,7 +191,7 @@ pytest's fixture system enables comprehensive test coverage without GPU requirem
 
 **Data Privacy**: All evaluation samples originate from the publicly available FHNW All Swiss German Dialects Test Set (MIT License, Version 1.0, 2023), supplemented with Mozilla Common Voice German and Dutch corpora for transfer learning experiments. The FHNW dataset contains crowd-sourced speech recordings with pseudonymised speaker identifiers (`client_id`) following Common Voice data collection protocols. No directly identifiable personal information (names, contact details, precise locations beyond cantonal dialect regions) is included in the published dashboard results.
 
-The dataset's "private/public" designation refers to the SwissText 2021 competition evaluation protocol (preventing test set contamination) rather than privacy classifications. All data used in this evaluation was obtained from FHNW's public institutional repository under MIT license terms.
+The dataset's "private/public" designation refers to the SwissText 2021 competition evaluation protocol (preventing test set contamination) rather than privacy classifications. All data used in this evaluation was obtained from FHNW's public institutional repository under MIT License terms.
 
 **Dependency Management**: Production deployment uses pinned dependency versions (requirements.txt with exact version specifications) to prevent supply-chain attacks from upstream package updates. The development workflow includes Dependabot monitoring for known vulnerabilities (see Section 2.2).
 
@@ -332,7 +332,7 @@ Error categorisation employs the **Wagner-Fischer algorithm** implemented in the
 - **Deletion (D)**: Reference word omitted in hypothesis
 - **Insertion (I)**: Extra word added in hypothesis not present in reference
 
-The alignment enables precise localization of errors within transcriptions, supporting targeted analysis of error types (phonological, morphological, syntactic) and extraction of confusion pairs (systematically misrecognized word mappings).
+The alignment enables precise localisation of errors within transcriptions, supporting targeted analysis of error types (phonological, morphological, syntactic) and extraction of confusion pairs (systematically misrecognised word mappings).
 
 **Worst-Sample Analysis:**
 
@@ -800,7 +800,7 @@ Analysis of high-WER samples identified systematic retention of Swiss German syn
 - **Metrics:** WER=71.4%, CER=43.8%, BLEU=41.1
 - **Source:** Sample `8d889bf5-b9b6-427f-a69d-4ad51f9a10ba.flac`, Lucerne (LU) dialect
 
-This example demonstrates high WER (71.4%) due to lexical substitutions ("Danach"→"Nach dem"), word reordering, and auxiliary insertion ("hat...gearbeitet" vs "arbeitete"), yet achieves BLEU=41.1 (above the 40% semantic preservation threshold). The transcription accurately represents the temporal semantics (employment as lawyer in Munich) whilst failing to normalize syntactic structure to Standard German conventions.
+This example demonstrates high WER (71.4%) due to lexical substitutions ("Danach"→"Nach dem"), word reordering, and auxiliary insertion ("hat...gearbeitet" vs "arbeitete"), yet achieves BLEU=41.1 (above the 40% semantic preservation threshold). The transcription accurately represents the temporal semantics (employment as lawyer in Munich) whilst failing to normalise syntactic structure to Standard German conventions.
 
 **Prevalence Quantification:**
 
@@ -817,7 +817,7 @@ Manual inspection of worst-performing samples revealed recurring patterns:
 
 - **Dialectal article retention:** Swiss German definite articles (e.g., "de Peter") occasionally preserved in Standard German output ("der Peter") where standard omits articles
 - **Lexical substitutions:** Phonetically similar Standard German words substituted for dialectal terms
-- **Compound word segmentation:** Swiss German compound structures inconsistently normalized to Standard German conventions
+- **Compound word segmentation:** Swiss German compound structures inconsistently normalised to Standard German conventions
 
 Systematic quantification of these pattern frequencies—including per-dialect breakdowns and linguistic feature correlation—was not conducted. These observations represent qualitative patterns requiring validation through controlled linguistic annotation.
 
@@ -840,7 +840,7 @@ Five primary findings emerge from the evaluation:
 
 **Finding 1: Whisper Architecture Outperforms German-Trained Wav2Vec2 by 2-3×**
 
-Whisper models achieve 28-34% WER on Swiss German→Standard German translation, outperforming German-trained Wav2Vec2 models (72-75% WER) by approximately 44 percentage points absolute WER. This performance gap persists despite Wav2Vec2's training on 1,700 hours of German Common Voice data with language model integration. The architectural difference—Whisper's encoder-decoder sequence-to-sequence design versus Wav2Vec2's acoustic-only modeling—correlates with this performance differential, though isolating the specific mechanisms (acoustic perception vs orthographic normalisation) would require phonetic-level analysis not conducted in this evaluation.
+Whisper models achieve 28-34% WER on Swiss German→Standard German translation, outperforming German-trained Wav2Vec2 models (72-75% WER) by approximately 44 percentage points absolute WER. This performance gap persists despite Wav2Vec2's training on 1,700 hours of German Common Voice data with language model integration. The architectural difference—Whisper's encoder-decoder sequence-to-sequence design versus Wav2Vec2's acoustic-only modelling—correlates with this performance differential, though isolating the specific mechanisms (acoustic perception vs orthographic normalisation) would require phonetic-level analysis not conducted in this evaluation.
 
 **Finding 2: Model Version Updates Do Not Guarantee Uniform Performance Improvement**
 
@@ -978,7 +978,7 @@ The following software frameworks and libraries were used in this project. Exact
 - jiwer 3.0.4 (WER/CER calculation) — https://github.com/jitsi/jiwer
 - sacrebleu 2.2.1 (BLEU implementation) — https://github.com/mjpost/sacrebleu
 
-**Web Framework & Visualization:**
+**Web Framework & Visualisation:**
 - FastAPI 0.115.0 — https://fastapi.tiangolo.com
 - Uvicorn 0.32.0 (ASGI server) — https://www.uvicorn.org
 - Streamlit 1.40.0 — https://streamlit.io
