@@ -80,7 +80,7 @@ The Overview tab provides aggregate performance metrics at a glance:
 - Average performance: WER 75.28%, CER 31.52%, BLEU 13.89
 - Summary statistics table showing mean, std dev, min, max for all metrics
 - Expandable "Metrics Definitions & Formulas" section with WER/CER/BLEU explanations
-- Sidebar with model selection (single model mode) and dialect filters (all 15 dialects visible)
+- Sidebar with model selection (single model mode) and dialect filters (all 17 dialects visible)
 - Full results table at bottom with pagination (20 rows per page)
 
 **Use Case:** Quick single-model assessment before diving into detailed analysis. Shows CTC-based Wav2Vec2 model performance (higher WER than Whisper models due to transcription vs. translation task).
@@ -290,7 +290,7 @@ The Overview tab provides aggregate performance metrics at a glance:
 **Error Analysis Interface:**
 - **Loaded:** 86 worst-performing samples (top 10% WER)
 - **Filters:**
-  - Dialect dropdown: "All" or specific canton (15 options)
+  - Dialect dropdown: "All" or specific canton (18 options)
   - Minimum WER slider: 0.00 - 200.00% (currently 0.00)
 - **Navigation:** Prev/Next buttons, sample counter (1 of 86)
 - **Status Banner:** Green success message confirms data loaded
