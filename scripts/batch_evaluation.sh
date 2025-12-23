@@ -113,7 +113,7 @@ echo "📥 Downloading evaluation results to local machine..."
 # Ensure local directory exists
 mkdir -p results/metrics/
 
-# ✅ FIX: Download from /workspace/results/metrics/ (OUTSIDE project dir)
+# Download from /workspace/results/metrics/ (OUTSIDE project dir)
 # This matches RESULTS_DIR in src/config.py for RunPod environment
 rsync -avz --progress -e "ssh -p ${REMOTE_PORT}" \
     ${REMOTE_USER}@${REMOTE_HOST}:/workspace/results/metrics/ \
