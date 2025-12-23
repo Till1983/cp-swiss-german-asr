@@ -18,7 +18,7 @@
 
 ## Test Structure
 
-The test suite is organized into three layers, each serving distinct validation purposes:
+The test suite is organised into three layers, each serving distinct validation purposes:
 
 ### Unit Tests (`tests/unit/`)
 
@@ -71,7 +71,7 @@ def test_calculate_wer_exact_match():
 
 ```
 tests/integration/
-├── test_backend_endpoints.py    # API endpoint behavior
+├── test_backend_endpoints.py    # API endpoint behaviour
 ├── test_data_pipeline.py         # Data loading → preprocessing → batching
 └── test_model_evaluation.py      # Model → evaluator → metrics
 ```
@@ -86,7 +86,7 @@ def test_load_and_preprocess_audio():
     preprocessor = AudioPreprocessor(target_sample_rate=16000)
     processed, final_sr = preprocessor.preprocess(audio, sr)
     assert final_sr == 16000
-    assert processed.mean() < 0.1  # Normalized
+    assert processed.mean() < 0.1  # Normalised
 ```
 
 **Best Practices:**
@@ -103,7 +103,7 @@ def test_load_and_preprocess_audio():
 **Characteristics:**
 
 - Slowest execution (1-10s per test)
-- Tests full system behavior
+- Tests full system behaviour
 - Validates user-facing APIs
 - Uses production-like configurations
 
@@ -170,7 +170,7 @@ Coverage targets are based on failure impact:
 
 3. **Lower Risk (Integration-tested acceptable):**
     - Heavy external dependencies (HuggingFace processors)
-    - Visualization code (dashboard rendering)
+    - Visualisation code (dashboard rendering)
 
 ### Why Not 100% Everywhere?
 
@@ -332,7 +332,7 @@ mock_processor.pad.return_value = {
 **Conclusion:** The 68% coverage is acceptable because:
 
 1. Critical logic (processor selection, configuration) is covered
-2. Integration tests validate real-world behavior
+2. Integration tests validate real-world behaviour
 3. Adding unit tests would require brittle, high-fidelity mocks
 4. Risk is low: HuggingFace processors are well-tested upstream
 
@@ -468,7 +468,7 @@ except ImportError:
 4. **Validation Strategy:**
    - ✅ **Unit tests:** Cover all model methods when pyctcdecode is available (97% of code)
    - ✅ **Integration tests:** Exercise transcription with and without language models
-   - ✅ **Manual testing:** Verified behavior when package is not installed
+    - ✅ **Manual testing:** Verified behaviour when package is not installed
 
 **Conclusion:** The 97% coverage is acceptable because the missed lines are defensive import guards for optional functionality. Testing them would require anti-patterns (mocking import system) without meaningful risk reduction.
 
@@ -534,7 +534,7 @@ def test_file_read_error(mock_open):
 
 **Problems with this approach:**
 - Creates brittle tests tied to implementation (changing from `open()` to `Path.read_text()` breaks tests)
-- Tests Python standard library behavior instead of our business logic
+- Tests Python standard library behaviour instead of our business logic
 - False confidence: We're testing that exceptions propagate, not that our code handles them correctly
 - High maintenance burden for minimal value
 
@@ -568,7 +568,7 @@ def test_file_read_error(mock_open):
 **Conclusion:** The 94% coverage is excellent and represents complete coverage of all practical code paths. The 6 missed lines are defensive exception handlers for edge cases that either:
 - Cannot occur in normal operation (unreachable import handler)
 - Are better validated through staging/production monitoring (disk failures, race conditions)
-- Would require testing framework behavior instead of application logic
+- Would require testing framework behaviour instead of application logic
 
 Pursuing 100% would add fragile tests that break with minor refactoring and provide false confidence without meaningful risk reduction.
 
@@ -576,7 +576,7 @@ Pursuing 100% would add fragile tests that break with minor refactoring and prov
 - ✅ All API endpoints tested (100% of routes)
 - ✅ All request validation paths tested
 - ✅ All response formats validated
-- ✅ Cache behavior comprehensively tested (100% of model_cache.py)
+- ✅ Cache behaviour comprehensively tested (100% of model_cache.py)
 - ✅ File handling edge cases covered (missing files, invalid paths, empty data)
 - ✅ Error responses validated (404, 500 status codes with proper messages)
 
@@ -649,7 +649,7 @@ class TestFeature:
         return {"key": "value"}
 
     @pytest.mark.unit
-    def test_function_expected_behavior(self, sample_input):
+    def test_function_expected_behaviour(self, sample_input):
         """Test function handles expected input correctly."""
         result = FunctionToTest(sample_input)
         
@@ -695,7 +695,7 @@ addopts =
 
 ### Best Practices Checklist
 
-- [ ] Test name describes behavior: `test_<function>_<condition>_<outcome>`
+- [ ] Test name describes behaviour: `test_<function>_<condition>_<outcome>`
 - [ ] One logical assertion per test
 - [ ] Uses fixtures for setup/teardown
 - [ ] Mocks external dependencies

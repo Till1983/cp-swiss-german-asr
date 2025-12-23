@@ -16,14 +16,25 @@ This document outlines GPU compatibility requirements for the Swiss German ASR p
 
 | GPU Model | Architecture | VRAM | PyTorch Version | EWC Mode | Status |
 |-----------|-------------|------|----------------|----------|---------|
-| RTX 3090 | Ampere (sm_86) | 24 GB | 2.6.0+ | CPU | ✅ Tested |
-| RTX 4090 | Ada (sm_89) | 24 GB | 2.6.0+ | CPU | ✅ Compatible |
+| RTX 3090 | Ampere (sm_86) | 24 GB | 2.6.0+ | GPU | ✅ Tested |
+| RTX 4090 | Ada (sm_89) | 24 GB | 2.6.0+ | GPU | ✅ Compatible |
 
 ### Requires PyTorch Upgrade
 
 | GPU Model | Architecture | VRAM | Min PyTorch | EWC Mode | Status |
 |-----------|-------------|------|-------------|----------|---------|
 | RTX 5090 | Blackwell (sm_120) | 32 GB | **2.8.0+** | GPU | ⚠️ Requires upgrade |
+| RTX PRO 6000 | Blackwell (sm_120) | 96 GB | **2.8.0+** | GPU | ⚠️ Requires upgrade |
+---
+
+## Dependency Files Overview
+
+The project maintains two requirements files for GPU architecture compatibility:
+
+- **`requirements.txt`** (authoritative): PyTorch 2.6.0 + dependencies for standard GPUs (RTX 3090, RTX 4090). Use this for reproducible thesis evaluation.
+- **`requirements_blackwell.txt`**: PyTorch 2.8.0+ for Blackwell GPUs (RTX 5090, RTX PRO 6000) requiring sm_120 compute capability.
+
+**Default recommendation**: Use `requirements.txt` unless deploying on Blackwell-generation hardware.
 
 ---
 
@@ -40,7 +51,7 @@ NVIDIA GeForce RTX 5090 with CUDA capability sm_120 is not compatible with the c
 ### Root Cause
 
 - RTX 5090 uses **Blackwell architecture** (compute capability sm_120)
-- PyTorch 2.6.0 was compiled for sm_50 through sm_90 only
+- PyTorch 2.6.0 (`requirements.txt`) was compiled for sm_50 through sm_90 only
 - No pre-compiled CUDA kernels exist for sm_120 in PyTorch 2.6.0
 - PyTorch does NOT have JIT compilation fallback for unsupported architectures
 
@@ -55,7 +66,12 @@ NVIDIA GeForce RTX 5090 with CUDA capability sm_120 is not compatible with the c
 
 ### The Solution
 
-**Upgrade to PyTorch 2.8.0 with CUDA 12.8 support:**
+**Option 1: Use `requirements_blackwell.txt` (Recommended for RTX 5090)**
+```bash
+pip install -r requirements_blackwell.txt
+```
+
+**Option 2: Manual upgrade to PyTorch 2.8.0 with CUDA 12.8:**
 ```bash
 # Uninstall old PyTorch
 pip uninstall -y torch torchvision torchaudio
@@ -88,14 +104,6 @@ pip install --upgrade \
 ## Memory Requirements by Configuration
 
 ### RTX 3090 (24 GB VRAM)
-
-**With CPU-based EWC (current configuration):**
-- Model: ~1.2 GB
-- Optimizer states: ~2.4 GB
-- Batch (4 samples): ~4.8 GB
-- EWC Fisher/old_params: ~2.4 GB (stored on GPU, computed on CPU)
-- Training activations: ~8-10 GB
-- **Total: ~19-21 GB** ✅ Fits in 24 GB
 
 **With GPU-based EWC (requires batch_size reduction):**
 - Model: ~1.2 GB
@@ -132,11 +140,11 @@ runpod:
   dataloader_num_workers: 8
 ```
 
-**EWC mode:** CPU-based (implemented in code)
+**EWC mode:**
 
 **Expected performance:**
 - Training time: 6-7 hours
-- GPU utilization: 85-90%
+- GPU utilisation: 85-90%
 - VRAM usage: 18-21 GB / 24 GB
 
 ### For RTX 5090 (32 GB) - Requires PyTorch 2.8.0
@@ -154,7 +162,7 @@ runpod:
 
 **Expected performance:**
 - Training time: 4-6 hours
-- GPU utilization: 85-95%
+- GPU utilisation: 85-95%
 - VRAM usage: 24-28 GB / 32 GB
 
 ---
@@ -301,7 +309,7 @@ pip install --force-reinstall numpy==1.26.4
 
 ### Issue: Training still slow on RTX 5090
 
-**Check GPU utilization:**
+**Check GPU utilisation:**
 ```bash
 watch -n 1 nvidia-smi
 ```
@@ -311,7 +319,7 @@ watch -n 1 nvidia-smi
 - Memory-Usage: 24-28 GB / 32 GB
 - Power: 300-450W
 
-**If utilization is low (<50%):**
+**If utilisation is low (<50%):**
 1. Check if EWC is still using CPU (log should say "GPU-based EWC")
 2. Verify batch size is 8 (not 4)
 3. Check for I/O bottlenecks (increase num_workers)

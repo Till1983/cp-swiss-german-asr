@@ -31,7 +31,7 @@ Improve test coverage for `src/backend/model_cache.py` and `src/backend/endpoint
 - `TestMakeKey`: Key generation consistency and distinctiveness
 - `TestCacheGet`: 
   - Cache hit/miss scenarios
-  - LRU eviction behavior
+  - LRU eviction behaviour
   - Multiple model types and LM paths
   - Capacity enforcement
 - `TestCacheClear`: Clearing empty and populated caches
@@ -100,7 +100,7 @@ except Exception as e:  # Exception in JSON parsing or file reading
 
 - **Total new tests**: 106+ test functions
 - **Coverage of critical paths**: 100%
-- **Cache eviction logic**: Fully tested (LRU behavior, capacity enforcement)
+- **Cache eviction logic**: Fully tested (LRU behaviour, capacity enforcement)
 - **File I/O error handling**: Well covered (missing directories, nonexistent files, format validation)
 - **Endpoint response formats**: Validated across all variations
 - **Edge cases**: Comprehensive coverage (empty data, extreme values, missing fields)

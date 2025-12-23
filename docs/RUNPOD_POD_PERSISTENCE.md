@@ -89,7 +89,7 @@ Pod 2 (Tomorrow):
 - **Use case**: Cost-sensitive workloads, experimentation
 
 ### Secure Cloud (Your Setup)
-- **T3/T4 data centers** with enterprise-grade reliability
+- **T3/T4 data centres** with enterprise-grade reliability
 - **Cannot be stopped** - only terminated
 - **Single-tenant**: Your GPU is dedicated, not shared
 - **Better for**: Thesis work, reproducibility, sensitive data
@@ -193,10 +193,10 @@ pip install -r requirements_blackwell.txt --no-cache-dir --break-system-packages
 - **Network volume**: ~$0.01/hr (always charged, even when no pod)
 - **Package installation time**: ~5 minutes = ~$0.04 per pod creation
 
-### Optimization Strategies
+### Optimisation Strategies
 1. **Keep pod running during active work** (~8 hours = $3.76)
 2. **Terminate between sessions** (data persists, no pod cost)
-3. **Package installation is negligible cost** (don't optimize this)
+3. **Package installation is negligible cost** (don't optimise this)
 
 ## Thesis Documentation
 
@@ -397,7 +397,7 @@ Pod 2 (Tomorrow):
 - **Use case**: Cost-sensitive workloads, experimentation
 
 ### Secure Cloud (Your Setup)
-- **T3/T4 data centers** with enterprise-grade reliability
+- **T3/T4 data centres** with enterprise-grade reliability
 - **Cannot be stopped** - only terminated
 - **Single-tenant**: Your GPU is dedicated, not shared
 - **Better for**: Thesis work, reproducibility, sensitive data
@@ -501,10 +501,10 @@ pip install -r requirements_blackwell.txt --no-cache-dir --break-system-packages
 - **Network volume**: ~$0.01/hr (always charged, even when no pod)
 - **Package installation time**: ~5 minutes = ~$0.04 per pod creation
 
-### Optimization Strategies
+### Optimisation Strategies
 1. **Keep pod running during active work** (~8 hours = $3.76)
 2. **Terminate between sessions** (data persists, no pod cost)
-3. **Package installation is negligible cost** (don't optimize this)
+3. **Package installation is negligible cost** (don't optimise this)
 
 ## Thesis Documentation
 

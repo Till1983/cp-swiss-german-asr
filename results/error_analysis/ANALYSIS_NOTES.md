@@ -5,7 +5,7 @@
 
 ### Overview
 
-This document contains qualitative observations and patterns from the ASR error analysis conducted on Swiss German dialect data. Observations are organized by model and dialect, with links to specific samples for reference.
+This document contains qualitative observations and patterns from the ASR error analysis conducted on Swiss German dialect data. Observations are organised by model and dialect, with links to specific samples for reference.
 
 ---
 
@@ -30,7 +30,7 @@ This document contains qualitative observations and patterns from the ASR error 
 | GL | 10.7% | 6 | Best performance, no insertions |
 
 **Questions:**
-- Does Whisper normalize Swiss German to Standard German spellings?
+- Does Whisper normalise Swiss German to Standard German spellings?
     - **Answer:** Yes, but in reverse - the model appears to produce Swiss German-influenced output (perfect tense constructions, different word order) when processing Swiss German audio, even when the reference is in Standard German form
 
 **Hypotheses:**
@@ -77,8 +77,8 @@ This document contains qualitative observations and patterns from the ASR error 
 | ZG | 41.6% | 30 | 16.7% | Worst WER, heavy restructuring |
 
 **Questions:**
-- How does speed optimization affect Swiss German recognition?
-    - **Answer:** Minimal impact - only +1.4% WER increase compared to v3. Error distribution proportions remain nearly identical (sub: 21.2% vs 19.9%, ins: 5.3% vs 5.1%, del: 2.3% vs 2.1%). The Turbo optimization does not fundamentally change Swiss German processing patterns.
+- How does speed optimisation affect Swiss German recognition?
+    - **Answer:** Minimal impact - only +1.4% WER increase compared to v3. Error distribution proportions remain nearly identical (sub: 21.2% vs 19.9%, ins: 5.3% vs 5.1%, del: 2.3% vs 2.1%). The Turbo optimisation does not fundamentally change Swiss German processing patterns.
 
 **Hypotheses:**
 - Speed-accuracy tradeoff is linear: Turbo's efficiency gains from reduced decoder complexity cause uniform ~10% relative increase across all error types
@@ -138,7 +138,7 @@ This document contains qualitative observations and patterns from the ASR error 
 **Hypotheses:**
 - V2's training data may have included more Swiss German or dialectal content, leading to better adaptation
 - V3/Turbo's expanded multilingual training may have diluted German dialect recognition
-- The consistent pattern of semantic paraphrasing across all Whisper versions suggests this is a fundamental model behavior, not version-specific
+- The consistent pattern of semantic paraphrasing across all Whisper versions suggests this is a fundamental model behaviour, not version-specific
 - Lower insertion rates in v2 correlate with better WER, suggesting over-generation is a key error source in v3/Turbo
 - Dialects with 0% insertion rate (GL, GR, SZ) consistently achieve best performance across all Whisper versions
 
@@ -199,7 +199,7 @@ This document contains qualitative observations and patterns from the ASR error 
 **Hypotheses:**
 - Reduced model capacity leads to less stable decoding, causing repetition loops and hallucinations
 - The 6.4% insertion rate (vs 4.5-5.3% in Large models) indicates the smaller model is more prone to over-generation
-- Swiss German phonetic transcription errors are more severe in Medium (e.g., "Sie fehlen" → "Se fala") suggesting weaker acoustic modeling
+- Swiss German phonetic transcription errors are more severe in Medium (e.g., "Sie fehlen" → "Se fala") suggesting weaker acoustic modelling
 - Despite capacity reduction, the fundamental Swiss German syntax patterns (perfect tense, word order) are preserved, indicating these are learned at the architecture level
 - Complete deletion failures (100% WER with all deletions) suggest occasional audio processing failures unique to Medium
 - AG dialect's 30.2% insertion rate (highest) may indicate specific speaker characteristics triggering hallucinations
@@ -281,7 +281,7 @@ This document contains qualitative observations and patterns from the ASR error 
 - **BE dialect suffers most from LM:** Bernese German's unique phonology is furthest from Standard German, making LM corrections maximally harmful
 - **Same semantic paraphrasing as all models:** The 200% WER sample appears identically across all 6 models, suggesting this is a fundamental property of the Swiss German speech content, not model architecture
 - **Uppercase output is a tokenization artifact:** The LM may use uppercase-only vocabulary, explaining output convention
-- **Pronoun confusion ("wir"→"mir") is Swiss German influence:** This substitution reflects actual Swiss German pronunciation being correctly recognized acoustically but "corrected" by LM
+- **Pronoun confusion ("wir"→"mir") is Swiss German influence:** This substitution reflects actual Swiss German pronunciation being correctly recognised acoustically but "corrected" by LM
 - **GR/GL dialects perform better** because they may have phonology closer to Standard German, making LM corrections less harmful
 
 **Worst Samples to Review:**
@@ -359,7 +359,7 @@ This document contains qualitative observations and patterns from the ASR error 
 - **BE dialect suffers most from LM:** Bernese German's unique phonology is furthest from Standard German, making LM corrections maximally harmful
 - **Same semantic paraphrasing as all models:** The 200% WER sample appears identically across all 6 models, suggesting this is a fundamental property of the Swiss German speech content, not model architecture
 - **Uppercase output is a tokenization artifact:** The LM may use uppercase-only vocabulary, explaining output convention
-- **Pronoun confusion ("wir"→"mir") is Swiss German influence:** This substitution reflects actual Swiss German pronunciation being correctly recognized acoustically but "corrected" by LM
+- **Pronoun confusion ("wir"→"mir") is Swiss German influence:** This substitution reflects actual Swiss German pronunciation being correctly recognised acoustically but "corrected" by LM
 - **GR/GL dialects perform better** because they may have phonology closer to Standard German, making LM corrections less harmful
 
 **Worst Samples to Review:**

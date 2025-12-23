@@ -1,7 +1,7 @@
 # Test Coverage Improvements Summary
 
 ## Overview
-This document summarizes comprehensive test improvements made to the Swiss German ASR project to significantly increase test coverage and quality.
+This document summarises comprehensive test improvements made to the Swiss German ASR project to significantly increase test coverage and quality.
 
 ## New Test Files Created
 
@@ -23,25 +23,25 @@ This document summarizes comprehensive test improvements made to the Swiss Germa
 
 3. **tests/unit/frontend/test_plotly_charts.py** (380+ lines)
    - Tests for performance categorization logic
-   - Tests for color mapping functions
+   - Tests for colour mapping functions
    - Chart creation with various data scenarios
    - Empty data handling
    - Performance threshold validation
 
 ### Integration Tests
 4. **tests/integration/test_error_analysis_pipeline.py** (350+ lines)
-   - Complete error analysis pipeline from evaluation to visualization
+   - Complete error analysis pipeline from evaluation to visualisation
    - Multi-model comparison workflows
    - Worst samples identification and export
    - End-to-end JSON generation and loading
-   - Error analysis to visualization data conversion
+   - Error analysis to visualisation data conversion
 
 5. **tests/integration/test_frontend_data_loading.py** (380+ lines)
    - Frontend data loading from actual result files
    - Results discovery and combination
    - Error analysis loading and parsing
    - Timestamp ordering and version management
-   - Complete visualization data pipeline
+   - Complete visualisation data pipeline
    - Graceful handling of missing/partial results
 
 ### Edge Cases and Property-Based Tests
@@ -95,11 +95,11 @@ This document summarizes comprehensive test improvements made to the Swiss Germa
   - Aggregation logic
 
 - **Sidebar component**: Core filtering logic tested
-- **Plotly charts**: Performance categorization and color mapping tested
+- **Plotly charts**: Performance categorisation and colour mapping tested
 
 ### 2. Integration Tests (Significantly Expanded)
 - **Error Analysis Pipeline**: Full workflow testing
-- **Frontend Data Loading**: Complete data flow from files to visualization
+- **Frontend Data Loading**: Complete data flow from files to visualisation
 - **Multi-Model Workflows**: Model comparison and aggregation
 - **Timestamp Management**: Version selection and ordering
 
@@ -146,7 +146,7 @@ This document summarizes comprehensive test improvements made to the Swiss Germa
   - Always in 0-100 range
   - Empty text → 0 BLEU
 
-- **Normalization Properties**:
+- **Normalisation Properties**:
   - Idempotent (normalizing twice = normalizing once)
   - Always lowercase
   - No extra whitespace
@@ -197,7 +197,7 @@ This document summarizes comprehensive test improvements made to the Swiss Germa
 - Real file loading scenarios tested
 
 ### 2. End-to-End Integration Tests
-- Complete pipeline tests from evaluation → analysis → visualization
+- Complete pipeline tests from evaluation → analysis → visualisation
 - Multi-model comparison workflows
 - Real file I/O with proper error handling
 - Timestamp-aware result management
@@ -314,5 +314,5 @@ The test suite now provides:
 - **High confidence** in code correctness
 - **Fast feedback** during development
 - **Regression prevention** for future changes
-- **Documentation** of expected behavior
+- **Documentation** of expected behaviour
 - **Safety net** for refactoring

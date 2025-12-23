@@ -12,7 +12,7 @@ This document tracks technical issues encountered during the Swiss German ASR pr
 - Pre-trained model checkpoints saved to RunPod and local
 - Automated configuration generation
 - Shell scripts for training orchestration
-- Dataset loading performance optimizations
+- Dataset loading performance optimisations
 - Path construction and TSV encoding fixes
 - CUDA memory management for EWC training
 
@@ -21,7 +21,7 @@ This document tracks technical issues encountered during the Swiss German ASR pr
   - `tokenizer` parameter deprecated in `Trainer.__init__` (use `processing_class`)
   - `torch.cuda.amp.GradScaler` deprecated (use `torch.amp.GradScaler('cuda')`)
   - `as_target_processor` deprecated in Wav2Vec2 processing
-- Missing punctuation/foreign characters in vocabulary (maps to `<unk>`, expected behavior)
+- Missing punctuation/foreign characters in vocabulary (maps to `<unk>`, expected behaviour)
 
 ---
 
@@ -169,8 +169,8 @@ This document tracks technical issues encountered during the Swiss German ASR pr
 **Lessons Learned:**
 - Understand tokenizer preprocessing pipeline before implementing validation
 - Wav2Vec2 uses uppercase-only vocabularies (reduces vocab from 52 to 26 letters)
-- Tokenizer's `__call__` method handles case normalization automatically
-- Sanity checks must mirror actual inference pipeline behavior
+- Tokenizer's `__call__` method handles case normalisation automatically
+- Sanity checks must mirror actual inference pipeline behaviour
 - This specific check could be removed entirely (tokenization validation in STEP 3 already confirms correctness)
 
 **Related Files:**
@@ -207,7 +207,7 @@ This document tracks technical issues encountered during the Swiss German ASR pr
 **Alternative Solutions (Not Implemented):**
 - Move EWC computation to CPU (accepts ~10% performance penalty)
 - Disable EWC temporarily (loses research contribution)
-- Use larger GPU (RTX 3090 24GB → A100 40GB)
+- Use larger GPU (RTX 3090 24GB → RTX 5090 32GB)
 
 **Related Files:**
 - `configs/training/german_adaptation.yml` (lines 75-77: runpod batch settings)

@@ -19,7 +19,7 @@ This project developed a reproducible evaluation framework for comparing state-o
 
 The system comprises three integrated components: (1) a FastAPI backend providing evaluation endpoints for 6 ASR models including Whisper variants (large-v3, large-v2, medium, turbo) and Wav2Vec2-German models; (2) a Docker-based evaluation pipeline implementing WER, CER, and BLEU metrics with systematic error categorisation; and (3) an interactive Streamlit dashboard featuring multi-model comparison visualisations, per-dialect performance breakdowns, and word-level error alignment tools. All evaluation results are persisted in structured JSON and CSV formats, ensuring reproducibility and enabling offline analysis.
 
-Evaluation on the Swiss German-to-Standard German translation task revealed systematic performance differences across models and dialects. Whisper models achieved 28.0–34.1% WER compared to 72.4–75.3% for Wav2Vec2 baselines, with Whisper large-v2 leading at 28.0% WER. Performance varied substantially by dialect, ranging from 5.8% (Glarus) to 39.7% (Zug), correlating with linguistic distance from Standard German. Error analysis of the 86 worst-performing samples (top 10% by WER) revealed that Whisper accurately transcribes Swiss German phonology but systematically fails to normalise to Standard German: 73% of errors exhibit perfect tense restructuring and 20.5% show dialectal article insertion patterns, producing Swiss German-influenced morphosyntax rather than the Standard German targets required by the task. BLEU analysis confirmed that only 1.4–2.1% of high-WER samples (WER ≥50%) preserved semantic meaning (BLEU ≥40%), validating WER as the appropriate metric for measuring translation quality on this corpus.
+Evaluation on the Swiss German-to-Standard German translation task revealed systematic performance differences across models and dialects. Whisper models achieved 28.0–34.1% WER compared to 72.4–75.3% for Wav2Vec2 baselines, with Whisper large-v2 leading at 28.0% WER. Performance varied substantially by dialect, ranging from 5.8% (Glarus) to 39.7% (Zug), correlating with linguistic distance from Standard German. Error analysis of the 86 worst-performing samples (top 10% by WER) revealed that Whisper accurately transcribes Swiss German phonology but systematically fails to normalise to Standard German: 73% of errors exhibit perfect tense restructuring and 20.5% show dialectal article insertion patterns, producing Swiss German-influenced morphosyntax rather than the Standard German targets required by the task. BLEU analysis confirmed that only 1.4–2.1% of high-WER samples (WER ≥50%) preserved semantic meaning (BLEU ≥40%), validating WER as the appropriate metric for measuring translation quality on this corpus. Reported WER/CER are corpus-level aggregates across the test set; BLEU is computed per-sample and averaged. Per-sample WER/CER are used only for descriptive statistics in analysis sections.
 
 **Success Criteria Achievement:**
 
@@ -30,7 +30,7 @@ The project successfully met all exposé requirements:
 - ✅ Interactive Streamlit dashboard
 - ✅ Docker-based evaluation pipeline
 - ✅ Comprehensive error analysis with word-level alignment
-- ✅ Technical documentation (12 documents covering methodology, workflows, architecture, and testing)
+- ✅ Technical documentation (14 documents covering methodology, workflows, architecture, and testing)
 
 The evaluation framework provides a foundation for ASR model selection in Swiss German applications, with documented limitations including dialectal sample imbalance (1–203 samples per dialect) and zero-shot evaluation scope (no fine-tuning performed).
 
@@ -48,7 +48,7 @@ The system follows a modular, service-oriented architecture with clear separatio
 │  │                    Streamlit Dashboard (Port 8501)                    │  │
 │  │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐     │  │
 │  │  │ Model Comparison │  │ Dialect Analysis │  │ Error Sample     │     │  │
-│  │  │ Visualizations   │  │ Breakdowns       │  │ Viewer           │     │  │
+│  │  │ Visualisations   │  │ Breakdowns       │  │ Viewer           │     │  │
 │  │  └──────────────────┘  └──────────────────┘  └──────────────────┘     │  │
 │  │                                                                       │  │
 │  │  Responsibilities:                                                    │  │
@@ -82,7 +82,7 @@ The system follows a modular, service-oriented architecture with clear separatio
 │  │  │ ASR Evaluator   │  │ Metrics Module  │  │ Error Analyzer      │    │  │
 │  │  │ (evaluator.py)  │  │ (metrics.py)    │  │ (error_analyzer.py) │    │  │
 │  │  └─────────────────┘  └─────────────────┘  └─────────────────────┘    │  │
-│  │          │                      │                      │              │  │
+│  │          │                      │                     │               │  │
 │  │          ├─ Whisper Models      ├─ WER calculation    ├─ Alignment    │  │
 │  │          └─ Wav2Vec2 Models     ├─ CER calculation    ├─ Error types  │  │
 │  │                                 └─ BLEU calculation   └─ Confusion    │  │
@@ -146,7 +146,10 @@ The system follows a modular, service-oriented architecture with clear separatio
 
 3. **Model Registry Pattern**: Centralized model configuration in `scripts/evaluate_models.py` with model type abstractions (Whisper, Wav2Vec2).
 
-4. **Stateless API**: FastAPI endpoints delegate to evaluation pipeline without maintaining session state, supporting horizontal scaling.
+4. **API Architecture:**
+- REST-compliant with resource-oriented endpoints
+- **Stateful model caching:** LRU cache (max 2 models) with manual control endpoints for memory management
+- Session-independent request handling (no user-specific state)
 
 5. **Docker Containerisation**: All components packaged in unified Docker image with separate service definitions in `docker-compose.yml` for local/cloud deployment.
 
@@ -175,6 +178,8 @@ The technology stack prioritises rapid development, reproducibility, and evaluat
 
 All Python dependencies are pinned to specific versions in `requirements.txt` (e.g., `torch==2.6.0`, `transformers==4.36.0`, `streamlit==1.32.0`) to prevent unexpected breaking changes from upstream updates. Docker base image locked to `python:3.11-slim-bullseye` with explicit digest hash for cryptographic verification. Dependabot alerts enabled on GitHub for security vulnerability monitoring. Version updates are tested in isolated feature branches before merging to main, with regression tests validating metric calculations remain consistent. This approach balances reproducibility (strict pinning) with security (monitored updates).
 
+**Dual Requirements Strategy:** The project maintains two dependency files to accommodate different GPU architectures. `requirements.txt` serves as the **authoritative specification** for reproducible thesis evaluation, pinning PyTorch 2.6.0 and compatible versions tested on RTX 3090 (Ampere architecture). `requirements_blackwell.txt` provides an alternative configuration for cutting-edge Blackwell GPUs (RTX 5090, RTX PRO 6000), requiring PyTorch 2.8.0+ for sm_120 compute capability support. Evaluators should use `requirements.txt` by default; `requirements_blackwell.txt` is only necessary when deploying on Blackwell-generation hardware unavailable during thesis development. See `docs/GPU_COMPATIBILITY.md` for architecture-specific guidance.
+
 **Testing Strategy & Quality Assurance:**
 
 pytest's fixture system enables comprehensive test coverage without GPU requirements: a `FakeEvaluator` fixture mocks model inference by returning predetermined WER/CER/BLEU values, allowing integration tests to validate API response schemas and error handling without loading multi-gigabyte models. Parametrised tests cover all 6 models without code duplication (e.g., `@pytest.mark.parametrize("model", ["whisper-large-v3", "wav2vec2-german"])`). Test suite spans three levels: unit tests for metric calculations (jiwer integration, BLEU score validation), integration tests for FastAPI endpoints (using TestClient to simulate HTTP requests), and end-to-end tests verifying complete evaluation workflows (dataset loading → model inference → result persistence). Total test execution time under 30 seconds enables rapid development iteration. Coverage targets were not formally specified but critical paths (evaluation pipeline, API endpoints, metric computation) achieve >80% line coverage per pytest-cov reports.
@@ -183,6 +188,12 @@ pytest's fixture system enables comprehensive test coverage without GPU requirem
 ### 2.3 Code Quality & Security Practices
 
 **Clean Code Principles:** The codebase follows industry-standard Python conventions with snake_case function naming (e.g., `evaluate_dataset()`) and PascalCase class naming (e.g., `WhisperEvaluator`). All public functions include Google-style docstrings with type hints for parameters and return values, enabling IDE autocomplete and runtime validation. Project structure separates concerns: `src/` contains application code organised by layer (backend, frontend, evaluation), `tests/` mirrors this structure with unit/integration/e2e test suites, and `docs/` provides methodology documentation enabling reproduction. Separation of concerns is enforced through modular design: Pydantic schemas define API contracts (`src/backend/models.py`), evaluator classes encapsulate model inference logic (`src/evaluation/evaluator.py`), and FastAPI routes handle HTTP request/response cycles without business logic.
+
+**Data Privacy**: All evaluation samples originate from the publicly available FHNW All Swiss German Dialects Test Set (MIT License, Version 1.0, 2023), supplemented with Mozilla Common Voice German and Dutch corpora for transfer learning experiments. The FHNW dataset contains crowd-sourced speech recordings with pseudonymised speaker identifiers (`client_id`) following Common Voice data collection protocols. No directly identifiable personal information (names, contact details, precise locations beyond cantonal dialect regions) is included in the published dashboard results.
+
+The dataset's "private/public" designation refers to the SwissText 2021 competition evaluation protocol (preventing test set contamination) rather than privacy classifications. All data used in this evaluation was obtained from FHNW's public institutional repository under MIT License terms.
+
+**Dependency Management**: Production deployment uses pinned dependency versions (requirements.txt with exact version specifications) to prevent supply-chain attacks from upstream package updates. The development workflow includes Dependabot monitoring for known vulnerabilities (see Section 2.2).
 
 **Input Validation & Security:** API endpoints implement input sanitisation to prevent path traversal attacks. The `/api/results/{model}` endpoint validates model names against alphanumeric patterns before file system access:
 
@@ -205,9 +216,15 @@ This validation prevents malicious requests such as `/api/results/../../etc/pass
 
 This project employs a zero-shot evaluation methodology, assessing pre-trained ASR models on Swiss German without dialect-specific fine-tuning. This approach was chosen for three primary reasons: (1) **research validity**—zero-shot evaluation tests genuine generalization capabilities rather than task-specific fitting, providing insights relevant to practitioners deploying models on unseen dialects; (2) **methodological focus**—the 9-week timeline prioritised rigorous comparative evaluation over model training, aligning with the project's core objective of systematic performance analysis; and (3) **resource constraints**—fine-tuning large-scale models (up to 1.55B parameters) on limited Swiss German data (863 samples across 17 dialects) would require extensive hyperparameter tuning and cross-validation infrastructure beyond project scope.
 
-An exploratory fine-tuning experiment was conducted in Week 6 to investigate Dutch→German→Swiss German transfer learning (leveraging linguistic proximity between Dutch and German). The experiment was discontinued due to two critical issues: (1) a deployment bug where the `adapt_on_cloud.sh` script downloaded and overwrote tokenizer vocabulary files from the base model, creating mismatches between the trained output layer and tokenizer vocabulary that resulted in 100% WER with `<unk>` token dominance; and (2) severe data imbalance between Dutch pre-training (100-300k samples × 10 epochs = 1-3M training examples) and German adaptation (30,708 samples × 3 epochs = 92k examples), creating a 10-30× training disparity. Despite implementing Elastic Weight Consolidation (lambda=0.4, fisher_samples=5000) to preserve Dutch knowledge, the German adaptation phase proved insufficient to restore German linguistic features given the limited training examples. These findings reinforced the strategic decision to focus project resources on zero-shot evaluation, which directly addresses the research question of out-of-the-box model performance for Swiss German ASR deployment scenarios without requiring complex multi-stage transfer learning infrastructure.
+**Fine-Tuning Investigation Timeline:** An exploratory transfer learning path was investigated to assess whether Dutch→German→Swiss German adaptation could improve zero-shot baselines. The development progressed through three phases:
 
-The zero-shot framework enables meaningful comparison of models' inherent multilingual capabilities and German-language transfer learning, providing actionable insights for practitioners selecting ASR systems for low-resource dialectal variants without access to fine-tuning infrastructure.
+- **October 2025 – Initial Dutch→German Transfer:** First attempt discontinued due to critical deployment bug in `adapt_on_cloud.sh` that overwrote tokenizer vocabulary files from the base model, creating mismatches between trained output layer and tokenizer vocabulary resulting in 100% WER with `<unk>` token dominance. Additionally, severe data imbalance between Dutch pre-training (100-300k samples × 10 epochs = 1-3M training examples) and German adaptation (30,708 samples × 3 epochs = 92k examples) created a 10-30× training disparity insufficient to restore German linguistic features.
+
+- **November 2025 – German Adaptation with EWC:** Tokenizer issues resolved and German adaptation successfully completed using Elastic Weight Consolidation (lambda=0.4, fisher_samples=5000) to preserve Dutch knowledge. Training converged with stable loss reduction and memory management improvements (GPU-based EWC on RTX 3090, 24GB VRAM). Technical infrastructure validated for future transfer learning research.
+
+- **Strategic Pivot to Zero-Shot:** Following successful German adaptation, preliminary evaluation revealed that zero-shot Whisper models (28.0% WER) already achieved performance competitive with fine-tuned alternatives, while requiring no training infrastructure or compute overhead. Given the 10-week timeline and core research objective of systematic comparative evaluation, project resources were strategically redirected to comprehensive zero-shot benchmarking across 6 models and 17 dialects. This decision prioritised methodological rigor (extensive error analysis, multi-dialect coverage, reproducible evaluation pipeline) over marginal fine-tuning gains that would have consumed remaining development time.
+
+The zero-shot framework enables meaningful comparison of models' inherent multilingual capabilities and German-language transfer learning, providing actionable insights for practitioners selecting ASR systems for low-resource dialectal variants without access to fine-tuning infrastructure. The validated fine-tuning pipeline remains available for future research requiring adaptation to specific Swiss German dialect subsets.
 
 ### 3.2 Model Selection Strategy
 
@@ -244,7 +261,7 @@ Three complementary metrics assess model performance across accuracy and semanti
 
 **Metric Validation:**
 
-Post-evaluation integration of BLEU scores validated the appropriateness of WER as the primary metric for this task. Analysis of high-WER samples (WER ≥50%, representing the worst-performing 10% of transcriptions) revealed that only 1.4–2.1% achieved BLEU ≥40% (threshold for semantic preservation in MT literature). This finding demonstrates that high WER predominantly reflects genuine transcription errors rather than semantically valid paraphrases, confirming WER's suitability for measuring translation quality on the Swiss German→Standard German task. Detailed BLEU integration results are presented in Section 5.3.
+Post-evaluation integration of BLEU scores validated the appropriateness of WER as the primary metric for this task. Analysis of high-WER samples (WER ≥50%, representing 19.1% of the test set) revealed that only 1.4–2.1% achieved BLEU ≥40% (threshold for semantic preservation in MT literature). This finding demonstrates that high WER predominantly reflects genuine transcription errors rather than semantically valid paraphrases, confirming WER's suitability for measuring translation quality on the Swiss German→Standard German task. Detailed BLEU integration results are presented in Section 5.3.
 
 **Alternatives Considered:**
 
@@ -274,11 +291,25 @@ This distribution reflects the corpus design goal of approximating real-world Sw
 
 **Aggregation Approach:**
 
-Model performance is reported using **corpus-level WER**, calculated by aggregating all errors across the entire test set before computing the error rate: WER_corpus = (Σ errors) / (Σ reference words). This approach follows standard practice in ASR evaluation (e.g., Kaldi toolkit, LibriSpeech benchmark) and differs from averaging per-utterance WERs, which would give disproportionate weight to short utterances where a single error can yield 100% WER.
+Model performance is reported using **corpus-level WER/CER**, calculated by aggregating all errors across the entire test set before computing the error rate: 
+```
+WER_corpus = (Σ errors) / (Σ reference words)
+```
 
-Corpus-level aggregation is appropriate for this evaluation because: (1) it reflects real-world deployment performance where total error count matters more than per-utterance variance, (2) it prevents artificially inflated error rates from short utterances (the FHNW corpus includes samples as brief as 2-3 words), and (3) it enables direct comparison with published ASR benchmarks that use identical methodology.
+This approach follows standard practice in ASR evaluation (Kaldi toolkit, LibriSpeech benchmark) and prevents bias from utterance length variation—particularly important given the FHNW corpus includes samples as brief as 2-3 words where a single error yields 100% per-utterance WER. Corpus-level aggregation reflects real-world deployment performance where total error count matters more than per-utterance variance.
 
-**Per-dialect WER** is computed separately for each of the 17 dialects using the same corpus-level approach within dialect subsets. This granularity reveals systematic performance patterns correlated with linguistic distance from Standard German whilst maintaining methodological consistency.
+**Per-dialect WER** is computed separately for each of the 17 dialects using the same corpus-level approach within dialect subsets, revealing systematic performance patterns correlated with linguistic distance from Standard German.
+
+**Important Distinction—Headline Metrics vs. Descriptive Statistics:**
+
+| Context | WER/CER Aggregation | BLEU Aggregation |
+|---------|---------------------|------------------|
+| **Headline metrics** (Sections 5.1-5.2 tables) | Corpus-level: (Σ errors) / (Σ words) | Per-sample, then averaged |
+| **Descriptive statistics** (Section 5.3 error analysis) | Per-sample values, then mean/median/std calculated | Per-sample, then averaged |
+
+**Rationale:** BLEU uses per-sample aggregation due to its corpus-level bias in the sacrebleu reference implementation. When Section 5.3 reports "mean WER = 32.5%" for error analysis, this represents the mean of per-sample WER values (useful for understanding error distribution), which differs from the headline corpus-level WER of 28.0% (useful for model comparison).
+
+**Example:** A model with **28.0% corpus-level WER** (headline metric) may simultaneously have **mean WER = 32.5%, median = 25.0%** (descriptive statistics), reflecting how a few high-error outliers affect the distribution without dominating the total error count.
 
 **Statistical Testing Limitations:**
 
@@ -301,7 +332,7 @@ Error categorisation employs the **Wagner-Fischer algorithm** implemented in the
 - **Deletion (D)**: Reference word omitted in hypothesis
 - **Insertion (I)**: Extra word added in hypothesis not present in reference
 
-The alignment enables precise localization of errors within transcriptions, supporting targeted analysis of error types (phonological, morphological, syntactic) and extraction of confusion pairs (systematically misrecognized word mappings).
+The alignment enables precise localisation of errors within transcriptions, supporting targeted analysis of error types (phonological, morphological, syntactic) and extraction of confusion pairs (systematically misrecognised word mappings).
 
 **Worst-Sample Analysis:**
 
@@ -474,7 +505,7 @@ Validation addressed three aspects: (1) **specification compliance** (were expos
 - ✅ Interactive Streamlit dashboard (requirement: visualisation interface)
 - ✅ Docker-based evaluation pipeline (requirement: reproducibility)
 - ✅ Comprehensive error analysis with word-level alignment (requirement: qualitative analysis)
-- ✅ Technical documentation (12 documents: README, methodology guides, API docs)
+- ✅ Technical documentation (14 documents: README, methodology guides, API docs)
 
 All exposé requirements met or exceeded.
 
@@ -483,7 +514,7 @@ All exposé requirements met or exceeded.
 **Method:** Test deployment and self-evaluation
 
 **Test Deployment (Streamlit Cloud):**
-- Dashboard deployed to Streamlit Cloud free tier (https://swiss-german-asr-eval.streamlit.app)
+- Dashboard deployed to Streamlit Cloud free tier (https://swiss-german-asr.streamlit.app)
 - Verified resource compliance: 6 cached models fit within 2.7GB memory limit
 - Confirmed all visualisations render correctly (Plotly charts, data tables, alignment displays)
 - Validated API endpoint connectivity (dashboard successfully fetches results from local FastAPI mock)
@@ -647,8 +678,6 @@ Complete mapping of requirements to implementation and validation evidence:
 - **Screenshots:** images/ directory contains 11 PNG files documenting dashboard interface
 - **Tests:** Comprehensive test suite with 40+ test files across unit/integration/e2e categories
 
-**Note:** Streamlit Cloud deployment is planned but not yet executed (deployable from main branch in <5 minutes). Dashboard currently validated via local Docker deployment and screenshot documentation.
-
 
 ## 5. Results & Key Findings
 
@@ -771,7 +800,7 @@ Analysis of high-WER samples identified systematic retention of Swiss German syn
 - **Metrics:** WER=71.4%, CER=43.8%, BLEU=41.1
 - **Source:** Sample `8d889bf5-b9b6-427f-a69d-4ad51f9a10ba.flac`, Lucerne (LU) dialect
 
-This example demonstrates high WER (71.4%) due to lexical substitutions ("Danach"→"Nach dem"), word reordering, and auxiliary insertion ("hat...gearbeitet" vs "arbeitete"), yet achieves BLEU=41.1 (above the 40% semantic preservation threshold). The transcription accurately represents the temporal semantics (employment as lawyer in Munich) whilst failing to normalize syntactic structure to Standard German conventions.
+This example demonstrates high WER (71.4%) due to lexical substitutions ("Danach"→"Nach dem"), word reordering, and auxiliary insertion ("hat...gearbeitet" vs "arbeitete"), yet achieves BLEU=41.1 (above the 40% semantic preservation threshold). The transcription accurately represents the temporal semantics (employment as lawyer in Munich) whilst failing to normalise syntactic structure to Standard German conventions.
 
 **Prevalence Quantification:**
 
@@ -788,7 +817,7 @@ Manual inspection of worst-performing samples revealed recurring patterns:
 
 - **Dialectal article retention:** Swiss German definite articles (e.g., "de Peter") occasionally preserved in Standard German output ("der Peter") where standard omits articles
 - **Lexical substitutions:** Phonetically similar Standard German words substituted for dialectal terms
-- **Compound word segmentation:** Swiss German compound structures inconsistently normalized to Standard German conventions
+- **Compound word segmentation:** Swiss German compound structures inconsistently normalised to Standard German conventions
 
 Systematic quantification of these pattern frequencies—including per-dialect breakdowns and linguistic feature correlation—was not conducted. These observations represent qualitative patterns requiring validation through controlled linguistic annotation.
 
@@ -811,7 +840,7 @@ Five primary findings emerge from the evaluation:
 
 **Finding 1: Whisper Architecture Outperforms German-Trained Wav2Vec2 by 2-3×**
 
-Whisper models achieve 28-34% WER on Swiss German→Standard German translation, outperforming German-trained Wav2Vec2 models (72-75% WER) by approximately 44 percentage points absolute WER. This performance gap persists despite Wav2Vec2's training on 1,700 hours of German Common Voice data with language model integration. The architectural difference—Whisper's encoder-decoder sequence-to-sequence design versus Wav2Vec2's acoustic-only modeling—correlates with this performance differential, though isolating the specific mechanisms (acoustic perception vs orthographic normalisation) would require phonetic-level analysis not conducted in this evaluation.
+Whisper models achieve 28-34% WER on Swiss German→Standard German translation, outperforming German-trained Wav2Vec2 models (72-75% WER) by approximately 44 percentage points absolute WER. This performance gap persists despite Wav2Vec2's training on 1,700 hours of German Common Voice data with language model integration. The architectural difference—Whisper's encoder-decoder sequence-to-sequence design versus Wav2Vec2's acoustic-only modelling—correlates with this performance differential, though isolating the specific mechanisms (acoustic perception vs orthographic normalisation) would require phonetic-level analysis not conducted in this evaluation.
 
 **Finding 2: Model Version Updates Do Not Guarantee Uniform Performance Improvement**
 
@@ -949,7 +978,7 @@ The following software frameworks and libraries were used in this project. Exact
 - jiwer 3.0.4 (WER/CER calculation) — https://github.com/jitsi/jiwer
 - sacrebleu 2.2.1 (BLEU implementation) — https://github.com/mjpost/sacrebleu
 
-**Web Framework & Visualization:**
+**Web Framework & Visualisation:**
 - FastAPI 0.115.0 — https://fastapi.tiangolo.com
 - Uvicorn 0.32.0 (ASGI server) — https://www.uvicorn.org
 - Streamlit 1.40.0 — https://streamlit.io

@@ -70,8 +70,6 @@ class ASREvaluator:
                 raise RuntimeError(f"Failed to load HF Whisper model: {e}") from e
 
         elif self.model_type == "wav2vec2":
-            # ✅ FIX: Wav2Vec2Model.__init__() handles all loading
-            # Constructor already prints loading messages - no duplicates needed
             try:
                 self.model = Wav2Vec2Model(
                     model_name=self.model_name,
@@ -84,8 +82,6 @@ class ASREvaluator:
                 raise RuntimeError(f"Failed to load Wav2Vec2 model: {e}") from e
 
         elif self.model_type == "mms":
-            # ✅ FIX: MMSModel.__init__() handles all loading
-            # Constructor already prints loading messages - no duplicates needed
             try:
                 self.model = MMSModel(
                     model_name=self.model_name,
@@ -139,8 +135,6 @@ class ASREvaluator:
             return transcription
 
         elif self.model_type in ["wav2vec2", "mms"]:
-            # ✅ FIX: Wav2Vec2Model/MMSModel.transcribe() returns Dict[str, str]
-            # Must extract 'text' key to get the actual transcription string
             result = self.model.transcribe(audio_path)
             if isinstance(result, dict) and "text" in result:
                 return result["text"]
@@ -198,16 +192,16 @@ class ASREvaluator:
         failed_samples = 0
         total_samples = len(df)
 
-        # ✅ IMPROVEMENT 1: Print header with timestamp
+        # Print header with timestamp
         print(f"\n{'='*60}")
         print(f"Processing {total_samples} samples...")
         print(f"Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"{'='*60}\n")
 
-        # ✅ IMPROVEMENT 2: Track start time for ETA calculation
+        # Track start time for ETA calculation
         start_time = datetime.now()
 
-        # ✅ IMPROVEMENT 3: Use tqdm for progress bar
+        # Use tqdm for progress bar
         # This provides visual feedback AND regular stdout updates
         progress_bar = tqdm(
             df.iterrows(),
