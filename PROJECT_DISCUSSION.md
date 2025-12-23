@@ -184,6 +184,10 @@ pytest's fixture system enables comprehensive test coverage without GPU requirem
 
 **Clean Code Principles:** The codebase follows industry-standard Python conventions with snake_case function naming (e.g., `evaluate_dataset()`) and PascalCase class naming (e.g., `WhisperEvaluator`). All public functions include Google-style docstrings with type hints for parameters and return values, enabling IDE autocomplete and runtime validation. Project structure separates concerns: `src/` contains application code organised by layer (backend, frontend, evaluation), `tests/` mirrors this structure with unit/integration/e2e test suites, and `docs/` provides methodology documentation enabling reproduction. Separation of concerns is enforced through modular design: Pydantic schemas define API contracts (`src/backend/models.py`), evaluator classes encapsulate model inference logic (`src/evaluation/evaluator.py`), and FastAPI routes handle HTTP request/response cycles without business logic.
 
+**Data Privacy**: All evaluation samples originate from publicly available research corpora (FHNW All Swiss German Dialects Test Set). No private user data is included in published results, eliminating PII exposure risks.
+
+**Dependency Management**: Production deployment uses pinned dependency versions (requirements.txt with exact version specifications) to prevent supply-chain attacks from upstream package updates. The development workflow includes Dependabot monitoring for known vulnerabilities (see Section 2.2).
+
 **Input Validation & Security:** API endpoints implement input sanitisation to prevent path traversal attacks. The `/api/results/{model}` endpoint validates model names against alphanumeric patterns before file system access:
 
 ```python
