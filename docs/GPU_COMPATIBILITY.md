@@ -24,6 +24,17 @@ This document outlines GPU compatibility requirements for the Swiss German ASR p
 | GPU Model | Architecture | VRAM | Min PyTorch | EWC Mode | Status |
 |-----------|-------------|------|-------------|----------|---------|
 | RTX 5090 | Blackwell (sm_120) | 32 GB | **2.8.0+** | GPU | ⚠️ Requires upgrade |
+| RTX PRO 6000 | Blackwell (sm_120) | 96 GB | **2.8.0+** | GPU | ⚠️ Requires upgrade |
+---
+
+## Dependency Files Overview
+
+The project maintains two requirements files for GPU architecture compatibility:
+
+- **`requirements.txt`** (authoritative): PyTorch 2.6.0 + dependencies for standard GPUs (RTX 3090, RTX 4090). Use this for reproducible thesis evaluation.
+- **`requirements_blackwell.txt`**: PyTorch 2.8.0+ for Blackwell GPUs (RTX 5090, RTX PRO 6000) requiring sm_120 compute capability.
+
+**Default recommendation**: Use `requirements.txt` unless deploying on Blackwell-generation hardware.
 
 ---
 
@@ -40,7 +51,7 @@ NVIDIA GeForce RTX 5090 with CUDA capability sm_120 is not compatible with the c
 ### Root Cause
 
 - RTX 5090 uses **Blackwell architecture** (compute capability sm_120)
-- PyTorch 2.6.0 was compiled for sm_50 through sm_90 only
+- PyTorch 2.6.0 (`requirements.txt`) was compiled for sm_50 through sm_90 only
 - No pre-compiled CUDA kernels exist for sm_120 in PyTorch 2.6.0
 - PyTorch does NOT have JIT compilation fallback for unsupported architectures
 
@@ -55,7 +66,12 @@ NVIDIA GeForce RTX 5090 with CUDA capability sm_120 is not compatible with the c
 
 ### The Solution
 
-**Upgrade to PyTorch 2.8.0 with CUDA 12.8 support:**
+**Option 1: Use `requirements_blackwell.txt` (Recommended for RTX 5090)**
+```bash
+pip install -r requirements_blackwell.txt
+```
+
+**Option 2: Manual upgrade to PyTorch 2.8.0 with CUDA 12.8:**
 ```bash
 # Uninstall old PyTorch
 pip uninstall -y torch torchvision torchaudio
