@@ -19,7 +19,7 @@ This project developed a reproducible evaluation framework for comparing state-o
 
 The system comprises three integrated components: (1) a FastAPI backend providing evaluation endpoints for 6 ASR models including Whisper variants (large-v3, large-v2, medium, turbo) and Wav2Vec2-German models; (2) a Docker-based evaluation pipeline implementing WER, CER, and BLEU metrics with systematic error categorisation; and (3) an interactive Streamlit dashboard featuring multi-model comparison visualisations, per-dialect performance breakdowns, and word-level error alignment tools. All evaluation results are persisted in structured JSON and CSV formats, ensuring reproducibility and enabling offline analysis.
 
-Evaluation on the Swiss German-to-Standard German translation task revealed systematic performance differences across models and dialects. Whisper models achieved 28.0–34.1% WER compared to 72.4–75.3% for Wav2Vec2 baselines, with Whisper large-v2 leading at 28.0% WER. Performance varied substantially by dialect, ranging from 5.8% (Glarus) to 39.7% (Zug), correlating with linguistic distance from Standard German. Error analysis of the 86 worst-performing samples (top 10% by WER) revealed that Whisper accurately transcribes Swiss German phonology but systematically fails to normalise to Standard German: 73% of errors exhibit perfect tense restructuring and 20.5% show dialectal article insertion patterns, producing Swiss German-influenced morphosyntax rather than the Standard German targets required by the task. BLEU analysis confirmed that only 1.4–2.1% of high-WER samples (WER ≥50%) preserved semantic meaning (BLEU ≥40%), validating WER as the appropriate metric for measuring translation quality on this corpus.
+Evaluation on the Swiss German-to-Standard German translation task revealed systematic performance differences across models and dialects. Whisper models achieved 28.0–34.1% WER compared to 72.4–75.3% for Wav2Vec2 baselines, with Whisper large-v2 leading at 28.0% WER. Performance varied substantially by dialect, ranging from 5.8% (Glarus) to 39.7% (Zug), correlating with linguistic distance from Standard German. Error analysis of the 86 worst-performing samples (top 10% by WER) revealed that Whisper accurately transcribes Swiss German phonology but systematically fails to normalise to Standard German: 73% of errors exhibit perfect tense restructuring and 20.5% show dialectal article insertion patterns, producing Swiss German-influenced morphosyntax rather than the Standard German targets required by the task. BLEU analysis confirmed that only 1.4–2.1% of high-WER samples (WER ≥50%) preserved semantic meaning (BLEU ≥40%), validating WER as the appropriate metric for measuring translation quality on this corpus. Reported WER/CER are corpus-level aggregates across the test set; BLEU is computed per-sample and averaged. Per-sample WER/CER are used only for descriptive statistics in analysis sections.
 
 **Success Criteria Achievement:**
 
@@ -30,7 +30,7 @@ The project successfully met all exposé requirements:
 - ✅ Interactive Streamlit dashboard
 - ✅ Docker-based evaluation pipeline
 - ✅ Comprehensive error analysis with word-level alignment
-- ✅ Technical documentation (12 documents covering methodology, workflows, architecture, and testing)
+- ✅ Technical documentation (14 documents covering methodology, workflows, architecture, and testing)
 
 The evaluation framework provides a foundation for ASR model selection in Swiss German applications, with documented limitations including dialectal sample imbalance (1–203 samples per dialect) and zero-shot evaluation scope (no fine-tuning performed).
 
@@ -146,7 +146,10 @@ The system follows a modular, service-oriented architecture with clear separatio
 
 3. **Model Registry Pattern**: Centralized model configuration in `scripts/evaluate_models.py` with model type abstractions (Whisper, Wav2Vec2).
 
-4. **Stateless API**: FastAPI endpoints delegate to evaluation pipeline without maintaining session state, supporting horizontal scaling.
+4. **API Architecture:**
+- REST-compliant with resource-oriented endpoints
+- **Stateful model caching:** LRU cache (max 2 models) with manual control endpoints for memory management
+- Session-independent request handling (no user-specific state)
 
 5. **Docker Containerisation**: All components packaged in unified Docker image with separate service definitions in `docker-compose.yml` for local/cloud deployment.
 
@@ -174,6 +177,8 @@ The technology stack prioritises rapid development, reproducibility, and evaluat
 **Dependency Management & Security:**
 
 All Python dependencies are pinned to specific versions in `requirements.txt` (e.g., `torch==2.6.0`, `transformers==4.36.0`, `streamlit==1.32.0`) to prevent unexpected breaking changes from upstream updates. Docker base image locked to `python:3.11-slim-bullseye` with explicit digest hash for cryptographic verification. Dependabot alerts enabled on GitHub for security vulnerability monitoring. Version updates are tested in isolated feature branches before merging to main, with regression tests validating metric calculations remain consistent. This approach balances reproducibility (strict pinning) with security (monitored updates).
+
+**Dual Requirements Strategy:** The project maintains two dependency files to accommodate different GPU architectures. `requirements.txt` serves as the **authoritative specification** for reproducible thesis evaluation, pinning PyTorch 2.6.0 and compatible versions tested on RTX 3090 (Ampere architecture). `requirements_blackwell.txt` provides an alternative configuration for cutting-edge Blackwell GPUs (RTX 5090, RTX PRO 6000), requiring PyTorch 2.8.0+ for sm_120 compute capability support. Evaluators should use `requirements.txt` by default; `requirements_blackwell.txt` is only necessary when deploying on Blackwell-generation hardware unavailable during thesis development. See `docs/GPU_COMPATIBILITY.md` for architecture-specific guidance.
 
 **Testing Strategy & Quality Assurance:**
 
@@ -211,9 +216,15 @@ This validation prevents malicious requests such as `/api/results/../../etc/pass
 
 This project employs a zero-shot evaluation methodology, assessing pre-trained ASR models on Swiss German without dialect-specific fine-tuning. This approach was chosen for three primary reasons: (1) **research validity**—zero-shot evaluation tests genuine generalization capabilities rather than task-specific fitting, providing insights relevant to practitioners deploying models on unseen dialects; (2) **methodological focus**—the 9-week timeline prioritised rigorous comparative evaluation over model training, aligning with the project's core objective of systematic performance analysis; and (3) **resource constraints**—fine-tuning large-scale models (up to 1.55B parameters) on limited Swiss German data (863 samples across 17 dialects) would require extensive hyperparameter tuning and cross-validation infrastructure beyond project scope.
 
-An exploratory fine-tuning experiment was conducted in Week 6 to investigate Dutch→German→Swiss German transfer learning (leveraging linguistic proximity between Dutch and German). The experiment was discontinued due to two critical issues: (1) a deployment bug where the `adapt_on_cloud.sh` script downloaded and overwrote tokenizer vocabulary files from the base model, creating mismatches between the trained output layer and tokenizer vocabulary that resulted in 100% WER with `<unk>` token dominance; and (2) severe data imbalance between Dutch pre-training (100-300k samples × 10 epochs = 1-3M training examples) and German adaptation (30,708 samples × 3 epochs = 92k examples), creating a 10-30× training disparity. Despite implementing Elastic Weight Consolidation (lambda=0.4, fisher_samples=5000) to preserve Dutch knowledge, the German adaptation phase proved insufficient to restore German linguistic features given the limited training examples. These findings reinforced the strategic decision to focus project resources on zero-shot evaluation, which directly addresses the research question of out-of-the-box model performance for Swiss German ASR deployment scenarios without requiring complex multi-stage transfer learning infrastructure.
+**Fine-Tuning Investigation Timeline:** An exploratory transfer learning path was investigated to assess whether Dutch→German→Swiss German adaptation could improve zero-shot baselines. The development progressed through three phases:
 
-The zero-shot framework enables meaningful comparison of models' inherent multilingual capabilities and German-language transfer learning, providing actionable insights for practitioners selecting ASR systems for low-resource dialectal variants without access to fine-tuning infrastructure.
+- **October 2025 – Initial Dutch→German Transfer:** First attempt discontinued due to critical deployment bug in `adapt_on_cloud.sh` that overwrote tokenizer vocabulary files from the base model, creating mismatches between trained output layer and tokenizer vocabulary resulting in 100% WER with `<unk>` token dominance. Additionally, severe data imbalance between Dutch pre-training (100-300k samples × 10 epochs = 1-3M training examples) and German adaptation (30,708 samples × 3 epochs = 92k examples) created a 10-30× training disparity insufficient to restore German linguistic features.
+
+- **November 2025 – German Adaptation with EWC:** Tokenizer issues resolved and German adaptation successfully completed using Elastic Weight Consolidation (lambda=0.4, fisher_samples=5000) to preserve Dutch knowledge. Training converged with stable loss reduction and memory management improvements (GPU-based EWC on RTX 3090, 24GB VRAM). Technical infrastructure validated for future transfer learning research.
+
+- **Strategic Pivot to Zero-Shot:** Following successful German adaptation, preliminary evaluation revealed that zero-shot Whisper models (28.0% WER) already achieved performance competitive with fine-tuned alternatives, while requiring no training infrastructure or compute overhead. Given the 10-week timeline and core research objective of systematic comparative evaluation, project resources were strategically redirected to comprehensive zero-shot benchmarking across 6 models and 17 dialects. This decision prioritised methodological rigor (extensive error analysis, multi-dialect coverage, reproducible evaluation pipeline) over marginal fine-tuning gains that would have consumed remaining development time.
+
+The zero-shot framework enables meaningful comparison of models' inherent multilingual capabilities and German-language transfer learning, providing actionable insights for practitioners selecting ASR systems for low-resource dialectal variants without access to fine-tuning infrastructure. The validated fine-tuning pipeline remains available for future research requiring adaptation to specific Swiss German dialect subsets.
 
 ### 3.2 Model Selection Strategy
 
@@ -480,7 +491,7 @@ Validation addressed three aspects: (1) **specification compliance** (were expos
 - ✅ Interactive Streamlit dashboard (requirement: visualisation interface)
 - ✅ Docker-based evaluation pipeline (requirement: reproducibility)
 - ✅ Comprehensive error analysis with word-level alignment (requirement: qualitative analysis)
-- ✅ Technical documentation (12 documents: README, methodology guides, API docs)
+- ✅ Technical documentation (14 documents: README, methodology guides, API docs)
 
 All exposé requirements met or exceeded.
 
@@ -489,7 +500,7 @@ All exposé requirements met or exceeded.
 **Method:** Test deployment and self-evaluation
 
 **Test Deployment (Streamlit Cloud):**
-- Dashboard deployed to Streamlit Cloud free tier (https://swiss-german-asr-eval.streamlit.app)
+- Dashboard deployed to Streamlit Cloud free tier (https://swiss-german-asr.streamlit.app)
 - Verified resource compliance: 6 cached models fit within 2.7GB memory limit
 - Confirmed all visualisations render correctly (Plotly charts, data tables, alignment displays)
 - Validated API endpoint connectivity (dashboard successfully fetches results from local FastAPI mock)
@@ -652,8 +663,6 @@ Complete mapping of requirements to implementation and validation evidence:
 - **Documentation:** 13 markdown files in docs/ cover methodology, testing, and workflows
 - **Screenshots:** images/ directory contains 11 PNG files documenting dashboard interface
 - **Tests:** Comprehensive test suite with 40+ test files across unit/integration/e2e categories
-
-**Note:** Streamlit Cloud deployment is planned but not yet executed (deployable from main branch in <5 minutes). Dashboard currently validated via local Docker deployment and screenshot documentation.
 
 
 ## 5. Results & Key Findings
