@@ -261,7 +261,7 @@ Three complementary metrics assess model performance across accuracy and semanti
 
 **Metric Validation:**
 
-Post-evaluation integration of BLEU scores validated the appropriateness of WER as the primary metric for this task. Analysis of high-WER samples (WER ≥50%, representing the worst-performing 10% of transcriptions) revealed that only 1.4–2.1% achieved BLEU ≥40% (threshold for semantic preservation in MT literature). This finding demonstrates that high WER predominantly reflects genuine transcription errors rather than semantically valid paraphrases, confirming WER's suitability for measuring translation quality on the Swiss German→Standard German task. Detailed BLEU integration results are presented in Section 5.3.
+Post-evaluation integration of BLEU scores validated the appropriateness of WER as the primary metric for this task. Analysis of high-WER samples (WER ≥50%, representing 19.1% of the test set) revealed that only 1.4–2.1% achieved BLEU ≥40% (threshold for semantic preservation in MT literature). This finding demonstrates that high WER predominantly reflects genuine transcription errors rather than semantically valid paraphrases, confirming WER's suitability for measuring translation quality on the Swiss German→Standard German task. Detailed BLEU integration results are presented in Section 5.3.
 
 **Alternatives Considered:**
 
@@ -291,11 +291,25 @@ This distribution reflects the corpus design goal of approximating real-world Sw
 
 **Aggregation Approach:**
 
-Model performance is reported using **corpus-level WER**, calculated by aggregating all errors across the entire test set before computing the error rate: WER_corpus = (Σ errors) / (Σ reference words). This approach follows standard practice in ASR evaluation (e.g., Kaldi toolkit, LibriSpeech benchmark) and differs from averaging per-utterance WERs, which would give disproportionate weight to short utterances where a single error can yield 100% WER.
+Model performance is reported using **corpus-level WER/CER**, calculated by aggregating all errors across the entire test set before computing the error rate: 
+```
+WER_corpus = (Σ errors) / (Σ reference words)
+```
 
-Corpus-level aggregation is appropriate for this evaluation because: (1) it reflects real-world deployment performance where total error count matters more than per-utterance variance, (2) it prevents artificially inflated error rates from short utterances (the FHNW corpus includes samples as brief as 2-3 words), and (3) it enables direct comparison with published ASR benchmarks that use identical methodology.
+This approach follows standard practice in ASR evaluation (Kaldi toolkit, LibriSpeech benchmark) and prevents bias from utterance length variation—particularly important given the FHNW corpus includes samples as brief as 2-3 words where a single error yields 100% per-utterance WER. Corpus-level aggregation reflects real-world deployment performance where total error count matters more than per-utterance variance.
 
-**Per-dialect WER** is computed separately for each of the 17 dialects using the same corpus-level approach within dialect subsets. This granularity reveals systematic performance patterns correlated with linguistic distance from Standard German whilst maintaining methodological consistency.
+**Per-dialect WER** is computed separately for each of the 17 dialects using the same corpus-level approach within dialect subsets, revealing systematic performance patterns correlated with linguistic distance from Standard German.
+
+**Important Distinction—Headline Metrics vs. Descriptive Statistics:**
+
+| Context | WER/CER Aggregation | BLEU Aggregation |
+|---------|---------------------|------------------|
+| **Headline metrics** (Sections 5.1-5.2 tables) | Corpus-level: (Σ errors) / (Σ words) | Per-sample, then averaged |
+| **Descriptive statistics** (Section 5.3 error analysis) | Per-sample values, then mean/median/std calculated | Per-sample, then averaged |
+
+**Rationale:** BLEU uses per-sample aggregation due to its corpus-level bias in the sacrebleu reference implementation. When Section 5.3 reports "mean WER = 32.5%" for error analysis, this represents the mean of per-sample WER values (useful for understanding error distribution), which differs from the headline corpus-level WER of 28.0% (useful for model comparison).
+
+**Example:** A model with **28.0% corpus-level WER** (headline metric) may simultaneously have **mean WER = 32.5%, median = 25.0%** (descriptive statistics), reflecting how a few high-error outliers affect the distribution without dominating the total error count.
 
 **Statistical Testing Limitations:**
 
