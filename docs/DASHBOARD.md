@@ -482,5 +482,5 @@ The dashboard is built with modular components:
 
 ---
 
-**Last Updated:** December 9, 2024  
+**Last Updated:** December 9, 2025  
 **Dashboard Version:** 2.0 (Multi-Model Comparison Support)
