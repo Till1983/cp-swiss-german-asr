@@ -56,7 +56,7 @@ docker compose up dashboard
 3. Open your browser and navigate to `http://localhost:8501`
 
 4. **Explore the dashboard:**
-   - Select one or more models from the sidebar multiselect (e.g., "whisper-small", "whisper-medium")
+   - Select one or more models from the sidebar multiselect (e.g., "whisper-large-v3", "whisper-medium")
    - Use filters to narrow results:
    - **Models:** Compare multiple models simultaneously
    - **Dialects:** Focus on specific Swiss German variants
