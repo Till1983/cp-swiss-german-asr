@@ -1,5 +1,13 @@
 # Hyperparameter Tuning for Dutch Pre-training and German Adaptation
 
+## Table of Contents
+- [1. Dutch Pre-training](#1-dutch-pre-training)
+- [2. German Adaptation](#2-german-adaptation)
+- [3. Batch Size Selection: Research Justification](#3-batch-size-selection-research-justification)
+- [4. General Recommendations](#4-general-recommendations)
+- [5. Reproducing Results](#5-reproducing-results)
+- [6. References](#6-references)
+
 This document details the rationale, experimental process, and results for hyperparameter selection in the Dutch pre-training and German adaptation phases of our ASR pipeline. It aims to support reproducibility and guide future fine-tuning efforts.
 
 ---

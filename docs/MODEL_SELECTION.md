@@ -1,5 +1,10 @@
 # Model Selection
 
+## Table of Contents
+- [Final Model Suite](#final-model-suite)
+- [Model Selection Rationale](#model-selection-rationale)
+- [Key Findings](#key-findings)
+
 ## Final Model Suite
 
 This document describes the six ASR models evaluated on the Swiss German test corpus (863 samples across 17 dialects).

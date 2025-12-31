@@ -1,5 +1,11 @@
 # Known Issues and Resolutions
 
+## Table of Contents
+- [Current Status (Week 4 - 2025-11-26)](#current-status-week-4---2025-11-26)
+- [Resolved Issues](#resolved-issues)
+- [Best Practices Derived](#best-practices-derived)
+- [References](#references)
+
 This document tracks technical issues encountered during the Swiss German ASR project development, their solutions, and lessons learned. It serves as a troubleshooting guide and knowledge base for future work.
 
 ---

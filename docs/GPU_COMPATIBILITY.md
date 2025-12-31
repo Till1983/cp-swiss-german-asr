@@ -1,5 +1,19 @@
 # GPU Compatibility Guide
 
+## Table of Contents
+- [Overview](#overview)
+- [Supported GPU Configurations](#supported-gpu-configurations)
+- [Dependency Files Overview](#dependency-files-overview)
+- [RTX 5090 Specific Requirements](#rtx-5090-specific-requirements)
+- [Memory Requirements by Configuration](#memory-requirements-by-configuration)
+- [Configuration Guidelines](#configuration-guidelines)
+- [Upgrade Path for RTX 5090](#upgrade-path-for-rtx-5090)
+- [Verification Checklist](#verification-checklist)
+- [Troubleshooting](#troubleshooting)
+- [Cost-Benefit Analysis](#cost-benefit-analysis)
+- [Backward Compatibility](#backward-compatibility)
+- [References](#references)
+
 **Last Updated:** November 26, 2025
 
 ---

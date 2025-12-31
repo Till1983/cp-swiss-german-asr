@@ -1,5 +1,14 @@
 # RunPod Training Workflow
 
+## Table of Contents
+- [One-Time Setup](#one-time-setup)
+- [Data Upload (First Time Only)](#data-upload-first-time-only)
+- [Prepare Datasets (First Time Only)](#prepare-datasets-first-time-only)
+- [Downloading the KenLM ARPA Model on RunPod](#downloading-the-kenlm-arpa-model-on-runpod)
+- [Run Training](#run-training)
+- [Cost Management](#cost-management)
+- [See Also](#see-also)
+
 ## One-Time Setup
 1. Create RunPod account
 2. Create 100GB network volume
