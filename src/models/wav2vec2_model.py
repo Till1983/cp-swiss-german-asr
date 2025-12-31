@@ -94,6 +94,18 @@ class Wav2Vec2Model:
             self.decoder = None  # ✅ SAFE: Fall back gracefully
 
     def transcribe(self, audio_path: Path, language: Optional[str] = None) -> Dict[str, str]:
+        """
+        Transcribe audio file to text.
+
+        Args:
+            audio_path: Path to audio file
+            language: Language code (e.g., 'de' for German). 
+                     - Required for multilingual models (e.g., facebook/mms-1b-all)
+                     - Ignored by monolingual German-specific models
+
+        Returns:
+            Dictionary with 'text' key containing transcription
+        """
         audio_path = Path(audio_path)
         if not audio_path.exists():
             raise FileNotFoundError(f"Audio file not found: {audio_path}")
