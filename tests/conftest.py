@@ -80,7 +80,20 @@ if 'transformers' not in sys.modules:
         def __call__(self, *args, **kwargs):
             return SimpleNamespace(logits=sys.modules['torch'].randn(1,10,5))
 
+    class SeamlessM4Tv2ForSpeechToText:  # type: ignore
+        @classmethod
+        def from_pretrained(cls, *args, **kwargs):
+            return cls()
+        def to(self, device):
+            return self
+        def eval(self):
+            return self
+        def generate(self, **kwargs):
+            return [sys.modules['torch'].tensor([1, 2, 3, 4, 5])]
+
     class AutoProcessor(Wav2Vec2Processor):  # type: ignore
+        def decode(self, token_ids, skip_special_tokens=True):
+            return "decoded text"
         pass
 
     class Trainer:  # type: ignore
@@ -113,6 +126,7 @@ if 'transformers' not in sys.modules:
     setattr(transformers, 'WhisperProcessor', WhisperProcessor)
     setattr(transformers, 'WhisperForConditionalGeneration', WhisperForConditionalGeneration)
     setattr(transformers, 'Wav2Vec2ForCTC', Wav2Vec2ForCTC)
+    setattr(transformers, 'SeamlessM4Tv2ForSpeechToText', SeamlessM4Tv2ForSpeechToText)
     setattr(transformers, 'AutoProcessor', AutoProcessor)
 
     sys.modules['transformers'] = transformers
@@ -137,6 +151,8 @@ if 'torch' not in sys.modules:
             return self
         def numpy(self):
             return self.data
+        def tolist(self):
+            return self.data.tolist()
         def squeeze(self, *args, **kwargs):
             return FakeTensor(np.squeeze(self.data, *args, **kwargs))
         def mean(self, *args, **kwargs):
@@ -153,6 +169,11 @@ if 'torch' not in sys.modules:
             return len(self.data)
         def __iter__(self):
             return iter(self.data)
+        def __getitem__(self, idx):
+            result = self.data[idx]
+            if isinstance(result, np.ndarray):
+                return FakeTensor(result)
+            return result
 
     def _make_tensor(data):
         return FakeTensor(data)
@@ -205,12 +226,16 @@ if 'torch' not in sys.modules:
     setattr(torch, 'backends', backends)
     setattr(backends, 'mps', mps)
     setattr(torch, 'tensor', _make_tensor)
+    setattr(torch, 'Tensor', FakeTensor)  # type reference for isinstance checks
     setattr(torch, 'randn', randn)
     setattr(torch, 'ones', ones)
     setattr(torch, 'zeros', zeros)
     setattr(torch, 'mean', mean)
     setattr(torch, 'no_grad', _NoGrad)
     setattr(torch, 'device', device)
+    setattr(torch, 'float32', 'float32')  # dtype placeholder
+    setattr(torch, 'float16', 'float16')  # dtype placeholder
+    setattr(torch, 'bfloat16', 'bfloat16')  # dtype placeholder
 
     sys.modules['torch'] = torch
     sys.modules['torch.backends'] = backends
