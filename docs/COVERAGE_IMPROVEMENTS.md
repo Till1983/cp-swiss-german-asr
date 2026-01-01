@@ -1,5 +1,14 @@
 # Test Coverage Improvements Summary
 
+## Table of Contents
+- [Objective](#objective)
+- [Results](#results)
+- [Detailed Changes](#detailed-changes)
+- [Remaining Coverage Gaps (6 lines in endpoints.py - 94% coverage)](#remaining-coverage-gaps-6-lines-in-endpointspy---94-coverage)
+- [Test Quality Metrics](#test-quality-metrics)
+- [Commands to Verify](#commands-to-verify)
+- [Conclusion](#conclusion)
+
 ## Objective
 Improve test coverage for `src/backend/model_cache.py` and `src/backend/endpoints.py` from their initial levels to be as close to 100% as feasible.
 

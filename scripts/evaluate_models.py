@@ -8,7 +8,6 @@ from datetime import datetime
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_root)
 
-# NOW import from src (after path is fixed)
 from src.config import FHNW_SWISS_GERMAN_ROOT, MODELS_DIR, DATA_DIR, RESULTS_DIR
 from src.evaluation.evaluator import ASREvaluator
 from src.utils.file_utils import save_results_json, save_results_csv
@@ -26,29 +25,28 @@ MODEL_REGISTRY = {
     "whisper-large-v3": {"type": "whisper", "name": "large-v3"},  # pinned version: identical to "whisper-large"
     "whisper-large-v3-turbo": {"type": "whisper", "name": "large-v3-turbo"},
 
-    # Hugging Face community Whisper models
-    "whisper-sg-large-v2-notebotIE": {
-        "type": "whisper-hf",
-        "name": "notebotIE/whisper-large-v2-swiss-german",
-    },
-
+    # Hugging Face community Whisper models    
    "whisper-large-swiss": {
         "type": "whisper-hf",
         "name": "jempf/whisper-large-swiss",
     },
 
-    "whisper-small-swiss": {
-        "type": "whisper-hf",
-        "name": "ss0ffii/whisper-small-german-swiss",
-    },
-    
     # Wav2Vec2 models
     ## German models
     "wav2vec2-german": {"type": "wav2vec2", "name": "jonatasgrosman/wav2vec2-large-xlsr-53-german"},
+    "wav2vec2-german-cv13": {"type": "wav2vec2", "name": "oliverguhr/wav2vec2-large-xlsr-53-german-cv13"},
+    "wav2vec2-german-300m": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-300m-german"},
+    "wav2vec2-german-300m-cv11": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-300m-german-cv11"},
     "wav2vec2-german-1b": {"type": "wav2vec2", "name": "jonatasgrosman/wav2vec2-xls-r-1b-german"},
     "wav2vec2-german-1b-5gram": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-1b-5gram-german"},
     "wav2vec2-1b-german-cv11": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-1b-german-cv11"},
-    "wav2vec2-german-300m": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-300m-german"},
+
+     # ✅ Added LM support here
+    "wav2vec2-german-with-lm": {
+        "type": "wav2vec2", 
+        "name": "aware-ai/wav2vec2-large-xlsr-53-german-with-lm", 
+        "lm_path": str(MODELS_DIR / "lm" / "kenLM.arpa") 
+    },
 
      # ✅ Added adapted German model - needs to be retrained and uploaded
     "wav2vec2-ger-nl-adapted": {
@@ -59,15 +57,9 @@ MODEL_REGISTRY = {
     
     # Multilingual models
     "wav2vec2-multi-56": {"type": "wav2vec2", "name": "voidful/wav2vec2-xlsr-multilingual-56"},
-    "wav2vec2-european-1b": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-1b-european"},
+    "wav2vec2-xls-r-300m": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-300m"},
     "wav2vec2-european-300m": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-300m-european"},
-
-    # ✅ Added LM support here
-    "wav2vec2-german-with-lm": {
-        "type": "wav2vec2", 
-        "name": "aware-ai/wav2vec2-large-xlsr-53-german-with-lm", 
-        "lm_path": str(MODELS_DIR / "lm" / "kenLM.arpa") 
-    },
+    "wav2vec2-european-1b": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-1b-european"},
 
     # MMS models
     "mms-1b-all": {"type": "mms", "name": "facebook/mms-1b-all"},

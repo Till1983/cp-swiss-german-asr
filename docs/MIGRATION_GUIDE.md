@@ -1,5 +1,13 @@
 # Configuration Migration Guide
 
+## Table of Contents
+- [Summary of Changes](#summary-of-changes)
+- [Migration Steps](#migration-steps)
+- [Verification](#verification)
+- [Troubleshooting](#troubleshooting)
+- [Rollback](#rollback)
+- [Questions?](#questions)
+
 ## Summary of Changes
 
 The configuration system has been improved to support multiple environments explicitly while maintaining backwards compatibility.

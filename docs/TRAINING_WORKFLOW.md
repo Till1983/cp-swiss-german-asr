@@ -1,5 +1,15 @@
 # ASR Training Workflow Documentation
 
+## Table of Contents
+- [1. Pipeline Overview](#1-pipeline-overview)
+- [2. Dutch Pre-training](#2-dutch-pre-training)
+- [3. German Adaptation (with EWC)](#3-german-adaptation-with-ewc)
+- [4. Swiss-German Zero-Shot Transfer](#4-swiss-german-zero-shot-transfer)
+- [5. Transfer Learning Approach](#5-transfer-learning-approach)
+- [6. Troubleshooting & Common Issues](#6-troubleshooting--common-issues)
+- [7. Additional Notes](#7-additional-notes)
+- [References](#references)
+
 This guide describes the full pipeline for fine-tuning Wav2Vec2 models for Swiss-German ASR, including Dutch pre-training, German adaptation (with EWC), and Swiss-German zero-shot transfer. It covers step-by-step instructions, command examples, resource requirements, troubleshooting, and the transfer learning strategy.
 
 ---

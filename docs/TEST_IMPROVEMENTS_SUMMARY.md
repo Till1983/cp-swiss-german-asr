@@ -1,5 +1,17 @@
 # Test Coverage Improvements Summary
 
+## Table of Contents
+- [Overview](#overview)
+- [New Test Files Created](#new-test-files-created)
+- [Test Coverage Areas](#test-coverage-areas)
+- [Test Statistics](#test-statistics)
+- [Key Testing Improvements](#key-testing-improvements)
+- [Testing Best Practices Implemented](#testing-best-practices-implemented)
+- [Running the Tests](#running-the-tests)
+- [Notes on Test Implementation](#notes-on-test-implementation)
+- [Future Recommendations](#future-recommendations)
+- [Conclusion](#conclusion)
+
 ## Overview
 This document summarises comprehensive test improvements made to the Swiss German ASR project to significantly increase test coverage and quality.
 

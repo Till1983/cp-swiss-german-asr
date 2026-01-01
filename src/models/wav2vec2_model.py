@@ -29,6 +29,10 @@ class Wav2Vec2Model:
         )
         self.lm_path = lm_path
         self.decoder = None
+        self._can_set_tokenizer_lang = False
+        self._has_model_adapter = False
+        self._lang_warning_printed = False
+        self._adapter_warning_printed = False
         
         print(f"Loading Wav2Vec2 model '{self.model_name}' on {self.device}...")
 
@@ -63,6 +67,10 @@ class Wav2Vec2Model:
         
         self.model.to(self.device)
         self.model.eval()
+
+        # Detect language capabilities at initialisation to avoid repeated checks during transcription
+        self._can_set_tokenizer_lang = self._detect_language_capability()
+        self._has_model_adapter = hasattr(self.model, "load_adapter")
         
         # ✅ Initialize Decoder if LM provided
         if self.lm_path:
@@ -99,12 +107,18 @@ class Wav2Vec2Model:
 
         Args:
             audio_path: Path to audio file
-            language: Language code (e.g., 'de' for German). 
-                     - Required for multilingual models (e.g., facebook/mms-1b-all)
+            language: Language code for multilingual models (e.g., 'de' for German).
+                     - Required for multilingual Wav2Vec2 models with language adapters
                      - Ignored by monolingual German-specific models
+                     - When provided, attempts to load language-specific adapter
 
         Returns:
             Dictionary with 'text' key containing transcription
+            
+        Note:
+            For multilingual models (e.g., voidful/wav2vec2-xlsr-multilingual-56),
+            the language parameter enables proper adapter switching. For monolingual
+            German models, this parameter is accepted but safely ignored.
         """
         audio_path = Path(audio_path)
         if not audio_path.exists():
@@ -124,6 +138,30 @@ class Wav2Vec2Model:
         
         if waveform.shape[0] > 1:
             waveform = torch.mean(waveform, dim=0, keepdim=True)
+        
+        # ✅ Language handling
+        # Only attempt target-lang switching when the tokenizer exposes a language map
+        if language:
+            if self._can_set_tokenizer_lang:
+                try:
+                    self.processor.tokenizer.set_target_lang(language)
+                except Exception as e:
+                    if not self._lang_warning_printed:
+                        print(f"ℹ️ Could not set tokenizer language to '{language}': {e}")
+                        self._lang_warning_printed = True
+            else:
+                if not self._lang_warning_printed:
+                    print("ℹ️ Language parameter ignored: tokenizer has no language mapping (monolingual CTC vocab).")
+                    self._lang_warning_printed = True
+
+            if self._has_model_adapter:
+                try:
+                    self.model.load_adapter(language)
+                except Exception as e:
+                    if not self._adapter_warning_printed:
+                        print(f"ℹ️ Could not load adapter for language '{language}': {e}")
+                        print("   Continuing with default model configuration (likely monolingual model)")
+                        self._adapter_warning_printed = True
         
         audio_input = self.processor(
             waveform.squeeze().numpy(), 
@@ -147,3 +185,13 @@ class Wav2Vec2Model:
             transcription = self.processor.batch_decode(predicted_ids)[0]
         
         return {"text": transcription}
+
+    def _detect_language_capability(self) -> bool:
+        """Check whether tokenizer supports multilingual target language switching."""
+        tokenizer = getattr(self.processor, "tokenizer", None)
+        if not tokenizer or not hasattr(tokenizer, "set_target_lang"):
+            return False
+
+        # Some multilingual tokenizers expose lang2id or languages collections
+        lang_map = getattr(tokenizer, "lang2id", None) or getattr(tokenizer, "languages", None)
+        return bool(lang_map)
