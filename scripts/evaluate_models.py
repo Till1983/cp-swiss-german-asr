@@ -64,6 +64,9 @@ MODEL_REGISTRY = {
     # MMS models
     "mms-1b-all": {"type": "mms", "name": "facebook/mms-1b-all"},
     "mms-1b-l1107": {"type": "mms", "name": "facebook/mms-1b-l1107"},
+
+    # SeamlessM4T models
+    "seamless-m4t-v2-large": {"type": "seamless-m4t", "name": "facebook/seamless-m4t-v2-large"},
 }
 
 def main():

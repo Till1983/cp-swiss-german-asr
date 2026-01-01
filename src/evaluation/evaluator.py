@@ -22,6 +22,7 @@ from transformers import WhisperProcessor, WhisperForConditionalGeneration
 from src.evaluation import metrics
 from src.models.wav2vec2_model import Wav2Vec2Model
 from src.models.mms_model import MMSModel
+from src.models.seamless_m4t_model import SeamlessM4TModel
 from src.config import FHNW_SWISS_GERMAN_ROOT
 
 class ASREvaluator:
@@ -35,8 +36,8 @@ class ASREvaluator:
             device: Device string
             lm_path: Optional path to KenLM file
         """
-        if model_type not in ["whisper", "whisper-hf", "wav2vec2", "mms"]:
-            raise ValueError(f"model_type must be 'whisper', 'whisper-hf', 'wav2vec2', or 'mms', got: {model_type}")
+        if model_type not in ["whisper", "whisper-hf", "wav2vec2", "mms", "seamless-m4t"]:
+            raise ValueError(f"model_type must be 'whisper', 'whisper-hf', 'wav2vec2', 'mms', or 'seamless-m4t', got: {model_type}")
 
         self.model_type = model_type
         self.model_name = model_name
@@ -93,6 +94,17 @@ class ASREvaluator:
             except Exception as e:
                 raise RuntimeError(f"Failed to load MMS model: {e}") from e
 
+        elif self.model_type == "seamless-m4t":
+            try:
+                self.model = SeamlessM4TModel(
+                    model_name=self.model_name,
+                    device=self.device,
+                )
+                # Note: NO self.model.load_model() - method doesn't exist
+                # Model is fully loaded after __init__() completes
+            except Exception as e:
+                raise RuntimeError(f"Failed to load SeamlessM4T model: {e}") from e
+
     def _get_transcription(self, audio_path: Path) -> str:
         """Get transcription from loaded model."""
         if self.model_type == "whisper":
@@ -142,6 +154,12 @@ class ASREvaluator:
 
         elif self.model_type == "mms":
             result = self.model.transcribe(audio_path, language="deu")
+            if isinstance(result, dict) and "text" in result:
+                return result["text"]
+            return str(result)
+
+        elif self.model_type == "seamless-m4t":
+            result = self.model.transcribe(audio_path, language="de")
             if isinstance(result, dict) and "text" in result:
                 return result["text"]
             return str(result)
