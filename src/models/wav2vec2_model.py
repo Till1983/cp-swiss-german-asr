@@ -32,6 +32,7 @@ class Wav2Vec2Model:
         self._can_set_tokenizer_lang = False
         self._has_model_adapter = False
         self._lang_warning_printed = False
+        self._adapter_warning_printed = False
         
         print(f"Loading Wav2Vec2 model '{self.model_name}' on {self.device}...")
 
@@ -67,7 +68,7 @@ class Wav2Vec2Model:
         self.model.to(self.device)
         self.model.eval()
 
-        # Detect language capabilities once to avoid per-sample checks later
+        # Detect language capabilities at initialisation to avoid repeated checks during transcription
         self._can_set_tokenizer_lang = self._detect_language_capability()
         self._has_model_adapter = hasattr(self.model, "load_adapter")
         
@@ -157,10 +158,10 @@ class Wav2Vec2Model:
                 try:
                     self.model.load_adapter(language)
                 except Exception as e:
-                    if not self._lang_warning_printed:
+                    if not self._adapter_warning_printed:
                         print(f"ℹ️ Could not load adapter for language '{language}': {e}")
                         print("   Continuing with default model configuration (likely monolingual model)")
-                        self._lang_warning_printed = True
+                        self._adapter_warning_printed = True
         
         audio_input = self.processor(
             waveform.squeeze().numpy(), 
@@ -186,7 +187,7 @@ class Wav2Vec2Model:
         return {"text": transcription}
 
     def _detect_language_capability(self) -> bool:
-        """Check whether tokenizer supports multi-lingual target language switching."""
+        """Check whether tokenizer supports multilingual target language switching."""
         tokenizer = getattr(self.processor, "tokenizer", None)
         if not tokenizer or not hasattr(tokenizer, "set_target_lang"):
             return False
