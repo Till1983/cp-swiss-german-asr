@@ -11,7 +11,7 @@ evaluation metrics including WER, CER, and BLEU score.
 
 
 
-def _normalize_text(text: str, mode: str = "standard") -> str:
+def _normalize_text(text: str, mode: str = "asr_fair") -> str:
     """
     Normalize text for metric calculation.
     
