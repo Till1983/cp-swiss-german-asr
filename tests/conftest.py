@@ -91,6 +91,16 @@ if 'transformers' not in sys.modules:
         def generate(self, **kwargs):
             return [sys.modules['torch'].tensor([1, 2, 3, 4, 5])]
 
+    class AutoConfig:  # type: ignore
+        def __init__(self, model_type="wav2vec2"):
+            self.model_type = model_type
+        @classmethod
+        def from_pretrained(cls, *args, **kwargs):
+            return cls()
+
+    class AutoModelForCTC(Wav2Vec2ForCTC):  # type: ignore
+        pass
+
     class AutoProcessor(Wav2Vec2Processor):  # type: ignore
         def decode(self, token_ids, skip_special_tokens=True):
             return "decoded text"
@@ -127,6 +137,8 @@ if 'transformers' not in sys.modules:
     setattr(transformers, 'WhisperForConditionalGeneration', WhisperForConditionalGeneration)
     setattr(transformers, 'Wav2Vec2ForCTC', Wav2Vec2ForCTC)
     setattr(transformers, 'SeamlessM4Tv2ForSpeechToText', SeamlessM4Tv2ForSpeechToText)
+    setattr(transformers, 'AutoConfig', AutoConfig)
+    setattr(transformers, 'AutoModelForCTC', AutoModelForCTC)
     setattr(transformers, 'AutoProcessor', AutoProcessor)
 
     sys.modules['transformers'] = transformers

@@ -10,10 +10,12 @@ class TestWav2Vec2ModelInit:
     """Test Wav2Vec2Model initialization."""
 
     @pytest.mark.unit
-    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
-    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
-    def test_initialization_default_device(self, mock_model_class, mock_processor_class):
+    @patch('src.models.wav2vec2_model.AutoProcessor')
+    @patch('src.models.wav2vec2_model.AutoModelForCTC')
+    @patch('src.models.wav2vec2_model.AutoConfig')
+    def test_initialization_default_device(self, mock_config_class, mock_model_class, mock_processor_class):
         """Test model initializes with default device selection."""
+        mock_config_class.from_pretrained.return_value = Mock(model_type="wav2vec2")
         mock_processor_class.from_pretrained.return_value = Mock()
         mock_model = Mock()
         mock_model_class.from_pretrained.return_value = mock_model
@@ -26,10 +28,12 @@ class TestWav2Vec2ModelInit:
         mock_model.eval.assert_called()
 
     @pytest.mark.unit
-    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
-    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
-    def test_initialization_with_device(self, mock_model_class, mock_processor_class):
+    @patch('src.models.wav2vec2_model.AutoProcessor')
+    @patch('src.models.wav2vec2_model.AutoModelForCTC')
+    @patch('src.models.wav2vec2_model.AutoConfig')
+    def test_initialization_with_device(self, mock_config_class, mock_model_class, mock_processor_class):
         """Test model initializes with specified device."""
+        mock_config_class.from_pretrained.return_value = Mock(model_type="wav2vec2")
         mock_processor_class.from_pretrained.return_value = Mock()
         mock_model = Mock()
         mock_model_class.from_pretrained.return_value = mock_model
@@ -40,10 +44,12 @@ class TestWav2Vec2ModelInit:
         assert model.device == "cpu"
 
     @pytest.mark.unit
-    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
-    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
-    def test_initialization_stores_lm_path(self, mock_model_class, mock_processor_class):
+    @patch('src.models.wav2vec2_model.AutoProcessor')
+    @patch('src.models.wav2vec2_model.AutoModelForCTC')
+    @patch('src.models.wav2vec2_model.AutoConfig')
+    def test_initialization_stores_lm_path(self, mock_config_class, mock_model_class, mock_processor_class):
         """Test model stores language model path."""
+        mock_config_class.from_pretrained.return_value = Mock(model_type="wav2vec2")
         mock_processor_class.from_pretrained.return_value = Mock()
         mock_model = Mock()
         mock_model_class.from_pretrained.return_value = mock_model
@@ -57,10 +63,12 @@ class TestWav2Vec2ModelInit:
         assert model.lm_path == "/path/to/lm.arpa"
 
     @pytest.mark.unit
-    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
-    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
-    def test_model_is_set_to_eval_mode(self, mock_model_class, mock_processor_class):
+    @patch('src.models.wav2vec2_model.AutoProcessor')
+    @patch('src.models.wav2vec2_model.AutoModelForCTC')
+    @patch('src.models.wav2vec2_model.AutoConfig')
+    def test_model_is_set_to_eval_mode(self, mock_config_class, mock_model_class, mock_processor_class):
         """Test model is set to evaluation mode."""
+        mock_config_class.from_pretrained.return_value = Mock(model_type="wav2vec2")
         mock_processor_class.from_pretrained.return_value = Mock()
         mock_model = Mock()
         mock_model_class.from_pretrained.return_value = mock_model
@@ -71,10 +79,12 @@ class TestWav2Vec2ModelInit:
         mock_model.eval.assert_called_once()
 
     @pytest.mark.unit
-    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
-    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
-    def test_processor_loaded(self, mock_model_class, mock_processor_class):
+    @patch('src.models.wav2vec2_model.AutoProcessor')
+    @patch('src.models.wav2vec2_model.AutoModelForCTC')
+    @patch('src.models.wav2vec2_model.AutoConfig')
+    def test_processor_loaded(self, mock_config_class, mock_model_class, mock_processor_class):
         """Test processor is loaded from pretrained."""
+        mock_config_class.from_pretrained.return_value = Mock(model_type="wav2vec2")
         mock_processor = Mock()
         mock_processor_class.from_pretrained.return_value = mock_processor
         mock_model_class.from_pretrained.return_value = Mock()
@@ -85,10 +95,12 @@ class TestWav2Vec2ModelInit:
         assert model.processor == mock_processor
 
     @pytest.mark.unit
-    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
-    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
-    def test_initialization_device_cuda(self, mock_model_class, mock_processor_class):
+    @patch('src.models.wav2vec2_model.AutoProcessor')
+    @patch('src.models.wav2vec2_model.AutoModelForCTC')
+    @patch('src.models.wav2vec2_model.AutoConfig')
+    def test_initialization_device_cuda(self, mock_config_class, mock_model_class, mock_processor_class):
         """Test model initialization detects CUDA device."""
+        mock_config_class.from_pretrained.return_value = Mock(model_type="wav2vec2")
         mock_processor_class.from_pretrained.return_value = Mock()
         mock_model = Mock()
         mock_model_class.from_pretrained.return_value = mock_model
@@ -99,10 +111,12 @@ class TestWav2Vec2ModelInit:
             assert model.device == "cuda"
 
     @pytest.mark.unit
-    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
-    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
-    def test_initialization_device_cpu(self, mock_model_class, mock_processor_class):
+    @patch('src.models.wav2vec2_model.AutoProcessor')
+    @patch('src.models.wav2vec2_model.AutoModelForCTC')
+    @patch('src.models.wav2vec2_model.AutoConfig')
+    def test_initialization_device_cpu(self, mock_config_class, mock_model_class, mock_processor_class):
         """Test model initialization falls back to CPU."""
+        mock_config_class.from_pretrained.return_value = Mock(model_type="wav2vec2")
         mock_processor_class.from_pretrained.return_value = Mock()
         mock_model = Mock()
         mock_model_class.from_pretrained.return_value = mock_model
@@ -113,6 +127,25 @@ class TestWav2Vec2ModelInit:
                 model = Wav2Vec2Model()
                 assert model.device == "cpu"
 
+    @pytest.mark.unit
+    @patch('src.models.wav2vec2_model.AutoProcessor')
+    @patch('src.models.wav2vec2_model.AutoModelForCTC')
+    @patch('src.models.wav2vec2_model.AutoConfig')
+    def test_initialization_uses_auto_model_for_wav2vec2_bert(self, mock_config_class, mock_model_class, mock_processor_class):
+        """Ensure wav2vec2-bert configs load via AutoModelForCTC."""
+        mock_config = Mock(model_type="wav2vec2-bert")
+        mock_config_class.from_pretrained.return_value = mock_config
+        mock_processor_class.from_pretrained.return_value = Mock()
+        mock_model_class.from_pretrained.return_value = Mock()
+
+        from src.models.wav2vec2_model import Wav2Vec2Model
+
+        model = Wav2Vec2Model(model_name="sharrnah/wav2vec2-bert-CV16-de")
+
+        mock_model_class.from_pretrained.assert_called_once()
+        _, kwargs = mock_model_class.from_pretrained.call_args
+        assert kwargs.get("config") is mock_config
+
 
 class TestWav2Vec2ModelTranscribe:
     """Test Wav2Vec2Model transcribe method."""
@@ -120,14 +153,17 @@ class TestWav2Vec2ModelTranscribe:
     @pytest.fixture
     def mock_wav2vec2_model(self):
         """Create a mocked Wav2Vec2Model."""
-        with patch('src.models.wav2vec2_model.Wav2Vec2Processor') as mock_processor_class, \
-             patch('src.models.wav2vec2_model.Wav2Vec2ForCTC') as mock_model_class:
+        with patch('src.models.wav2vec2_model.AutoProcessor') as mock_processor_class, \
+             patch('src.models.wav2vec2_model.AutoModelForCTC') as mock_model_class, \
+             patch('src.models.wav2vec2_model.AutoConfig') as mock_config_class:
 
             # Setup processor mock
             mock_processor = Mock()
             mock_processor.return_value = {"input_values": torch.randn(1, 16000)}
             mock_processor.batch_decode.return_value = ["transcribed text"]
             mock_processor_class.from_pretrained.return_value = mock_processor
+
+            mock_config_class.from_pretrained.return_value = Mock(model_type="wav2vec2")
 
             # Setup model mock
             mock_model = Mock()
@@ -230,11 +266,13 @@ class TestWav2Vec2ModelDecoderInit:
     """Test Wav2Vec2Model decoder initialization."""
 
     @pytest.mark.unit
-    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
-    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
+    @patch('src.models.wav2vec2_model.AutoProcessor')
+    @patch('src.models.wav2vec2_model.AutoModelForCTC')
+    @patch('src.models.wav2vec2_model.AutoConfig')
     @patch('src.models.wav2vec2_model._HAS_PYCTCDECODE', True)
-    def test_decoder_not_init_without_lm_path(self, mock_model_class, mock_processor_class):
+    def test_decoder_not_init_without_lm_path(self, mock_config_class, mock_model_class, mock_processor_class):
         """Test decoder is not initialized without LM path."""
+        mock_config_class.from_pretrained.return_value = Mock(model_type="wav2vec2")
         mock_processor_class.from_pretrained.return_value = Mock()
         mock_model_class.from_pretrained.return_value = Mock()
 
@@ -244,13 +282,15 @@ class TestWav2Vec2ModelDecoderInit:
         assert model.decoder is None
 
     @pytest.mark.unit
-    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
-    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
+    @patch('src.models.wav2vec2_model.AutoProcessor')
+    @patch('src.models.wav2vec2_model.AutoModelForCTC')
+    @patch('src.models.wav2vec2_model.AutoConfig')
     @patch('src.models.wav2vec2_model._HAS_PYCTCDECODE', False)
-    def test_decoder_not_init_without_pyctcdecode(self, mock_model_class, mock_processor_class):
+    def test_decoder_not_init_without_pyctcdecode(self, mock_config_class, mock_model_class, mock_processor_class):
         """Test decoder is not initialized when pyctcdecode not available."""
         mock_processor = Mock()
         mock_processor.tokenizer.get_vocab.return_value = {"a": 0, "b": 1}
+        mock_config_class.from_pretrained.return_value = Mock(model_type="wav2vec2")
         mock_processor_class.from_pretrained.return_value = mock_processor
         mock_model_class.from_pretrained.return_value = Mock()
 
@@ -263,11 +303,12 @@ class TestWav2Vec2ModelDecoderInit:
         assert model.decoder is None
 
     @pytest.mark.unit
-    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
-    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
+    @patch('src.models.wav2vec2_model.AutoProcessor')
+    @patch('src.models.wav2vec2_model.AutoModelForCTC')
+    @patch('src.models.wav2vec2_model.AutoConfig')
     @patch('src.models.wav2vec2_model._HAS_PYCTCDECODE', True)
     @patch('src.models.wav2vec2_model.build_ctcdecoder')
-    def test_decoder_init_with_valid_lm(self, mock_decoder, mock_model_class, mock_processor_class, temp_dir):
+    def test_decoder_init_with_valid_lm(self, mock_decoder, mock_config_class, mock_model_class, mock_processor_class, temp_dir):
         """Test decoder initializes successfully with valid LM file."""
         # Create LM file
         lm_file = temp_dir / "test.arpa"
@@ -275,6 +316,7 @@ class TestWav2Vec2ModelDecoderInit:
 
         mock_processor = Mock()
         mock_processor.tokenizer.get_vocab.return_value = {"a": 0, "b": 1}
+        mock_config_class.from_pretrained.return_value = Mock(model_type="wav2vec2")
         mock_processor_class.from_pretrained.return_value = mock_processor
         mock_model_class.from_pretrained.return_value = Mock()
         
@@ -292,11 +334,12 @@ class TestWav2Vec2ModelDecoderInit:
         mock_decoder.assert_called_once()
 
     @pytest.mark.unit
-    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
-    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
+    @patch('src.models.wav2vec2_model.AutoProcessor')
+    @patch('src.models.wav2vec2_model.AutoModelForCTC')
+    @patch('src.models.wav2vec2_model.AutoConfig')
     @patch('src.models.wav2vec2_model._HAS_PYCTCDECODE', True)
     @patch('src.models.wav2vec2_model.build_ctcdecoder')
-    def test_decoder_falls_back_on_build_failure(self, mock_decoder, mock_model_class, mock_processor_class, temp_dir):
+    def test_decoder_falls_back_on_build_failure(self, mock_decoder, mock_config_class, mock_model_class, mock_processor_class, temp_dir):
         """Test decoder falls back to None when build_ctcdecoder fails."""
         # Create LM file
         lm_file = temp_dir / "test.arpa"
@@ -304,6 +347,7 @@ class TestWav2Vec2ModelDecoderInit:
 
         mock_processor = Mock()
         mock_processor.tokenizer.get_vocab.return_value = {"a": 0, "b": 1}
+        mock_config_class.from_pretrained.return_value = Mock(model_type="wav2vec2")
         mock_processor_class.from_pretrained.return_value = mock_processor
         mock_model_class.from_pretrained.return_value = Mock()
         
@@ -320,12 +364,13 @@ class TestWav2Vec2ModelDecoderInit:
         assert model.decoder is None
 
     @pytest.mark.unit
-    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
-    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
+    @patch('src.models.wav2vec2_model.AutoProcessor')
+    @patch('src.models.wav2vec2_model.AutoModelForCTC')
+    @patch('src.models.wav2vec2_model.AutoConfig')
     @patch('src.models.wav2vec2_model._HAS_PYCTCDECODE', True)
     @patch('src.models.wav2vec2_model.build_ctcdecoder')
     @patch('torchaudio.load')
-    def test_transcribe_with_decoder(self, mock_torchaudio, mock_decoder_builder, mock_model_class, mock_processor_class, temp_dir):
+    def test_transcribe_with_decoder(self, mock_torchaudio, mock_decoder_builder, mock_config_class, mock_model_class, mock_processor_class, temp_dir):
         """Test transcribe uses decoder when available."""
         # Setup LM file
         lm_file = temp_dir / "test.arpa"
@@ -335,6 +380,7 @@ class TestWav2Vec2ModelDecoderInit:
         mock_processor = Mock()
         mock_processor.tokenizer.get_vocab.return_value = {"a": 0, "b": 1}
         mock_processor.return_value = {"input_values": torch.randn(1, 16000)}
+        mock_config_class.from_pretrained.return_value = Mock(model_type="wav2vec2")
         mock_processor_class.from_pretrained.return_value = mock_processor
         
         mock_model = Mock()
@@ -389,14 +435,16 @@ class TestWav2Vec2ModelEdgeCases:
             assert wav2vec2_model._HAS_PYCTCDECODE is False
 
     @pytest.mark.unit
-    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
-    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
-    def test_handles_local_model_path(self, mock_model_class, mock_processor_class, temp_dir):
+    @patch('src.models.wav2vec2_model.AutoProcessor')
+    @patch('src.models.wav2vec2_model.AutoModelForCTC')
+    @patch('src.models.wav2vec2_model.AutoConfig')
+    def test_handles_local_model_path(self, mock_config_class, mock_model_class, mock_processor_class, temp_dir):
         """Test model handles local model path."""
         # Create a fake model directory
         model_dir = temp_dir / "local_model"
         model_dir.mkdir()
 
+        mock_config_class.from_pretrained.return_value = Mock(model_type="wav2vec2")
         mock_processor_class.from_pretrained.return_value = Mock()
         mock_model_class.from_pretrained.return_value = Mock()
 
@@ -408,10 +456,12 @@ class TestWav2Vec2ModelEdgeCases:
         assert model.model_name == str(model_dir)
 
     @pytest.mark.unit
-    @patch('src.models.wav2vec2_model.Wav2Vec2Processor')
-    @patch('src.models.wav2vec2_model.Wav2Vec2ForCTC')
-    def test_processor_load_failure(self, mock_model_class, mock_processor_class):
+    @patch('src.models.wav2vec2_model.AutoProcessor')
+    @patch('src.models.wav2vec2_model.AutoModelForCTC')
+    @patch('src.models.wav2vec2_model.AutoConfig')
+    def test_processor_load_failure(self, mock_config_class, mock_model_class, mock_processor_class):
         """Test appropriate error when processor fails to load."""
+        mock_config_class.from_pretrained.return_value = Mock(model_type="wav2vec2")
         mock_processor_class.from_pretrained.side_effect = OSError("Model not found")
 
         from src.models.wav2vec2_model import Wav2Vec2Model
