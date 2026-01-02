@@ -1,5 +1,5 @@
 import torch
-from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
+from transformers import AutoConfig, AutoModelForCTC, AutoProcessor
 from pathlib import Path
 from typing import Optional, Dict
 import torchaudio
@@ -11,6 +11,7 @@ try:
     _HAS_PYCTCDECODE = True
 except ImportError:
     _HAS_PYCTCDECODE = False
+    build_ctcdecoder = None  # ensure attribute exists for test patching when dependency is missing
 
 class Wav2Vec2Model:
     def __init__(self, model_name: str = "aware-ai/wav2vec2-large-xlsr-53-german-with-lm", device: str = None, lm_path: str = None):
@@ -40,30 +41,24 @@ class Wav2Vec2Model:
         is_local_path = Path(model_name).exists()
 
         try:
-            if is_local_path:
-                print(f"   Detected local model path, using local_files_only=True")
-                self.processor = Wav2Vec2Processor.from_pretrained(
-                    model_name, 
-                    local_files_only=True
-                )
-            else:
-                print(f"   Loading from HuggingFace Hub")
-                self.processor = Wav2Vec2Processor.from_pretrained(model_name)
+            config_kwargs = {"local_files_only": True} if is_local_path else {}
+            model_kwargs = {"local_files_only": True} if is_local_path else {}
+
+            print("   Loading config")
+            self.config = AutoConfig.from_pretrained(model_name, **config_kwargs)
+
+            print("   Loading processor")
+            self.processor = AutoProcessor.from_pretrained(model_name, **config_kwargs)
         except (TypeError, OSError) as e:
             raise ValueError(f"Failed to load processor: {str(e)}") from e
 
         # Load model with same logic
-        if is_local_path:
-            self.model = Wav2Vec2ForCTC.from_pretrained(
-                model_name, 
-                use_safetensors=True, 
-                local_files_only=True
-            )
-        else:
-            self.model = Wav2Vec2ForCTC.from_pretrained(
-                model_name, 
-                use_safetensors=True
-            )
+        model_kwargs["use_safetensors"] = True  # keep strict safetensors requirement
+        self.model = AutoModelForCTC.from_pretrained(
+            model_name,
+            config=self.config,
+            **model_kwargs,
+        )
         
         self.model.to(self.device)
         self.model.eval()

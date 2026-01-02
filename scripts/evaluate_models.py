@@ -40,6 +40,7 @@ MODEL_REGISTRY = {
     "wav2vec2-german-1b": {"type": "wav2vec2", "name": "jonatasgrosman/wav2vec2-xls-r-1b-german"},
     "wav2vec2-german-1b-5gram": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-1b-5gram-german"},
     "wav2vec2-1b-german-cv11": {"type": "wav2vec2", "name": "aware-ai/wav2vec2-xls-r-1b-german-cv11"},
+    "wav2vec2-bert-CV16-de": {"type": "wav2vec2", "name": "sharrnah/wav2vec2-bert-CV16-de"},
 
      # ✅ Added LM support here
     "wav2vec2-german-with-lm": {
