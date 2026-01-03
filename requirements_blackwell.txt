@@ -11,7 +11,7 @@
 # ============================================================================
 # TRANSFORMERS & HUGGING FACE (Compatible with PyTorch 2.8)
 # ============================================================================
-transformers==4.46.0  # Upgraded from 4.46.0 to fix SeamlessM4T tokenizer conversion issue
+transformers==4.54.1  # Upgraded from 4.46.0 to fix SeamlessM4T tokenizer conversion issue
 accelerate==1.2.1
 datasets==3.2.0
 huggingface-hub==0.26.2
