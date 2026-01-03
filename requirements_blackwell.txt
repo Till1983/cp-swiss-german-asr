@@ -14,7 +14,7 @@
 transformers==4.54.1  # Upgraded from 4.46.0 to fix SeamlessM4T tokenizer conversion issue
 accelerate==1.2.1
 datasets==3.2.0
-huggingface-hub==0.26.2
+huggingface-hub>=0.34.0,<1.0
 hf_transfer>=0.1.8
 pyctcdecode==0.5.0
 kenlm==0.3.0
