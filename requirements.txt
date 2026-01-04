@@ -22,7 +22,7 @@ librosa==0.10.1  # Requires numpy<2.0
 pydub==0.25.1
 soundfile>=0.12.1
 #imageio-ffmpeg>=0.5.1
-static-ffmpeg
+ffmpeg-binaries
 
 # ASR models
 openai-whisper==20250625
