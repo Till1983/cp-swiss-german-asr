@@ -25,6 +25,16 @@ from src.models.mms_model import MMSModel
 from src.models.seamless_m4t_model import SeamlessM4TModel
 from src.config import FHNW_SWISS_GERMAN_ROOT
 
+# Ensure ffmpeg is available on PATH (for openai-whisper)
+try:
+    import imageio_ffmpeg
+    import os
+    ffmpeg_dir = os.path.dirname(imageio_ffmpeg.get_ffmpeg_exe())
+    if ffmpeg_dir not in os.environ.get("PATH", ""):
+        os.environ["PATH"] = ffmpeg_dir + os.pathsep + os.environ.get("PATH", "")
+except ImportError:
+    pass  # imageio-ffmpeg not installed, assume system ffmpeg is available
+
 class ASREvaluator:
     def __init__(self, model_type: str = "whisper", model_name: str = "base", device: str = None, lm_path: str = None):
         """
