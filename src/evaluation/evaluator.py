@@ -27,35 +27,6 @@ from src.config import FHNW_SWISS_GERMAN_ROOT
 import os
 
 
-def _ensure_ffmpeg_on_path():
-    """Populate PATH with bundled ffmpeg if available."""
-    candidates = []
-    try:
-        from ffmpegio import config as ffmpegio_config
-        ffmpeg_path = getattr(ffmpegio_config, "ffmpeg_bin", None)
-        if ffmpeg_path:
-            candidates.append(ffmpeg_path)
-    except Exception:
-        pass
-
-    try:
-        import imageio_ffmpeg
-        candidates.append(imageio_ffmpeg.get_ffmpeg_exe())
-    except Exception:
-        pass
-
-    for exe_path in candidates:
-        if not exe_path:
-            continue
-        ffmpeg_dir = os.path.dirname(exe_path)
-        current_path = os.environ.get("PATH", "")
-        if ffmpeg_dir and ffmpeg_dir not in current_path:
-            os.environ["PATH"] = ffmpeg_dir + os.pathsep + current_path
-            break
-
-
-_ensure_ffmpeg_on_path()
-
 class ASREvaluator:
     def __init__(self, model_type: str = "whisper", model_name: str = "base", device: str = None, lm_path: str = None):
         """
