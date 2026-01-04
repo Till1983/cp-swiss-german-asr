@@ -17,23 +17,44 @@ import pandas as pd
 from pathlib import Path
 from typing import Dict, Optional
 from datetime import datetime, timedelta
-from tqdm import tqdm  
-from transformers import WhisperProcessor, WhisperForConditionalGeneration 
+from tqdm import tqdm
+from transformers import WhisperProcessor, WhisperForConditionalGeneration
 from src.evaluation import metrics
 from src.models.wav2vec2_model import Wav2Vec2Model
 from src.models.mms_model import MMSModel
 from src.models.seamless_m4t_model import SeamlessM4TModel
 from src.config import FHNW_SWISS_GERMAN_ROOT
+import os
 
-# Ensure ffmpeg is available on PATH (for openai-whisper)
-try:
-    import imageio_ffmpeg
-    import os
-    ffmpeg_dir = os.path.dirname(imageio_ffmpeg.get_ffmpeg_exe())
-    if ffmpeg_dir not in os.environ.get("PATH", ""):
-        os.environ["PATH"] = ffmpeg_dir + os.pathsep + os.environ.get("PATH", "")
-except ImportError:
-    pass  # imageio-ffmpeg not installed, assume system ffmpeg is available
+
+def _ensure_ffmpeg_on_path():
+    """Populate PATH with bundled ffmpeg if available."""
+    candidates = []
+    try:
+        from ffmpegio import config as ffmpegio_config
+        ffmpeg_path = getattr(ffmpegio_config, "ffmpeg_bin", None)
+        if ffmpeg_path:
+            candidates.append(ffmpeg_path)
+    except Exception:
+        pass
+
+    try:
+        import imageio_ffmpeg
+        candidates.append(imageio_ffmpeg.get_ffmpeg_exe())
+    except Exception:
+        pass
+
+    for exe_path in candidates:
+        if not exe_path:
+            continue
+        ffmpeg_dir = os.path.dirname(exe_path)
+        current_path = os.environ.get("PATH", "")
+        if ffmpeg_dir and ffmpeg_dir not in current_path:
+            os.environ["PATH"] = ffmpeg_dir + os.pathsep + current_path
+            break
+
+
+_ensure_ffmpeg_on_path()
 
 class ASREvaluator:
     def __init__(self, model_type: str = "whisper", model_name: str = "base", device: str = None, lm_path: str = None):
