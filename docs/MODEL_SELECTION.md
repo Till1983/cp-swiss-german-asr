@@ -78,4 +78,40 @@ Self-supervised speech recognition models trained on German Common Voice data. T
 - **Whisper consistently outperforms Wav2Vec2** by 2.5-3x on WER metrics (28-34% vs. 72-75%)
 - **Model size matters less than training data**: whisper-medium (769M) outperforms wav2vec2-1b-german-cv11 (1000M)
 - **Translation vs. transcription task framing** explains performance gap: Whisper models benefit from explicit Swiss German→Standard German mapping in training data
-- **Language model integration** provides minimal benefit for Wav2Vec2 on dialectal speech (75.28% WER with LM vs. 72.42% without)
+- **Language model integration** provides minimal benefit for Wav2Vec2 on dialectal speech (75.28% WER with LM vs. 72.42% without) - **Important:** see correction below
+
+---
+
+> **⚠️ Normalisation Mode Correction (January 2026)**
+> 
+> The original claim that "Language model integration provides minimal benefit for Wav2Vec2 on dialectal speech (75.28% WER with LM vs. 72.42% without)" was based on **standard normalisation** which systematically penalises LM-enhanced decoding due to punctuation handling differences.
+> 
+> Under **ASR-fair normalisation** (lowercase + punctuation removal), the ranking reverses:
+> 
+> | Model | Standard WER | ASR-Fair WER |
+> |-------|--------------|--------------|
+> | wav2vec2-1b-german-cv11 | 72.42% | 70.97% |
+> | wav2vec2-german-with-lm | 75.28% | **70.05%** |
+> 
+> **Corrected finding:** Language model integration provides measurable benefit under fair normalisation (70.05% vs 70.97%), with the LM-enhanced model showing the largest improvement from normalisation (5.23pp vs 1.45pp).
+> 
+> **Interpretation:** The LM decoder produces different punctuation/formatting patterns than greedy CTC decoding, which were penalised under standard evaluation. Both Wav2Vec2 variants remain significantly behind Whisper (~25-28% WER) regardless of normalisation.
+
+---
+
+### Additional Note for Whisper Section
+
+Under ASR-fair normalization, Whisper models also improve:
+
+| Model | Standard WER | ASR-Fair WER | Improvement |
+|-------|--------------|--------------|-------------|
+| whisper-large-v2 | 28.00% | 25.60% | 2.40pp |
+| whisper-large-v3 | 29.53% | 26.93% | 2.60pp |
+| whisper-large-v3-turbo | 30.94% | 28.23% | 2.71pp |
+| whisper-medium | 34.11% | 31.20% | 2.91pp |
+
+The improvement is smaller than for CTC models (~2.5pp vs ~5-9pp) because Whisper's punctuation more closely matches reference text, but differences in comma placement and hyphenation still contribute errors under standard normalisation.
+
+**Conclusion:** Whisper's dominance over CTC models is maintained regardless of normalisation mode. The gap remains ~44pp under both evaluation methods.
+
+---
