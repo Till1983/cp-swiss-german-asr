@@ -10,6 +10,7 @@
 - [Upgrade Path for RTX 5090](#upgrade-path-for-rtx-5090)
 - [Verification Checklist](#verification-checklist)
 - [Troubleshooting](#troubleshooting)
+- [Cross-Architecture Reproducibility Limitations](#cross-architecture-reproducibility-limitations)
 - [Cost-Benefit Analysis](#cost-benefit-analysis)
 - [Backward Compatibility](#backward-compatibility)
 - [References](#references)
@@ -340,11 +341,101 @@ watch -n 1 nvidia-smi
 
 ---
 
+## Cross-Architecture Reproducibility Limitations
+
+### Overview
+
+**Critical for thesis work:** Different GPU architectures produce slightly different evaluation results, even with identical code and deterministic settings. This is a fundamental limitation documented by PyTorch, not a bug in this project.
+
+### Empirical Results (January 2026)
+
+Systematic testing across three GPU types with identical evaluation code:
+
+| Model | RTX 3090 (Ampere) | RTX 5090 (Blackwell) | RTX 6000 PRO | Δ max |
+|-------|-------------------|----------------------|--------------|-------|
+| whisper-large-v3-turbo WER | 28.2275% | 28.2258% | 28.2258% | 0.002pp |
+| whisper-large-v3-turbo CER | 13.6589% | 13.6622% | 13.6622% | 0.003pp |
+| whisper-medium WER | 31.1964% | 31.1964% | 31.1964% | 0.000pp |
+| whisper-medium CER | 15.8972% | 15.8988% | 15.8988% | 0.002pp |
+| wav2vec2-1b-german-cv11 WER | 69.7233% | 69.9233% | 69.9233% | 0.200pp |
+
+**Key observations:**
+1. Results cluster by architecture: Ampere (3090) vs newer GPUs (5090, 6000 PRO)
+2. Whisper shows minimal variation (~0.002pp)
+3. Wav2Vec2 shows larger variation (~0.2pp) - CTC decoding is more sensitive
+4. PyTorch version is NOT the cause (tested PyTorch 2.6 vs 2.8 on same GPU = identical)
+
+### RTX 5090 Specific Warning
+
+**⚠️ RTX 5090 shows non-deterministic behavior between runs:**
+
+| Run | whisper-turbo WER | whisper-turbo CER |
+|-----|-------------------|-------------------|
+| RTX 5090 Run 1 | 28.2275% | 13.6589% (matches 3090) |
+| RTX 5090 Run 2 | 28.2258% | 13.6622% (matches 6000 PRO) |
+
+This is a known Blackwell architecture issue ([HuggingFace #38874](https://github.com/huggingface/transformers/issues/38874)). The GPU appears to initialise into different "modes" between sessions.
+
+**Recommendation:** Avoid RTX 5090 for reproducibility-critical thesis evaluations.
+
+### Recommendations for Thesis Work
+
+1. **Use a single GPU architecture for ALL final evaluations**
+   - Recommended: RTX 3090 (proven stable, deterministic)
+   - Acceptable: RTX 4090 (Ada Lovelace, should be stable)
+   - Avoid: RTX 5090 (non-deterministic initialisation)
+
+2. **Document hardware in methodology section:**
+   ```
+   All model evaluations were conducted on NVIDIA RTX 3090 GPUs 
+   (Ampere architecture, sm_86) using PyTorch 2.6.0 with CUDA 12.x.
+   ```
+
+3. **Acknowledge limitation if comparing with other studies:**
+   ```
+   Results may vary by approximately 0.002-0.2 percentage points 
+   when evaluated on different GPU architectures due to differences 
+   in floating-point implementation (PyTorch Reproducibility Guidelines).
+   ```
+
+4. **For training (where exact reproducibility is less critical):**
+   - RTX 5090/6000 PRO are acceptable and offer better performance
+   - Memory constraints on RTX 3090 (24GB) may necessitate Blackwell GPUs
+
+### PyTorch Version vs GPU Architecture
+
+**Tested and confirmed:** The difference is caused by GPU architecture, NOT PyTorch version.
+
+| Configuration | whisper-turbo WER | whisper-turbo CER |
+|---------------|-------------------|-------------------|
+| RTX 3090 + PyTorch 2.6.0 | 28.2275% | 13.6589% |
+| RTX 3090 + PyTorch 2.8.0 | 28.2275% | 13.6589% |
+| RTX 5090 + PyTorch 2.8.0 | 28.2258% | 13.6622% |
+
+Same GPU + different PyTorch = **identical results**
+Different GPU + same PyTorch = **different results**
+
+### TorchCodec Compatibility Issue
+
+When using `requirements_blackwell.txt` (PyTorch 2.8.0) for Wav2Vec2/MMS evaluation:
+
+```
+Error: TorchCodec is required for load_with_torchcodec
+```
+
+**Cause:** PyTorch 2.8 changed torchaudio's default audio backend.
+
+**Workaround:** Use `requirements.txt` (PyTorch 2.6.0) on RTX 3090 for CTC model evaluations.
+
+**Note:** Whisper is unaffected (uses its own audio loading).
+
+---
+
 ## Cost-Benefit Analysis
 
 ### Development Phase (Current)
 
-**Recommended:** RTX 3090 + PyTorch 2.6.0 + CPU EWC
+**Recommended:** RTX 3090 + PyTorch 2.6.0 + GPU EWC
 - **Reason:** Proven stable, no upgrade risk
 - **Cost:** $3.50 per training run (6.5 hours @ $0.50/hr)
 - **Timeline:** Meets thesis deadline
@@ -383,6 +474,6 @@ watch -n 1 nvidia-smi
 
 ---
 
-**Last Updated:** November 26, 2025  
-**Tested Configurations:** RTX 3090 + PyTorch 2.6.0 + CPU EWC  
-**Documented Configurations:** RTX 5090 + PyTorch 2.8.0 + GPU EWC (not yet tested)
+**Last Updated:** 2026-01-05 
+**Tested Configurations:** RTX 3090 + PyTorch 2.6.0 + GPU EWC (recommended for batch evaluation)
+**Documented Configurations:** RTX 5090 + PyTorch 2.8.0 + GPU EWC (recommended for model training)

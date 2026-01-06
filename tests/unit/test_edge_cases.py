@@ -199,9 +199,10 @@ class TestMetricsEdgeCases:
         reference = "!!!"
         hypothesis = "???"
 
-        # Our normalization keeps punctuation; tokens differ, so 100% WER
+        # With asr_fair normalization, punctuation is removed, both become empty
+        # Empty reference returns 0.0 by convention
         result = calculate_wer(reference, hypothesis)
-        assert result == 100.0
+        assert result == 0.0
 
     @pytest.mark.unit
     def test_wer_with_numbers_only(self):

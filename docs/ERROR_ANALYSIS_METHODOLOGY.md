@@ -215,18 +215,32 @@ def get_alignment(self, reference: str, hypothesis: str) -> List[Dict[str, Optio
 
 ### 2.3 Text Normalisation
 
-Before alignment, texts undergo normalisation via `_normalize_text()` from `src/evaluation/metrics.py`:
+Before alignment, texts undergo normalisation via `_normalize_text()` from `src/evaluation/metrics.py`.
 
+**Current Implementation (ASR-Fair Mode, Default):**
+```python
+def _normalize_text(text: str, mode: str = "asr_fair") -> str:
+    text = text.lower()
+    if mode == "asr_fair":
+        import string
+        text = text.translate(str.maketrans('', '', string.punctuation))
+    return " ".join(text.split())
+```
+
+Steps performed:
 - Convert to lowercase
-- Remove punctuation (configurable)
+- Remove punctuation (in ASR-fair mode)
 - Collapse multiple whitespace
 - Strip leading/trailing whitespace
 
-**Note:** Normalisation is applied identically to both reference and hypothesis, ensuring consistent comparison across all model types (Whisper, Wav2Vec2, and future models).
+> **Correction Note (January 2026):** Prior to this commit, punctuation removal was documented but not implemented in the default normalisation. The original implementation only performed lowercase conversion and whitespace normalisation. This discrepancy was identified during cross-architecture reproducibility testing and corrected with the introduction of the `mode` parameter. Historical results (pre-January 2026) used what is now called "standard" mode.
+
+**Note:** Normalisation is applied identically to both reference and hypothesis, ensuring consistent comparison across all model types.
 
 ### 2.4 Handling Complex Substitutions
 
 When jiwer reports a substitution spanning multiple words (e.g., 2 reference words → 3 hypothesis words), the alignment logic pairs words sequentially and classifies residuals:
+
 ```python
 elif type_ == 'substitute':
     max_len = max(len(ref_words), len(hyp_words))
@@ -752,10 +766,17 @@ Alignments operate at word level, not sub-word or phoneme level. This means:
 
 ### 7.2 Normalisation Effects
 
-Text normalisation (lowercase, punctuation removal) can:
+Text normalisation affects metric calculation differently depending on mode:
 
-- **Mask capitalization errors**: "Berlin" → "berlin" is treated as correct
-- **Conflate punctuation variants**: "Hallo!" vs "Hallo" are identical after normalisation
+**Standard Mode** (lowercase + whitespace only):
+- Preserves punctuation differences
+- "Hallo!" vs "Hallo" are treated as different (punctuation counts as characters)
+- May penalize CTC models that don't output punctuation
+
+**ASR-Fair Mode** (lowercase + punctuation removal + whitespace):
+- "Hallo!" vs "Hallo" are treated as identical
+- "Berlin" → "berlin" (capitalization masked)
+- Enables fair comparison between seq2seq (Whisper) and CTC (Wav2Vec2) models
 
 ### 7.3 Reference Quality Dependency
 
@@ -796,6 +817,72 @@ Comparing models that perform different tasks (translation vs. recognition) requ
 - Higher WER in Wav2Vec2 does not necessarily mean "worse" - it may indicate dialectal preservation
 - Lower WER in Whisper may mask translation errors that are semantically problematic
 - Direct WER comparison should be supplemented with qualitative error analysis
+
+---
+
+### 7.7 Cross-Architecture Evaluation Variation
+
+Evaluation metrics may vary slightly when computed on different GPU architectures:
+
+| Architecture | Whisper Variation | Wav2Vec2 Variation |
+|--------------|-------------------|---------------------|
+| Same GPU, multiple runs | 0.000pp | 0.000pp |
+| Ampere vs Blackwell | ~0.002pp | ~0.2pp |
+
+**Implications:**
+- Results from RTX 3090 and RTX 5090 are not directly comparable at high precision
+- CTC-based models (Wav2Vec2) show 100× larger variation than seq2seq models (Whisper)
+- Rankings and conclusions are unaffected (differences are below statistical significance)
+
+**Recommendation:** Report hardware configuration in methodology; use single architecture for all evaluations.
+
+**Reference:** See `docs/GPU_COMPATIBILITY.md` for detailed cross-architecture testing results.
+
+---
+
+### 7.8 Normalisation Mode Selection
+
+This project supports two text normalisation modes that affect metric calculation:
+
+#### Standard Mode
+```python
+def _normalize_text(text: str, mode: str = "standard") -> str:
+    text = text.lower()
+    # No punctuation removal
+    return " ".join(text.split())
+```
+- Lowercases text, collapses whitespace
+- **Preserves punctuation**
+- Use for: Comparability with published benchmarks using standard WER
+
+#### ASR-Fair Mode (Default)
+```python
+def _normalize_text(text: str, mode: str = "asr_fair") -> str:
+    text = text.lower()
+    import string
+    text = text.translate(str.maketrans('', '', string.punctuation))
+    return " ".join(text.split())
+```
+- Lowercases text, **removes punctuation**, collapses whitespace
+- Use for: Fair cross-architecture comparison (CTC vs seq2seq models)
+
+#### Why This Matters
+
+CTC-based models (Wav2Vec2, MMS) typically do not output punctuation, while seq2seq models (Whisper) do. Under standard normalisation, CTC models are penalized for missing punctuation they were never trained to produce.
+
+**Empirical impact (863-sample test set):**
+
+| Model | Standard WER | ASR-Fair WER | Δ |
+|-------|--------------|--------------|---|
+| whisper-large-v3-turbo | 30.94% | 28.23% | -2.71pp |
+| wav2vec2-german-with-lm | 75.28% | 70.05% | -5.23pp |
+| wav2vec2-1b-german-cv11 | 72.42% | 70.97% | -1.45pp |
+
+CTC models with LM decoding benefit most from fair normalisation.
+
+#### Recommendation
+
+Report **both** metrics in research for transparency. Document which mode was used for each comparison.
 
 ---
 
@@ -1008,8 +1095,7 @@ logging:
 ---
 
 **Document Version:** 2.1  
-**Last Updated:** 2025-12-04  
+**Last Updated:** 2026-01-05  
 **Authors:** Till Ermold  
 **Revisions:** 
-- v2.0: Corrected error rate calculation methods, fixed translation task examples, added empirical validation
-- v2.1: Clarified model-agnostic framework, added Wav2Vec2 examples, updated task definition to cover both translation and recognition models
+- Documented normalisation mode changes in Section 7.8 and their impact on WER calculations.

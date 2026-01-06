@@ -69,7 +69,9 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} bash << ENDSSH
     cd /workspace/cp-swiss-german-asr
 
     echo "📦 Installing requirements (no-cache)..."
-    pip install --no-cache-dir -r requirements_blackwell.txt --break-system-packages
+    apt-get update && apt-get install -y ffmpeg
+    apt-get update && apt-get install -y rsync
+    pip install --no-cache-dir -r requirements.txt --break-system-packages
     echo "✅ Dependencies installed"
     echo ""
 

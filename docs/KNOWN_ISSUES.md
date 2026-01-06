@@ -226,6 +226,87 @@ This document tracks technical issues encountered during the Swiss German ASR pr
 
 ---
 
+### 8. Cross-GPU Architecture Result Variation
+
+**Problem:** Identical evaluation code produces slightly different WER/CER/BLEU results when run on different GPU architectures (e.g., RTX 3090 vs RTX 5090 vs RTX 6000 PRO), even with deterministic settings enabled.
+
+**Observed Behaviour:**
+
+| Model | RTX 3090 (Ampere) | RTX 5090/6000 PRO | Δ |
+|-------|-------------------|-------------------|---|
+| whisper-large-v3-turbo WER | 28.2275% | 28.2258% | -0.0017pp |
+| whisper-large-v3-turbo CER | 13.6589% | 13.6622% | +0.0033pp |
+| whisper-medium CER | 15.8972% | 15.8988% | +0.0016pp |
+| wav2vec2-1b-german-cv11 WER | 69.7233% | 69.9233% | +0.20pp |
+
+**Root Cause:** Expected behaviour per PyTorch documentation—different GPU architectures use different cuDNN kernel implementations and floating-point accumulation paths.
+
+**Key Finding:** PyTorch version is NOT the cause. RTX 3090 with PyTorch 2.6.0 and PyTorch 2.8.0 produce identical results. GPU architecture is the determining factor.
+
+**Solution:** 
+1. Use a single GPU architecture for all final thesis evaluations
+2. Document hardware: "All evaluations conducted on NVIDIA RTX 3090 (Ampere, sm_86)"
+
+**References:**
+- [PyTorch Reproducibility Guide](https://pytorch.org/docs/stable/notes/randomness.html)
+- [HuggingFace Issue #38874](https://github.com/huggingface/transformers/issues/38874)
+
+---
+
+### 9. RTX 5090 Non-Deterministic Initialisation
+
+**Problem:** RTX 5090 produces different results between consecutive runs, even with identical code.
+
+**Observed Behaviour:**
+- Run 1 on RTX 5090: Results match RTX 3090 exactly
+- Run 2 on RTX 5090: Results match RTX 6000 PRO (different from Run 1)
+- RTX 3090 and RTX 6000 PRO: Consistent across all runs
+
+**Root Cause:** Known Blackwell architecture issue (HuggingFace #38874).
+
+**Solution:** Avoid RTX 5090 for reproducibility-critical evaluation. Use RTX 3090 or RTX 4090.
+
+---
+
+### 10. TorchCodec Required Error on PyTorch 2.8
+
+**Problem:** Wav2Vec2 evaluation fails on PyTorch 2.8.0:
+```
+TorchCodec is required for load_with_torchcodec.
+```
+
+**Root Cause:** PyTorch 2.8.0 changed torchaudio's default audio loading backend.
+
+**Affected Models:** Wav2Vec2, MMS (any model using torchaudio.load())
+
+**Not Affected:** Whisper (uses openai-whisper's own audio loading)
+
+**Solution:** Use `requirements.txt` (PyTorch 2.6.0) on RTX 3090 for CTC model evaluations.
+
+---
+
+### 11. FFmpeg Not Found on RunPod RTX 3090 Instances
+
+**Problem:** Whisper evaluation fails with:
+```
+FileNotFoundError: [Errno 2] No such file or directory: 'ffmpeg'
+```
+
+**Root Cause:** RunPod RTX 3090 instances do not have ffmpeg pre-installed. Whisper requires the ffmpeg CLI binary in the system PATH—pip packages like `imageio-ffmpeg` or `static-ffmpeg` do not resolve this because they install ffmpeg to Python package directories, not system PATH locations.
+
+**Note:** RTX 5090 and RTX 6000 PRO instances have ffmpeg pre-installed.
+
+**Solution Implemented:** The `scripts/batch_evaluation.sh` script installs ffmpeg before running evaluations:
+
+```bash
+apt-get update && apt-get install -y ffmpeg
+pip install --no-cache-dir -r requirements.txt --break-system-packages
+```
+
+**Why pip-based ffmpeg packages don't work:** Whisper calls `subprocess.run(["ffmpeg", ...])` with a bare command name, relying on system PATH lookup. Pip packages provide Python APIs and bundled binaries but don't integrate with subprocess PATH resolution in containerised environments.
+
+---
+
 ## Best Practices Derived
 
 ### Data Pipeline
@@ -265,4 +346,4 @@ This document tracks technical issues encountered during the Swiss German ASR pr
 
 ---
 
-**Last Updated:** 2025-11-26 (Week 4, German Adaptation Phase)
+**Last Updated:** 2026-01-05 (GPU Compatibility and Normalisation Mode Updates)

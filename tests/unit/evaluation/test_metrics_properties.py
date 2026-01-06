@@ -34,7 +34,8 @@ from src.evaluation.metrics import (
     calculate_bleu_score,
     batch_wer,
     batch_cer,
-    batch_bleu
+    batch_bleu,
+    _normalize_text
 )
 
 
@@ -70,7 +71,11 @@ class TestWERProperties:
     @settings(max_examples=50, deadline=None)
     def test_wer_empty_hypothesis_is_100(self, reference):
         """WER should be 100 when hypothesis is empty (all deletions)."""
+        from src.evaluation.metrics import _normalize_text
         assume(reference.strip())
+        # After normalization, reference must still have content
+        normalized_ref = _normalize_text(reference)
+        assume(normalized_ref.strip())
 
         wer = calculate_wer(reference, "")
         assert wer == 100.0
@@ -131,6 +136,9 @@ class TestCERProperties:
     def test_cer_empty_hypothesis_is_100(self, reference):
         """CER should be 100 when hypothesis is empty."""
         assume(reference.strip())
+        # Also ensure the normalized reference has content
+        normalized_ref = _normalize_text(reference)
+        assume(normalized_ref.strip())
 
         cer = calculate_cer(reference, "")
         assert cer == 100.0
@@ -158,7 +166,11 @@ class TestBLEUProperties:
     @settings(max_examples=50, deadline=None)
     def test_bleu_identical_strings_is_100(self, text):
         """BLEU should be 100 for identical strings."""
+        from src.evaluation.metrics import _normalize_text
         assume(text.strip())
+        # After normalization, text must still have content
+        normalized_text = _normalize_text(text)
+        assume(normalized_text.strip())
 
         bleu = calculate_bleu_score(text, text)
         assert bleu == pytest.approx(100.0, abs=0.1)
@@ -220,7 +232,10 @@ class TestBatchMetricsProperties:
     @settings(max_examples=30, deadline=None)
     def test_batch_bleu_identical_lists(self, texts):
         """Batch BLEU should be ~100 when all references match hypotheses."""
+        from src.evaluation.metrics import _normalize_text
         assume(all(t.strip() for t in texts))
+        # After normalization, all texts must still have content
+        assume(all(_normalize_text(t).strip() for t in texts))
 
         result = batch_bleu(texts, texts)
 

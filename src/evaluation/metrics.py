@@ -11,17 +11,21 @@ evaluation metrics including WER, CER, and BLEU score.
 
 
 
-def _normalize_text(text: str) -> str:
+def _normalize_text(text: str, mode: str = "asr_fair") -> str:
     """
-    Normalize text by converting to lowercase and stripping whitespace.
+    Normalize text for metric calculation.
     
-    Args:
-        text: Input text string
-        
-    Returns:
-        Normalized text string
+    Modes:
+    - "standard": lowercase + whitespace collapse (applied in previous analyses, preserves punctuation)
+    - "asr_fair": lowercase + punctuation removal + whitespace collapse (new default for future ASR evaluations)
     """
-    return " ".join(text.lower().split())
+    text = text.lower()
+    
+    if mode == "asr_fair":
+        import string
+        text = text.translate(str.maketrans('', '', string.punctuation))
+    
+    return " ".join(text.split())
 
 
 def _filter_empty_references(references: List[str], hypotheses: List[str]) -> tuple:
