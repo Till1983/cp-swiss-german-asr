@@ -16,8 +16,8 @@ def _normalize_text(text: str, mode: str = "asr_fair") -> str:
     Normalize text for metric calculation.
     
     Modes:
-    - "standard": lowercase + whitespace collapse (current behavior, preserves punctuation)
-    - "asr_fair": lowercase + punctuation removal + whitespace collapse
+    - "standard": lowercase + whitespace collapse (applied in previous analyses, preserves punctuation)
+    - "asr_fair": lowercase + punctuation removal + whitespace collapse (new default for future ASR evaluations)
     """
     text = text.lower()
     
