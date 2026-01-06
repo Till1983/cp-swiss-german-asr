@@ -1098,4 +1098,4 @@ logging:
 **Last Updated:** 2026-01-05  
 **Authors:** Till Ermold  
 **Revisions:** 
-- Documented normmalisation mode changes in Section 7.8 and their impact on WER calculations.
+- Documented normalisation mode changes in Section 7.8 and their impact on WER calculations.
