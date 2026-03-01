@@ -61,8 +61,9 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} bash << 'ENDSSH'
 
     cd /workspace/cp-swiss-german-asr
 
-    echo "[INSTALL] Installing requirements (no-cache)..."
-    pip install --no-cache-dir -r requirements_blackwell.txt --break-system-packages
+    echo "[INSTALL] Installing requirements..."
+    apt-get update && apt-get install -y rsync
+    pip install --default-timeout=600 -r requirements.txt --break-system-packages
     
     # Define paths
     RESULTS_DIR="/workspace/results"
