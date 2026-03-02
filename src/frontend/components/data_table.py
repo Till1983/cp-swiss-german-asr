@@ -54,6 +54,18 @@ def display_data_table(
             format="%.2f",
             help="BLEU score - higher is better"
         ),
+        "chrf": st.column_config.NumberColumn(
+            "chrF",
+            width="small",
+            format="%.2f",
+            help="chrF score - higher is better"
+        ),
+        "semdist": st.column_config.NumberColumn(
+            "SemDist",
+            width="small",
+            format="%.3f",
+            help="Semantic Distance - lower is better"
+        ),
         "model": st.column_config.TextColumn(
             "Model",
             width="medium",

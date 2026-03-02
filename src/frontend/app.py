@@ -49,7 +49,7 @@ st.title("🎙️ Swiss German ASR Model Evaluation Dashboard")
 st.markdown("""
 This dashboard provides comprehensive evaluation results for Automatic Speech Recognition (ASR) 
 models tested on Swiss German dialects. Compare model performance across different dialects 
-using metrics like WER (Word Error Rate), CER (Character Error Rate), and BLEU scores.
+using metrics like WER (Word Error Rate), CER (Character Error Rate), BLEU, chrF, and Semantic Distance.
 """)
 
 # Load data
@@ -212,19 +212,27 @@ with tab1:  # Overview
     # Display overall metrics from OVERALL row
     overall_df = filtered_df[filtered_df['dialect'] == 'OVERALL']
     
-    col1, col2, col3 = st.columns(3)
-    
+    col1, col2, col3, col4, col5 = st.columns(5)
+
     if 'wer' in overall_df.columns and not overall_df.empty:
         with col1:
             st.metric("Average WER", f"{overall_df['wer'].mean():.2f}%")
-    
+
     if 'cer' in overall_df.columns and not overall_df.empty:
         with col2:
             st.metric("Average CER", f"{overall_df['cer'].mean():.2f}%")
-    
+
     if 'bleu' in overall_df.columns and not overall_df.empty:
         with col3:
             st.metric("Average BLEU", f"{overall_df['bleu'].mean():.2f}")
+
+    if 'chrf' in overall_df.columns and not overall_df.empty:
+        with col4:
+            st.metric("Average chrF", f"{overall_df['chrf'].mean():.2f}")
+
+    if 'semdist' in overall_df.columns and not overall_df.empty:
+        with col5:
+            st.metric("Average SemDist", f"{overall_df['semdist'].mean():.3f}")
     
     # Add summary statistics
     st.divider()
@@ -281,7 +289,7 @@ with tab2:  # Dialect Analysis
             """)
             
             # Determine sort direction based on metric
-            sort_ascending = selected_metric in ['wer', 'cer']  # Lower is better for WER/CER
+            sort_ascending = selected_metric in ['wer', 'cer', 'semdist']  # Lower is better
             
             # Display comparison table
             styled_comparison = compare_models(
@@ -395,9 +403,35 @@ with tab3:  # Detailed Metrics
             show_legend=True
         )
         st.plotly_chart(fig_bleu, use_container_width=True)
-    
+
+    # Add chrF comparison if available
+    if not filtered_df.empty and 'chrf' in filtered_df.columns:
+        st.subheader("chrF Score Comparison by Dialect")
+        chrf_chart_data = prepare_chart_data(filtered_df, 'chrf')
+        fig_chrf = create_metric_comparison_chart(
+            data=chrf_chart_data,
+            metric_name="CHRF",
+            title="chrF Score by Dialect",
+            height=450,
+            show_legend=True
+        )
+        st.plotly_chart(fig_chrf, use_container_width=True)
+
+    # Add SemDist comparison if available
+    if not filtered_df.empty and 'semdist' in filtered_df.columns:
+        st.subheader("Semantic Distance Comparison by Dialect")
+        semdist_chart_data = prepare_chart_data(filtered_df, 'semdist')
+        fig_semdist = create_metric_comparison_chart(
+            data=semdist_chart_data,
+            metric_name="SEMDIST",
+            title="Semantic Distance by Dialect",
+            height=450,
+            show_legend=True
+        )
+        st.plotly_chart(fig_semdist, use_container_width=True)
+
     st.divider()
-    
+
     # Add the detailed data table here
     display_data_table(
         filtered_df,

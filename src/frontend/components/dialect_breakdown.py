@@ -27,7 +27,7 @@ from utils.error_data_loader import (
 
 def create_dialect_comparison(
     df: pd.DataFrame,
-    selected_metric: Literal['wer', 'cer', 'bleu'] = 'wer',
+    selected_metric: Literal['wer', 'cer', 'bleu', 'chrf', 'semdist'] = 'wer',
     models: Optional[List[str]] = None
 ) -> go.Figure:
     """
@@ -50,9 +50,11 @@ def create_dialect_comparison(
     metric_labels = {
         'wer': 'Word Error Rate (%)',
         'cer': 'Character Error Rate (%)',
-        'bleu': 'BLEU Score'
+        'bleu': 'BLEU Score',
+        'chrf': 'chrF Score',
+        'semdist': 'Semantic Distance',
     }
-    
+
     # Get unique models and dialects
     unique_models = df_filtered['model'].unique()
     unique_dialects = sorted(df_filtered['dialect'].unique())
@@ -105,7 +107,7 @@ def create_dialect_comparison(
 
 def create_aggregate_comparison(
     df: pd.DataFrame,
-    selected_metric: Literal['wer', 'cer', 'bleu'] = 'wer',
+    selected_metric: Literal['wer', 'cer', 'bleu', 'chrf', 'semdist'] = 'wer',
     models: Optional[List[str]] = None
 ) -> go.Figure:
     """
@@ -133,11 +135,13 @@ def create_aggregate_comparison(
     metric_labels = {
         'wer': 'Word Error Rate (%)',
         'cer': 'Character Error Rate (%)',
-        'bleu': 'BLEU Score'
+        'bleu': 'BLEU Score',
+        'chrf': 'chrF Score',
+        'semdist': 'Semantic Distance',
     }
-    
-    # Sort by metric (ascending for WER/CER, descending for BLEU)
-    sort_ascending = selected_metric != 'bleu'
+
+    # Sort by metric (ascending for WER/CER/semdist, descending for BLEU/chrF)
+    sort_ascending = selected_metric not in ('bleu', 'chrf')
     df_agg = df_agg.sort_values(selected_metric, ascending=sort_ascending)
     
     # Create bar chart
