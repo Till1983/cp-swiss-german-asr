@@ -152,6 +152,12 @@ class SeamlessM4TModel:
             output_tokens = self.model.generate(
                 **audio_inputs,
                 tgt_lang=tgt_lang,
+                max_new_tokens=448,           # Limit generation length (~30 seconds max)
+                num_beams=5,                  # Beam search for better decoding
+                repetition_penalty=1.2,       # Prevent repetition loops (e.g., "drei Drei Drei...")
+                temperature=0.0,              # Deterministic decoding (matching Whisper behavior)
+                length_penalty=1.0,           # Neutral length penalty
+                no_repeat_ngram_size=3,       # Prevent phrase repetition
             )
 
         # Decode output tokens to text
