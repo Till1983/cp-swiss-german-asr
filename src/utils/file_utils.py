@@ -68,27 +68,44 @@ def save_results_csv(results: Dict, output_path: str) -> None:
         
         output_path = Path(output_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        
+
+        # Check for optional new metrics
+        has_chrf = 'per_dialect_chrf' in results and 'overall_chrf' in results
+        has_semdist = (
+            'per_dialect_semdist' in results
+            and results.get('overall_semdist') is not None
+        )
+
         # Get all unique dialects (should be consistent across metrics)
         dialects = set(results['per_dialect_wer'].keys())
-        
+
         # Build comprehensive per-dialect data
         data = []
         for dialect in sorted(dialects):
-            data.append({
+            row = {
                 'dialect': dialect,
                 'wer': results['per_dialect_wer'].get(dialect, None),
                 'cer': results['per_dialect_cer'].get(dialect, None),
-                'bleu': results['per_dialect_bleu'].get(dialect, None)
-            })
-        
+                'bleu': results['per_dialect_bleu'].get(dialect, None),
+            }
+            if has_chrf:
+                row['chrf'] = results['per_dialect_chrf'].get(dialect, None)
+            if has_semdist:
+                row['semdist'] = results['per_dialect_semdist'].get(dialect, None)
+            data.append(row)
+
         # Add overall metrics as a summary row
-        data.append({
+        overall_row = {
             'dialect': 'OVERALL',
             'wer': results.get('overall_wer', None),
             'cer': results.get('overall_cer', None),
-            'bleu': results.get('overall_bleu', None)
-        })
+            'bleu': results.get('overall_bleu', None),
+        }
+        if has_chrf:
+            overall_row['chrf'] = results.get('overall_chrf', None)
+        if has_semdist:
+            overall_row['semdist'] = results.get('overall_semdist', None)
+        data.append(overall_row)
         
         df = pd.DataFrame(data)
         df.to_csv(output_path, index=False)
