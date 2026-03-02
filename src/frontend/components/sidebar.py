@@ -43,7 +43,7 @@ def render_sidebar(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
     # Metric selection
     selected_metric = st.sidebar.radio(
         "Select Metric",
-        options=["WER", "CER", "BLEU"],
+        options=["WER", "CER", "BLEU", "CHRF", "SEMDIST"],
         index=0,
         help="Choose which metric to visualize"
     )
