@@ -48,7 +48,7 @@ MODEL_REGISTRY = {
         "lm_path": str(MODELS_DIR / "lm" / "kenLM.arpa") 
     },
 
-     # ✅ Added adapted German model - needs to be retrained and uploaded
+     # ✅ Added adapted German model - not usable for evaluation but included for completeness
     "wav2vec2-ger-nl-adapted": {
         "type": "wav2vec2",
         "name": str(MODELS_DIR / "adapted" / "wav2vec2-german-adapted"),
