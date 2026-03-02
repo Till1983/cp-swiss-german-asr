@@ -1,0 +1,54 @@
+{
+  "timestamp": "2026-03-02T11:02:15.138029",
+  "models": {
+    "whisper-large-v3-turbo": {
+      "mean_wer": 28.22747903570615,
+      "mean_cer": 14.127177935154908,
+      "mean_bleu": 54.62921366917139,
+      "total_samples": 863,
+      "semantic_preservation_rate": 1.2746234067207416
+    },
+    "whisper-large-v3": {
+      "mean_wer": 26.92940315767662,
+      "mean_cer": 13.67540204396221,
+      "mean_bleu": 56.925277308607384,
+      "total_samples": 863,
+      "semantic_preservation_rate": 0.9269988412514484
+    },
+    "whisper-large-v2": {
+      "mean_wer": 25.629963894737937,
+      "mean_cer": 12.584709476894972,
+      "mean_bleu": 58.45543305754335,
+      "total_samples": 863,
+      "semantic_preservation_rate": 0.6952491309385863
+    },
+    "whisper-medium": {
+      "mean_wer": 31.19638826475443,
+      "mean_cer": 15.972028891176075,
+      "mean_bleu": 51.472373930962625,
+      "total_samples": 863,
+      "semantic_preservation_rate": 0.6952491309385863
+    },
+    "seamless-m4t-v2-large": {
+      "mean_wer": 49.17607434409288,
+      "mean_cer": 24.752434932766977,
+      "mean_bleu": 33.32267425823342,
+      "total_samples": 863,
+      "semantic_preservation_rate": 1.2746234067207416
+    },
+    "wav2vec2-1b-german-cv11": {
+      "mean_wer": 70.97366486995688,
+      "mean_cer": 29.703200973308082,
+      "mean_bleu": 14.28962696307997,
+      "total_samples": 863,
+      "semantic_preservation_rate": 0.2317497103128621
+    },
+    "wav2vec2-german-with-lm": {
+      "mean_wer": 70.047902721715,
+      "mean_cer": 30.8901460925365,
+      "mean_bleu": 16.28336336154841,
+      "total_samples": 863,
+      "semantic_preservation_rate": 0.4634994206257242
+    }
+  }
+}
