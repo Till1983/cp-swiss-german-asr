@@ -198,11 +198,19 @@ def main():
             logger.info(f"  Overall WER: {results['overall_wer']:.4f}")
             logger.info(f"  Overall CER: {results['overall_cer']:.4f}")
             logger.info(f"  Overall BLEU: {results['overall_bleu']:.4f}")
+            if results.get('overall_chrf') is not None:
+                logger.info(f"  Overall chrF: {results['overall_chrf']:.4f}")
+            if results.get('overall_semdist') is not None:
+                logger.info(f"  Overall SemDist: {results['overall_semdist']:.4f}")
             
             print(f"✓ Model {model_spec} evaluation complete")
             print(f"  Overall WER: {results['overall_wer']:.4f}")
             print(f"  Overall CER: {results['overall_cer']:.4f}")
             print(f"  Overall BLEU: {results['overall_bleu']:.4f}")
+            if results.get('overall_chrf') is not None:
+                print(f"  Overall chrF: {results['overall_chrf']:.4f}")
+            if results.get('overall_semdist') is not None:
+                print(f"  Overall SemDist: {results['overall_semdist']:.4f}")
             
         except Exception as e:
             logger.error(f"❌ Error evaluating {model_spec}: {e}", exc_info=True)
@@ -212,21 +220,40 @@ def main():
     
     # Print summary table
     if all_results:
-        print(f"\n{'='*80}")
+        # Detect whether chrF / SemDist are available in any result
+        has_chrf = any(r.get('overall_chrf') is not None for r in all_results.values())
+        has_semdist = any(r.get('overall_semdist') is not None for r in all_results.values())
+
+        col_width = 100 + (10 if has_chrf else 0) + (12 if has_semdist else 0)
+        print(f"\n{'='*col_width}")
         print("EVALUATION SUMMARY")
-        print(f"{'='*80}")
-        print(f"{'Model':<30} {'WER':<10} {'CER':<10} {'BLEU':<10} {'Samples':<10}")
-        print(f"{'-'*80}")
+        print(f"{'='*col_width}")
+        header = f"{'Model':<30} {'WER':<10} {'CER':<10} {'BLEU':<10}"
+        if has_chrf:
+            header += f" {'chrF':<10}"
+        if has_semdist:
+            header += f" {'SemDist':<12}"
+        header += f" {'Samples':<10}"
+        print(header)
+        print(f"{'-'*col_width}")
         
         for model_spec, results in all_results.items():
-            print(f"{model_spec:<30} "
-                  f"{results['overall_wer']:<10.4f} "
-                  f"{results['overall_cer']:<10.4f} "
-                  f"{results['overall_bleu']:<10.4f} "
-                  f"{results['total_samples']:<10}")
+            row = (f"{model_spec:<30} "
+                   f"{results['overall_wer']:<10.4f} "
+                   f"{results['overall_cer']:<10.4f} "
+                   f"{results['overall_bleu']:<10.4f}")
+            if has_chrf:
+                chrf_val = results.get('overall_chrf')
+                row += f" {chrf_val:<10.4f}" if chrf_val is not None else f" {'N/A':<10}"
+            if has_semdist:
+                semdist_val = results.get('overall_semdist')
+                row += f" {semdist_val:<12.4f}" if semdist_val is not None else f" {'N/A':<12}"
+            row += f" {results['total_samples']:<10}"
+            print(row)
         
-        print(f"{'='*80}")
-        print(f"\nResults saved to: {output_dir}")
+        print(f"{'='*col_width}")
+        print(f"\nNormalisation: ASR-Fair (lowercase + punctuation removal)")
+        print(f"Results saved to: {output_dir}")
     else:
         print("❌ No models were successfully evaluated")
         sys.exit(1)
