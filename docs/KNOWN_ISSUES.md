@@ -307,6 +307,53 @@ pip install --no-cache-dir -r requirements.txt --break-system-packages
 
 ---
 
+### 12. Normalisation Mode Inflated Legacy Evaluation Metrics
+
+**Problem:** All model evaluation results prior to January 2026 were computed using **Standard Normalisation** (lowercase only, punctuation preserved). Because model outputs differ in punctuation style — particularly LM-enhanced Wav2Vec2 models — this artificially inflated WER and CER and deflated BLEU for virtually all models. The effect was most pronounced for `wav2vec2-german-with-lm` (WER inflated by 5.23pp) but affected every model to some degree (~2.5–2.9pp for Whisper models).
+
+**Solution Implemented:**
+- Default normalisation mode changed to **ASR-Fair** (lowercase + punctuation removal) in January 2026
+- Old results preserved in documentation as **legacy (Standard Normalisation)** for reproducibility
+- New evaluation run (March 2026) provides ASR-Fair results for all seven models
+- Full breakdown in [docs/MODEL_SELECTION.md](MODEL_SELECTION.md)
+
+**Result:** Legacy results are clearly labelled and not used for current comparisons. New results are the authoritative figures.
+
+**Lessons Learned:**
+- Punctuation handling in normalisation has outsized impact on model ranking, especially when comparing models that differ in output style (e.g., LM decoding vs. greedy CTC)
+- Report normalisation mode explicitly alongside all metric figures
+- Standard ASR benchmarks (e.g., SpeechBench, ESB) typically strip punctuation; align with community conventions
+
+**Related Files:**
+- `src/evaluation/metrics.py` (lines 1–50: `_normalize_text`, mode parameter)
+- `docs/MODEL_SELECTION.md` (Legacy and Current results sections)
+
+---
+
+### 13. chrF and SemDist Metrics Added to Evaluation Pipeline (March 2026)
+
+**Context:** The initial evaluation pipeline computed only WER, CER, and BLEU. As of March 2026, **chrF** (character n-gram F-score via `sacrebleu`) and **SemDist** (semantic distance via `sentence-transformers`) are computed for every evaluation run.
+
+**Implementation details:**
+- chrF uses `sacrebleu.CHRF` with default parameters (β=1, character n-gram order 6); corpus-level aggregation for overall score
+- SemDist uses `paraphrase-multilingual-mpnet-base-v2` via `sentence-transformers`; mean of per-sample scores
+- SemDist is gracefully skipped if `sentence-transformers` is not installed (reported as `null` in results)
+- Both metrics are ASR-Fair normalised before computation
+- `save_results_csv` and `save_results_json` detect presence of metrics conditionally, maintaining backward compatibility with older result files
+
+**Result:** All evaluation runs from March 2026 onward include five metrics (WER, CER, BLEU, chrF, SemDist). Older result files in `results/metrics/` contain only WER, CER, BLEU — dashboard and API handle both formats.
+
+**Lessons Learned:**
+- chrF is more stable than BLEU for short sentences and morphologically rich languages (German compound words score better under character-level metrics)
+- SemDist captures valid translation variants that WER/CER penalise as errors, providing a complementary view of translation quality for Whisper models
+
+**Related Files:**
+- `src/evaluation/metrics.py` (`calculate_chrf`, `batch_chrf`, `calculate_semdist`, `batch_semdist`)
+- `src/evaluation/evaluator.py` (lines 216–222: SentenceTransformer loading; lines 283–298: per-sample metric computation)
+- `src/utils/file_utils.py` (lines 73–107: conditional chrF/SemDist in CSV/JSON output)
+
+---
+
 ## Best Practices Derived
 
 ### Data Pipeline
@@ -346,4 +393,4 @@ pip install --no-cache-dir -r requirements.txt --break-system-packages
 
 ---
 
-**Last Updated:** 2026-01-05 (GPU Compatibility and Normalisation Mode Updates)
+**Last Updated:** 2026-03-03 (Added issues #12 and #13: Normalisation Legacy Results, chrF/SemDist Metrics Integration)

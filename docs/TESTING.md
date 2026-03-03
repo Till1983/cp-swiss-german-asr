@@ -158,7 +158,7 @@ def test_complete_api_evaluation_flow():
 Coverage targets are based on failure impact:
 
 1. **High Risk (100% required):**
-    - Metric calculations (WER, CER, BLEU)
+    - Metric calculations (WER, CER, BLEU, chrF, SemDist)
     - Model transcription logic
     - Error analysis algorithms
     - API validation and error handling
@@ -267,6 +267,12 @@ Recent improvements (Dec 2025):
 - Added comprehensive unit tests for `src/frontend/utils/data_loader.py` and `src/training/trainer.py`
 - Total tests: 463; overall coverage ~97%
 - HTML coverage report generated at `htmlcov/index.html`
+
+Recent improvements (Mar 2026):
+
+- Added unit tests for `calculate_chrf`, `batch_chrf`, `calculate_semdist`, and `batch_semdist` in `src/evaluation/metrics.py`
+- Added tests covering ASR-Fair and Standard Normalisation modes in `_normalize_text`
+- Added tests for `save_results_json` and `save_results_csv` with chrF/SemDist fields present and absent
 
 Note: Coverage figures are expected to change as the codebase evolves; rely on the generated report rather than static documentation.
 

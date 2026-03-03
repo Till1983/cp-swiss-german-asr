@@ -127,6 +127,8 @@ Compared to Reference: "ich gehe heute in die stadt"
 | **Substitution** | Wrong word choice OR valid translation variant | Phonetic confusion OR dialectal lexicon |
 | **Deletion** | Translation omission | Failed to hear/recognise word |
 | **Insertion** | Over-generation/hallucination | Extra transcribed sounds |
+| **chrF** | Translation character-level fidelity (surface form) | Recognition character overlap with Standard German reference |
+| **SemDist** | Semantic meaning preservation (0 = identical meaning; highly informative for translation) | Semantic distance from Standard German (reflects dialect gap as well as recognition errors) |
 
 #### 3. Confusion Pairs Reveal Different Patterns
 
@@ -143,12 +145,16 @@ Compared to Reference: "ich gehe heute in die stadt"
 
 From actual results (FHNW corpus, 863 samples):
 
-| Model | Mean WER | Primary Error Type | Task |
+> **⚠️ Legacy results (Standard Normalisation):** WER figures below were computed using Standard Normalisation (lowercase only, punctuation preserved), which inflated WER for all models. See [docs/MODEL_SELECTION.md](MODEL_SELECTION.md) for current ASR-Fair Normalisation results including chrF and SemDist.
+
+| Model | Mean WER *(legacy)* | Primary Error Type | Task |
 |-------|----------|-------------------|------|
 | whisper-large-v2 | 28.00% | Substitution (18.98%) | Translation |
 | whisper-large-v3 | 29.53% | Substitution (19.92%) | Translation |
 | wav2vec2-german-with-lm | 75.28% | Substitution (55.18%) | Recognition |
 | wav2vec2-1b-german-cv11 | 72.42% | Substitution (54.46%) | Recognition |
+
+**Current ASR-Fair WER (March 2026):** whisper-large-v2: 25.63%, whisper-large-v3: 26.93%, wav2vec2-german-with-lm: 70.05%, wav2vec2-1b-german-cv11: 70.97%. chrF and SemDist further confirm Whisper's semantic advantage (SemDist ~0.055–0.057 vs. ~0.286).
 
 **Key Observation:** Wav2Vec2 models show 2.5-3x higher WER because:
 1. They were not explicitly trained for Swiss German dialects

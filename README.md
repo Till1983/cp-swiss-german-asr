@@ -68,6 +68,10 @@ The dashboard displays **pre-computed evaluation results** from multiple ASR mod
 - **WER** (Word Error Rate): Lower is better, measures word-level accuracy
 - **CER** (Character Error Rate): Lower is better, measures character-level accuracy
 - **BLEU**: Higher is better (0-100), measures translation quality
+- **chrF** (Character F-score): Higher is better (0-100), measures character n-gram overlap — more robust than word-level metrics for morphologically rich languages
+- **SemDist** (Semantic Distance): Lower is better (0–1), cosine distance between sentence embeddings — captures meaning preservation beyond surface form
+
+> **⚠️ Normalisation Note:** Results prior to March 2026 were computed using **Standard Normalisation** (lowercase only, punctuation preserved), which artificially inflated WER and CER and deflated BLEU for models whose output punctuation differed from the reference. Current results use **ASR-Fair Normalisation** (lowercase + punctuation removal) for a fair cross-model comparison. See [docs/MODEL_SELECTION.md](docs/MODEL_SELECTION.md) for the full breakdown including legacy and current results.
 
 ### Visualisations
 1. **Model Comparison:** Side-by-side WER/CER/BLEU across all models
@@ -236,13 +240,17 @@ curl -X POST http://localhost:8000/api/evaluate \
   "overall_wer": 28.5,
   "overall_cer": 12.3,
   "overall_bleu": 68.7,
+  "overall_chrf": 83.2,
+  "overall_semdist": 0.062,
   "per_dialect_wer": {"BE": 25.0, "ZH": 30.0},
   "per_dialect_cer": {"BE": 10.0, "ZH": 13.0},
-  "per_dialect_bleu": {"BE": 72.0, "ZH": 67.0}
+  "per_dialect_bleu": {"BE": 72.0, "ZH": 67.0},
+  "per_dialect_chrf": {"BE": 85.1, "ZH": 82.4},
+  "per_dialect_semdist": {"BE": 0.052, "ZH": 0.068}
 }
 ```
 
-**Note:** WER and CER are percentages (0-100, lower is better). BLEU is 0-100 (higher is better).
+**Note:** WER and CER are percentages (0-100, lower is better). BLEU and chrF are 0-100 (higher is better). SemDist is 0–1 (lower is better). All metrics use ASR-Fair Normalisation (lowercase + punctuation removal).
 
 ---
 
@@ -429,5 +437,5 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Last Updated:** December 23, 2025  
-**Version:** 3.0 (Add Core API Endpoints)
+**Last Updated:** March 3, 2026  
+**Version:** 4.0 (Add chrF and SemDist Metrics; ASR-Fair Normalisation)
