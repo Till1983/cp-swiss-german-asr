@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-03-03T12:21:02.560240",
+  "models": {
+    "whisper-large-v3-turbo": {
+      "mean_wer": 28.22747903570615,
+      "mean_cer": 14.127177935154908,
+      "mean_bleu": 54.62921366917139,
+      "total_samples": 863,
+      "semantic_preservation_rate": 1.2746234067207416
+    }
+  }
+}
