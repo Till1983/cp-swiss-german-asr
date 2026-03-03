@@ -48,6 +48,7 @@ pandas==2.2.3
 evaluate==0.4.3
 jiwer==3.0.5
 sacrebleu==2.4.3
+sentence-transformers>=2.2.0
 
 # ============================================================================
 # ASR MODELS

@@ -213,6 +213,14 @@ class ASREvaluator:
         if limit is not None and limit > 0:
             df = df.head(limit)
 
+        # Try to load SentenceTransformer model for SemDist computation (once, for efficiency)
+        semdist_model = None
+        try:
+            from sentence_transformers import SentenceTransformer
+            semdist_model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
+        except ImportError:
+            pass  # sentence-transformers not installed; SemDist will be skipped
+
         results = []
         failed_samples = 0
         total_samples = len(df)
@@ -272,6 +280,11 @@ class ASREvaluator:
             wer = metrics.calculate_wer(reference, hypothesis)
             cer = metrics.calculate_cer(reference, hypothesis)
             bleu = metrics.calculate_bleu_score(reference, hypothesis)
+            chrf = metrics.calculate_chrf(reference, hypothesis)
+            semdist = (
+                metrics.calculate_semdist(reference, hypothesis, semdist_model)
+                if semdist_model is not None else None
+            )
 
             results.append({
                 'audio_file': audio_path.name,
@@ -280,7 +293,9 @@ class ASREvaluator:
                 'hypothesis': hypothesis,
                 'wer': wer,
                 'cer': cer,
-                'bleu': bleu
+                'bleu': bleu,
+                'chrf': chrf,
+                'semdist': semdist,
             })
 
             # ✅ IMPROVEMENT 4: Print progress milestone every 10 samples
@@ -321,30 +336,45 @@ class ASREvaluator:
                 'overall_wer': 0.0,
                 'overall_cer': 0.0,
                 'overall_bleu': 0.0,
+                'overall_chrf': 0.0,
+                'overall_semdist': None,
                 'per_dialect_wer': {},
                 'per_dialect_cer': {},
                 'per_dialect_bleu': {},
+                'per_dialect_chrf': {},
+                'per_dialect_semdist': {},
                 'total_samples': 0,
                 'failed_samples': failed_samples,
                 'samples': []
             }
 
-        # Calculate aggregate metrics (unchanged)
+        # Calculate aggregate metrics
         overall_wer = sum(r['wer'] for r in results) / len(results)
-        
+
         references = [r['reference'] for r in results]
         hypotheses = [r['hypothesis'] for r in results]
         cer_result = metrics.batch_cer(references, hypotheses)
         overall_cer = cer_result['overall_cer']
-        
+
         bleu_result = metrics.batch_bleu(references, hypotheses)
         overall_bleu = bleu_result['overall_bleu']
 
-        # Aggregate per-dialect metrics (unchanged)
+        chrf_result = metrics.batch_chrf(references, hypotheses)
+        overall_chrf = chrf_result['overall_chrf']
+
+        if semdist_model is not None:
+            semdist_result = metrics.batch_semdist(references, hypotheses, semdist_model)
+            overall_semdist = semdist_result['overall_semdist']
+        else:
+            overall_semdist = None
+
+        # Aggregate per-dialect metrics
         dialects = set(r['dialect'] for r in results)
         per_dialect_wer = {}
         per_dialect_cer = {}
         per_dialect_bleu = {}
+        per_dialect_chrf = {}
+        per_dialect_semdist = {}
 
         for dialect in dialects:
             dialect_samples = [r for r in results if r['dialect'] == dialect]
@@ -354,14 +384,23 @@ class ASREvaluator:
                 hyps = [r['hypothesis'] for r in dialect_samples]
                 per_dialect_cer[dialect] = metrics.batch_cer(refs, hyps)['overall_cer']
                 per_dialect_bleu[dialect] = metrics.batch_bleu(refs, hyps)['overall_bleu']
+                per_dialect_chrf[dialect] = metrics.batch_chrf(refs, hyps)['overall_chrf']
+                if semdist_model is not None:
+                    per_dialect_semdist[dialect] = metrics.batch_semdist(
+                        refs, hyps, semdist_model
+                    )['overall_semdist']
 
         return {
             'overall_wer': overall_wer,
             'overall_cer': overall_cer,
             'overall_bleu': overall_bleu,
+            'overall_chrf': overall_chrf,
+            'overall_semdist': overall_semdist,
             'per_dialect_wer': per_dialect_wer,
             'per_dialect_cer': per_dialect_cer,
             'per_dialect_bleu': per_dialect_bleu,
+            'per_dialect_chrf': per_dialect_chrf,
+            'per_dialect_semdist': per_dialect_semdist,
             'total_samples': len(results),
             'failed_samples': failed_samples,
             'samples': results

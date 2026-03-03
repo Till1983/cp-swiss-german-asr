@@ -20,9 +20,19 @@ METRIC_THRESHOLDS = {
         'poor': (35, float('inf'))
     },
     'bleu': {
-        'excellent': (50, 100),
+        'excellent': (50, 101),
         'good': (30, 50),
         'poor': (0, 30)
+    },
+    'chrf': {
+        'excellent': (75, 101),
+        'good': (50, 75),
+        'poor': (0, 50)
+    },
+    'semdist': {
+        'excellent': (0, 0.2),
+        'good': (0.2, 0.4),
+        'poor': (0.4, float('inf'))
     }
 }
 
@@ -95,7 +105,7 @@ def _df_to_chart_data(
 
 def compare_models(
     df: pd.DataFrame,
-    selected_metric: Literal['wer', 'cer', 'bleu'] = 'wer',
+    selected_metric: Literal['wer', 'cer', 'bleu', 'chrf', 'semdist'] = 'wer',
     sort_ascending: bool = True
 ) -> pd.DataFrame:
     """
@@ -136,7 +146,7 @@ def compare_models(
 
 def create_model_comparison_chart(
     df: pd.DataFrame,
-    selected_metric: Literal['wer', 'cer', 'bleu'] = 'wer',
+    selected_metric: Literal['wer', 'cer', 'bleu', 'chrf', 'semdist'] = 'wer',
     dialects: Optional[List[str]] = None,
     height: int = 500,
     show_legend: bool = True,
@@ -157,7 +167,9 @@ def create_model_comparison_chart(
     metric_labels = {
         'wer': 'Word Error Rate',
         'cer': 'Character Error Rate',
-        'bleu': 'BLEU Score'
+        'bleu': 'BLEU Score',
+        'chrf': 'chrF Score',
+        'semdist': 'Semantic Distance',
     }
     
     chart_data = _df_to_chart_data(df, selected_metric)
@@ -175,7 +187,7 @@ def create_model_comparison_chart(
 
 def create_multi_metric_comparison(
     df: pd.DataFrame,
-    metrics: List[Literal['wer', 'cer', 'bleu']] = None,
+    metrics: List[Literal['wer', 'cer', 'bleu', 'chrf', 'semdist']] = None,
     height: int = 400,
 ) -> Dict[str, go.Figure]:
     """
@@ -183,14 +195,15 @@ def create_multi_metric_comparison(
     
     Args:
         df: DataFrame with columns ['model', 'dialect', 'wer', 'cer', 'bleu']
-        metrics: List of metrics to visualize. Defaults to ['wer', 'cer', 'bleu']
+        metrics: List of metrics to visualize. Defaults to available metrics.
         height: Chart height in pixels
         
     Returns:
         Dictionary mapping metric names to Plotly Figures
     """
     if metrics is None:
-        metrics = ['wer', 'cer', 'bleu']
+        all_metrics = ['wer', 'cer', 'bleu', 'chrf', 'semdist']
+        metrics = [m for m in all_metrics if m in df.columns]
     
     figures = {}
     for metric in metrics:
@@ -205,7 +218,7 @@ def create_multi_metric_comparison(
 
 def create_model_ranking_chart(
     df: pd.DataFrame,
-    selected_metric: Literal['wer', 'cer', 'bleu'] = 'wer',
+    selected_metric: Literal['wer', 'cer', 'bleu', 'chrf', 'semdist'] = 'wer',
     top_n: Optional[int] = None,
     height: int = 400,
 ) -> go.Figure:
@@ -227,8 +240,8 @@ def create_model_ranking_chart(
     model_avg = df_filtered.groupby('model')[selected_metric].mean().reset_index()
     model_avg.columns = ['model', 'avg_metric']
     
-    # Sort by metric (ascending for WER/CER, descending for BLEU)
-    ascending = selected_metric.lower() != 'bleu'
+    # Sort by metric (ascending for WER/CER/semdist, descending for BLEU/chrF)
+    ascending = selected_metric.lower() not in ('bleu', 'chrf')
     model_avg = model_avg.sort_values('avg_metric', ascending=not ascending)
     
     if top_n:
@@ -255,7 +268,9 @@ def create_model_ranking_chart(
     metric_labels = {
         'wer': 'Average WER (%)',
         'cer': 'Average CER (%)',
-        'bleu': 'Average BLEU Score'
+        'bleu': 'Average BLEU Score',
+        'chrf': 'Average chrF Score',
+        'semdist': 'Average Semantic Distance',
     }
     
     fig.update_layout(

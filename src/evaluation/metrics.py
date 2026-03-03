@@ -1,6 +1,8 @@
-from typing import List, Dict
+from typing import Any, List, Dict
+import numpy as np
 import jiwer
 from sacrebleu import sentence_bleu
+from sacrebleu.metrics import CHRF
 
 """
 ASR Evaluation Metrics Module
@@ -284,4 +286,195 @@ def batch_bleu(references: List[str], hypotheses: List[str]) -> Dict:
     return {
         "overall_bleu": overall_bleu,
         "per_sample_bleu": per_sample_bleu
+    }
+
+
+def calculate_chrf(reference: str, hypothesis: str) -> float:
+    """
+    Calculate chrF score between reference and hypothesis.
+    
+    chrF measures character n-gram F-score, which is more robust than
+    word-level metrics for morphologically rich languages like German.
+    
+    Args:
+        reference: Ground truth text
+        hypothesis: Predicted text
+        
+    Returns:
+        chrF score (0-100)
+    """
+    reference = _normalize_text(reference)
+    hypothesis = _normalize_text(hypothesis)
+    
+    if not reference or not hypothesis:
+        return 0.0
+    
+    chrf = CHRF()
+    result = chrf.sentence_score(hypothesis, [reference])
+    return result.score
+
+
+def batch_chrf(references: List[str], hypotheses: List[str]) -> Dict:
+    """
+    Calculate chrF score for a batch of reference-hypothesis pairs.
+    
+    Uses corpus-level chrF for overall score (consistent with WER/CER aggregate
+    calculation) and sentence-level chrF for per-sample analysis.
+    
+    Empty references or hypotheses receive a score of 0.0.
+    
+    Args:
+        references: List of ground truth texts
+        hypotheses: List of predicted texts
+        
+    Returns:
+        Dictionary containing:
+            - overall_chrf: Corpus-level chrF score across all samples
+            - per_sample_chrf: List of chrF scores for each sample
+    """
+    if len(references) != len(hypotheses):
+        raise ValueError("References and hypotheses must have the same length")
+    
+    if not references:
+        return {"overall_chrf": 0.0, "per_sample_chrf": []}
+    
+    # Normalize all texts
+    norm_references = [_normalize_text(ref) for ref in references]
+    norm_hypotheses = [_normalize_text(hyp) for hyp in hypotheses]
+    
+    chrf = CHRF()
+    
+    # Calculate per-sample chrF using sentence_score
+    per_sample_chrf = []
+    for ref, hyp in zip(norm_references, norm_hypotheses):
+        if not ref or not hyp:
+            chrf_score = 0.0
+        else:
+            chrf_score = chrf.sentence_score(hyp, [ref]).score
+        per_sample_chrf.append(chrf_score)
+    
+    # Calculate overall chrF using corpus-level aggregation
+    # Filter out empty pairs for corpus-level calculation
+    valid_refs = []
+    valid_hyps = []
+    for ref, hyp in zip(norm_references, norm_hypotheses):
+        if ref and hyp:
+            valid_refs.append(ref)
+            valid_hyps.append(hyp)
+    
+    if valid_refs:
+        overall_chrf = chrf.corpus_score(valid_hyps, [valid_refs]).score
+    else:
+        overall_chrf = 0.0
+    
+    return {
+        "overall_chrf": overall_chrf,
+        "per_sample_chrf": per_sample_chrf
+    }
+
+
+def calculate_semdist(reference: str, hypothesis: str, model: Any) -> float:
+    """
+    Calculate Semantic Distance (SemDist) between reference and hypothesis.
+    
+    SemDist = 1 - cosine_similarity between sentence embeddings.
+    Lower values indicate higher semantic similarity (0 = identical meaning,
+    1 = completely unrelated).
+    
+    Args:
+        reference: Ground truth text
+        hypothesis: Predicted text
+        model: Pre-loaded SentenceTransformer instance
+        
+    Returns:
+        Semantic distance (0-1), lower is better
+    """
+    reference = _normalize_text(reference)
+    hypothesis = _normalize_text(hypothesis)
+    
+    if not reference or not hypothesis:
+        return 1.0
+    
+    embeddings = model.encode([reference, hypothesis])
+    ref_emb = embeddings[0]
+    hyp_emb = embeddings[1]
+    
+    # Compute cosine similarity with zero-norm guard
+    norm_ref = np.linalg.norm(ref_emb)
+    norm_hyp = np.linalg.norm(hyp_emb)
+    
+    if norm_ref == 0.0 or norm_hyp == 0.0:
+        return 1.0
+    
+    cosine_sim = np.dot(ref_emb, hyp_emb) / (norm_ref * norm_hyp)
+    # Clamp to [-1, 1] to handle floating-point imprecision
+    cosine_sim = float(np.clip(cosine_sim, -1.0, 1.0))
+    
+    return 1.0 - cosine_sim
+
+
+def batch_semdist(references: List[str], hypotheses: List[str], model: Any) -> Dict:
+    """
+    Calculate Semantic Distance for a batch of reference-hypothesis pairs.
+    
+    Batch-encodes all texts at once for efficiency. Overall SemDist is the
+    mean of per-sample scores (no corpus-level aggregation applies to embeddings).
+    
+    Empty references or hypotheses receive a score of 1.0 (maximum distance).
+    
+    Args:
+        references: List of ground truth texts
+        hypotheses: List of predicted texts
+        model: Pre-loaded SentenceTransformer instance
+        
+    Returns:
+        Dictionary containing:
+            - overall_semdist: Mean semantic distance across all samples
+            - per_sample_semdist: List of semantic distances for each sample
+    """
+    if len(references) != len(hypotheses):
+        raise ValueError("References and hypotheses must have the same length")
+    
+    if not references:
+        return {"overall_semdist": 0.0, "per_sample_semdist": []}
+    
+    # Normalize all texts
+    norm_references = [_normalize_text(ref) for ref in references]
+    norm_hypotheses = [_normalize_text(hyp) for hyp in hypotheses]
+    
+    # Identify valid pairs (both non-empty) for batch encoding
+    valid_indices = []
+    all_texts = []
+    for i, (ref, hyp) in enumerate(zip(norm_references, norm_hypotheses)):
+        if ref and hyp:
+            valid_indices.append(i)
+            all_texts.extend([ref, hyp])
+    
+    # Batch encode all valid texts at once for efficiency
+    if all_texts:
+        all_embeddings = model.encode(all_texts)
+    
+    # Calculate per-sample SemDist
+    per_sample_semdist = [1.0] * len(references)  # Default: maximum distance
+    
+    for j, idx in enumerate(valid_indices):
+        ref_emb = all_embeddings[j * 2]
+        hyp_emb = all_embeddings[j * 2 + 1]
+        
+        norm_ref = np.linalg.norm(ref_emb)
+        norm_hyp = np.linalg.norm(hyp_emb)
+        
+        if norm_ref == 0.0 or norm_hyp == 0.0:
+            per_sample_semdist[idx] = 1.0
+        else:
+            cosine_sim = np.dot(ref_emb, hyp_emb) / (norm_ref * norm_hyp)
+            cosine_sim = float(np.clip(cosine_sim, -1.0, 1.0))
+            per_sample_semdist[idx] = 1.0 - cosine_sim
+    
+    # Overall SemDist = mean of per-sample scores
+    overall_semdist = sum(per_sample_semdist) / len(per_sample_semdist)
+    
+    return {
+        "overall_semdist": overall_semdist,
+        "per_sample_semdist": per_sample_semdist
     }

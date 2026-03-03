@@ -53,6 +53,16 @@ PERFORMANCE_THRESHOLDS = {
         'excellent': (50, 100),
         'good': (30, 50),
         'poor': (0, 30)
+    },
+    'chrf': {
+        'excellent': (75, 100),
+        'good': (50, 75),
+        'poor': (0, 50)
+    },
+    'semdist': {
+        'excellent': (0, 0.2),
+        'good': (0.2, 0.4),
+        'poor': (0.4, float('inf'))
     }
 }
 
@@ -250,9 +260,12 @@ def create_metric_comparison_chart(
     if metric_name.upper() in ["WER", "CER"]:
         yaxis_title = f"{metric_name} (%)"
         value_format = ":.2f}"
-    elif metric_name.upper() == "BLEU":
+    elif metric_name.upper() in ["BLEU", "CHRF"]:
         yaxis_title = f"{metric_name} Score"
         value_format = ":.2f}"
+    elif metric_name.upper() == "SEMDIST":
+        yaxis_title = "Semantic Distance"
+        value_format = ":.3f}"
     else:
         yaxis_title = metric_name
         value_format = ":.2f}"

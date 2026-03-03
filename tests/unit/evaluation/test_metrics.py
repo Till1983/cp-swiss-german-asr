@@ -3,9 +3,13 @@ from src.evaluation.metrics import (
     calculate_wer, 
     calculate_cer, 
     calculate_bleu_score,
+    calculate_chrf,
+    calculate_semdist,
     batch_wer, 
     batch_cer,
     batch_bleu,
+    batch_chrf,
+    batch_semdist,
     _normalize_text
 )
 
@@ -503,3 +507,195 @@ class TestSwissGermanRealistic:
         result = calculate_bleu_score(reference, hypothesis)
         # Should have some overlap
         assert 0.0 < result < 100.0
+
+
+# ============================================================================
+# chrF TESTS
+# ============================================================================
+
+class TestCalculateChrF:
+    """Test single-sample chrF score calculation"""
+    
+    def test_calculate_chrf_perfect_match(self):
+        """chrF should be 100 for identical strings"""
+        reference = "hello world"
+        hypothesis = "hello world"
+        assert calculate_chrf(reference, hypothesis) == pytest.approx(100.0, abs=0.01)
+    
+    def test_calculate_chrf_partial_match(self):
+        """chrF should be between 0 and 100 for partial matches"""
+        reference = "hello world"
+        hypothesis = "hello earth"
+        result = calculate_chrf(reference, hypothesis)
+        assert 0.0 < result < 100.0
+    
+    def test_calculate_chrf_empty_reference(self):
+        """chrF should be 0 when reference is empty"""
+        assert calculate_chrf("", "hello") == 0.0
+    
+    def test_calculate_chrf_empty_hypothesis(self):
+        """chrF should be 0 when hypothesis is empty"""
+        assert calculate_chrf("hello", "") == 0.0
+    
+    def test_calculate_chrf_both_empty(self):
+        """chrF should be 0 when both are empty"""
+        assert calculate_chrf("", "") == 0.0
+    
+    def test_calculate_chrf_case_insensitive(self):
+        """chrF should be case insensitive (normalization applied)"""
+        reference = "Hello World"
+        hypothesis = "hello world"
+        assert calculate_chrf(reference, hypothesis) == pytest.approx(100.0, abs=0.01)
+    
+    def test_calculate_chrf_swiss_german(self):
+        """chrF should handle Swiss German text with umlauts"""
+        reference = "der Zug fährt nach Zürich"
+        hypothesis = "der Zug fahrt nach Zurich"
+        result = calculate_chrf(reference, hypothesis)
+        # High character overlap despite missing umlauts
+        assert result > 50.0
+
+
+class TestBatchChrF:
+    """Test batch chrF score calculation"""
+    
+    def test_batch_chrf_empty_input(self):
+        """Should handle empty lists gracefully"""
+        result = batch_chrf([], [])
+        assert result["overall_chrf"] == 0.0
+        assert result["per_sample_chrf"] == []
+    
+    def test_batch_chrf_length_mismatch(self):
+        """Should raise ValueError for mismatched lengths"""
+        with pytest.raises(ValueError, match="must have the same length"):
+            batch_chrf(["a"], [])
+    
+    def test_batch_chrf_exact_matches(self):
+        """Corpus chrF should be 100 for exact matches"""
+        references = ["hello world"]
+        hypotheses = ["hello world"]
+        result = batch_chrf(references, hypotheses)
+        assert result["overall_chrf"] == pytest.approx(100.0, abs=0.01)
+        assert result["per_sample_chrf"][0] == pytest.approx(100.0, abs=0.01)
+    
+    def test_batch_chrf_multiple_samples(self):
+        """Batch chrF should return correct structure for multiple samples"""
+        references = ["hello world", "foo bar", "test case"]
+        hypotheses = ["hello world", "foo baz", "test"]
+        result = batch_chrf(references, hypotheses)
+        assert "overall_chrf" in result
+        assert "per_sample_chrf" in result
+        assert len(result["per_sample_chrf"]) == 3
+        # First sample is perfect match
+        assert result["per_sample_chrf"][0] == pytest.approx(100.0, abs=0.01)
+    
+    def test_batch_chrf_single_vs_batch_consistency(self):
+        """Single chrF should match batch per-sample chrF for one sample"""
+        reference = "hello world"
+        hypothesis = "hello earth"
+        single_chrf = calculate_chrf(reference, hypothesis)
+        batch_result = batch_chrf([reference], [hypothesis])
+        assert single_chrf == pytest.approx(batch_result["per_sample_chrf"][0], abs=0.01)
+    
+    def test_batch_chrf_with_empty_strings(self):
+        """Batch chrF should handle empty strings gracefully"""
+        references = ["hello world", "", "test"]
+        hypotheses = ["hello world", "something", "test"]
+        result = batch_chrf(references, hypotheses)
+        assert len(result["per_sample_chrf"]) == 3
+        assert result["per_sample_chrf"][1] == 0.0  # Empty ref -> 0.0
+
+
+# ============================================================================
+# SemDist TESTS
+# ============================================================================
+
+@pytest.fixture(scope="module")
+def semdist_model():
+    """Load SentenceTransformer model once for all SemDist tests in this module."""
+    from sentence_transformers import SentenceTransformer
+    return SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
+
+
+@pytest.mark.slow
+class TestCalculateSemDist:
+    """Test single-sample Semantic Distance calculation"""
+    
+    def test_semdist_identical(self, semdist_model):
+        """SemDist should be near zero for identical German sentences"""
+        text = "Der Zug fährt nach Zürich"
+        result = calculate_semdist(text, text, semdist_model)
+        assert result < 0.05
+    
+    def test_semdist_semantically_similar(self, semdist_model):
+        """SemDist should be low for semantically similar German sentences"""
+        reference = "Der Zug fährt nach Zürich"
+        hypothesis = "Die Bahn geht nach Zürich"
+        result = calculate_semdist(reference, hypothesis, semdist_model)
+        assert result < 0.3
+    
+    def test_semdist_semantically_unrelated(self, semdist_model):
+        """SemDist should be high for semantically unrelated German sentences"""
+        reference = "Der Zug fährt nach Zürich"
+        hypothesis = "Ich esse gerne Kuchen"
+        result = calculate_semdist(reference, hypothesis, semdist_model)
+        assert result > 0.5
+    
+    def test_semdist_empty_reference(self, semdist_model):
+        """SemDist should be 1.0 when reference is empty"""
+        assert calculate_semdist("", "hallo", semdist_model) == 1.0
+    
+    def test_semdist_empty_hypothesis(self, semdist_model):
+        """SemDist should be 1.0 when hypothesis is empty"""
+        assert calculate_semdist("hallo", "", semdist_model) == 1.0
+    
+    def test_semdist_both_empty(self, semdist_model):
+        """SemDist should be 1.0 when both are empty"""
+        assert calculate_semdist("", "", semdist_model) == 1.0
+    
+    def test_semdist_range(self, semdist_model):
+        """SemDist should always be between 0 and 1"""
+        reference = "Heute scheint die Sonne"
+        hypothesis = "Es regnet stark"
+        result = calculate_semdist(reference, hypothesis, semdist_model)
+        assert 0.0 <= result <= 1.0
+
+
+@pytest.mark.slow
+class TestBatchSemDist:
+    """Test batch Semantic Distance calculation"""
+    
+    def test_batch_semdist_empty_input(self, semdist_model):
+        """Should handle empty lists gracefully"""
+        result = batch_semdist([], [], semdist_model)
+        assert result["overall_semdist"] == 0.0
+        assert result["per_sample_semdist"] == []
+    
+    def test_batch_semdist_length_mismatch(self, semdist_model):
+        """Should raise ValueError for mismatched lengths"""
+        with pytest.raises(ValueError, match="must have the same length"):
+            batch_semdist(["a"], [], semdist_model)
+    
+    def test_batch_semdist_identical_samples(self, semdist_model):
+        """SemDist should be near zero for identical German sentence pairs"""
+        references = ["Der Zug fährt nach Zürich", "Heute ist schönes Wetter"]
+        hypotheses = ["Der Zug fährt nach Zürich", "Heute ist schönes Wetter"]
+        result = batch_semdist(references, hypotheses, semdist_model)
+        assert result["overall_semdist"] < 0.05
+        assert all(score < 0.05 for score in result["per_sample_semdist"])
+    
+    def test_batch_semdist_mixed(self, semdist_model):
+        """SemDist should distinguish similar from unrelated pairs"""
+        references = ["Der Zug fährt nach Zürich", "Der Zug fährt nach Zürich"]
+        hypotheses = ["Der Zug fährt nach Zürich", "Ich esse gerne Kuchen"]
+        result = batch_semdist(references, hypotheses, semdist_model)
+        # Identical pair should have lower distance than unrelated pair
+        assert result["per_sample_semdist"][0] < result["per_sample_semdist"][1]
+    
+    def test_batch_semdist_with_empty_strings(self, semdist_model):
+        """Batch SemDist should handle empty strings"""
+        references = ["Hallo Welt", "", "Guten Tag"]
+        hypotheses = ["Hallo Welt", "etwas", "Guten Tag"]
+        result = batch_semdist(references, hypotheses, semdist_model)
+        assert len(result["per_sample_semdist"]) == 3
+        assert result["per_sample_semdist"][1] == 1.0  # Empty ref -> 1.0
