@@ -12,7 +12,9 @@ from types import SimpleNamespace
 # Lightweight mocks for optional heavy deps (ensure availability during test
 # collection, especially in container without installed ML packages).
 # ---------------------------------------------------------------------------
-if 'transformers' not in sys.modules:
+try:
+    import transformers
+except ImportError:
     transformers = ModuleType('transformers')
     transformers.__path__ = []  # mark as package
 
@@ -145,7 +147,9 @@ if 'transformers' not in sys.modules:
     sys.modules['transformers.trainer_utils'] = trainer_utils
     sys.modules['transformers.integrations'] = integrations
 
-if 'torch' not in sys.modules:
+try:
+    import torch
+except ImportError:
     torch = ModuleType('torch')
     backends = ModuleType('torch.backends')
     mps = ModuleType('torch.backends.mps')

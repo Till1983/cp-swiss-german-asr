@@ -3,6 +3,7 @@ import pytest
 from pathlib import Path
 from unittest import mock
 import sys
+import importlib.util
 from types import ModuleType
 
 # NOTE: These tests run in the same process as unit tests during full-suite
@@ -11,7 +12,11 @@ from types import ModuleType
 
 def _ensure_mock_module(name: str) -> None:
     if name not in sys.modules:
-        sys.modules[name] = mock.MagicMock()
+        # Only mock if the package is not actually installed; mocking an
+        # installed package with MagicMock sets __spec__ = None, which causes
+        # ValueError when importlib.util.find_spec() is called on it later.
+        if importlib.util.find_spec(name) is None:
+            sys.modules[name] = mock.MagicMock()
 
 
 def _ensure_module(name: str, *, is_package: bool = False) -> ModuleType:
