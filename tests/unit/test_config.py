@@ -107,7 +107,15 @@ class TestEnvironmentConfiguration:
     @pytest.mark.unit
     def test_config_main_entrypoint_runs(self, capsys):
         """Running config as __main__ should not raise and should print checks."""
-        runpy.run_module("src.config", run_name="__main__")
+        import sys
+        # Temporarily remove src.config from sys.modules so runpy executes it
+        # in a clean state (avoids RuntimeWarning about module already cached).
+        saved = sys.modules.pop("src.config", None)
+        try:
+            runpy.run_module("src.config", run_name="__main__")
+        finally:
+            if saved is not None:
+                sys.modules["src.config"] = saved
         out = capsys.readouterr().out
         assert "Configuration Check" in out
 
