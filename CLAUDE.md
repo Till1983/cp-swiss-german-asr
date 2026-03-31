@@ -5,6 +5,9 @@ Guidelines for working on this repository with Claude Code.
 ## Hard Constraints
 
 - **Do not install new dependencies** without asking the user first. This includes pip packages, system packages, or any additions to `requirements*.txt` files.
+- **Do not install packages via `pip install`, `apt-get install`, or similar commands**. All dependencies must be added to the appropriate `requirements*.txt` files or Dockerfiles and installed through the Docker setup.
+- **Do not modify `docker-compose.yml`** without explicit permission. The Docker configuration is designed for consistency and ease of use across different environments.
+- **Do not modify Dockerfiles** without explicit permission. The Docker setup is carefully configured for consistency across environments.
 - **Do not create virtual environments**. The project runs entirely inside Docker containers.
 
 ## Testing
