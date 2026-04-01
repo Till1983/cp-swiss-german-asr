@@ -8,6 +8,9 @@ cp-swiss-german-asr/
 ├── .env.example.local
 ├── .env.example.runpod
 ├── .gitignore
+├── .pytest_cache/
+├── .ruff_cache/
+├── CLAUDE.md
 ├── Dockerfile
 ├── LICENSE
 ├── README.md
@@ -23,10 +26,12 @@ cp-swiss-german-asr/
 ├── requirements.txt
 ├── requirements_blackwell.txt
 ├── requirements_local.txt
+├── test_output.log      # gitignored
 ├── .vscode/
 │   └── settings.json
 ├── .streamlit/
 │   ├── config.toml
+│   ├── secrets.toml         # gitignored
 │   └── secrets.toml.example
 ├── data/                # gitignored (the entire directory - large files)
 │   ├── README.md
@@ -211,6 +216,39 @@ cp-swiss-german-asr/
 │   └── sidebar-model-selection-dropdown-menu.png
 ├── logs/                # gitignored (*.log files)
 │   └── evaluation.log
+├── models/              # gitignored (large model files)
+│   ├── adapted/
+│   │   └── wav2vec2-german-adapted/
+│   │       ├── checkpoint-500/ ... checkpoint-5757/  # training checkpoints
+│   │       ├── checkpoints/
+│   │       ├── config.json
+│   │       ├── language_model/
+│   │       │   ├── attrs.json
+│   │       │   ├── KenLM.arpa
+│   │       │   └── unigrams.txt
+│   │       ├── logs/
+│   │       │   └── events.out.tfevents.*
+│   │       ├── model.safetensors
+│   │       ├── preprocessor_config.json
+│   │       ├── special_tokens_map.json
+│   │       ├── tokenizer_config.json
+│   │       ├── trainer_state.json
+│   │       ├── training_args.bin
+│   │       └── vocab.json
+│   ├── lm/
+│   │   └── kenLM.arpa
+│   └── pretrained/
+│       └── wav2vec2-dutch-pretrained/
+│           ├── checkpoint-500/ ... checkpoint-14300/  # training checkpoints
+│           ├── checkpoints/
+│           ├── config.json
+│           ├── model.safetensors
+│           ├── preprocessor_config.json
+│           ├── special_tokens_map.json
+│           ├── tokenizer_config.json
+│           ├── trainer_state.json
+│           ├── training_args.bin
+│           └── vocab.json
 ├── personal-notes/      # gitignored (the entire directory - personal notes)
 │   ├── week01_days1-2_docker_local_setup.md
 │   ├── week01_days3-4_data_pipeline.md
@@ -224,50 +262,44 @@ cp-swiss-german-asr/
 │   ├── error_analysis/
 │   │   ├── ANALYSIS_NOTES.md
 │   │   ├── error_analysis_config.yml
-│   │   ├── 20251203_112924/
-│   │   │   ├── README.txt
+│   │   ├── pipeline_20260303_120258.log
+│   │   ├── pipeline_20260303_122101.log
+│   │   ├── 20260303_120258/
+│   │   │   ├── analysis_seamless-m4t-v2-large.json
 │   │   │   ├── analysis_wav2vec2-1b-german-cv11.json
 │   │   │   ├── analysis_wav2vec2-german-with-lm.json
 │   │   │   ├── analysis_whisper-large-v2.json
-│   │   │   ├── analysis_whisper-large-v3-turbo.json
 │   │   │   ├── analysis_whisper-large-v3.json
 │   │   │   ├── analysis_whisper-medium.json
 │   │   │   ├── model_comparison_summary.json
+│   │   │   ├── worst_samples_seamless-m4t-v2-large.csv
 │   │   │   ├── worst_samples_wav2vec2-1b-german-cv11.csv
 │   │   │   ├── worst_samples_wav2vec2-german-with-lm.csv
 │   │   │   ├── worst_samples_whisper-large-v2.csv
-│   │   │   ├── worst_samples_whisper-large-v3-turbo.csv
 │   │   │   ├── worst_samples_whisper-large-v3.csv
 │   │   │   └── worst_samples_whisper-medium.csv
-│   │   └── bleu_integration_20251204_201238/
-│   │       ├── README.txt
-│   │       ├── analysis_wav2vec2-1b-german-cv11.json
-│   │       ├── analysis_wav2vec2-german-with-lm.json
-│   │       ├── analysis_whisper-large-v2.json
+│   │   └── 20260303_122101/
 │   │       ├── analysis_whisper-large-v3-turbo.json
-│   │       ├── analysis_whisper-large-v3.json
-│   │       ├── analysis_whisper-medium.json
 │   │       ├── model_comparison_summary.json
-│   │       ├── worst_samples_wav2vec2-1b-german-cv11.csv
-│   │       ├── worst_samples_wav2vec2-german-with-lm.csv
-│   │       ├── worst_samples_whisper-large-v2.csv
-│   │       ├── worst_samples_whisper-large-v3-turbo.csv
-│   │       ├── worst_samples_whisper-large-v3.csv
-│   │       └── worst_samples_whisper-medium.csv
-│   └── metrics/
-│       └── 20251202_171718/
-│           ├── wav2vec2-1b-german-cv11_results.csv
-│           ├── wav2vec2-1b-german-cv11_results.json
-│           ├── wav2vec2-german-with-lm_results.csv
-│           ├── wav2vec2-german-with-lm_results.json
-│           ├── whisper-large-v2_results.csv
-│           ├── whisper-large-v2_results.json
-│           ├── whisper-large-v3_results.csv
-│           ├── whisper-large-v3_results.json
-│           ├── whisper-large-v3-turbo_results.csv
-│           ├── whisper-large-v3-turbo_results.json
-│           ├── whisper-medium_results.csv
-│           └── whisper-medium_results.json
+│   │       └── worst_samples_whisper-large-v3-turbo.csv
+│   ├── metrics/
+│   │   ├── 20260303_105207/
+│   │   │   ├── seamless-m4t-v2-large_results.csv
+│   │   │   ├── seamless-m4t-v2-large_results.json
+│   │   │   ├── wav2vec2-1b-german-cv11_results.csv
+│   │   │   ├── wav2vec2-1b-german-cv11_results.json
+│   │   │   ├── wav2vec2-german-with-lm_results.csv
+│   │   │   ├── wav2vec2-german-with-lm_results.json
+│   │   │   ├── whisper-large-v2_results.csv
+│   │   │   ├── whisper-large-v2_results.json
+│   │   │   ├── whisper-large-v3_results.csv
+│   │   │   ├── whisper-large-v3_results.json
+│   │   │   ├── whisper-medium_results.csv
+│   │   │   └── whisper-medium_results.json
+│   │   └── 20260303_121313/
+│   │       ├── whisper-large-v3-turbo_results.csv
+│   │       └── whisper-large-v3-turbo_results.json
+│   └── tmp/
 ├── scripts/
 │   ├── adapt_on_cloud.sh
 │   ├── analyze_errors.py
@@ -328,8 +360,14 @@ cp-swiss-german-asr/
 │   │       └── __pycache__/  # gitignored
 │   ├── models/
 │   │   ├── mms_model.py
+│   │   ├── seamless_m4t_model.py
 │   │   ├── wav2vec2_model.py
+│   │   ├── lm/
+│   │   │   └── kenLM.arpa
 │   │   └── __pycache__/      # gitignored
+│   ├── tmp/                 # gitignored
+│   │   ├── nltk_data/
+│   │   └── numba_cache/
 │   ├── training/
 │   │   └── trainer.py
 │   └── utils/
@@ -354,9 +392,10 @@ cp-swiss-german-asr/
     │   │   ├── sample_be_1.wav
     │   │   ├── sample_vs_3.wav
     │   │   └── sample_zh_2.wav
-    │   └── data/
-    │       ├── mock_results.json
-    │       └── mock_swiss_german.tsv
+    │   ├── data/
+    │   │   ├── mock_results.json
+    │   │   └── mock_swiss_german.tsv
+    │   └── sample_data/
     ├── integration/
     │   ├── __init__.py
     │   ├── conftest.py
@@ -394,10 +433,13 @@ cp-swiss-german-asr/
         │   ├── test_error_data_loader.py
         │   ├── test_plotly_charts.py
         │   └── test_sidebar.py
+        ├── data/                # empty placeholder dir
         ├── model_tests/
         │   ├── __init__.py
         │   ├── test_mms_model.py
+        │   ├── test_seamless_m4t_model.py
         │   └── test_wav2vec2_model.py
+        ├── models/              # empty placeholder dir
         ├── training/
         │   ├── __init__.py
         │   └── test_trainer.py
