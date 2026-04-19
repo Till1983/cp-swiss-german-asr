@@ -17,7 +17,7 @@ def render_metrics_definitions():
         or substituted (S) compared to the total number of words in the reference (N). 
         Lower is better - 0% means perfect transcription.
         """)
-        st.markdown("[📖 Learn more about WER](https://en.wikipedia.org/wiki/Word_error_rate)")
+        st.markdown("[📖 From WER and RIL to MER and WIL: Improved Evaluation Measures for Connected Speech Recognition (Morris et al., 2004)](https://www.isca-archive.org/interspeech_2004/morris04_interspeech.pdf)")
         
         st.markdown("---")
         
@@ -28,7 +28,7 @@ def render_metrics_definitions():
         of word level. Useful for languages with complex word structures or when evaluating 
         character-by-character accuracy. Lower is better.
         """)
-        st.markdown("[📖 Learn more about CER](https://www.isca-speech.org/archive/interspeech_2005/morris05_interspeech.html)")
+        st.markdown("[📖 Advocating Character Error Rate for Multilingual ASR Evaluation (Thennal, James & Gopinath, 2025)](https://aclanthology.org/2025.findings-naacl.277.pdf)")
         
         st.markdown("---")
         
