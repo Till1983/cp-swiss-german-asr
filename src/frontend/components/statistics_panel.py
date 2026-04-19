@@ -63,6 +63,7 @@ def render_metrics_definitions():
         1 means completely unrelated. Unlike WER or BLEU, it tolerates paraphrases and 
         dialect-level rewording that preserve meaning. Lower is better.
         """)
+        st.markdown("[📖 Semantic Distance: A New Metric for ASR Performance Analysis Towards Spoken Language Understanding (Kim et al., 2021)](https://arxiv.org/pdf/2104.02138)")
 
         st.markdown("---")
 
