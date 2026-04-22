@@ -7,6 +7,10 @@
 
 This document contains qualitative observations and patterns from the ASR error analysis conducted on Swiss German dialect data. Observations are organised by model and dialect, with links to specific samples for reference.
 
+> **Normalisation note (added April 2026):** All data recorded in sessions 2025-12-03 and 2025-12-04 was produced under **Standard Normalisation** (lowercase only, punctuation preserved). From January 2026 onward the project switched to **ASR-Fair Normalisation** (lowercase + punctuation removal), which removes systematic bias caused by punctuation differences between model outputs (see `docs/MODEL_SELECTION.md` and `docs/KNOWN_ISSUES.md` issue #12 for details). Updated quantitative results are provided inline and in new tables, clearly marked as **"ASR-Fair (March 2026)"**. Original values are preserved and labelled **"Standard Normalisation (legacy)"**. Qualitative observations about error patterns (e.g., perfect tense restructuring, word order changes) are independent of normalisation mode and are not relabelled unless the resulting conclusion changes.
+>
+> **Critical finding:** Under Standard Normalisation, `wav2vec2-german-with-lm` appeared to perform *worse* than `wav2vec2-1b-german-cv11` (75.3% vs 72.4% WER), leading to the conclusion that the language model hurts performance. Under ASR-Fair Normalisation this ranking **reverses**: 70.05% vs 70.97% WER. The Standard Normalisation conclusion that "the LM hurts performance" is incorrect; updated conclusions are provided in those sections.
+
 ---
 
 ## Model-Specific Observations
@@ -18,16 +22,26 @@ This document contains qualitative observations and patterns from the ASR error 
 - **Article insertions:** Frequent insertion of articles ("der", "die", "das") at sentence beginnings where reference lacks them
 - **Word order changes:** Model often restructures sentences with different word order, particularly moving verbs to end position (e.g., "verlor...Selbstständigkeit" → "hat...Selbstständigkeit verloren")
 - **Compound word splitting:** Hyphenated/compound words sometimes split (e.g., "landsberg-velen" → "landsberg velen", "atom-u-boot" → "atom-aubau")
-- **High insertion rate in BE/SO/SG dialects:** BE (20.5%), SO (25.7%), SG (23.1%) insertion rates significantly higher than GR (5%) and GL (0%)
+- **High insertion rate in BE/SO/SG dialects *(Standard Normalisation — legacy)*:** BE (20.5%), SO (25.7%), SG (23.1%) insertion rates significantly higher than GR (5%) and GL (0%)
+  - *ASR-Fair (March 2026):* BE (22.2%), SO (27.9%), SG (26.2%) significantly higher than GR (5.6%) and GL (0.0%) — same relative pattern, slightly higher absolute values
 
-**Dialect Performance:**
+**Dialect Performance *(Standard Normalisation — legacy)*:**
 | Dialect | Mean WER | Sample Count | Notable Pattern |
-|---------|----------|--------------|-----------------|
+|---------|----------|--------------|-----------------||
 | ZG | 46.3% | 30 | Highest WER, many restructuring errors |
 | SO | 34.8% | 36 | High variance (std: 41.0), highest insertion rate |
 | BE | 31.7% | 203 | Most samples, consistent restructuring patterns |
 | GR | 17.2% | 12 | Lowest WER, minimal insertions |
 | GL | 10.7% | 6 | Best performance, no insertions |
+
+**Dialect Performance *(ASR-Fair Normalisation — March 2026)*:**
+| Dialect | Mean WER | Sample Count | Notable Pattern |
+|---------|----------|--------------|-----------------||
+| ZG | 42.7% | 30 | Highest WER, many restructuring errors |
+| SO | 31.8% | 36 | High variance (std: 36.9), highest insertion rate |
+| BE | 29.6% | 203 | Most samples, consistent restructuring patterns |
+| GR | 15.5% | 12 | Very low WER, minimal insertions |
+| GL | 2.1% | 6 | Best performance, no insertions — large drop vs legacy due to punctuation removal |
 
 **Questions:**
 - Does Whisper normalise Swiss German to Standard German spellings?
@@ -65,9 +79,9 @@ This document contains qualitative observations and patterns from the ASR error 
 - **Compound word splitting:** Similar to v3 (e.g., "Ventimiglia-Sanremo" → "Ventimilia San Remo")
 - **Occasional code-switching to English:** Rare cases of English output (e.g., "Späth Orgelbau erbaut" → "Spread all about")
 
-**Dialect Performance:**
+**Dialect Performance *(Standard Normalisation — legacy)*:**
 | Dialect | Mean WER | Sample Count | Insertion Rate | Notable Pattern |
-|---------|----------|--------------|----------------|-----------------|
+|---------|----------|--------------|----------------|-----------------||
 | GL | 10.7% | 6 | 0% | Best performance, clean output |
 | GR | 18.8% | 12 | 13.6% | Low errors, minimal restructuring |
 | ZH | 28.2% | 144 | 16.1% | Moderate restructuring |
@@ -76,9 +90,21 @@ This document contains qualitative observations and patterns from the ASR error 
 | SO | 36.0% | 36 | 22.7% | Highest variance (std: 38.4) |
 | ZG | 41.6% | 30 | 16.7% | Worst WER, heavy restructuring |
 
+**Dialect Performance *(ASR-Fair Normalisation — March 2026)*:**
+| Dialect | Mean WER | Sample Count | Insertion Rate | Notable Pattern |
+|---------|----------|--------------|----------------|-----------------||
+| GL | 2.1% | 6 | 0.0% | Best performance, no insertions — large drop vs legacy due to punctuation removal |
+| GR | 16.4% | 12 | 15.8% | Low errors, minimal restructuring |
+| ZH | 25.8% | 144 | 17.9% | Moderate restructuring |
+| SG | 27.3% | 116 | 25.2% | High insertion rate |
+| BE | 30.2% | 203 | 22.7% | High perfect tense conversion |
+| SO | 32.1% | 36 | 25.2% | Highest variance, high insertion rate |
+| ZG | 38.1% | 30 | 19.1% | Worst WER, heavy restructuring |
+
 **Questions:**
 - How does speed optimisation affect Swiss German recognition?
-    - **Answer:** Minimal impact - only +1.4% WER increase compared to v3. Error distribution proportions remain nearly identical (sub: 21.2% vs 19.9%, ins: 5.3% vs 5.1%, del: 2.3% vs 2.1%). The Turbo optimisation does not fundamentally change Swiss German processing patterns.
+    - **Answer *(Standard Normalisation — legacy)*:** Minimal impact - only +1.4% WER increase compared to v3. Error distribution proportions remain nearly identical (sub: 21.2% vs 19.9%, ins: 5.3% vs 5.1%, del: 2.3% vs 2.1%). The Turbo optimisation does not fundamentally change Swiss German processing patterns.
+    - *ASR-Fair (March 2026):* Conclusion unchanged — only +1.3% WER increase compared to v3 (28.23% vs 26.93%). Error distribution remains nearly identical (sub: 18.6% vs 17.4%, ins: 5.4% vs 5.2%, del: 2.3% vs 2.2%).
 
 **Hypotheses:**
 - Speed-accuracy tradeoff is linear: Turbo's efficiency gains from reduced decoder complexity cause uniform ~10% relative increase across all error types
@@ -105,17 +131,19 @@ This document contains qualitative observations and patterns from the ASR error 
 ### Whisper Large v2
 
 **Systematic Patterns:**
-- **Best overall Whisper performance:** Mean WER 28.0% (vs v3: 29.5%, v3-Turbo: 30.9%) - surprisingly outperforms newer versions on Swiss German
+- **Best overall Whisper performance *(Standard Normalisation — legacy)*:** Mean WER 28.0% (vs v3: 29.5%, v3-Turbo: 30.9%) - surprisingly outperforms newer versions on Swiss German
+  - *ASR-Fair (March 2026):* 25.63% (vs v3: 26.93%, v3-Turbo: 28.23%) — ranking unchanged, v2 still best across all Whisper variants
 - **Same perfect tense restructuring:** Converts simple past to analytic perfect tense (e.g., "unterschrieb" → "hat...unterschrieben", "arbeitete" → "hat...gearbeitet")
 - **Semantic paraphrasing identical to v3:** Same complete restructuring pattern (e.g., "Allerdings sind diese Ergebnisse umstritten" → "Man muss aber auch sagen..." - 200% WER)
 - **Compound word handling:** Both fusion ("Mal Etappenort" → "Maletappenort") and splitting ("Landsberg-Velen" → "Landsberg Wählen")
 - **Word order inversion:** Entire sentences restructured while preserving meaning (e.g., "Im Norden liegt die Bandasee" → "Der Bandasee ist im Norden")
 - **Swiss spelling conventions:** Converts ß to ss (e.g., "Außerdem" → "Ausserdem", "Bußmann" → "Bussmann")
-- **Lower insertion rate than v3/Turbo:** 4.5% vs 5.1-5.3%, suggesting slightly more conservative decoding
+- **Lower insertion rate than v3/Turbo *(Standard Normalisation — legacy)*:** 4.5% vs 5.1-5.3%, suggesting slightly more conservative decoding
+  - *ASR-Fair (March 2026):* 4.6% vs 5.2-5.4% — same pattern, essentially identical numbers
 
-**Dialect Performance:**
+**Dialect Performance *(Standard Normalisation — legacy)*:**
 | Dialect | Mean WER | Sample Count | Insertion Rate | Notable Pattern |
-|---------|----------|--------------|----------------|-----------------|
+|---------|----------|--------------|----------------|-----------------||
 | GL | 5.8% | 6 | 0% | Best performance, minimal errors |
 | GR | 11.3% | 12 | 0% | Very low errors, no insertions |
 | SZ | 14.6% | 9 | 0% | Low WER, no insertions |
@@ -131,9 +159,29 @@ This document contains qualitative observations and patterns from the ASR error 
 | FR | 37.0% | 7 | 16.7% | Limited samples |
 | ZG | 39.7% | 30 | 17.8% | Highest WER, heavy restructuring |
 
+**Dialect Performance *(ASR-Fair Normalisation — March 2026)*:**
+| Dialect | Mean WER | Sample Count | Insertion Rate | Notable Pattern |
+|---------|----------|--------------|----------------|-----------------||
+| GL | 0.0% | 6 | 0.0% | Best performance, no errors and no insertions |
+| GR | 10.3% | 12 | 0.0% | Very low errors, no insertions |
+| SZ | 10.7% | 9 | 0.0% | Low WER, no insertions |
+| UR | 21.2% | 15 | 3.8% | Lower than v3/Turbo (unchanged vs legacy) |
+| ZH | 21.8% | 144 | 15.8% | Moderate restructuring |
+| BL | 24.1% | 54 | 19.0% | Moderate errors |
+| AG | 25.5% | 108 | 17.0% | Consistent performance |
+| TG | 24.8% | 50 | 22.1% | Near average |
+| LU | 26.1% | 51 | 17.7% | Near average |
+| SG | 26.0% | 116 | 23.7% | High insertion rate |
+| BE | 28.1% | 203 | 21.0% | Most samples, consistent patterns |
+| VS | 28.5% | 17 | 6.1% | Low insertions despite moderate WER |
+| SO | 32.2% | 36 | 26.2% | Highest insertion rate |
+| FR | 32.1% | 7 | 19.2% | Limited samples (notable WER drop vs legacy) |
+| ZG | 35.7% | 30 | 20.4% | Highest WER, heavy restructuring |
+
 **Questions:**
 - Why does v2 outperform v3 and v3-Turbo on Swiss German?
-    - **Answer:** Possibly due to differences in training data or decoder architecture. V2 may have been trained on more German dialectal data, or v3's larger training set may have introduced more Standard German bias. The lower insertion rate (4.5% vs 5.1-5.3%) suggests v2 is more conservative in generating additional words.
+    - **Answer *(Standard Normalisation — legacy)*:** Possibly due to differences in training data or decoder architecture. V2 may have been trained on more German dialectal data, or v3's larger training set may have introduced more Standard German bias. The lower insertion rate (4.5% vs 5.1-5.3%) suggests v2 is more conservative in generating additional words.
+    - *ASR-Fair (March 2026):* Conclusion unchanged — v2 (25.63%) still outperforms v3 (26.93%) and v3-Turbo (28.23%). The lower insertion rate under fair norm (4.6% vs 5.2-5.4%) equally supports the conservative decoding hypothesis.
 
 **Hypotheses:**
 - V2's training data may have included more Swiss German or dialectal content, leading to better adaptation
@@ -161,7 +209,8 @@ This document contains qualitative observations and patterns from the ASR error 
 ### Whisper Medium
 
 **Systematic Patterns:**
-- **Highest insertion rate among Whisper models:** 6.4% (vs v2: 4.5%, v3: 5.1%, Turbo: 5.3%) - more prone to generating extra words
+- **Highest insertion rate among Whisper models *(Standard Normalisation — legacy)*:** 6.4% (vs v2: 4.5%, v3: 5.1%, Turbo: 5.3%) - more prone to generating extra words
+  - *ASR-Fair (March 2026):* 6.5% (vs v2: 4.6%, v3: 5.2%, Turbo: 5.4%) — same ranking, essentially identical values
 - **Hallucination/repetition loops:** Catastrophic failure case with 469% WER where model repeated the same sentence 5+ times ("In der Vergangenheit wurden Temples...")
 - **Same perfect tense restructuring:** Converts simple past to analytic perfect tense (e.g., "absolvierte" → "hat...absolviert", "gehörte" → "hat...gehört")
 - **Semantic paraphrasing identical to larger models:** Same 200% WER sample ("Allerdings sind diese Ergebnisse umstritten" → "Man muss aber auch sagen..." - 200% WER)
@@ -169,7 +218,8 @@ This document contains qualitative observations and patterns from the ASR error 
 - **Word order inversion:** Same pattern as v2/v3 (e.g., "Im Norden liegt die Bandasee" → "Der Bandasee ist im Norden")
 - **Compound word handling:** Both fusion ("Mal Etappenort" → "MAU-Etappe ORT") and splitting ("Landsberg-Velen" → "Landsberg Wählen")
 - **Complete sentence deletion:** Rare but present (e.g., "Aber woran liegt das?" → "" - 100% WER with 4 deletions)
-- **Higher variance than larger models:** std_wer 30.1% vs v2: 25.1%, v3: 25.7%
+- **Higher variance than larger models *(Standard Normalisation — legacy)*:** std_wer 30.1% vs v2: 25.1%, v3: 25.7%
+  - *ASR-Fair (March 2026):* std_wer 28.9% vs v2: 23.5%, v3: 23.9% — Medium still shows highest variance among Whisper models
 
 **Dialect Performance:**
 | Dialect | Mean WER | Sample Count | Insertion Rate | Notable Pattern |
@@ -194,11 +244,12 @@ This document contains qualitative observations and patterns from the ASR error 
 - Does reduced model capacity cause more hallucinations?
     - **Answer:** Yes, the Medium model shows a unique catastrophic failure pattern (469% WER) with repetition loops not seen in larger models. This suggests the smaller decoder has less robust stopping criteria.
 - How does Medium compare to the Large models overall?
-    - **Answer:** Medium has +6.1% WER compared to v2 (34.1% vs 28.0%), with the gap primarily driven by higher insertion rates and occasional hallucinations. The core error patterns (perfect tense, word order) remain identical.
+    - **Answer *(Standard Normalisation — legacy)*:** Medium has +6.1% WER compared to v2 (34.1% vs 28.0%), with the gap primarily driven by higher insertion rates and occasional hallucinations. The core error patterns (perfect tense, word order) remain identical.
+    - *ASR-Fair (March 2026):* Medium has +5.6% WER compared to v2 (31.20% vs 25.63%). Same drivers: higher insertion rates and occasional hallucinations. Core error patterns unchanged.
 
 **Hypotheses:**
 - Reduced model capacity leads to less stable decoding, causing repetition loops and hallucinations
-- The 6.4% insertion rate (vs 4.5-5.3% in Large models) indicates the smaller model is more prone to over-generation
+- The 6.4% insertion rate *(Standard Normalisation — legacy; ASR-Fair: 6.5% vs 4.6-5.4%)* (vs 4.5-5.3% in Large models) indicates the smaller model is more prone to over-generation
 - Swiss German phonetic transcription errors are more severe in Medium (e.g., "Sie fehlen" → "Se fala") suggesting weaker acoustic modelling
 - Despite capacity reduction, the fundamental Swiss German syntax patterns (perfect tense, word order) are preserved, indicating these are learned at the architecture level
 - Complete deletion failures (100% WER with all deletions) suggest occasional audio processing failures unique to Medium
@@ -223,10 +274,14 @@ This document contains qualitative observations and patterns from the ASR error 
 ### Wav2Vec2 with LM (German)
 
 **Systematic Patterns:**
-- **Worst overall performance:** Mean WER 75.3% (vs Wav2Vec2 without LM: 72.4%, Whisper v2: 28.0%) - language model aides Swiss German recognition poorly. Base of this model is Wav2Vec2 Large XLSR 53 German by Jonatas Grosman (WER ~79% without LM)
-- **Highest insertion rate among all models:** 7.1% (vs Wav2Vec2 without LM: 4.6%, Whisper: 4.5-6.4%) - LM over-generates words
-- **Lower deletion rate than without LM:** 6.9% (vs 9.7%) - LM reduces word dropping but increases substitutions
-- **Substitution-dominated errors:** 55.2% substitution rate (vs 54.5% without LM) - marginally worse
+- **Worst overall performance *(Standard Normalisation — legacy)*:** Mean WER 75.3% (vs Wav2Vec2 without LM: 72.4%, Whisper v2: 28.0%) - language model aides Swiss German recognition poorly. Base of this model is Wav2Vec2 Large XLSR 53 German by Jonatas Grosman (WER ~79% without LM)
+  - *ASR-Fair (March 2026):* 70.05% (vs Wav2Vec2 without LM: 70.97%, Whisper v2: 25.63%) — **ranking reversal**: under fair norm the LM model actually outperforms the non-LM model; see updated Q&A below
+- **Highest insertion rate among all models *(Standard Normalisation — legacy)*:** 7.1% (vs Wav2Vec2 without LM: 4.6%, Whisper: 4.5-6.4%) - LM over-generates words
+  - *ASR-Fair (March 2026):* 7.2% (vs Wav2Vec2 without LM: 4.7%, Whisper: 4.6-6.5%) — same pattern, LM still has the highest insertion rate among all models
+- **Lower deletion rate than without LM *(Standard Normalisation — legacy)*:** 6.9% (vs 9.7%) - LM reduces word dropping but increases substitutions
+  - *ASR-Fair (March 2026):* 7.0% (vs 9.8%) — same direction; LM reduces deletions at the cost of more insertions
+- **Substitution-dominated errors *(Standard Normalisation — legacy)*:** 55.2% substitution rate (vs 54.5% without LM) - marginally worse
+  - *ASR-Fair (March 2026):* 50.4% (vs 52.8% without LM) — fair norm shows LM actually has a *lower* substitution rate than without LM
 - **Same semantic paraphrasing as all other models:** Identical 200% WER sample ("Allerdings sind diese Ergebnisse umstritten" → "Man muss aber auch sagen...")
 - **Uppercase output convention:** All hypotheses in uppercase (e.g., "MAN MUSS ABER AUCH SAGEN DASS DIE ERGEBNISSE SEHR UMSTRITTEN SIND")
 - **Swiss German phonetic transcription:** Severe phonetic confusion (e.g., "Lebensjahr vollendet" → "SLABENSJAUR ISCH VOLLENDET" - 150% WER)
@@ -235,7 +290,7 @@ This document contains qualitative observations and patterns from the ASR error 
 - **Pronoun confusion:** Systematic "wir"→"mir" substitution (Swiss German influence)
 - **Article/case confusion:** Identical patterns to Wav2Vec2 without LM ("den"→"der", "des"→"vom")
 
-**Dialect Performance:**
+**Dialect Performance *(Standard Normalisation — legacy)*:**
 | Dialect | Mean WER | Sample Count | Sub Rate | Del Rate | Ins Rate | Notable Pattern |
 |---------|----------|--------------|----------|----------|----------|-----------------|
 | NW | 50.0% | 1 | 50.0% | 0% | 50.0% | Single sample, unreliable |
@@ -256,6 +311,27 @@ This document contains qualitative observations and patterns from the ASR error 
 | UR | 84.4% | 15 | 80.8% | 13.3% | 5.8% | Worst major dialect |
 | BE | 84.0% | 203 | 78.9% | 11.0% | 10.1% | Most samples, worst performance |
 
+**Dialect Performance *(ASR-Fair Normalisation — March 2026)*:**
+| Dialect | Mean WER | Sample Count | Sub Rate | Del Rate | Ins Rate | Notable Pattern |
+|---------|----------|--------------|----------|----------|----------|-----------------|
+| NW | 50.0% | 1 | 50.0% | 0.0% | 50.0% | Single sample, unreliable |
+| GL | 54.7% | 6 | 77.3% | 0.0% | 22.7% | Best major dialect, no deletions |
+| GR | 59.7% | 12 | 71.6% | 18.9% | 9.5% | High deletion rate |
+| SH | 56.3% | 4 | 74.1% | 7.4% | 18.5% | Limited samples |
+| VS | 61.3% | 17 | 80.4% | 15.9% | 3.7% | Lowest insertion rate |
+| BL | 64.4% | 54 | 81.5% | 9.7% | 8.8% | High substitution rate |
+| ZH | 65.0% | 144 | 77.8% | 9.7% | 12.5% | Near average |
+| FR | 66.0% | 7 | 75.9% | 20.4% | 3.7% | High deletion rate |
+| AG | 66.7% | 108 | 78.3% | 10.6% | 11.0% | Consistent errors |
+| TG | 66.2% | 50 | 78.6% | 9.4% | 12.0% | Consistent errors |
+| SG | 67.6% | 116 | 78.1% | 10.6% | 11.3% | Near average |
+| LU | 68.2% | 51 | 79.2% | 11.9% | 8.9% | Moderate deletions |
+| SZ | 70.0% | 9 | 78.3% | 11.7% | 10.0% | Consistent errors |
+| SO | 71.1% | 36 | 73.5% | 9.4% | 17.1% | Highest insertion rate |
+| ZG | 77.7% | 30 | 79.2% | 6.6% | 14.2% | High WER, high insertions |
+| BE | 79.9% | 203 | 77.5% | 11.7% | 10.8% | Most samples, worst performance |
+| UR | 80.1% | 15 | 76.5% | 15.7% | 7.8% | Worst major dialect |
+
 **Top Confusion Pairs (across dialects):**
 | Reference | Hypothesis | Count | Pattern |
 |-----------|------------|-------|---------|
@@ -270,15 +346,17 @@ This document contains qualitative observations and patterns from the ASR error 
 
 **Questions:**
 - Does the language model help or hurt Swiss German recognition?
-    - **Answer:** The LM **hurts** performance (+2.9% WER compared to without LM). The German LM is trained on Standard German text, creating a mismatch with Swiss German phonology. The LM increases insertions (7.1% vs 4.6%) while only marginally reducing deletions (6.9% vs 9.7%), suggesting it's generating plausible but incorrect Standard German words.
+    - **Answer *(Standard Normalisation — legacy, conclusion overturned by fair normalisation)*:** The LM **hurts** performance (+2.9% WER compared to without LM). The German LM is trained on Standard German text, creating a mismatch with Swiss German phonology. The LM increases insertions (7.1% vs 4.6%) while only marginally reducing deletions (6.9% vs 9.7%), suggesting it's generating plausible but incorrect Standard German words.
+    - *ASR-Fair (March 2026) — revised conclusion:* The LM **marginally helps**: 70.05% vs 70.97% WER (without LM). The 5.23 pp improvement is largely due to punctuation removal eliminating the penalty from the LM decoder's comma/period output. The LM's insertion rate (7.2%) remains higher than without LM (4.7%), and deletions stay lower (7.0% vs 9.8%). Net effect: slight benefit, not a cost.
 - Why is BE dialect performance so poor (84.0% WER)?
-    - **Answer:** BE (Bernese German) has the most distinctive phonology among major dialects. The Standard German LM actively "corrects" Bernese patterns to Standard German, amplifying errors rather than reducing them.
+    - **Answer *(Standard Normalisation — legacy)*:** BE (Bernese German) has the most distinctive phonology among major dialects. The Standard German LM actively "corrects" Bernese patterns to Standard German, amplifying errors rather than reducing them.
+    - *ASR-Fair (March 2026):* BE WER is 79.9% (vs 79.2% without LM — now only 0.7 pp worse). BE still has worst performance, but the LM penalty is minimal under fair norm. The phonological mismatch observation remains valid.
 
 **Hypotheses:**
-- **LM creates domain mismatch:** The Standard German language model expects Standard German word sequences, but receives Swiss German acoustic features, causing systematic errors
-- **LM increases insertions due to over-completion:** When acoustics are ambiguous, LM "completes" sequences with Standard German words that weren't spoken
-- **Deletion reduction is misleading:** LM reduces deletions by inserting incorrect words rather than truly recognizing missing content
-- **BE dialect suffers most from LM:** Bernese German's unique phonology is furthest from Standard German, making LM corrections maximally harmful
+- **LM creates domain mismatch *(partially revised)*:** The Standard German language model expects Standard German word sequences, but receives Swiss German acoustic features, causing systematic errors. *ASR-Fair: domain mismatch is real but its WER impact is offset by reduction of punctuation-driven errors under fair normalisation.*
+- **LM increases insertions due to over-completion:** When acoustics are ambiguous, LM "completes" sequences with Standard German words that weren't spoken (confirmed under both normalisation modes: 7.1-7.2% vs 4.6-4.7%)
+- **Deletion reduction is misleading *(Standard Normalisation — legacy)*:** LM reduces deletions by inserting incorrect words rather than truly recognizing missing content. *ASR-Fair: still holds — deletions drop from 9.8% to 7.0% while insertions rise from 4.7% to 7.2%.*
+- **BE dialect suffers most from LM *(revised)*:** Bernese German's unique phonology is furthest from Standard German, making LM corrections harmful. *ASR-Fair: BE LM penalty drops from 2.9 pp to 0.7 pp; phonological mismatch confirmed but its WER contribution is reduced by fair normalisation.*
 - **Same semantic paraphrasing as all models:** The 200% WER sample appears identically across all 6 models, suggesting this is a fundamental property of the Swiss German speech content, not model architecture
 - **Uppercase output is a tokenization artifact:** The LM may use uppercase-only vocabulary, explaining output convention
 - **Pronoun confusion ("wir"→"mir") is Swiss German influence:** This substitution reflects actual Swiss German pronunciation being correctly recognised acoustically but "corrected" by LM
@@ -302,10 +380,15 @@ This document contains qualitative observations and patterns from the ASR error 
 
 ### Wav2Vec2 (German CV11)
 
-**Systematic Patterns:**
-- **Dramatically higher error rates than Whisper:** Mean WER 72.4% (vs Whisper v2: 28.0%) - more than 2.5x worse performance
-- **Substitution-dominated errors:** 54.5% substitution rate (vs Whisper: 19-23%) - model struggles with Swiss German phonemes
-- **High deletion rate:** 9.7% (vs Whisper: 2.1-2.4%) - frequently drops words entirely
+> **Data quality note:** The dialect performance table, Top Confusion Pairs, Questions, and Hypotheses in this section were incorrectly copied from the Wav2Vec2 with LM section in the original December 2025 analysis. The data shown in those blocks belongs to the LM model, not to wav2vec2-1b-german-cv11. This has been corrected below: the legacy (Standard Normalisation) blocks are preserved as-is with an annotation, and correct fair-normalisation data from the March 2026 analysis is added.
+
+**Systematic Patterns *(Standard Normalisation — legacy for quantitative comparisons)*:**
+- **Dramatically higher error rates than Whisper *(Standard Normalisation — legacy)*:** Mean WER 72.4% (vs Whisper v2: 28.0%) - more than 2.5x worse performance
+  - *ASR-Fair (March 2026):* 70.97% (vs Whisper v2: 25.63%) — ranking unchanged, gap slightly smaller but still >2.5x
+- **Substitution-dominated errors *(Standard Normalisation — legacy)*:** 54.5% substitution rate (vs Whisper: 19-23%) - model struggles with Swiss German phonemes
+  - *ASR-Fair (March 2026):* 52.8% sub rate (vs Whisper: 16.7-20.1%) — same pattern
+- **High deletion rate *(Standard Normalisation — legacy)*:** 9.7% (vs Whisper: 2.1-2.4%) - frequently drops words entirely
+  - *ASR-Fair (March 2026):* 9.8% — essentially unchanged
 - **Swiss German phonetic transcription:** Transcribes dialectal pronunciation rather than Standard German (e.g., "Allerdings" → "Man muss aber auch sagen" - 220% WER, identical semantic paraphrase to Whisper)
 - **Severe word boundary confusion:** Compounds split incorrectly (e.g., "Schicksal führt" → "SSchicksau führt", "Landsberg-Velen" → "Landsberg Wehlen")
 - **Vowel/consonant substitutions:** Swiss German vowel shifts poorly handled (e.g., "wuchs" → "ish", "Lebensjahr" → "Slavens jar")
@@ -313,7 +396,7 @@ This document contains qualitative observations and patterns from the ASR error 
 - **Tense conversion (less systematic than Whisper):** Some perfect tense patterns but more chaotic (e.g., "wurde" → "ist", "war" → "ist")
 - **Complete sentence restructuring:** Similar to Whisper but with higher error density (e.g., "Allerdings sind diese Ergebnisse umstritten" → "Man muss aber auch sagen, dass die Ergeibniss sehr umstritten sind" - 220% WER)
 
-**Dialect Performance:**
+**Dialect Performance *(Standard Normalisation — legacy; note: this table was incorrectly copied from the Wav2Vec2 with LM section in the original notes — the values shown belong to the LM model)*:**
 | Dialect | Mean WER | Sample Count | Sub Rate | Del Rate | Ins Rate | Notable Pattern |
 |---------|----------|--------------|----------|----------|----------|-----------------|
 | NW | 50.0% | 1 | 50.0% | 0% | 50.0% | Single sample, unreliable |
@@ -334,7 +417,28 @@ This document contains qualitative observations and patterns from the ASR error 
 | UR | 84.4% | 15 | 80.8% | 13.3% | 5.8% | Worst major dialect |
 | BE | 84.0% | 203 | 78.9% | 11.0% | 10.1% | Most samples, worst performance |
 
-**Top Confusion Pairs (across dialects):**
+**Dialect Performance *(ASR-Fair Normalisation — March 2026, correct data for wav2vec2-1b-german-cv11)*:**
+| Dialect | Mean WER | Sample Count | Sub Rate | Del Rate | Ins Rate | Notable Pattern |
+|---------|----------|--------------|----------|----------|----------|-----------------|
+| NW | 75.0% | 1 | 66.7% | 0.0% | 33.3% | Single sample, unreliable |
+| GL | 50.4% | 6 | 73.9% | 8.7% | 17.4% | Best major dialect |
+| GR | 63.8% | 12 | 85.0% | 10.0% | 5.0% | High substitution rate |
+| SH | 54.3% | 4 | 88.5% | 7.7% | 3.8% | Limited samples |
+| FR | 65.5% | 7 | 85.2% | 11.1% | 3.7% | Limited samples |
+| ZH | 64.5% | 144 | 77.9% | 14.8% | 7.3% | Near average |
+| BL | 67.9% | 54 | 75.5% | 19.1% | 5.4% | High deletion rate |
+| AG | 67.4% | 108 | 78.4% | 14.9% | 6.6% | Consistent errors |
+| TG | 66.0% | 50 | 83.8% | 10.8% | 5.4% | Consistent errors |
+| VS | 69.1% | 17 | 77.0% | 20.5% | 2.5% | Highest deletion rate, lowest insertions |
+| SZ | 68.8% | 9 | 79.7% | 13.6% | 6.8% | Consistent errors |
+| SG | 71.4% | 116 | 78.9% | 13.0% | 8.0% | Near average |
+| UR | 71.3% | 15 | 80.2% | 15.8% | 4.0% | High deletion rate |
+| LU | 73.5% | 51 | 73.9% | 19.8% | 6.2% | High deletions |
+| SO | 70.3% | 36 | 76.8% | 10.0% | 13.3% | Higher insertion rate |
+| BE | 79.2% | 203 | 78.5% | 15.1% | 6.4% | Most samples, worst performance |
+| ZG | 79.8% | 30 | 79.7% | 9.7% | 10.6% | Highest WER |
+
+**Top Confusion Pairs *(Standard Normalisation — legacy; note: this table was incorrectly copied from the Wav2Vec2 with LM section)*:**
 | Reference | Hypothesis | Count | Pattern |
 |-----------|------------|-------|---------|
 | "wurde" | "ist" | 22 | Tense conversion (same as without LM) |
@@ -347,22 +451,21 @@ This document contains qualitative observations and patterns from the ASR error 
 | "werden" | "werdet/werde" | 9 | Inflection errors |
 
 **Questions:**
-- Does the language model help or hurt Swiss German recognition?
-    - **Answer:** The LM **hurts** performance (+2.9% WER compared to without LM). The German LM is trained on Standard German text, creating a mismatch with Swiss German phonology. The LM increases insertions (7.1% vs 4.6%) while only marginally reducing deletions (6.9% vs 9.7%), suggesting it's generating plausible but incorrect Standard German words.
-- Why is BE dialect performance so poor (84.0% WER)?
-    - **Answer:** BE (Bernese German) has the most distinctive phonology among major dialects. The Standard German LM actively "corrects" Bernese patterns to Standard German, amplifying errors rather than reducing them.
+- How does wav2vec2-1b-german-cv11 perform compared to Whisper models?
+    - **Answer *(Standard Normalisation — legacy)*:** Dramatically worse: 72.4% WER vs 28.0% for Whisper v2 — more than 2.5x the error rate. The model trained exclusively on Standard German struggles fundamentally with Swiss German phonology.
+    - *ASR-Fair (March 2026):* 70.97% vs 25.63% for Whisper v2 — still more than 2.5x worse. Ranking and interpretation unchanged.
+- How does this model compare to wav2vec2-german-with-lm?
+    - **Answer *(Standard Normalisation — legacy)*:** wav2vec2-1b-german-cv11 (72.4%) outperformed wav2vec2-german-with-lm (75.3%) under Standard Normalisation.
+    - *ASR-Fair (March 2026) — revised:* The ranking **reverses**: wav2vec2-1b-german-cv11 (70.97%) is now **worse** than wav2vec2-german-with-lm (70.05%). The 5.23 pp Standard Normalisation penalty on the LM model from punctuation differences was the sole driver of the legacy ranking.
 
 **Hypotheses:**
-- **LM creates domain mismatch:** The Standard German language model expects Standard German word sequences, but receives Swiss German acoustic features, causing systematic errors
-- **LM increases insertions due to over-completion:** When acoustics are ambiguous, LM "completes" sequences with Standard German words that weren't spoken
-- **Deletion reduction is misleading:** LM reduces deletions by inserting incorrect words rather than truly recognizing missing content
-- **BE dialect suffers most from LM:** Bernese German's unique phonology is furthest from Standard German, making LM corrections maximally harmful
-- **Same semantic paraphrasing as all models:** The 200% WER sample appears identically across all 6 models, suggesting this is a fundamental property of the Swiss German speech content, not model architecture
-- **Uppercase output is a tokenization artifact:** The LM may use uppercase-only vocabulary, explaining output convention
-- **Pronoun confusion ("wir"→"mir") is Swiss German influence:** This substitution reflects actual Swiss German pronunciation being correctly recognised acoustically but "corrected" by LM
-- **GR/GL dialects perform better** because they may have phonology closer to Standard German, making LM corrections less harmful
+- **Substitution-dominated failure:** High substitution rate (52.8% fair norm) reflects acoustic confusion between Swiss German and Standard German phonemes, not word-level insertion/deletion
+- **High deletion rate distinguishes from LM model:** 9.8% deletion rate (fair norm) vs 7.0% for with-LM model, suggesting the LM helps the model recover missing words even when phonetics are ambiguous
+- **Worst affected dialects:** BE (79.2%) and ZG (79.8%) under fair norm — same dialects as worst-performers in Whisper; more distinctive phonology drives worse recognition
+- **Best affected dialects:** GL (50.4%) and GR (63.8%) — consistent with all other models; suggests closer phonology to Standard German training data
+- **Same semantic paraphrasing as all models:** The 200% WER sample appears identically across all models (see with-LM section), confirming it is a speech content property, not model-specific
 
-**Worst Samples to Review:**
+**Worst Samples to Review *(Standard Normalisation — legacy; note: this table was incorrectly copied from the Wav2Vec2 with LM section)*:**
 | Priority | File | Dialect | WER | Issue |
 |----------|------|---------|-----|-------|
 | Critical | `699a7e10-2912-427f-9947-8c73e60394c1.flac` | SO | 200% | Complete semantic paraphrase (identical across all models) |
@@ -380,9 +483,13 @@ This document contains qualitative observations and patterns from the ASR error 
 
 ## Session: 2025-12-04
 
+> **Normalisation note:** All data in this session was produced with **Standard Normalisation (legacy)** — lowercase only, punctuation preserved. Fair-normalisation (ASR-Fair, March 2026) comparisons are provided for the main summary table and dialect rankings below. The per-dialect sub-sections retain their original Standard Normalisation numbers; treat all per-dialect model WER values in this session as Standard Normalisation (legacy) unless explicitly marked otherwise.
+
 ## Dialect-Specific Observations
 
 ### Summary Table: Mean WER by Dialect Across All Models
+
+*(Standard Normalisation — legacy)*
 
 | Dialect | Sample Count | Whisper v2 | Whisper v3 | Whisper v3-Turbo | Whisper Medium | Wav2Vec2 CV11 | Wav2Vec2 + LM |
 |---------|--------------|------------|------------|------------------|----------------|---------------|---------------|
@@ -405,11 +512,36 @@ This document contains qualitative observations and patterns from the ASR error 
 
 **Key:** Best performers in **bold green**, worst performers in **bold red**
 
+*(ASR-Fair Normalisation — March 2026)*
+
+| Dialect | Sample Count | Whisper v2 | Whisper v3 | Whisper v3-Turbo | Whisper Medium | Wav2Vec2 CV11 | Wav2Vec2 + LM |
+|---------|--------------|------------|------------|------------------|----------------|---------------|---------------|
+| **GL** | 6 | **0.0%** | 2.1% | 2.1% | 9.2% | 50.4% | 54.7% |
+| **GR** | 12 | 10.3% | 15.5% | 16.4% | 18.8% | 63.8% | 59.7% |
+| **SH** | 4 | 34.0% | 33.7% | 36.2% | 34.0% | 54.3% | 56.3% |
+| **SZ** | 9 | 10.7% | 20.9% | 30.5% | 36.1% | 68.8% | 70.0% |
+| **ZH** | 144 | 21.8% | 22.8% | 25.8% | 27.5% | 64.5% | 65.0% |
+| **BL** | 54 | 24.1% | 25.2% | 27.1% | 31.6% | 67.9% | 64.4% |
+| **AG** | 108 | 25.5% | 25.4% | 26.9% | 34.2% | 67.4% | 66.7% |
+| **TG** | 50 | 24.8% | 26.0% | 28.4% | 31.8% | 66.0% | 66.2% |
+| **LU** | 51 | 26.1% | 27.5% | 26.7% | 32.1% | 73.5% | 68.2% |
+| **SG** | 116 | 26.0% | 26.5% | 27.3% | 29.3% | 71.4% | 67.6% |
+| **UR** | 15 | 21.2% | 28.1% | 35.5% | 30.5% | 71.3% | 80.1% |
+| **VS** | 17 | 28.5% | 27.0% | 26.6% | 30.2% | 69.1% | 61.3% |
+| **BE** | 203 | 28.1% | 29.6% | 30.2% | 33.1% | 79.2% | **79.9%** |
+| **SO** | 36 | 32.2% | 31.8% | 32.1% | 33.0% | 70.3% | 71.1% |
+| **FR** | 7 | 32.1% | 30.6% | 36.2% | 38.4% | 65.5% | 66.0% |
+| **ZG** | 30 | 35.7% | **42.7%** | 38.1% | 33.9% | **79.8%** | 77.7% |
+
+**Key:** Best performers in **bold green**, worst performers in **bold red**
+
 ---
 
 ### Dialect Rankings
 
 #### Best Performing Dialects (Consistently Low WER)
+
+*(Standard Normalisation — legacy)*
 
 | Rank | Dialect | Region | Avg WER (Whisper) | Avg WER (Wav2Vec2) | Key Characteristics |
 |------|---------|--------|-------------------|--------------------|--------------------|
@@ -417,13 +549,30 @@ This document contains qualitative observations and patterns from the ASR error 
 | 2 | **GR** (Graubünden) | Southeast | 17.3% | 65.3% | Low errors, minimal restructuring, 0% insertion rate in v2 |
 | 3 | **SZ** (Schwyz) | Central | 27.4% | 72.8% | Low WER in v2, but high variance across models |
 
-#### Worst Performing Dialects (Consistently High WER)
+*(ASR-Fair Normalisation — March 2026; avg Whisper WER = mean of v2/v3/turbo/medium)*
 
 | Rank | Dialect | Region | Avg WER (Whisper) | Avg WER (Wav2Vec2) | Key Characteristics |
 |------|---------|--------|-------------------|--------------------|--------------------|
+| 1 | **GL** (Glarus) | Central-East | 3.35% | 52.6% | Best by far, near-zero Whisper WER |
+| 2 | **GR** (Graubünden) | Southeast | 15.25% | 61.8% | Second best, ranking unchanged |
+| 3 | **SZ** (Schwyz) | Central | 24.55% | 69.4% | Third best, ranking unchanged |
+
+#### Worst Performing Dialects (Consistently High WER)
+
+*(Standard Normalisation — legacy)*
+
+| Rank | Dialect | Region | Avg WER (Whisper) | Avg WER (Wav2Vec2) | Key Characteristics |
 | 1 | **ZG** (Zug) | Central | 41.5% | 82.4% | Highest WER, heavy sentence restructuring |
 | 2 | **BE** (Bern) | West-Central | 32.3% | 82.2% | Most samples (203), consistent restructuring patterns |
 | 3 | **SO** (Solothurn) | Northwest | 35.4% | 74.5% | Highest variance (std: 38-41%), highest insertion rates |
+
+*(ASR-Fair Normalisation — March 2026; avg Whisper WER = mean of v2/v3/turbo/medium)*
+
+| Rank | Dialect | Region | Avg WER (Whisper) | Avg WER (Wav2Vec2) | Key Characteristics |
+|------|---------|--------|-------------------|--------------------|--------------------|
+| 1 | **ZG** (Zug) | Central | 37.6% | 78.8% | Highest Whisper WER, ranking unchanged |
+| 2 | **BE** (Bern) | West-Central | 30.25% | 79.6% | Ranking unchanged; largest absolute WER reduction for Whisper |
+| 3 | **SO** (Solothurn) | Northwest | 32.28% | 70.7% | Ranking unchanged; high insertion rate persists |
 
 ---
 
@@ -734,6 +883,9 @@ This sample produces **identical semantic paraphrasing** across all 6 models, su
 - LM trained on Standard German text creates domain mismatch
 
 ### Dialect Phonology Patterns
+
+*(Standard Normalisation — legacy; see Session 2025-12-04 preamble)*
+
 | Dialect Group | Characteristics | Whisper WER | Wav2Vec2 WER |
 |---------------|-----------------|-------------|--------------|
 | **Eastern (GL, GR)** | Closer to Standard German | 10-18% | 52-67% |
