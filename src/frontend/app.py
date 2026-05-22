@@ -4,6 +4,7 @@ from typing import List
 import plotly.graph_objects as go
 import plotly.io as pio
 from utils.data_loader import get_available_results, combine_multiple_models
+from utils.model_selection import ALL_MODELS_OPTION, expand_model_selection, normalize_model_multiselect
 from components.sidebar import render_sidebar
 from components.model_comparison import compare_models, _get_performance_category
 from components.dialect_breakdown import create_aggregate_comparison, render_per_dialect_analysis
@@ -64,15 +65,39 @@ if not available_models:
 
 # Model selection - Multi-select for comparison
 st.sidebar.header("Model Selection")
-selected_models = st.sidebar.multiselect(
+model_names = list(available_models.keys())
+DEFAULT_MODEL = "whisper-large-v2"
+MODEL_SELECTION_KEY = "selected_models_ui"
+MODEL_SELECTION_PREV_KEY = "selected_models_ui_prev"
+
+if MODEL_SELECTION_KEY not in st.session_state:
+    default_model = DEFAULT_MODEL if DEFAULT_MODEL in model_names else model_names[0]
+    st.session_state[MODEL_SELECTION_KEY] = [default_model]
+    st.session_state[MODEL_SELECTION_PREV_KEY] = [default_model]
+
+
+def _on_model_selection_change() -> None:
+    current = st.session_state.get(MODEL_SELECTION_KEY, [])
+    previous = st.session_state.get(MODEL_SELECTION_PREV_KEY, [])
+    normalized = normalize_model_multiselect(current, previous)
+    st.session_state[MODEL_SELECTION_KEY] = normalized
+    st.session_state[MODEL_SELECTION_PREV_KEY] = list(normalized)
+
+
+st.sidebar.multiselect(
     "Choose models to compare:",
-    options=list(available_models.keys()),
-    default=[list(available_models.keys())[0]],  # Default to first model
+    options=[ALL_MODELS_OPTION, *model_names],
+    key=MODEL_SELECTION_KEY,
+    on_change=_on_model_selection_change,
     help="Select one or more models to analyze and compare"
 )
+selected_models = st.session_state.get(MODEL_SELECTION_KEY, [])
+selected_models = expand_model_selection(selected_models, model_names)
 
 # Show selection summary
-if len(selected_models) > 1:
+if len(selected_models) == len(model_names):
+    st.sidebar.success(f"✅ Comparing all {len(selected_models)} models")
+elif len(selected_models) > 1:
     st.sidebar.success(f"✅ Comparing {len(selected_models)} models")
 elif len(selected_models) == 1:
     st.sidebar.info(f"📊 Analyzing: {selected_models[0]}")
