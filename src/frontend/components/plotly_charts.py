@@ -50,12 +50,12 @@ PERFORMANCE_THRESHOLDS = {
         'poor': (35, float('inf'))
     },
     'bleu': {
-        'excellent': (50, 100),
+        'excellent': (50, 101),
         'good': (30, 50),
         'poor': (0, 30)
     },
     'chrf': {
-        'excellent': (75, 100),
+        'excellent': (75, 101),
         'good': (50, 75),
         'poor': (0, 50)
     },
