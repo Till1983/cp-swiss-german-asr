@@ -9,12 +9,12 @@
 # ============================================================================
 
 # ============================================================================
-# PyTorch (with CUDA 12.4 support)
+# PyTorch (with CUDA 12.8 support)
 # ============================================================================
---extra-index-url https://download.pytorch.org/whl/cu124
-torch>=2.5.0
-torchvision>=0.20.0
-torchaudio>=2.5.0
+--extra-index-url https://download.pytorch.org/whl/cu128
+torch==2.8.0+cu128
+torchvision==0.23.0+cu128
+torchaudio==2.8.0+cu128
 
 # ============================================================================
 # TRANSFORMERS & HUGGING FACE (Compatible with PyTorch 2.8)
