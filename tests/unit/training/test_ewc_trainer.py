@@ -10,7 +10,11 @@ import csv
 
 import pytest
 import torch
-from transformers import WhisperConfig, WhisperForConditionalGeneration
+from transformers import (
+    Seq2SeqTrainingArguments,
+    WhisperConfig,
+    WhisperForConditionalGeneration,
+)
 
 from src.training.ewc_trainer import (
     Seq2SeqEWCTrainer,
@@ -132,7 +136,7 @@ def test_key_coverage_fires_when_key_missing(tiny_model):
 # ---------------------------------------------------------------------------
 # Trainer-level: key coverage at __init__ and raw calibration logging
 # ---------------------------------------------------------------------------
-def _make_trainer(tmp_path, model, drop_key=None, ewc_lambda=1.0, log_path=None):
+def _make_trainer(tmp_path, model, should_drop_key=False, ewc_lambda=1.0, log_path=None):
     from transformers import Seq2SeqTrainingArguments
 
     names = [n for n, _ in model.named_parameters()]
@@ -140,7 +144,7 @@ def _make_trainer(tmp_path, model, drop_key=None, ewc_lambda=1.0, log_path=None)
               for n, p in model.named_parameters()}
     old = {n: torch.zeros_like(p, dtype=torch.float32)
            for n, p in model.named_parameters()}
-    if drop_key is not None:
+    if should_drop_key:
         del fisher[names[0]]
 
     args = Seq2SeqTrainingArguments(
