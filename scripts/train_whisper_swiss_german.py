@@ -268,7 +268,7 @@ def main(argv=None):
     check_fisher_metadata(cfg)
 
     # --- model + processor ---
-    model, processor = build_whisper_model(cfg["model"], gradient_checkpointing)
+    model, processor = build_whisper_model(cfg["model"], cfg.get("augmentation"), gradient_checkpointing)
 
     # --- data ---
     from src.data.whisper_collator import DataCollatorSpeechSeq2SeqWithPadding
