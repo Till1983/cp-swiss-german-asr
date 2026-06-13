@@ -7,6 +7,7 @@ FHNW metadata TSVs and audio clips. Audio paths are reconstructed from
 prefix (``/app/...``) and would be wrong under ``ENVIRONMENT=runpod``.
 """
 
+import csv
 import logging
 from pathlib import Path
 from typing import List, Optional
@@ -32,7 +33,7 @@ def load_metadata_df(
 ) -> pd.DataFrame:
     """Load a FHNW metadata TSV, optionally sampling a fixed subset."""
     df = pd.read_csv(
-        metadata_path, sep="\t", low_memory=False, encoding="utf-8", quoting=3
+        metadata_path, sep="\t", low_memory=False, encoding="utf-8", quoting=csv.QUOTE_NONE
     )
     if subset_size is not None and subset_size < len(df):
         df = df.sample(n=subset_size, random_state=seed).reset_index(drop=True)
