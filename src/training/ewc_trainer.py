@@ -85,8 +85,12 @@ def ewc_raw_term(named_parameters, fisher_dict, old_params) -> torch.Tensor:
     all done in fp32 and accumulated into an fp32 scalar, even when the live
     parameters are bf16. Differentiable w.r.t. the live parameters.
     """
+    # Convert to list to allow multiple iterations and to capture device safely.
+    named_params_list = list(named_parameters)
+    device = named_params_list[0][1].device if named_params_list else "cpu"
+    
     total = None
-    for name, param in named_parameters:
+    for name, param in named_params_list:
         if name not in fisher_dict:
             continue
         fisher = fisher_dict[name].to(param.device).float()
@@ -96,7 +100,6 @@ def ewc_raw_term(named_parameters, fisher_dict, old_params) -> torch.Tensor:
         total = contrib if total is None else total + contrib
     if total is None:
         # No covered parameters -> zero on the model device to avoid device mismatch.
-        device = next(iter(named_parameters))[1].device if named_parameters else "cpu"
         return torch.zeros((), dtype=torch.float32, device=device)
     return total
 
@@ -216,7 +219,7 @@ class Seq2SeqEWCTrainer(Seq2SeqTrainer):
             )
 
         # Only apply / log the penalty during training (skip eval forwards).
-        if model.training and self.fisher_dict:
+        if model.training and self.fisher_dict and self.ewc_lambda > 0.0:
             raw_ewc = self.compute_raw_ewc_term(model)
             ewc_penalty = scaled_ewc_penalty(
                 raw_ewc, self.ewc_lambda, self.apply_half_factor
