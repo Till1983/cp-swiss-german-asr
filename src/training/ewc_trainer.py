@@ -95,8 +95,8 @@ def ewc_raw_term(named_parameters, fisher_dict, old_params) -> torch.Tensor:
         contrib = (fisher * diff.pow(2)).sum()
         total = contrib if total is None else total + contrib
     if total is None:
-        # No covered parameters -> zero (on a best-effort device).
-        device = "cpu"
+        # No covered parameters -> zero on the model device to avoid device mismatch.
+        device = next(iter(named_parameters))[1].device if named_parameters else "cpu"
         return torch.zeros((), dtype=torch.float32, device=device)
     return total
 
