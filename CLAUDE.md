@@ -28,6 +28,7 @@ Guidelines for working on this repository with Claude Code.
 ## Project Structure
 
 - `src/` — Application source code (backend API, frontend dashboard, models, evaluation, data, training, utils)
+- `configs/training/` — Training configuration files (YAML)
 - `tests/` — Test suite (`unit/`, `integration/`, `e2e/`, `fixtures/`)
 - `scripts/` — Standalone evaluation and training scripts
 - `docs/` — Detailed documentation (testing guide, model selection, GPU setup, etc.)
