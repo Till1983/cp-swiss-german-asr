@@ -259,7 +259,10 @@ def main(argv=None):
         if args.smoke_test else cfg["evaluation"].get("eval_steps", 125)
 
     timestamp = time.strftime("%Y%m%d_%H%M%S")
-    output_dir = resolve_path(config.RESULTS_DIR, smoke.get("output_subdir", "smoke_test")) / timestamp
+    output_subdir = smoke.get("output_subdir", "smoke_test") if args.smoke_test else "baseline"
+    output_dir = resolve_path(config.RESULTS_DIR, output_subdir, timestamp)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    logger.info("Output dir: %s", output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     logger.info("Output dir: %s", output_dir)
     logger.info("gradient_checkpointing=%s  max_steps=%s  ewc_lambda=%s  eval_subset_size=%s",
@@ -389,14 +392,31 @@ def write_outputs(output_dir, trainer, train_result, throughput, cfg, args,
     _dump_json(output_dir / "throughput.json", throughput.summary(target_steps))
 
     peak_alloc = peak_reserved = None
-    try:
-        import torch
+    # Derive peak VRAM from vram_profile.csv if available (more reliable than torch.cuda.max_memory_*
+    # which reflect only the peak since the last reset by MemoryProfilerCallback).
+    vram_profile_path = output_dir / "vram_profile.csv"
+    if vram_profile_path.exists():
+        try:
+            import pandas as pd
+            df = pd.read_csv(vram_profile_path)
+            if "allocated_gb" in df.columns:
+                peak_alloc = df["allocated_gb"].max()
+            if "reserved_gb" in df.columns:
+                peak_reserved = df["reserved_gb"].max()
+        except Exception:
+            pass
+    # Fall back to torch CUDA stats if vram_profile.csv not available.
+    if peak_alloc is None or peak_reserved is None:
+        try:
+            import torch
 
-        if torch.cuda.is_available():
-            peak_alloc = torch.cuda.max_memory_allocated() / (1024**3)
-            peak_reserved = torch.cuda.max_memory_reserved() / (1024**3)
-    except Exception:
-        pass
+            if torch.cuda.is_available():
+                if peak_alloc is None:
+                    peak_alloc = torch.cuda.max_memory_allocated() / (1024**3)
+                if peak_reserved is None:
+                    peak_reserved = torch.cuda.max_memory_reserved() / (1024**3)
+        except Exception:
+            pass
 
     summary = [
         "# Whisper Large-v2 + EWC smoke test — summary",
@@ -410,8 +430,8 @@ def write_outputs(output_dir, trainer, train_result, throughput, cfg, args,
         "(Requirement A: fisher_diagonal.pt has NO 1/2 baked in)",
         "",
         "## VRAM",
-        f"- peak allocated: {peak_alloc:.2f} GB" if peak_alloc is not None else "- peak allocated: n/a (no CUDA)",
-        f"- peak reserved: {peak_reserved:.2f} GB" if peak_reserved is not None else "- peak reserved: n/a (no CUDA)",
+        f"- peak allocated: {peak_alloc:.2f} GB" if peak_alloc is not None else "- peak allocated: n/a (vram_profile.csv not found)",
+        f"- peak reserved: {peak_reserved:.2f} GB" if peak_reserved is not None else "- peak reserved: n/a (vram_profile.csv not found)",
         "- budget: 96 GB (see vram_profile.csv for per-step train/eval peaks)",
         "",
         "## Outcome",
