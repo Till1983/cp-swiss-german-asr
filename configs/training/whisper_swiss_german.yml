@@ -132,8 +132,10 @@ smoke_test:
   eval_subset_size: 75        # 50-100 utterances from val, not full 862
   ewc_lambda_placeholder: 1.0 # nonzero -> exercises EWC memory path; raw values
                               # logged separately for calibration regardless
-  memory_history_steps: 5     # torch.cuda.memory._record_memory_history window
-  gc_probe_steps: 5           # GC-off probe before committing to full 500
+  memory_history_steps: 5     # currently unused by scripts/train_whisper_swiss_german.py
+                              # (left for future bounded snapshot capture support)
+  gc_probe_steps: 5           # currently unused by scripts/train_whisper_swiss_german.py
+                              # GC probe is currently done manually via --max_steps=<probe>
   # relative to RESULTS_DIR -> RESULTS_DIR / "smoke_test" / "<timestamp>"
   output_subdir: "smoke_test"
 
