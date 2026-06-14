@@ -11,18 +11,8 @@
 #
 # PENDING ITEMS — resolve before using this config for the baseline or EWC
 # grid runs. The smoke test populates these:
-#   [PENDING-1] training.learning_rate       — anchor 1e-5, bracket [5e-6, 2.5e-5]
-#   [PENDING-2] training.warmup_steps        — anchor 50, decided jointly with LR
+#   
 #   [PENDING-3] training.adam_epsilon        — 1e-9 vs 1e-8 sanity check
-#   [PENDING-4] training.gradient_checkpointing — GC-off probed first; flips
-#                                                  true only if GC-off OOMs
-#   [PENDING-5] training.per_device_train_batch_size — 16 default; drops to 8
-#                                                  (+accum=2) only if GC-on
-#                                                  still OOMs
-#   [PENDING-6] evaluation.eval_steps / checkpointing.save_steps — derived
-#                                                  from final batch size
-#   [PENDING-7] ewc.lambda_grid              — c/10, c, c×10 from calibration
-#                                                  log (steps 20-50)
 # =============================================================================
 
 model:
@@ -55,12 +45,12 @@ training:
   weight_decay: 0.1
   adam_epsilon: 1e-9          # [PENDING-3] vs 1e-8 — cite Timmel et al. p.4 if retained
   lr_scheduler_type: "linear" # linear warmup -> linear decay
-  learning_rate: 1e-5         # [PENDING-1] anchor value for smoke test only
-  warmup_steps: 50            # [PENDING-2] anchor value for smoke test only
+  learning_rate: 1e-5         
+  warmup_steps: 50            
   num_train_epochs: 5         # hard ceiling
-  per_device_train_batch_size: 16   # [PENDING-5]
-  gradient_accumulation_steps: 1    # [PENDING-5] -> 2 if batch drops to 8
-  gradient_checkpointing: false     # [PENDING-4] — smoke test probes GC-off first
+  per_device_train_batch_size: 16   
+  gradient_accumulation_steps: 1    
+  gradient_checkpointing: false     
   bf16: true
   max_grad_norm: 1.0
   predict_with_generate: true
@@ -77,18 +67,18 @@ ewc:
   fisher_sample_size: 1000   # German CV 22.0, computed on zero-shot checkpoint (done)
   apply_half_factor: true    # Requirement A — fisher_diagonal.pt has NO 1/2 baked in;
                               # must match trainer's compute_ewc_loss convention
-  lambda_grid:               # [PENDING-7] — populate after smoke test calibration log
+  lambda_grid:               
     - 0.0      # baseline, no EWC
-    - null     # c/10
-    - null     # c
-    - null     # c x 10
+    - 3000.0     # c/10
+    - 30000.0     # c
+    - 300000.0     # c x 10
   forgetting_benchmark: "german_cv_22.0"  # RQ2 eval — likely post-hoc, not per-step
 
 checkpointing:
   # relative to MODELS_DIR -> MODELS_DIR / "fine_tuned" / "whisper-large-v2-swiss-german"
   output_dir: "fine_tuned/whisper-large-v2-swiss-german"
   save_strategy: "steps"
-  save_steps: 125             # [PENDING-6] ~0.5 epoch at batch 16; re-check if batch changes
+  save_steps: 125             
   save_total_limit: 3
   load_best_model_at_end: true
   metric_for_best_model: "wer"
@@ -96,7 +86,7 @@ checkpointing:
 
 evaluation:
   evaluation_strategy: "steps"
-  eval_steps: 125             # [PENDING-6]
+  eval_steps: 125             
   eval_subset_size: null       # full val (862) for real runs; smoke test overrides this
   per_dialect_wer_logging: true
   per_dialect_column: "accent"  # matches data.dialect_column
