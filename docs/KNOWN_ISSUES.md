@@ -1,7 +1,7 @@
 # Known Issues and Resolutions
 
 ## Table of Contents
-- [Current Status (Week 4 - 2025-11-26)](#current-status-week-4---2025-11-26)
+- [Current Status (Thesis Week 3 - 2026-06-14)](#current-status-thesis-week-3---2026-06-14)
 - [Resolved Issues](#resolved-issues)
 - [Best Practices Derived](#best-practices-derived)
 - [References](#references)
@@ -10,7 +10,7 @@ This document tracks technical issues encountered during the Swiss German ASR pr
 
 ---
 
-## Current Status (Week 4 - 2025-11-26)
+## Current Status (Thesis Week 3 - 2026-06-14)
 
 ### ✅ Completed & Resolved
 - Dutch pre-training pipeline (fully functional)
@@ -351,6 +351,39 @@ pip install --no-cache-dir -r requirements.txt --break-system-packages
 - `src/evaluation/metrics.py` (`calculate_chrf`, `batch_chrf`, `calculate_semdist`, `batch_semdist`)
 - `src/evaluation/evaluator.py` (lines 216–222: SentenceTransformer loading; lines 283–298: per-sample metric computation)
 - `src/utils/file_utils.py` (lines 73–107: conditional chrF/SemDist in CSV/JSON output)
+
+---
+
+### 14. train_whisper_on_cloud.sh — Login Shell Environment Mismatch
+
+**Problem:** The shell script launches training via `tmux new-session ... "bash -lc ..."`.
+On RunPod, a non-interactive login shell (`bash -lc`) does not inherit the same
+environment as an interactive SSH session, causing the tmux session to exit
+immediately with no log output and no error message surfaced locally.
+
+**Symptom:** The wrapper reports "Session already exited within the wait window"
+and "log file not found" within 12 seconds of launch.
+
+**Workaround (current):** SSH into the pod directly and launch the tmux session
+manually from the interactive shell:
+```bash
+tmux new-session -d -s whisper-train \
+  "cd /workspace/cp-swiss-german-asr && \
+   export ENVIRONMENT=runpod && \
+   export PYTHONPATH=/workspace/cp-swiss-german-asr && \
+   python scripts/train_whisper_swiss_german.py \
+     --config configs/training/whisper_swiss_german.yml \
+     [args] 2>&1 | tee /workspace/results/logs/whisper_swiss_german/run_<timestamp>.log"
+```
+
+**Root cause:** The `bash -lc` invocation sources `/etc/profile` and `~/.bash_profile`
+but on this RunPod image those do not activate the conda/pip environment where
+`accelerate 1.14.0` was installed, causing an import failure before Python output
+begins.
+
+**Fix needed:** Source the correct environment explicitly inside the tmux command,
+or replace `bash -lc` with a `bash -c` invocation that explicitly activates the
+environment. Resolve before EWC-grid runs.
 
 ---
 

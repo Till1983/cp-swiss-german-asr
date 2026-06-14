@@ -1,0 +1,134 @@
+# =============================================================================
+# Whisper Large-v2 + EWC Fine-tuning — FHNW Swiss German ASR
+# Mirrors configs/training/german_adaptation.yml / dutch_pretrain.yml structure
+#
+# PATH CONVENTION:
+# All *_path / *_dir / *_metadata values below are RELATIVE to the
+# corresponding src/config.py constant (DATA_DIR, MODELS_DIR, RESULTS_DIR),
+# resolved at runtime via e.g. `config.RESULTS_DIR / cfg["ewc"]["fisher_diagonal_path"]`.
+# This makes the file identical for local (/app/...) and RunPod (/workspace/...)
+# environments — do not hardcode absolute paths here.
+#
+# PENDING ITEMS — resolve before using this config for the baseline or EWC
+# grid runs. The smoke test populates these:
+#   
+#   [PENDING-3] training.adam_epsilon        — 1e-9 vs 1e-8 sanity check
+# =============================================================================
+
+model:
+  name: "openai/whisper-large-v2"
+  attn_implementation: "sdpa"   # FlashAttention2 unavailable on Blackwell (RTX PRO 6000)
+  torch_dtype: "float32"
+  language: "de"
+  task: "transcribe"
+  condition_on_prev_tokens: false  # guards against hallucination loop
+                                    # (capstone: 469.23% WER without this, AG sample)
+
+data:
+  # relative to DATA_DIR -> DATA_DIR / "metadata" / "train.tsv" etc.
+  train_metadata: "metadata/train.tsv"   # 4,025 utterances, 17 cantons
+  val_metadata: "metadata/val.tsv"       # 862 utterances
+  test_metadata: "metadata/test.tsv"     # 863 utterances — final eval only, not loaded here
+  dialect_column: "accent"
+  sampling_rate: 16000
+  num_workers: 8             # carried over from capstone GPU_COMPATIBILITY guidance;
+                              # re-check this doesn't bottleneck on RTX PRO 6000
+
+augmentation:
+  spec_augment: "librispeech_basic"   # Radford et al. — applied via feature extractor /
+                                       # custom augmentation hook
+
+training:
+  optimizer: "adamw"
+  adam_beta1: 0.9
+  adam_beta2: 0.98
+  weight_decay: 0.1
+  adam_epsilon: 1e-9          # [PENDING-3] vs 1e-8 — cite Timmel et al. p.4 if retained
+  lr_scheduler_type: "linear" # linear warmup -> linear decay
+  learning_rate: 1e-5         
+  warmup_steps: 50            
+  num_train_epochs: 5         # hard ceiling
+  per_device_train_batch_size: 16   
+  gradient_accumulation_steps: 1    
+  gradient_checkpointing: false     
+  bf16: true
+  max_grad_norm: 1.0
+  predict_with_generate: true
+  generation_max_length: 225  # check against FHNW label length distribution
+  generation_num_beams: 1     # greedy for training-time eval; final eval may differ
+  seed: 42
+
+ewc:
+  enabled: true
+  # relative to RESULTS_DIR -> RESULTS_DIR / "fisher" / "20260611_112301" / "..."
+  fisher_diagonal_path: "fisher/20260611_112301/fisher_diagonal.pt"
+  theta_star_path: "fisher/20260611_112301/theta_star.pt"
+  fisher_metadata_path: "fisher/20260611_112301/fisher_metadata.json"
+  fisher_sample_size: 1000   # German CV 22.0, computed on zero-shot checkpoint (done)
+  apply_half_factor: true    # Requirement A — fisher_diagonal.pt has NO 1/2 baked in;
+                              # must match trainer's compute_ewc_loss convention
+  lambda_grid:               
+    - 0.0      # baseline, no EWC
+    - 3000.0     # c/10
+    - 30000.0     # c
+    - 300000.0     # c x 10
+  forgetting_benchmark: "german_cv_22.0"  # RQ2 eval — likely post-hoc, not per-step
+
+checkpointing:
+  # relative to MODELS_DIR -> MODELS_DIR / "fine_tuned" / "whisper-large-v2-swiss-german"
+  output_dir: "fine_tuned/whisper-large-v2-swiss-german"
+  save_strategy: "steps"
+  save_steps: 125             
+  save_total_limit: 3
+  load_best_model_at_end: true
+  metric_for_best_model: "wer"
+  greater_is_better: false
+
+evaluation:
+  evaluation_strategy: "steps"
+  eval_steps: 125             
+  eval_subset_size: null       # full val (862) for real runs; smoke test overrides this
+  per_dialect_wer_logging: true
+  per_dialect_column: "accent"  # matches data.dialect_column
+  per_utterance_wer_persistence: true  # writes to results["samples"][i]["wer"]
+
+early_stopping:
+  enabled: true
+  patience: 3
+
+logging:
+  logging_strategy: "steps"
+  logging_steps: 25
+  report_to: ["tensorboard"]  # matches existing repo precedent (dutch_pretrain.yml,
+                              # german_adaptation.yml); W&B available via use_wandb
+                              # flag in ProjectTrainer if desired later
+  # relative to RESULTS_DIR -> RESULTS_DIR / "logs" / "whisper_swiss_german"
+  logging_dir: "logs/whisper_swiss_german"
+  ewc_calibration_log: "logs/whisper_swiss_german/ewc_calibration.csv"
+                              # raw task_loss + raw ewc_term, unscaled, every step
+
+environment:
+  seed: 42
+  dataloader_num_workers: 8
+
+# -----------------------------------------------------------------------------
+# Smoke-test-specific overrides — applied via CLI flags or this block when
+# running scripts/train_whisper_swiss_german.py in smoke-test mode.
+# Real baseline/EWC runs ignore this section entirely.
+# -----------------------------------------------------------------------------
+smoke_test:
+  max_steps: 500
+  eval_steps: 250             # one eval pass within the 500-step window
+  eval_subset_size: 75        # 50-100 utterances from val, not full 862
+  ewc_lambda_placeholder: 1.0 # nonzero -> exercises EWC memory path; raw values
+                              # logged separately for calibration regardless
+  memory_history_steps: 5     # currently unused by scripts/train_whisper_swiss_german.py
+                              # (left for future bounded snapshot capture support)
+  gc_probe_steps: 5           # currently unused by scripts/train_whisper_swiss_german.py
+                              # GC probe is currently done manually via --max_steps=<probe>
+  # relative to RESULTS_DIR -> RESULTS_DIR / "smoke_test" / "<timestamp>"
+  output_subdir: "smoke_test"
+
+runpod:
+  # overrides applied when ENVIRONMENT=runpod, per src/config.py convention
+  dataloader_num_workers: 8

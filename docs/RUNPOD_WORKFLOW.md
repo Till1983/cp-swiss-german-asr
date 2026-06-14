@@ -5,6 +5,7 @@
 - [Data Upload (First Time Only)](#data-upload-first-time-only)
 - [Prepare Datasets (First Time Only)](#prepare-datasets-first-time-only)
 - [Downloading the KenLM ARPA Model on RunPod](#downloading-the-kenlm-arpa-model-on-runpod)
+- [Run Whisper Swiss German Training](#run-whisper-swiss-german-training)
 - [Run Training](#run-training)
 - [Batch Evaluation on RunPod](#batch-evaluation-on-runpod)
 - [RunPod Error Analysis](#runpod-error-analysis)
@@ -14,7 +15,7 @@
 ## One-Time Setup
 1. Create RunPod account
 2. Create 100GB network volume
-3. Deploy RTX 3090 Secure Cloud pod
+3. Deploy RTX 3090 Secure Cloud pod for evaluation/RTX PRO 6000 for training and fine-tuning
 4. Add SSH key to RunPod settings
 5. Update `.env` with pod connection info
 
@@ -65,6 +66,24 @@ Ensure Python dependencies are installed (`pip install -r requirements.txt`) bef
 # On your laptop (triggers remote training)
 ./scripts/train_on_cloud.sh
 ```
+
+## Run Whisper Swiss German Training
+```bash
+# Smoke test (uses smoke-test mode + short run)
+./scripts/train_whisper_on_cloud.sh --smoke_test=true --max_steps=500
+
+# Baseline run (no EWC)
+./scripts/train_whisper_on_cloud.sh --smoke_test=false --ewc_lambda=0.0
+
+# EWC-grid run example
+./scripts/train_whisper_on_cloud.sh --smoke_test=false --ewc_lambda=0.1
+```
+
+- Launches on RunPod inside detached tmux session `whisper-train` so training survives local disconnects.
+- Forwards all args directly to `python scripts/train_whisper_swiss_german.py --config configs/training/whisper_swiss_german.yml "$@"`.
+- Check status without attaching: `./scripts/train_whisper_on_cloud.sh --status`
+- Sync results back after/while running: `./scripts/train_whisper_on_cloud.sh --sync-results`
+- Attach/detach manually on pod: `tmux attach -t whisper-train` and `Ctrl-b d`
 
 ## Batch Evaluation on RunPod
 ```bash
