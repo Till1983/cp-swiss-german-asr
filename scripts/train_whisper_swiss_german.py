@@ -260,7 +260,7 @@ def main(argv=None):
 
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     output_subdir = smoke.get("output_subdir", "smoke_test") if args.smoke_test else "baseline"
-    output_dir = resolve_path(config.RESULTS_DIR, output_subdir, timestamp)
+    output_dir = resolve_path(config.RESULTS_DIR, output_subdir) / timestamp
     output_dir.mkdir(parents=True, exist_ok=True)
     logger.info("Output dir: %s", output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -399,10 +399,10 @@ def write_outputs(output_dir, trainer, train_result, throughput, cfg, args,
         try:
             import pandas as pd
             df = pd.read_csv(vram_profile_path)
-            if "allocated_gb" in df.columns:
-                peak_alloc = df["allocated_gb"].max()
-            if "reserved_gb" in df.columns:
-                peak_reserved = df["reserved_gb"].max()
+            if "max_allocated_gb" in df.columns:
+                peak_alloc = df["max_allocated_gb"].max()
+            if "max_reserved_gb" in df.columns:
+                peak_reserved = df["max_reserved_gb"].max()
         except Exception:
             pass
     # Fall back to torch CUDA stats if vram_profile.csv not available.
