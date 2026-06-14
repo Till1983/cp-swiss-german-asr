@@ -68,7 +68,7 @@ def parse_args(argv=None):
     parser.add_argument("--eval_subset_size", type=int, default=None,
                         help="default from smoke_test.eval_subset_size (~75)")
     parser.add_argument("--smoke_test", type=_str2bool, default=True,
-                        help="apply smoke_test. overrides (default true)")
+                        help="apply smoke_test.* overrides (default true)")
     return parser.parse_args(argv)
 
 
@@ -314,8 +314,6 @@ def main(argv=None):
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     output_subdir = smoke.get("output_subdir", "smoke_test") if args.smoke_test else "baseline"
     output_dir = resolve_path(config.RESULTS_DIR, output_subdir) / timestamp
-    output_dir.mkdir(parents=True, exist_ok=True)
-    logger.info("Output dir: %s", output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     logger.info("Output dir: %s", output_dir)
     logger.info(
