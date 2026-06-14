@@ -10,6 +10,7 @@ cp-swiss-german-asr/
 ├── .gitignore
 ├── .pytest_cache/
 ├── .ruff_cache/
+├── AGENTS.md
 ├── CLAUDE.md
 ├── Dockerfile
 ├── LICENSE
@@ -107,6 +108,7 @@ cp-swiss-german-asr/
 │   ├── PROJECT-STRUCTURE.md
 │   ├── RUNPOD_POD_PERSISTENCE.md
 │   ├── RUNPOD_WORKFLOW.md
+│   ├── SMOKE_TEST_RESULTS.md
 │   ├── TEST_IMPROVEMENTS_SUMMARY.md
 │   ├── TESTING.md
 │   └── TRAINING_WORKFLOW.md
@@ -201,6 +203,8 @@ cp-swiss-german-asr/
 │   ├── 20251113_172257/
 │   ├── 20251113_180429/
 │   └── 20251113_181410/
+├── htmlcov/             # gitignored
+│   └── ...
 ├── images/
 │   ├── detailed-metrics.png
 │   ├── dialect-analysis.png
@@ -301,10 +305,12 @@ cp-swiss-german-asr/
 │   │       └── whisper-large-v3-turbo_results.json
 │   └── tmp/
 ├── scripts/
+│   ├── __pycache__/         # gitignored
 │   ├── adapt_on_cloud.sh
 │   ├── analyze_errors.py
 │   ├── batch_evaluation.sh
 │   ├── check_lm_vocab.py
+│   ├── compute_fisher.py
 │   ├── diagnose_lm_alignment.py
 │   ├── download_lm.py
 │   ├── evaluate_models.py
@@ -315,8 +321,12 @@ cp-swiss-german-asr/
 │   ├── train_dutch_pretrain.py
 │   ├── train_german_adaptation.py
 │   ├── train_on_cloud.sh
-│   └── upload_to_cloud.sh
+│   ├── train_whisper_on_cloud.sh
+│   ├── train_whisper_swiss_german.py
+│   ├── upload_to_cloud.sh
+│   └── verify_fisher_keys.py
 ├── src/
+│   ├── .cache/              # gitignored
 │   ├── __init__.py
 │   ├── config.py
 │   ├── __pycache__/         # gitignored
