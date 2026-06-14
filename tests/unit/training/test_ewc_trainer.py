@@ -136,7 +136,7 @@ def test_key_coverage_fires_when_key_missing(tiny_model):
 # ---------------------------------------------------------------------------
 # Trainer-level: key coverage at __init__ and raw calibration logging
 # ---------------------------------------------------------------------------
-def _make_trainer(tmp_path, model, should_drop_key=False, ewc_lambda=1.0, log_path=None):
+def _make_trainer(tmp_path, model, should_drop_key=True, ewc_lambda=1.0, log_path=None):
     from transformers import Seq2SeqTrainingArguments
 
     names = [n for n, _ in model.named_parameters()]
@@ -167,7 +167,7 @@ def _make_trainer(tmp_path, model, should_drop_key=False, ewc_lambda=1.0, log_pa
 @pytest.mark.unit
 def test_trainer_init_raises_on_missing_key(tmp_path, tiny_model):
     with pytest.raises(ValueError, match="key-coverage"):
-        _make_trainer(tmp_path, tiny_model, drop_key=True)
+        _make_trainer(tmp_path, tiny_model, should_drop_key=True)
 
 
 @pytest.mark.unit
