@@ -27,6 +27,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 import yaml  # noqa: E402
+from transformers import TrainerCallback  # noqa: E402
 
 import src.config as config  # noqa: E402
 from src.training.whisper_setup import build_whisper_model, resolve_path  # noqa: E402
@@ -105,8 +106,11 @@ def check_fisher_metadata(cfg: dict) -> None:
         "dtype": "float32",
     }
     mismatches = []
-    if meta.get("n_processed") != expected["n_processed"] and meta.get("n_requested") != expected["n_processed"]:
-        mismatches.append(f"n_samples={meta.get('n_processed')} (expected {expected['n_processed']})")
+    if (meta.get("n_processed") != expected["n_processed"]
+            and meta.get("n_requested") != expected["n_processed"]):
+        mismatches.append(
+            f"n_samples={meta.get('n_processed')} (expected {expected['n_processed']})"
+        )
     for k in ("seed", "attn_implementation", "dtype"):
         if meta.get(k) != expected[k]:
             mismatches.append(f"{k}={meta.get(k)} (expected {expected[k]})")
@@ -115,15 +119,62 @@ def check_fisher_metadata(cfg: dict) -> None:
     if mismatches:
         logger.warning("Fisher metadata sanity check mismatches: %s", "; ".join(mismatches))
     else:
-        logger.info("Fisher metadata sanity check passed (n=%s, seed=%s, %s, %s).",
-                    meta.get("n_processed"), meta.get("seed"),
-                    meta.get("attn_implementation"), meta.get("dtype"))
+        logger.info(
+            "Fisher metadata sanity check passed (n=%s, seed=%s, %s, %s).",
+            meta.get("n_processed"), meta.get("seed"),
+            meta.get("attn_implementation"), meta.get("dtype"),
+        )
+
+
+# ---------------------------------------------------------------------------
+# I/O helpers
+# ---------------------------------------------------------------------------
+def _dump_json(path: Path, obj) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w") as fh:
+        json.dump(obj, fh, indent=2)
+
+
+def _append_jsonl(path: Path, obj) -> None:
+    """Append one JSON record as a newline-delimited entry.
+
+    Each call writes one line: ``{"step": N, "dialect1": wer1, ...}\\n``.
+    The file is created if absent; existing lines are preserved, so the full
+    per-step history survives a crash mid-training.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "a") as fh:
+        fh.write(json.dumps(obj) + "\n")
+
+
+# ---------------------------------------------------------------------------
+# Step counter callback
+# ---------------------------------------------------------------------------
+class StepCounterCallback(TrainerCallback):
+    """Keep step_counter[0] current so compute_metrics can stamp JSONL records.
+
+    ``on_step_end`` fires after each optimizer step, before
+    ``_maybe_log_save_evaluate`` triggers evaluation (see Trainer
+    ``_inner_training_loop``).  That means when ``compute_metrics`` runs
+    during an eval pass at step N, ``step_counter[0]`` is already N — the
+    write and read are in the correct order without any look-ahead.
+
+    Threading via a single-element list is the minimal-coupling pattern:
+    both ``build_compute_metrics`` and ``main`` share the same list object;
+    the callback writes it, the closure reads it.
+    """
+
+    def __init__(self, counter: list) -> None:
+        self._counter = counter
+
+    def on_step_end(self, args, state, control, **kwargs):
+        self._counter[0] = state.global_step
 
 
 # ---------------------------------------------------------------------------
 # Metrics
 # ---------------------------------------------------------------------------
-def build_compute_metrics(processor, eval_dataset, output_dir, cfg):
+def build_compute_metrics(processor, eval_dataset, output_dir, cfg, step_counter):
     import jiwer
 
     dialects = eval_dataset.dialects
@@ -166,20 +217,22 @@ def build_compute_metrics(processor, eval_dataset, output_dir, cfg):
             }
             for d, w in per_dialect_wer.items():
                 metrics[f"wer_{d}"] = w
-            _dump_json(Path(output_dir) / "per_dialect_wer.json", per_dialect_wer)
+            # Append this eval pass as a JSONL record keyed by step.
+            # StepCounterCallback.on_step_end updates step_counter[0] before
+            # _maybe_log_save_evaluate triggers evaluation, so the value here
+            # is always the step that triggered this eval pass.
+            record = {"step": step_counter[0], **per_dialect_wer}
+            _append_jsonl(Path(output_dir) / "per_dialect_wer.jsonl", record)
 
         if per_utt:
+            # Overwrite is intentional: per-utterance breakdown is a point-in-
+            # time snapshot of the most recent eval pass, not a time series.
+            # The step-tagged time series lives in per_dialect_wer.jsonl.
             _dump_json(Path(output_dir) / "per_utterance_wer.json", {"samples": samples})
 
         return metrics
 
     return compute_metrics
-
-
-def _dump_json(path: Path, obj) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w") as fh:
-        json.dump(obj, fh, indent=2)
 
 
 # ---------------------------------------------------------------------------
@@ -263,15 +316,17 @@ def main(argv=None):
     output_dir = resolve_path(config.RESULTS_DIR, output_subdir) / timestamp
     output_dir.mkdir(parents=True, exist_ok=True)
     logger.info("Output dir: %s", output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    logger.info("Output dir: %s", output_dir)
-    logger.info("gradient_checkpointing=%s  max_steps=%s  ewc_lambda=%s  eval_subset_size=%s",
-                gradient_checkpointing, max_steps, ewc_lambda, eval_subset_size)
+    logger.info(
+        "gradient_checkpointing=%s  max_steps=%s  ewc_lambda=%s  eval_subset_size=%s",
+        gradient_checkpointing, max_steps, ewc_lambda, eval_subset_size,
+    )
 
     check_fisher_metadata(cfg)
 
     # --- model + processor ---
-    model, processor = build_whisper_model(cfg["model"], cfg.get("augmentation"), gradient_checkpointing)
+    model, processor = build_whisper_model(
+        cfg["model"], cfg.get("augmentation"), gradient_checkpointing
+    )
 
     # --- data ---
     from src.data.whisper_collator import DataCollatorSpeechSeq2SeqWithPadding
@@ -284,12 +339,16 @@ def main(argv=None):
         subset_size=eval_subset_size,
         seed=cfg["training"].get("seed", 42),
     )
-    train_ds = WhisperSpeechDataset(train_df, clips_dir, processor,
-                                    sampling_rate=cfg["data"]["sampling_rate"],
-                                    dialect_column=cfg["data"]["dialect_column"])
-    eval_ds = WhisperSpeechDataset(val_df, clips_dir, processor,
-                                   sampling_rate=cfg["data"]["sampling_rate"],
-                                   dialect_column=cfg["data"]["dialect_column"])
+    train_ds = WhisperSpeechDataset(
+        train_df, clips_dir, processor,
+        sampling_rate=cfg["data"]["sampling_rate"],
+        dialect_column=cfg["data"]["dialect_column"],
+    )
+    eval_ds = WhisperSpeechDataset(
+        val_df, clips_dir, processor,
+        sampling_rate=cfg["data"]["sampling_rate"],
+        dialect_column=cfg["data"]["dialect_column"],
+    )
     logger.info("Train utterances: %d | Eval utterances: %d", len(train_ds), len(eval_ds))
 
     collator = DataCollatorSpeechSeq2SeqWithPadding(
@@ -300,10 +359,12 @@ def main(argv=None):
     # --- EWC artifacts ---
     from src.training.ewc_trainer import Seq2SeqEWCTrainer, load_fisher_and_theta
 
-    fisher_path = resolve_path(config.RESULTS_DIR,
-                               args.fisher_path or cfg["ewc"]["fisher_diagonal_path"])
-    theta_path = resolve_path(config.RESULTS_DIR,
-                              args.theta_star_path or cfg["ewc"]["theta_star_path"])
+    fisher_path = resolve_path(
+        config.RESULTS_DIR, args.fisher_path or cfg["ewc"]["fisher_diagonal_path"]
+    )
+    theta_path = resolve_path(
+        config.RESULTS_DIR, args.theta_star_path or cfg["ewc"]["theta_star_path"]
+    )
     logger.info("Loading Fisher: %s", fisher_path)
     logger.info("Loading theta*: %s", theta_path)
     fisher_dict, old_params = load_fisher_and_theta(fisher_path, theta_path)
@@ -322,6 +383,12 @@ def main(argv=None):
 
     vram_callback = MemoryProfilerCallback(output_dir / "vram_profile.csv")
 
+    # Shared mutable container: StepCounterCallback.on_step_end writes
+    # state.global_step after every optimizer step (before evaluation fires),
+    # so the closure in build_compute_metrics always reads the current step.
+    step_counter = [0]
+    step_counter_callback = StepCounterCallback(step_counter)
+
     training_args = build_training_arguments(
         cfg, args, output_dir, gradient_checkpointing, max_steps, eval_steps
     )
@@ -333,13 +400,15 @@ def main(argv=None):
         eval_dataset=eval_ds,
         data_collator=collator,
         processing_class=processor.feature_extractor,
-        compute_metrics=build_compute_metrics(processor, eval_ds, output_dir, cfg),
+        compute_metrics=build_compute_metrics(
+            processor, eval_ds, output_dir, cfg, step_counter
+        ),
         fisher_dict=fisher_dict,
         old_params=old_params,
         ewc_lambda=ewc_lambda,
         apply_half_factor=cfg["ewc"].get("apply_half_factor", True),
         ewc_log_path=ewc_log_path,
-        callbacks=[vram_callback],
+        callbacks=[vram_callback, step_counter_callback],
     )
 
     # --- profiling lifecycle around training ---
@@ -392,8 +461,9 @@ def write_outputs(output_dir, trainer, train_result, throughput, cfg, args,
     _dump_json(output_dir / "throughput.json", throughput.summary(target_steps))
 
     peak_alloc = peak_reserved = None
-    # Derive peak VRAM from vram_profile.csv if available (more reliable than torch.cuda.max_memory_*
-    # which reflect only the peak since the last reset by MemoryProfilerCallback).
+    # Derive peak VRAM from vram_profile.csv if available (more reliable than
+    # torch.cuda.max_memory_* which reflect only the peak since the last reset
+    # by MemoryProfilerCallback).
     vram_profile_path = output_dir / "vram_profile.csv"
     if vram_profile_path.exists():
         try:
@@ -409,12 +479,11 @@ def write_outputs(output_dir, trainer, train_result, throughput, cfg, args,
     if peak_alloc is None or peak_reserved is None:
         try:
             import torch
-
             if torch.cuda.is_available():
                 if peak_alloc is None:
-                    peak_alloc = torch.cuda.max_memory_allocated() / (1024**3)
+                    peak_alloc = torch.cuda.max_memory_allocated() / (1024 ** 3)
                 if peak_reserved is None:
-                    peak_reserved = torch.cuda.max_memory_reserved() / (1024**3)
+                    peak_reserved = torch.cuda.max_memory_reserved() / (1024 ** 3)
         except Exception:
             pass
 
@@ -426,26 +495,41 @@ def write_outputs(output_dir, trainer, train_result, throughput, cfg, args,
         f"- per_device_train_batch_size: {cfg['training']['per_device_train_batch_size']}",
         f"- max_steps: {max_steps}",
         f"- ewc_lambda (placeholder): {ewc_lambda}",
-        f"- EWC half-factor applied: {cfg['ewc'].get('apply_half_factor', True)} "
-        "(Requirement A: fisher_diagonal.pt has NO 1/2 baked in)",
+        (
+            f"- EWC half-factor applied: {cfg['ewc'].get('apply_half_factor', True)} "
+            "(Requirement A: fisher_diagonal.pt has NO 1/2 baked in)"
+        ),
         "",
         "## VRAM",
-        f"- peak allocated: {peak_alloc:.2f} GB" if peak_alloc is not None else "- peak allocated: n/a (vram_profile.csv not found)",
-        f"- peak reserved: {peak_reserved:.2f} GB" if peak_reserved is not None else "- peak reserved: n/a (vram_profile.csv not found)",
+        (
+            f"- peak allocated: {peak_alloc:.2f} GB"
+            if peak_alloc is not None
+            else "- peak allocated: n/a (vram_profile.csv not found)"
+        ),
+        (
+            f"- peak reserved: {peak_reserved:.2f} GB"
+            if peak_reserved is not None
+            else "- peak reserved: n/a (vram_profile.csv not found)"
+        ),
         "- budget: 96 GB (see vram_profile.csv for per-step train/eval peaks)",
         "",
         "## Outcome",
     ]
     if oom_error is not None:
         summary.append(f"- OOM / RuntimeError during training:\n```\n{oom_error}\n```")
-        summary.append("- ACTION: re-run with --gradient_checkpointing=true; if it still OOMs, STOP and report.")
+        summary.append(
+            "- ACTION: re-run with --gradient_checkpointing=true; "
+            "if it still OOMs, STOP and report."
+        )
     else:
         summary.append("- training completed without OOM.")
         if train_result is not None:
             summary.append(f"- final metrics: {train_result.metrics}")
-        summary.append("- go/no-go on LR=1e-5/warmup=50: inspect loss_curve.csv for a sane "
-                       "decrease through warmup (no spike/flatline) and ewc_calibration.csv "
-                       "for the raw EWC term scale used to centre the lambda grid.")
+        summary.append(
+            "- go/no-go on LR=1e-5/warmup=50: inspect loss_curve.csv for a sane "
+            "decrease through warmup (no spike/flatline) and ewc_calibration.csv "
+            "for the raw EWC term scale used to centre the lambda grid."
+        )
 
     (output_dir / "summary.md").write_text("\n".join(summary) + "\n")
     logger.info("Wrote smoke-test artifacts to %s", output_dir)
