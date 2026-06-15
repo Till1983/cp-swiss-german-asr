@@ -95,8 +95,11 @@ class TestGetPerformanceCategory:
 
     def test_out_of_bounds_values(self):
         """Test values outside defined ranges (should return 'poor')."""
-        # BLEU 100.0 is not included in the "excellent" range (50, 100); the upper bound is exclusive.
-        assert get_performance_category(100.0, 'bleu') == 'poor'
+        # BLEU uses (50, 101), so 100.0 is still "excellent".
+        assert get_performance_category(100.0, 'bleu') == 'excellent'
+
+        # Values above supported BLEU range fall through.
+        assert get_performance_category(101.0, 'bleu') == 'poor'
         
         # Negative values fall through
         assert get_performance_category(-1.0, 'wer') == 'poor'
@@ -361,7 +364,7 @@ class TestPerformanceThresholds:
         assert thresholds['good'][0] == 30
         assert thresholds['good'][1] == 50
         assert thresholds['excellent'][0] == 50
-        assert thresholds['excellent'][1] == 100
+        assert thresholds['excellent'][1] == 101
 
     def test_performance_colors_defined(self):
         """Test that all performance colors are defined."""
