@@ -12,6 +12,7 @@ kaleido>=0.2.1
 
 # Data & ML - CPU-ONLY versions (much faster to install)
 numpy>=1.26.0,<2.0.0
+scipy==1.14.1
 pandas>=2.0.0
 
 # PyTorch CPU-only (70% smaller and faster to install)
