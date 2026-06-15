@@ -3,6 +3,7 @@ import numpy as np
 import jiwer
 from sacrebleu import sentence_bleu
 from sacrebleu.metrics import CHRF
+from src.evaluation.text_normalization import normalize_text
 
 """
 ASR Evaluation Metrics Module
@@ -21,13 +22,7 @@ def _normalize_text(text: str, mode: str = "asr_fair") -> str:
     - "standard": lowercase + whitespace collapse (applied in previous analyses, preserves punctuation)
     - "asr_fair": lowercase + punctuation removal + whitespace collapse (new default for future ASR evaluations)
     """
-    text = text.lower()
-    
-    if mode == "asr_fair":
-        import string
-        text = text.translate(str.maketrans('', '', string.punctuation))
-    
-    return " ".join(text.split())
+    return normalize_text(text, mode=mode)
 
 
 def _filter_empty_references(references: List[str], hypotheses: List[str]) -> tuple:

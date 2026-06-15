@@ -9,6 +9,7 @@ kaleido>=0.2.1
 
 # Data & ML - Python 3.12 + PyTorch 2.6 compatible
 numpy>=1.26.0,<2.0.0  # Critical: Prevent NumPy 2.0 to maintain PyTorch/librosa compatibility
+scipy==1.14.1
 pandas>=2.0.0
 torch==2.6.0
 torchaudio==2.6.0
