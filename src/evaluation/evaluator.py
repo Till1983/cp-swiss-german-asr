@@ -349,10 +349,11 @@ class ASREvaluator:
             }
 
         # Calculate aggregate metrics
-        overall_wer = sum(r['wer'] for r in results) / len(results)
-
         references = [r['reference'] for r in results]
         hypotheses = [r['hypothesis'] for r in results]
+        wer_result = metrics.batch_wer(references, hypotheses)
+        overall_wer = wer_result['overall_wer'] 
+
         cer_result = metrics.batch_cer(references, hypotheses)
         overall_cer = cer_result['overall_cer']
 
@@ -379,9 +380,9 @@ class ASREvaluator:
         for dialect in dialects:
             dialect_samples = [r for r in results if r['dialect'] == dialect]
             if dialect_samples:
-                per_dialect_wer[dialect] = sum(r['wer'] for r in dialect_samples) / len(dialect_samples)
                 refs = [r['reference'] for r in dialect_samples]
                 hyps = [r['hypothesis'] for r in dialect_samples]
+                per_dialect_wer[dialect] = metrics.batch_wer(refs, hyps)['overall_wer']
                 per_dialect_cer[dialect] = metrics.batch_cer(refs, hyps)['overall_cer']
                 per_dialect_bleu[dialect] = metrics.batch_bleu(refs, hyps)['overall_bleu']
                 per_dialect_chrf[dialect] = metrics.batch_chrf(refs, hyps)['overall_chrf']
