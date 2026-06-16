@@ -7,7 +7,6 @@ Tests the complete flow from evaluation results to error analysis and visualizat
 import pytest
 import json
 import tempfile
-import statistics
 from pathlib import Path
 from unittest.mock import patch, Mock
 from src.evaluation.error_analyzer import ErrorAnalyzer
@@ -174,19 +173,21 @@ class TestErrorAnalysisPipeline:
         """Test comparing error analysis from multiple models."""
         analyzer = ErrorAnalyzer()
 
-        # Generate analysis for "model A"
+        # Generate slightly worse results for "model B" (different transcriptions)
+        import copy
+        worse_results = copy.deepcopy(sample_evaluation_results)
+        for result in worse_results:
+            # Degrade the hypothesis by replacing all words with "x" to ensure higher WER
+            result["hypothesis"] = " ".join(
+                ["x"] * len(result["reference"].split())
+            )
+
+        # Generate analysis for "model A" (original, better results)
         analysis_a = {
             "aggregate_stats": analyzer.calculate_aggregate_stats(sample_evaluation_results),
             "dialect_analysis": analyzer.analyze_by_dialect(sample_evaluation_results),
             "error_distribution_percent": {}
         }
-
-        # Generate slightly worse results for "model B"
-        worse_results = sample_evaluation_results.copy()
-        for result in worse_results:
-            result["wer"] += 5.0
-            result["cer"] += 2.0
-            result["bleu"] -= 5.0
 
         analysis_b = {
             "aggregate_stats": analyzer.calculate_aggregate_stats(worse_results),
@@ -231,9 +232,11 @@ class TestErrorAnalysisPipeline:
         dialect_analysis = analyzer.analyze_by_dialect(empty_results)
         assert dialect_analysis == {}
 
-        # Current implementation raises StatisticsError for empty results
-        with pytest.raises(statistics.StatisticsError):
-            analyzer.calculate_aggregate_stats(empty_results)
+        # Empty results return zero stats (no error raised)
+        aggregate = analyzer.calculate_aggregate_stats(empty_results)
+        assert aggregate["mean_wer"] == 0.0
+        assert aggregate["mean_cer"] == 0.0
+        assert aggregate["mean_bleu"] == 0.0
 
     @pytest.mark.integration
     def test_error_analysis_single_dialect(self):
@@ -300,10 +303,9 @@ class TestErrorAnalysisMetricsIntegration:
         assert "BE" in dialect_analysis
         be_stats = dialect_analysis["BE"]
 
-        # First result should have 0% WER (perfect match)
-        # Second result should have 50% WER (1 substitution out of 2 words)
-        # Mean should be 25%
-        assert be_stats["mean_wer"] == pytest.approx(25.0, abs=1.0)
+        # Corpus-level WER: 1 substitution across 6 total reference words
+        # = 1/6 * 100 ≈ 16.67%
+        assert be_stats["mean_wer"] == pytest.approx(100.0 / 6.0, abs=1.0)
 
     @pytest.mark.integration
     def test_error_distribution_calculation(self):
