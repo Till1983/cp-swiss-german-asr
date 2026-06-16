@@ -157,7 +157,7 @@ class ASREvaluator:
                 language="de",
                 temperature=0.0,                  # Deterministic decoding
                 beam_size=5,                       # Consistent beam search
-                condition_on_prev_tokens=False,    # Guards against hallucination loops
+                condition_on_previous_text=False,    # Guards against hallucination loops
                 fp16=False                         # Unconditional FP32 for reproducibility
             )
             return result['text']
