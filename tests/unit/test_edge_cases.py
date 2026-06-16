@@ -256,8 +256,8 @@ class TestMetricsEdgeCases:
         """Test batch metrics with only one sample."""
         from src.evaluation.metrics import batch_wer, batch_cer, batch_bleu
 
-        refs = ["hello world"]
-        hyps = ["hello world"]
+        refs = ["hello world this is"]
+        hyps = ["hello world this is"]
 
         wer_result = batch_wer(refs, hyps)
         cer_result = batch_cer(refs, hyps)
