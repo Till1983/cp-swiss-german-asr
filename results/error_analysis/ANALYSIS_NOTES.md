@@ -1,4 +1,3 @@
-```markdown
 # Error Analysis Notes
 
 > **⚠️ Note on WER figures — added 16 June 2026.** The per-dialect "Mean 
