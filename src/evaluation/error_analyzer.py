@@ -151,12 +151,12 @@ class ErrorAnalyzer:
         Calculate aggregate (micro) WER/CER/BLEU plus median/std of the
         per-utterance distribution for WER and CER, and BLEU statistics.
 
-        mean_wer/mean_cer/mean_bleu are corpus-level aggregates (total errors /
-        total reference words for WER/CER; corpus BLEU with brevity penalty for
-        BLEU), NOT the arithmetic mean of per-sample rates. median_wer/std_wer/
-        std_bleu remain descriptive statistics over the per-utterance
-        distribution, which is a legitimate complementary view, not the
-        headline aggregate.
+        mean_wer/mean_cer are corpus-level aggregates (total errors / total
+        reference words for WER/CER), NOT the arithmetic mean of per-sample
+        rates. mean_bleu is the arithmetic mean of per-sample sentence-level
+        BLEU scores. median_wer/std_wer/median_bleu/std_bleu remain descriptive
+        statistics over the per-utterance distribution, which is a legitimate
+        complementary view, not the headline aggregate.
 
         Args:
             results: List of evaluation results with wer, cer, bleu, reference,
