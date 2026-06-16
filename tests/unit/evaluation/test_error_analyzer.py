@@ -1,5 +1,9 @@
 import pytest
+from unittest.mock import patch
 from src.evaluation.error_analyzer import ErrorAnalyzer
+
+pytestmark = pytest.mark.unit
+
 
 class TestErrorAnalyzer:
     @pytest.fixture
@@ -194,19 +198,26 @@ class TestErrorAnalyzer:
             # Missing dialect key should be handled
             {'reference': 'foo', 'hypothesis': 'bar', 'wer': 100.0, 'cer': 100.0, 'bleu': 0.0}
         ]
-        
-        analysis = analyzer.analyze_by_dialect(results)
-        
+
+        with patch('src.evaluation.error_analyzer.batch_wer') as mock_wer, \
+             patch('src.evaluation.error_analyzer.batch_cer') as mock_cer, \
+             patch('src.evaluation.error_analyzer.batch_bleu') as mock_bleu:
+            mock_wer.return_value = {'overall_wer': 25.0}
+            mock_cer.return_value = {'overall_cer': 10.0}
+            mock_bleu.return_value = {'overall_bleu': 75.0}
+
+            analysis = analyzer.analyze_by_dialect(results)
+
         assert 'bern' in analysis
         assert 'zurich' in analysis
         assert 'unknown' in analysis
-        
+
         # Check Bern stats
         bern_stats = analysis['bern']
         assert bern_stats['sample_count'] == 2
         assert bern_stats['mean_wer'] == 25.0
-        assert bern_stats['mean_bleu'] == 75.0  # NEW
-        
+        assert bern_stats['mean_bleu'] == 75.0
+
         # Check error distribution structure exists and is populated
         assert 'error_distribution' in bern_stats
         dist = bern_stats['error_distribution']
@@ -216,34 +227,48 @@ class TestErrorAnalyzer:
     def test_calculate_aggregate_stats(self, analyzer):
         """Test calculation of mean/median/std stats including BLEU."""
         results = [
-            {'wer': 10.0, 'cer': 5.0, 'bleu': 85.0},
-            {'wer': 20.0, 'cer': 10.0, 'bleu': 75.0},
-            {'wer': 30.0, 'cer': 15.0, 'bleu': 65.0}
+            {'wer': 10.0, 'cer': 5.0, 'bleu': 85.0, 'reference': 'a b c', 'hypothesis': 'a b c'},
+            {'wer': 20.0, 'cer': 10.0, 'bleu': 75.0, 'reference': 'a b c', 'hypothesis': 'a b d'},
+            {'wer': 30.0, 'cer': 15.0, 'bleu': 65.0, 'reference': 'a b c', 'hypothesis': 'a d e'}
         ]
-        
-        stats = analyzer.calculate_aggregate_stats(results)
-        
+
+        with patch('src.evaluation.error_analyzer.batch_wer') as mock_wer, \
+             patch('src.evaluation.error_analyzer.batch_cer') as mock_cer, \
+             patch('src.evaluation.error_analyzer.batch_bleu') as mock_bleu:
+            mock_wer.return_value = {'overall_wer': 20.0}
+            mock_cer.return_value = {'overall_cer': 10.0}
+            mock_bleu.return_value = {'overall_bleu': 75.0}
+
+            stats = analyzer.calculate_aggregate_stats(results)
+
         assert stats['mean_wer'] == 20.0
         assert stats['mean_cer'] == 10.0
-        assert stats['mean_bleu'] == 75.0  # NEW
+        assert stats['mean_bleu'] == 75.0
         assert 'std_wer' in stats
         assert 'std_cer' in stats
-        assert 'std_bleu' in stats  # NEW
-        
+        assert 'std_bleu' in stats
+
         # Check standard deviations are calculated
         assert stats['std_wer'] > 0
-        assert stats['std_bleu'] > 0  # NEW
+        assert stats['std_bleu'] > 0
 
     def test_calculate_aggregate_stats_single_sample(self, analyzer):
         """Test stats with a single sample (std should be 0)."""
-        results = [{'wer': 25.0, 'cer': 12.0, 'bleu': 70.0}]
-        
-        stats = analyzer.calculate_aggregate_stats(results)
-        
+        results = [{'wer': 25.0, 'cer': 12.0, 'bleu': 70.0, 'reference': 'hello', 'hypothesis': 'hello'}]
+
+        with patch('src.evaluation.error_analyzer.batch_wer') as mock_wer, \
+             patch('src.evaluation.error_analyzer.batch_cer') as mock_cer, \
+             patch('src.evaluation.error_analyzer.batch_bleu') as mock_bleu:
+            mock_wer.return_value = {'overall_wer': 25.0}
+            mock_cer.return_value = {'overall_cer': 12.0}
+            mock_bleu.return_value = {'overall_bleu': 70.0}
+
+            stats = analyzer.calculate_aggregate_stats(results)
+
         assert stats['mean_wer'] == 25.0
         assert stats['std_wer'] == 0.0
-        assert stats['mean_bleu'] == 70.0  # NEW
-        assert stats['std_bleu'] == 0.0  # NEW
+        assert stats['mean_bleu'] == 70.0
+        assert stats['std_bleu'] == 0.0
 
     # ============================================================================
     # WER-BLEU CORRELATION TESTS (NEW)

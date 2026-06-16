@@ -2,32 +2,32 @@
   "meta": {
     "model_name": "whisper-medium",
     "source_file": "whisper-medium_results.json",
-    "timestamp": "20260303_112117",
+    "timestamp": "20260616_103556",
     "total_samples": 863
   },
   "global_metrics": {
-    "mean_wer": 31.19638826475443,
+    "mean_wer": 30.171603196991065,
     "median_wer": 25.0,
-    "std_wer": 28.929077979174135,
-    "mean_cer": 15.972028891176075,
+    "std_wer": 24.681138072033182,
+    "mean_cer": 14.940991608438367,
     "median_cer": 11.11111111111111,
-    "std_cer": 21.71680792997744,
-    "mean_bleu": 51.472373930962625,
-    "median_bleu": 48.86103195703452,
-    "std_bleu": 28.96438045214598
+    "std_cer": 15.388385115835883,
+    "mean_bleu": 51.51823041524126,
+    "median_bleu": 48.892302243490086,
+    "std_bleu": 28.926628686401504
   },
   "error_distribution_percent": {
-    "substitution": 20.068139355973184,
-    "deletion": 2.3299263655346745,
-    "insertion": 6.495219254863171,
-    "correct": 71.10671502362898
+    "substitution": 20.199225235196458,
+    "deletion": 2.3796347537354734,
+    "insertion": 5.832872163807416,
+    "correct": 71.58826784726065
   },
   "wer_bleu_correlation": {
     "summary": {
       "total_samples": 863,
       "high_wer_high_bleu_count": 6,
-      "high_wer_low_bleu_count": 184,
-      "low_wer_high_bleu_count": 504,
+      "high_wer_low_bleu_count": 183,
+      "low_wer_high_bleu_count": 505,
       "low_wer_low_bleu_count": 169,
       "semantic_preservation_rate": 0.6952491309385863
     },
@@ -215,19 +215,19 @@
   "dialect_analysis": {
     "BE": {
       "sample_count": 203,
-      "mean_wer": 33.110983160244245,
-      "std_wer": 27.485811015627103,
-      "mean_cer": 17.727990108142574,
-      "mean_bleu": 50.023523085170694,
-      "std_bleu": 29.196814723716994,
+      "mean_wer": 32.20507715281234,
+      "std_wer": 26.87472393714198,
+      "mean_cer": 16.85049455632249,
+      "mean_bleu": 50.149065485954814,
+      "std_bleu": 29.140182191878132,
       "error_distribution": {
         "substitution": 467,
         "deletion": 42,
-        "insertion": 150,
+        "insertion": 138,
         "correct": 1500,
-        "sub_rate": 0.708649468892261,
-        "del_rate": 0.0637329286798179,
-        "ins_rate": 0.2276176024279211
+        "sub_rate": 0.7217928902627512,
+        "del_rate": 0.06491499227202473,
+        "ins_rate": 0.2132921174652241
       },
       "top_confusions": [
         [
@@ -304,19 +304,19 @@
     },
     "AG": {
       "sample_count": 108,
-      "mean_wer": 34.1551118634452,
-      "std_wer": 49.0376632045057,
-      "mean_cer": 18.564467310723124,
-      "mean_bleu": 52.58276570734411,
-      "std_bleu": 29.30786874478251,
+      "mean_wer": 29.77941176470588,
+      "std_wer": 25.428622244142964,
+      "mean_cer": 14.17088033190717,
+      "mean_bleu": 52.71321976820794,
+      "std_bleu": 29.119570365198296,
       "error_distribution": {
-        "substitution": 225,
-        "deletion": 28,
-        "insertion": 121,
-        "correct": 835,
-        "sub_rate": 0.6016042780748663,
-        "del_rate": 0.0748663101604278,
-        "ins_rate": 0.3235294117647059
+        "substitution": 224,
+        "deletion": 31,
+        "insertion": 69,
+        "correct": 833,
+        "sub_rate": 0.691358024691358,
+        "del_rate": 0.09567901234567901,
+        "ins_rate": 0.21296296296296297
       },
       "top_confusions": [
         [
@@ -393,10 +393,10 @@
     },
     "TG": {
       "sample_count": 50,
-      "mean_wer": 31.755266955266954,
+      "mean_wer": 30.997876857749468,
       "std_wer": 21.694802927974013,
-      "mean_cer": 15.044787081683738,
-      "mean_bleu": 49.61017473961586,
+      "mean_cer": 14.147228112693123,
+      "mean_bleu": 49.61017473961585,
       "std_bleu": 26.784822059490022,
       "error_distribution": {
         "substitution": 101,
@@ -482,10 +482,10 @@
     },
     "BL": {
       "sample_count": 54,
-      "mean_wer": 31.618777313221756,
+      "mean_wer": 30.952380952380953,
       "std_wer": 20.99538501204015,
-      "mean_cer": 14.995439827812403,
-      "mean_bleu": 46.735408486906636,
+      "mean_cer": 14.427860696517413,
+      "mean_bleu": 46.73540848690663,
       "std_bleu": 25.94501722098893,
       "error_distribution": {
         "substitution": 121,
@@ -571,9 +571,9 @@
     },
     "GR": {
       "sample_count": 12,
-      "mean_wer": 18.76230251230251,
+      "mean_wer": 17.741935483870968,
       "std_wer": 14.964253346457058,
-      "mean_cer": 11.823959689596473,
+      "mean_cer": 10.643015521064301,
       "mean_bleu": 61.467789736120444,
       "std_bleu": 30.869391041671733,
       "error_distribution": {
@@ -660,10 +660,10 @@
     },
     "ZH": {
       "sample_count": 144,
-      "mean_wer": 27.546409994326662,
+      "mean_wer": 27.028885832187072,
       "std_wer": 22.244908377896763,
-      "mean_cer": 13.460460388406817,
-      "mean_bleu": 53.967425351848334,
+      "mean_cer": 12.79319781078968,
+      "mean_bleu": 53.96742535184834,
       "std_bleu": 28.089251318499944,
       "error_distribution": {
         "substitution": 295,
@@ -749,9 +749,9 @@
     },
     "UR": {
       "sample_count": 15,
-      "mean_wer": 30.476301476301476,
+      "mean_wer": 27.659574468085108,
       "std_wer": 26.14450318053538,
-      "mean_cer": 13.076746785001625,
+      "mean_cer": 11.318795430944965,
       "mean_bleu": 53.49554745030387,
       "std_bleu": 30.982670925419377,
       "error_distribution": {
@@ -838,9 +838,9 @@
     },
     "LU": {
       "sample_count": 51,
-      "mean_wer": 32.0988270988271,
+      "mean_wer": 32.224532224532226,
       "std_wer": 25.54190301896097,
-      "mean_cer": 13.790252940820647,
+      "mean_cer": 14.148471615720522,
       "mean_bleu": 51.78114243792339,
       "std_bleu": 30.753712520901363,
       "error_distribution": {
@@ -927,10 +927,10 @@
     },
     "SG": {
       "sample_count": 116,
-      "mean_wer": 29.324669583290273,
+      "mean_wer": 29.63294538943599,
       "std_wer": 22.236444565989196,
-      "mean_cer": 15.438893382353667,
-      "mean_bleu": 50.966265067766955,
+      "mean_cer": 15.709698137443803,
+      "mean_bleu": 50.96626506776693,
       "std_bleu": 29.728912048920563,
       "error_distribution": {
         "substitution": 225,
@@ -1016,9 +1016,9 @@
     },
     "SO": {
       "sample_count": 36,
-      "mean_wer": 33.02443698277032,
+      "mean_wer": 31.53409090909091,
       "std_wer": 35.927894796257924,
-      "mean_cer": 18.489991972845964,
+      "mean_cer": 17.18565234528971,
       "mean_bleu": 52.97412105598259,
       "std_bleu": 31.41205263546243,
       "error_distribution": {
@@ -1105,10 +1105,10 @@
     },
     "ZG": {
       "sample_count": 30,
-      "mean_wer": 33.908175158175155,
+      "mean_wer": 33.793103448275865,
       "std_wer": 23.093952658045424,
-      "mean_cer": 17.50562580787686,
-      "mean_bleu": 45.955066728428854,
+      "mean_cer": 18.097447795823665,
+      "mean_bleu": 45.95506672842886,
       "std_bleu": 26.81575323331074,
       "error_distribution": {
         "substitution": 72,
@@ -1194,10 +1194,10 @@
     },
     "VS": {
       "sample_count": 17,
-      "mean_wer": 30.174825174825177,
+      "mean_wer": 32.369942196531795,
       "std_wer": 23.836886977063028,
-      "mean_cer": 13.01532101073278,
-      "mean_bleu": 54.11485115204755,
+      "mean_cer": 13.941480206540447,
+      "mean_bleu": 54.11485115204756,
       "std_bleu": 32.8496852966339,
       "error_distribution": {
         "substitution": 43,
@@ -1301,9 +1301,9 @@
     },
     "GL": {
       "sample_count": 6,
-      "mean_wer": 9.166666666666666,
+      "mean_wer": 10.416666666666668,
       "std_wer": 14.288690166235206,
-      "mean_cer": 1.0289855072463767,
+      "mean_cer": 1.0638297872340425,
       "mean_bleu": 88.27756844701798,
       "std_bleu": 18.812671037544433,
       "error_distribution": {
@@ -1334,10 +1334,10 @@
     },
     "SH": {
       "sample_count": 4,
-      "mean_wer": 33.997252747252745,
+      "mean_wer": 31.11111111111111,
       "std_wer": 15.772796051377446,
-      "mean_cer": 14.271237527716185,
-      "mean_bleu": 41.97171838892056,
+      "mean_cer": 14.909090909090908,
+      "mean_bleu": 41.971718388920564,
       "std_bleu": 13.159347273442602,
       "error_distribution": {
         "substitution": 9,
@@ -1416,10 +1416,10 @@
     },
     "SZ": {
       "sample_count": 9,
-      "mean_wer": 36.146230312896975,
+      "mean_wer": 28.57142857142857,
       "std_wer": 35.88181253855093,
-      "mean_cer": 25.045861642385262,
-      "mean_bleu": 52.80236172411838,
+      "mean_cer": 16.826003824091778,
+      "mean_bleu": 52.80236172411837,
       "std_bleu": 35.01579417458419,
       "error_distribution": {
         "substitution": 15,
@@ -1505,9 +1505,9 @@
     },
     "FR": {
       "sample_count": 7,
-      "mean_wer": 38.420706277849135,
+      "mean_wer": 39.50617283950617,
       "std_wer": 13.65002274424067,
-      "mean_cer": 19.509549976967815,
+      "mean_cer": 20.108695652173914,
       "mean_bleu": 39.01752475848714,
       "std_bleu": 21.303821858190165,
       "error_distribution": {
@@ -1594,25 +1594,6 @@
     }
   },
   "worst_samples": [
-    {
-      "audio_file": "55f9b670-5cac-4dbd-b837-82646ee1f274.flac",
-      "dialect": "AG",
-      "reference": "Die Samples wurden in der Vergangenheit von verschiedenen Kommentatoren der verschiedenen Sprachversionen eingesprochen.",
-      "hypothesis": " In der Vergangenheit wurden Temples von verschiedenen Kommentatoren aus verschiedenen Sprachversionen gesprochen. In der Vergangenheit wurden Temples von verschiedenen Kommentatoren aus verschiedenen Sprachversionen gesprochen. In der Vergangenheit wurden Temples von verschiedenen Kommentatoren aus verschiedenen Sprachversionen gesprochen. In der Vergangenheit wurden Temples von verschiedenen Kommentatoren aus verschiedenen Sprachversionen gesprochen. In der Vergangenheit wurden Temples von verschiedenen Kommentatoren aus verschiedenen Sprachversionen gesprochen. In der Vergangenheit wurden Temples von verschiedenen Kommentatoren aus verschiedenen Sprachversionen",
-      "wer": 469.2307692307692,
-      "cer": 460.5042016806722,
-      "bleu": 3.8266073649123924,
-      "chrf": 43.94697126934247,
-      "semdist": 0.3277949094772339,
-      "alignment_readable": "REF:  ***** die samples       wurden *****   ***** *****         *****         ***** *****         *****           *****      in der vergangenheit *****  *****   von verschiedenen kommentatoren ***** *****         *****           *****      ***** der *****         *****  *****   ***** verschiedenen *****         ***** *****         sprachversionen *****      ***** ***** *****         *****  *****   ***** *****         *****         ***** *****         *****           *****      ***** ***** *****         *****  *****   ***** *****         *****         ***** *****         *****           *****      ***** ***** *****         *****  *****   ***** *****         *****         ***** *****         eingesprochen\nHYP:  in    der vergangenheit wurden temples von   verschiedenen kommentatoren aus   verschiedenen sprachversionen gesprochen in der vergangenheit wurden temples von verschiedenen kommentatoren aus   verschiedenen sprachversionen gesprochen in    der vergangenheit wurden temples von   verschiedenen kommentatoren aus   verschiedenen sprachversionen gesprochen in    der   vergangenheit wurden temples von   verschiedenen kommentatoren aus   verschiedenen sprachversionen gesprochen in    der   vergangenheit wurden temples von   verschiedenen kommentatoren aus   verschiedenen sprachversionen gesprochen in    der   vergangenheit wurden temples von   verschiedenen kommentatoren aus   verschiedenen sprachversionen\nTYPE: I     S   S             C      I       I     I             I             I     I             I               I          C  C   C             I      I       C   C             C             I     I             I               I          I     C   I             I      I       I     C             I             I     I             C               I          I     I     I             I      I       I     I             I             I     I             I               I          I     I     I             I      I       I     I             I             I     I             I               I          I     I     I             I      I       I     I             I             I     I             S",
-      "error_counts": {
-        "correct": 10,
-        "substitution": 3,
-        "deletion": 0,
-        "insertion": 58,
-        "total_errors": 61
-      }
-    },
     {
       "audio_file": "699a7e10-2912-427f-9947-8c73e60394c1.flac",
       "dialect": "SO",
@@ -1706,25 +1687,6 @@
         "deletion": 0,
         "insertion": 5,
         "total_errors": 7
-      }
-    },
-    {
-      "audio_file": "b838033f-222e-4c18-bd06-979667307630.flac",
-      "dialect": "BE",
-      "reference": "In den Gesprächsrunden wird mit Vertretern aus Kirche, Politik, Wirtschaft und Kultur diskutiert.",
-      "hypothesis": " In der Gesprächsrunde wird mit Vertretern aus Kirchen, Politik, Wirtschaft und Kultur diskutiert. In der Gesprächsrunde wird mit Vertretern aus Kirchen, Politik und Kultur diskutiert.",
-      "wer": 115.38461538461537,
-      "cer": 92.5531914893617,
-      "bleu": 24.250566202074662,
-      "chrf": 75.31891944116434,
-      "semdist": 0.027373909950256348,
-      "alignment_readable": "REF:  in den gesprächsrunden wird mit vertretern aus kirche  politik wirtschaft ***** *****  *****      ***** ***** *****          ***** ***** *****      ***** *****   *****   und kultur diskutiert\nHYP:  in der gesprächsrunde  wird mit vertretern aus kirchen politik wirtschaft und   kultur diskutiert in    der   gesprächsrunde wird  mit   vertretern aus   kirchen politik und kultur diskutiert\nTYPE: C  S   S               C    C   C          C   S       C       C          I     I      I          I     I     I              I     I     I          I     I       I       C   C      C",
-      "error_counts": {
-        "correct": 10,
-        "substitution": 3,
-        "deletion": 0,
-        "insertion": 12,
-        "total_errors": 15
       }
     },
     {
@@ -2200,6 +2162,25 @@
         "deletion": 1,
         "insertion": 0,
         "total_errors": 6
+      }
+    },
+    {
+      "audio_file": "55f9b670-5cac-4dbd-b837-82646ee1f274.flac",
+      "dialect": "AG",
+      "reference": "Die Samples wurden in der Vergangenheit von verschiedenen Kommentatoren der verschiedenen Sprachversionen eingesprochen.",
+      "hypothesis": " In der Vergangenheit wurden Temples von verschiedenen Kommentatoren aus verschiedenen Sprachversionen gesprochen. Vielen Dank für's Zuhören!",
+      "wer": 84.61538461538461,
+      "cer": 50.42016806722689,
+      "bleu": 17.915645938206772,
+      "chrf": 77.81913960382748,
+      "semdist": 0.3970809578895569,
+      "alignment_readable": "REF:  die   samples wurden in der vergangenheit *****  *****   von verschiedenen kommentatoren der verschiedenen sprachversionen *****      *****  ***** ***** eingesprochen\nHYP:  ***** *****   *****  in der vergangenheit wurden temples von verschiedenen kommentatoren aus verschiedenen sprachversionen gesprochen vielen dank  fürs  zuhören\nTYPE: D     D       D      C  C   C             I      I       C   C             C             S   C             C               I          I      I     I     S",
+      "error_counts": {
+        "correct": 8,
+        "substitution": 2,
+        "deletion": 3,
+        "insertion": 6,
+        "total_errors": 11
       }
     },
     {
@@ -3220,6 +3201,25 @@
       "chrf": 71.34308846780448,
       "semdist": 0.08006441593170166,
       "alignment_readable": "REF:  die *****               restaurierungsarbeiten in den letzten jahren *****  *****    legten größtenteils die spätmittelalterliche  zweitfassung   wieder frei\nHYP:  die restaurierungsappen die                    in den letzten jahren lecker gerüstet sind   teilen       die spätmittelalterlichen zweitfassungen wieder frei\nTYPE: C   I                   S                      C  C   C       C      I      I        S      S            C   S                     S              C      C",
+      "error_counts": {
+        "correct": 8,
+        "substitution": 5,
+        "deletion": 0,
+        "insertion": 3,
+        "total_errors": 8
+      }
+    },
+    {
+      "audio_file": "5451f1af-56b9-4924-86f7-c42c1f56ac8e.flac",
+      "dialect": "TG",
+      "reference": "Zwischen North und South Queensferry pendelte vor dem Bau der Brücke eine Fähre.",
+      "hypothesis": " Zwischen die North- und South Queens Ferry hat die Formbau von der Brücke eine Fähre gependelt.",
+      "wer": 61.53846153846154,
+      "cer": 37.9746835443038,
+      "bleu": 22.894156860669913,
+      "chrf": 74.6268409168984,
+      "semdist": 0.06447780132293701,
+      "alignment_readable": "REF:  zwischen ***** north und south *****  queensferry pendelte vor dem     bau der brücke eine fähre *****\nHYP:  zwischen die   north und south queens ferry       hat      die formbau von der brücke eine fähre gependelt\nTYPE: C        I     C     C   C     I      S           S        S   S       S   C   C      C    C     I",
       "error_counts": {
         "correct": 8,
         "substitution": 5,

@@ -2,7 +2,7 @@ import jiwer
 import statistics
 from collections import Counter, defaultdict
 from typing import List, Dict, Tuple, Any, Optional, Union
-from src.evaluation.metrics import _normalize_text
+from src.evaluation.metrics import _normalize_text, batch_wer, batch_cer, batch_bleu
 
 
 class ErrorAnalyzer:
@@ -148,27 +148,38 @@ class ErrorAnalyzer:
 
     def calculate_aggregate_stats(self, results: List[Dict]) -> Dict[str, float]:
         """
-        Calculate mean, median, and standard deviation for WER, CER, and BLEU.
-        
+        Calculate aggregate (micro) WER/CER/BLEU plus median/std of the
+        per-utterance distribution for WER and CER, and BLEU statistics.
+
+        mean_wer/mean_cer are corpus-level aggregates (total errors / total
+        reference words for WER/CER), NOT the arithmetic mean of per-sample
+        rates. mean_bleu is the arithmetic mean of per-sample sentence-level
+        BLEU scores. median_wer/std_wer/median_bleu/std_bleu remain descriptive
+        statistics over the per-utterance distribution, which is a legitimate
+        complementary view, not the headline aggregate.
+
         Args:
-            results: List of evaluation results with wer, cer, and bleu fields
-            
+            results: List of evaluation results with wer, cer, bleu, reference,
+                     and hypothesis fields
+
         Returns:
             Dictionary with aggregate statistics
         """
         wers = [r['wer'] for r in results]
         cers = [r['cer'] for r in results]
-        bleus = [r.get('bleu', 0.0) for r in results]  # MODIFIED: Extract BLEU scores
-        
+        bleus = [r.get('bleu', 0.0) for r in results]
+
+        references = [r['reference'] for r in results]
+        hypotheses = [r['hypothesis'] for r in results]
+
         return {
-            'mean_wer': statistics.mean(wers),
-            'median_wer': statistics.median(wers),
+            'mean_wer': batch_wer(references, hypotheses)['overall_wer'] if results else 0.0,
+            'median_wer': statistics.median(wers) if wers else 0.0,
             'std_wer': statistics.stdev(wers) if len(wers) > 1 else 0.0,
-            'mean_cer': statistics.mean(cers),
-            'median_cer': statistics.median(cers),
+            'mean_cer': batch_cer(references, hypotheses)['overall_cer'] if results else 0.0,
+            'median_cer': statistics.median(cers) if cers else 0.0,
             'std_cer': statistics.stdev(cers) if len(cers) > 1 else 0.0,
-            # NEW: BLEU statistics
-            'mean_bleu': statistics.mean(bleus) if bleus else 0.0,
+            'mean_bleu': batch_bleu(references, hypotheses)['overall_bleu'] if results else 0.0,
             'median_bleu': statistics.median(bleus) if bleus else 0.0,
             'std_bleu': statistics.stdev(bleus) if len(bleus) > 1 else 0.0,
         }
@@ -206,47 +217,48 @@ class ErrorAnalyzer:
 
     def analyze_by_dialect(self, results: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
         """
-        Group results by dialect and compute statistics and confusion patterns for each.
-        
+        Group results by dialect and compute statistics and confusion patterns
+        for each. mean_wer/mean_bleu per dialect are corpus-level aggregates
+        over that dialect's samples, consistent with calculate_aggregate_stats.
+
         Args:
-            results: List of evaluation results with dialect, reference, hypothesis, wer, cer, bleu fields
-            
+            results: List of evaluation results with dialect, reference,
+                     hypothesis, wer, cer, bleu fields
+
         Returns:
             Dictionary mapping dialect to analysis results
         """
-        # Group by dialect
         by_dialect = defaultdict(list)
         for r in results:
             dialect = r.get('dialect', 'unknown')
             by_dialect[dialect].append(r)
-        
+
         analysis = {}
-        
+
         for dialect, samples in by_dialect.items():
-            # Compute WER/CER/BLEU stats
             wers = [s['wer'] for s in samples]
             cers = [s['cer'] for s in samples]
-            bleus = [s.get('bleu', 0.0) for s in samples]  # MODIFIED: Extract BLEU
-            
-            # Compute alignments to get error distribution
+            bleus = [s.get('bleu', 0.0) for s in samples]
+
+            references = [s['reference'] for s in samples]
+            hypotheses = [s['hypothesis'] for s in samples]
+
             alignments = [self.get_alignment(s['reference'], s['hypothesis']) for s in samples]
             all_counts = [self.categorize_errors(align) for align in alignments]
-            
+
             total_sub = sum(counts['substitution'] for counts in all_counts)
             total_del = sum(counts['deletion'] for counts in all_counts)
             total_ins = sum(counts['insertion'] for counts in all_counts)
             total_cor = sum(counts['correct'] for counts in all_counts)
-            
-            # Calculate rates over ERRORS ONLY (excluding correct)
+
             total_errs = total_sub + total_del + total_ins
-            
+
             analysis[dialect] = {
                 'sample_count': len(samples),
-                'mean_wer': statistics.mean(wers),
+                'mean_wer': batch_wer(references, hypotheses)['overall_wer'] if samples else 0.0,
                 'std_wer': statistics.stdev(wers) if len(wers) > 1 else 0.0,
-                'mean_cer': statistics.mean(cers),
-                # NEW: BLEU statistics per dialect
-                'mean_bleu': statistics.mean(bleus) if bleus else 0.0,
+                'mean_cer': batch_cer(references, hypotheses)['overall_cer'] if samples else 0.0,
+                'mean_bleu': batch_bleu(references, hypotheses)['overall_bleu'] if samples else 0.0,
                 'std_bleu': statistics.stdev(bleus) if len(bleus) > 1 else 0.0,
                 'error_distribution': {
                     'substitution': total_sub,
@@ -259,7 +271,7 @@ class ErrorAnalyzer:
                 },
                 'top_confusions': self.find_confusion_pairs(alignments)[:10]
             }
-        
+
         return analysis
 
     def analyze_wer_bleu_correlation(
@@ -273,6 +285,14 @@ class ErrorAnalyzer:
         
         High-WER + High-BLEU samples = Valid paraphrases (semantic preservation)
         High-WER + Low-BLEU samples = True errors (semantic drift)
+        
+        Note: wer/bleu here are the per-sample (per-utterance) scores stored on
+        each sample, since this analysis is inherently about individual-sample
+        behaviour (which utterances diverge from reference wording while staying
+        semantically close) — not about a corpus-level aggregate. This is a
+        legitimate use of per-sample values; it is not the same computation as
+        calculate_aggregate_stats and is not affected by the micro/macro
+        distinction discussed there.
         
         Args:
             results: List of evaluation results with wer, cer, bleu scores
@@ -307,6 +327,8 @@ class ErrorAnalyzer:
                 'high_wer_low_bleu_count': len(high_wer_low_bleu),
                 'low_wer_high_bleu_count': len(low_wer_high_bleu),
                 'low_wer_low_bleu_count': len(low_wer_low_bleu),
+                # NOTE: this is a percentage (×100), not a [0,1] proportion —
+                # do not read values >1 as anomalous; they are valid percentages.
                 'semantic_preservation_rate': (
                     len(high_wer_high_bleu) / len(results) * 100 
                     if results else 0.0

@@ -83,6 +83,9 @@ TYPE: I        S      C     D     D     D     C"
 BE,83.33333333333334,39.130434782608695,8.032276872815304,"Earl of Arundel, der zu den vierzig Märtyrern Englands und Wales zählt."," Earl of Rundle, da zu den 40 wenigen Märtyrer Englern, som du weiss, zauwt.",8,0,2,"REF:  earl of arundel der zu den ***** *****   vierzig  märtyrern englands und wales zählt
 HYP:  earl of rundle  da  zu den 40    wenigen märtyrer englern   som      du  weiss zauwt
 TYPE: C    C  S       S   C  C   I     I       S        S         S        S   S     S"
+LU,81.81818181818183,30.303030303030305,7.141816289329644,Auf unseren Donnerstagssitzungen in Straßburg erörtern wir Menschenrechtsverletzungen in aller Welt.," Aus unserer Donnerstagssitzung in Strassburg haben wir die Menschenrechtsverletzungen in alle Welt, euer Utrecht.",6,0,3,"REF:  auf unseren donnerstagssitzungen in straßburg  erörtern wir ***** menschenrechtsverletzungen in aller welt ***** *****
+HYP:  aus unserer donnerstagssitzung   in strassburg haben    wir die   menschenrechtsverletzungen in alle  welt euer  utrecht
+TYPE: S   S       S                    C  S          S        C   I     C                          C  S     C    I     I"
 BE,80.0,45.83333333333333,12.44023474812678,Es liegt im flachen Land., zurück dein frachen Land.,3,1,0,"REF:  es     liegt im      flachen land
 HYP:  zurück dein  frachen *****   land
 TYPE: S      S     S       D       C"
@@ -125,9 +128,6 @@ TYPE: C    C      I     I      S         S       C         C             I     S
 BE,72.72727272727273,23.376623376623375,14.458924666162856,Dieser kann über einen stählernen Steg und ebensolche Treppen erreicht werden., Da kann über eine Stelle eine Stege oder eben solche Treppen erreicht werden.,6,0,2,"REF:  dieser kann über ***** *****  einen stählernen steg und  ebensolche treppen erreicht werden
 HYP:  da     kann über eine  stelle eine  stege      oder eben solche     treppen erreicht werden
 TYPE: S      C    C    I     I      S     S          S    S    S          C       C        C"
-LU,72.72727272727273,25.252525252525253,7.768562846380176,Auf unseren Donnerstagssitzungen in Straßburg erörtern wir Menschenrechtsverletzungen in aller Welt., Aus unserer Donnerstagssitzung in Strassburg haben wir die Menschenrechtsverletzungen in alle welt eutredd.,6,0,2,"REF:  auf unseren donnerstagssitzungen in straßburg  erörtern wir ***** menschenrechtsverletzungen in aller welt *****
-HYP:  aus unserer donnerstagssitzung   in strassburg haben    wir die   menschenrechtsverletzungen in alle  welt eutredd
-TYPE: S   S       S                    C  S          S        C   I     C                          C  S     C    I"
 AG,71.42857142857143,65.71428571428571,14.535768424205482,Etappe trat er danach nicht mehr an., Die Etappe ist nachher nicht mehr angetreten.,3,1,1,"REF:  ***** etappe trat er      danach nicht mehr an
 HYP:  die   etappe ist  nachher *****  nicht mehr angetreten
 TYPE: I     C      S    S       D      C     C    S"

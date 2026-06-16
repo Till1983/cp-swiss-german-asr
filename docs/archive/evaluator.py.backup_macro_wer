@@ -1,24 +1,12 @@
 """
-IMPROVED evaluator.py with SSH-keepalive-friendly progress logging and micro-aggregate WER
+IMPROVED evaluator.py with SSH-keepalive-friendly progress logging
 
-Updated 16.06.2026:
-- Enforces micro-aggregate WER (total errors / total reference words across all samples)
-  per field standard (jiwer, HuggingFace evaluate, sclite all default to micro).
-  Prior capstone evaluations used macro-average (mean of per-utterance WER rates).
-  See Methodology section of thesis for justification of the switch.
-- Per-dialect WER now also uses micro-aggregation for consistency.
-- Locked Whisper configuration: condition_on_previous_text=False to guard against
-  hallucination loops (capstone AG dialect case: 469.23% WER). See capstone error
-  analysis for context.
-- SentenceTransformer (SemDist) now loaded once in load_model(), not per
-  evaluate_dataset() call, to avoid reloading multilingual transformer from disk
-  on repeated evaluations.
-
-Key changes from prior version:
+Key changes:
 1. Added tqdm progress bar for visual feedback
-2. Added periodic print statements every N samples (keeps SSH alive during long runs)
-3. Added elapsed time tracking and ETA estimation
-4. All changes are in evaluate_dataset() method only
+2. Added periodic print statements every N samples (keeps SSH alive)
+3. Added elapsed time tracking
+4. Added ETA estimation
+5. All changes are in evaluate_dataset() method only
 
 This prevents SSH timeout during long evaluations by ensuring regular stdout activity.
 """
@@ -36,10 +24,7 @@ from src.models.wav2vec2_model import Wav2Vec2Model
 from src.models.mms_model import MMSModel
 from src.models.seamless_m4t_model import SeamlessM4TModel
 from src.config import FHNW_SWISS_GERMAN_ROOT
-from src.utils.logging_config import setup_logger
 import os
-
-logger = setup_logger("evaluator", "logs/evaluator.log")
 
 
 class ASREvaluator:
@@ -65,7 +50,6 @@ class ASREvaluator:
         )
         self.model = None
         self.processor = None  # ← used by wav2vec2/mms/whisper-hf if needed
-        self.semdist_model = None  # loaded once in load_model(), not per evaluate_dataset() call
 
     def load_model(self):
         """Load the appropriate model."""
@@ -123,42 +107,18 @@ class ASREvaluator:
             except Exception as e:
                 raise RuntimeError(f"Failed to load SeamlessM4T model: {e}") from e
 
-        # Load SentenceTransformer model for SemDist computation once per evaluator
-        # instance, not once per evaluate_dataset() call. Avoids reloading a
-        # multilingual transformer from disk on every evaluation run.
-        try:
-            from sentence_transformers import SentenceTransformer
-            self.semdist_model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
-        except ImportError:
-            logger.warning(
-                "sentence-transformers not installed; SemDist will be skipped for this run."
-            )
-            self.semdist_model = None
-        except Exception as e:
-            # Catches network failures, disk space issues, or other load errors
-            # (relevant on RunPod given documented network/filesystem quirks in
-            # GPU_COMPATIBILITY.md / KNOWN_ISSUES.md) so a missing SemDist score
-            # is visible at evaluation time rather than discovered later.
-            logger.warning(
-                f"Failed to load SemDist model ({type(e).__name__}: {e}); "
-                "SemDist will be skipped for this run."
-            )
-            self.semdist_model = None
-
     def _get_transcription(self, audio_path: Path) -> str:
         """Get transcription from loaded model."""
         if self.model_type == "whisper":
             audio = whisper.load_audio(str(audio_path))
-            # Deterministic decoding per locked configuration.
-            # condition_on_previous_text=False guards against hallucination loops
-            # (capstone AG dialect case: 469.23% WER hallucination loop).
+            # ✅ DETERMINISTIC WHISPER PARAMETERS
             result = self.model.transcribe(
-                audio,
+                audio, 
                 language="de",
-                temperature=0.0,                  # Deterministic decoding
-                beam_size=5,                       # Consistent beam search
-                condition_on_previous_text=False,    # Guards against hallucination loops
-                fp16=False                         # Unconditional FP32 for reproducibility
+                temperature=0.0,      # Deterministic decoding
+                beam_size=5,          # Consistent beam search
+                best_of=5,            # Deterministic candidate selection
+                fp16=False            # UNCONDITIONAL FP32 for reproducibility
             )
             return result['text']
 
@@ -253,8 +213,13 @@ class ASREvaluator:
         if limit is not None and limit > 0:
             df = df.head(limit)
 
-        # SemDist model is loaded once in load_model(), reused across calls
-        semdist_model = self.semdist_model
+        # Try to load SentenceTransformer model for SemDist computation (once, for efficiency)
+        semdist_model = None
+        try:
+            from sentence_transformers import SentenceTransformer
+            semdist_model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
+        except ImportError:
+            pass  # sentence-transformers not installed; SemDist will be skipped
 
         results = []
         failed_samples = 0
@@ -384,11 +349,10 @@ class ASREvaluator:
             }
 
         # Calculate aggregate metrics
+        overall_wer = sum(r['wer'] for r in results) / len(results)
+
         references = [r['reference'] for r in results]
         hypotheses = [r['hypothesis'] for r in results]
-        wer_result = metrics.batch_wer(references, hypotheses)
-        overall_wer = wer_result['overall_wer']
-
         cer_result = metrics.batch_cer(references, hypotheses)
         overall_cer = cer_result['overall_cer']
 
@@ -415,9 +379,9 @@ class ASREvaluator:
         for dialect in dialects:
             dialect_samples = [r for r in results if r['dialect'] == dialect]
             if dialect_samples:
+                per_dialect_wer[dialect] = sum(r['wer'] for r in dialect_samples) / len(dialect_samples)
                 refs = [r['reference'] for r in dialect_samples]
                 hyps = [r['hypothesis'] for r in dialect_samples]
-                per_dialect_wer[dialect] = metrics.batch_wer(refs, hyps)['overall_wer']
                 per_dialect_cer[dialect] = metrics.batch_cer(refs, hyps)['overall_cer']
                 per_dialect_bleu[dialect] = metrics.batch_bleu(refs, hyps)['overall_bleu']
                 per_dialect_chrf[dialect] = metrics.batch_chrf(refs, hyps)['overall_chrf']
