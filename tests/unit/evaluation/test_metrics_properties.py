@@ -4,6 +4,7 @@ Property-based tests for metrics using Hypothesis.
 Tests mathematical properties and invariants that should always hold.
 """
 
+
 import pytest
 
 # Try to import hypothesis, skip tests if not available
@@ -13,6 +14,8 @@ try:
     HYPOTHESIS_AVAILABLE = True
 except ImportError:
     HYPOTHESIS_AVAILABLE = False
+    pytest.skip("hypothesis package not installed", allow_module_level=True)
+
     # Create dummy decorators for when hypothesis is not available
     def given(*args, **kwargs):
         return pytest.mark.skip(reason="hypothesis not installed")
@@ -21,12 +24,14 @@ except ImportError:
         @staticmethod
         def text(*args, **kwargs):
             return None
+
         @staticmethod
         def lists(*args, **kwargs):
             return None
-    
+
     class HealthCheck:
         filter_too_much = "filter_too_much"
+
 
 from src.evaluation.metrics import (
     calculate_wer,
@@ -35,14 +40,13 @@ from src.evaluation.metrics import (
     batch_wer,
     batch_cer,
     batch_bleu,
-    _normalize_text
+    _normalize_text,
 )
 
 
 # Only run these tests if hypothesis is available
 pytestmark = pytest.mark.skipif(
-    not HYPOTHESIS_AVAILABLE,
-    reason="hypothesis package not installed"
+    not HYPOTHESIS_AVAILABLE, reason="hypothesis package not installed"
 )
 
 
@@ -72,6 +76,7 @@ class TestWERProperties:
     def test_wer_empty_hypothesis_is_100(self, reference):
         """WER should be 100 when hypothesis is empty (all deletions)."""
         from src.evaluation.metrics import _normalize_text
+
         assume(reference.strip())
         # After normalization, reference must still have content
         normalized_ref = _normalize_text(reference)
@@ -94,14 +99,26 @@ class TestWERProperties:
         assert 0.0 <= wer1
         assert 0.0 <= wer2
 
-    @given(st.text(alphabet=st.characters(whitelist_categories=('Lu', 'Ll'), max_codepoint=591), min_size=1, max_size=50))
+    @given(
+        st.text(
+            alphabet=st.characters(
+                whitelist_categories=("Lu", "Ll"), max_codepoint=591
+            ),
+            min_size=1,
+            max_size=50,
+        )
+    )
     @settings(max_examples=30, deadline=None)
     def test_wer_case_insensitive(self, text):
         """WER should be case-insensitive."""
         assume(text.strip())
-        assume("ß" not in text)  # German sharp s causes issues with simple case conversion
+        assume(
+            "ß" not in text
+        )  # German sharp s causes issues with simple case conversion
         assume("µ" not in text)  # Micro sign causes issues with simple case conversion
-        assume("ŉ" not in text)  # Latin small letter n preceded by apostrophe causes issues
+        assume(
+            "ŉ" not in text
+        )  # Latin small letter n preceded by apostrophe causes issues
         assume("ı" not in text)  # Latin small letter dotless i causes issues
         assume("ǰ" not in text)  # Latin small letter j with caron causes issues
         assume("ſ" not in text)  # Latin small letter long s maps differently in casing
@@ -143,7 +160,7 @@ class TestCERProperties:
         cer = calculate_cer(reference, "")
         assert cer == 100.0
 
-    @given(st.text(alphabet='abcdefghijklmnopqrstuvwxyz ', min_size=5, max_size=50))
+    @given(st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=5, max_size=50))
     @settings(max_examples=30, deadline=None)
     def test_cer_single_character_error(self, text):
         """CER for single character substitution should be approximately 1/n * 100."""
@@ -167,6 +184,7 @@ class TestBLEUProperties:
     def test_bleu_identical_strings_is_100(self, text):
         """BLEU should be 100 for identical strings."""
         from src.evaluation.metrics import _normalize_text
+
         assume(text.strip())
         # After normalization, text must still have content
         normalized_text = _normalize_text(text)
@@ -228,26 +246,34 @@ class TestBatchMetricsProperties:
         assert result["overall_cer"] == 0.0
         assert all(cer == 0.0 or cer is None for cer in result["per_sample_cer"])
 
-    @given(st.lists(st.text(min_size=1, max_size=50), min_size=1, max_size=20))
+    @given(
+        st.lists(
+            st.lists(
+                st.from_regex(r"[a-z]{2,8}", fullmatch=True), min_size=4, max_size=12
+            ).map(" ".join),
+            min_size=1,
+            max_size=20,
+        )
+    )
     @settings(max_examples=30, deadline=None)
     def test_batch_bleu_identical_lists(self, texts):
-        """Batch BLEU should be ~100 when all references match hypotheses."""
+        """Identical refs/hyps: corpus BLEU ~100 given >=4 tokens per sentence."""
         from src.evaluation.metrics import _normalize_text
-        assume(all(t.strip() for t in texts))
-        # After normalization, all texts must still have content
+
         assume(all(_normalize_text(t).strip() for t in texts))
-
         result = batch_bleu(texts, texts)
-
-        # Should be very close to 100
         assert result["overall_bleu"] > 99.0
         assert all(bleu > 99.0 for bleu in result["per_sample_bleu"])
 
     @given(
         st.lists(st.text(min_size=1, max_size=50), min_size=1, max_size=20),
-        st.lists(st.text(min_size=1, max_size=50), min_size=1, max_size=20)
+        st.lists(st.text(min_size=1, max_size=50), min_size=1, max_size=20),
     )
-    @settings(max_examples=30, deadline=None, suppress_health_check=[HealthCheck.filter_too_much])
+    @settings(
+        max_examples=30,
+        deadline=None,
+        suppress_health_check=[HealthCheck.filter_too_much],
+    )
     def test_batch_wer_length_consistency(self, refs, hyps):
         """Batch WER should have consistent output lengths."""
         assume(len(refs) == len(hyps))
@@ -260,7 +286,7 @@ class TestBatchMetricsProperties:
 
     @given(
         st.lists(st.text(min_size=1, max_size=50), min_size=1, max_size=20),
-        st.lists(st.text(min_size=1, max_size=50), min_size=1, max_size=20)
+        st.lists(st.text(min_size=1, max_size=50), min_size=1, max_size=20),
     )
     @settings(max_examples=30, deadline=None)
     def test_batch_metrics_length_mismatch_raises(self, refs, hyps):
@@ -325,7 +351,13 @@ class TestNormalizationProperties:
 
         assert normalized_once == normalized_twice
 
-    @given(st.text(alphabet=st.characters(whitelist_categories=('Lu', 'Ll')), min_size=1, max_size=50))
+    @given(
+        st.text(
+            alphabet=st.characters(whitelist_categories=("Lu", "Ll")),
+            min_size=1,
+            max_size=50,
+        )
+    )
     @settings(max_examples=30, deadline=None)
     def test_normalization_lowercase(self, text):
         """Normalization should convert to lowercase."""
@@ -356,8 +388,12 @@ class TestNormalizationProperties:
 class TestMetricsMonotonicity:
     """Property-based tests for monotonicity properties."""
 
-    @given(st.text(alphabet='abcdefghijklmnopqrstuvwxyz ', min_size=10, max_size=50))
-    @settings(max_examples=20, deadline=None, suppress_health_check=[HealthCheck.filter_too_much])
+    @given(st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=10, max_size=50))
+    @settings(
+        max_examples=20,
+        deadline=None,
+        suppress_health_check=[HealthCheck.filter_too_much],
+    )
     def test_wer_increases_with_more_errors(self, text):
         """WER should increase (or stay same) as we introduce more errors."""
         assume(len(text.split()) >= 3)
@@ -379,7 +415,7 @@ class TestMetricsMonotonicity:
         assert wer_0 <= wer_1
         assert wer_1 <= wer_2
 
-    @given(st.text(alphabet='abcdefghijklmnopqrstuvwxyz', min_size=10, max_size=50))
+    @given(st.text(alphabet="abcdefghijklmnopqrstuvwxyz", min_size=10, max_size=50))
     @settings(max_examples=20, deadline=None)
     def test_cer_increases_with_more_character_errors(self, text):
         """CER should increase as we introduce more character errors."""

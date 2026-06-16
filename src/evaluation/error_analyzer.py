@@ -148,8 +148,21 @@ class ErrorAnalyzer:
 
     def calculate_aggregate_stats(self, results: List[Dict]) -> Dict[str, float]:
         """
+<<<<<<< HEAD
         Calculate mean, median, and standard deviation for WER, CER, and BLEU.
         
+=======
+        Calculate aggregate (micro) WER/CER/BLEU plus median/std of the
+        per-utterance distribution for WER and CER, and BLEU statistics.
+
+        mean_wer/mean_cer/mean_bleu are corpus-level aggregates (total errors /
+        total reference words for WER/CER; corpus BLEU with brevity penalty for
+        BLEU), NOT the arithmetic mean of per-sample rates. median_wer/std_wer/
+        median_bleu/std_bleu remain descriptive statistics over the per-utterance
+        distribution, which is a legitimate complementary view, not the
+        headline aggregate.
+
+>>>>>>> 691a444a7651cf5949b94c3fb6c8dbc1071f2d12
         Args:
             results: List of evaluation results with wer, cer, and bleu fields
             

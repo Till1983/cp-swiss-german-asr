@@ -164,13 +164,12 @@ class TestBatchBLEU:
             batch_bleu(["a"], [])
     
     def test_batch_bleu_exact_match(self):
-        """BLEU should be 100 for exact matches"""
-        references = ["hello world"]
-        hypotheses = ["hello world"]
+        """Corpus BLEU reaches 100 only when all 1-4 gram orders match (>=4 tokens)."""
+        references = ["herzlich willkommen in bern heute"]
+        hypotheses = ["herzlich willkommen in bern heute"]
         result = batch_bleu(references, hypotheses)
-        # Use pytest.approx to account for floating-point precision in BLEU calculation
-        assert result["overall_bleu"] == pytest.approx(100.0, abs=0.01)
-        assert result["per_sample_bleu"][0] == pytest.approx(100.0, abs=0.01)
+        assert result["overall_bleu"] == pytest.approx(100.0, abs=0.01)        # corpus_bleu
+        assert result["per_sample_bleu"][0] == pytest.approx(100.0, abs=0.01)  # sentence_bleu
 
 
 class TestCalculateBLEU:
