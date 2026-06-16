@@ -7,7 +7,7 @@ Updated 16.06.2026:
   Prior capstone evaluations used macro-average (mean of per-utterance WER rates).
   See Methodology section of thesis for justification of the switch.
 - Per-dialect WER now also uses micro-aggregation for consistency.
-- Locked Whisper configuration: condition_on_prev_tokens=False to guard against
+- Locked Whisper configuration: condition_on_previous_text=False to guard against
   hallucination loops (capstone AG dialect case: 469.23% WER). See capstone error
   analysis for context.
 - SentenceTransformer (SemDist) now loaded once in load_model(), not per
@@ -150,7 +150,7 @@ class ASREvaluator:
         if self.model_type == "whisper":
             audio = whisper.load_audio(str(audio_path))
             # Deterministic decoding per locked configuration.
-            # condition_on_prev_tokens=False guards against hallucination loops
+            # condition_on_previous_text=False guards against hallucination loops
             # (capstone AG dialect case: 469.23% WER hallucination loop).
             result = self.model.transcribe(
                 audio,
