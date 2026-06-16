@@ -24,7 +24,10 @@ from src.models.wav2vec2_model import Wav2Vec2Model
 from src.models.mms_model import MMSModel
 from src.models.seamless_m4t_model import SeamlessM4TModel
 from src.config import FHNW_SWISS_GERMAN_ROOT
+from src.utils.logging_config import setup_logger
 import os
+
+logger = setup_logger("evaluator", "logs/evaluator.log")
 
 
 class ASREvaluator:
@@ -50,6 +53,7 @@ class ASREvaluator:
         )
         self.model = None
         self.processor = None  # ← used by wav2vec2/mms/whisper-hf if needed
+        self.semdist_model = None  # loaded once in load_model(), not per evaluate_dataset() call
 
     def load_model(self):
         """Load the appropriate model."""
@@ -107,18 +111,42 @@ class ASREvaluator:
             except Exception as e:
                 raise RuntimeError(f"Failed to load SeamlessM4T model: {e}") from e
 
+        # Load SentenceTransformer model for SemDist computation once per evaluator
+        # instance, not once per evaluate_dataset() call. Avoids reloading a
+        # multilingual transformer from disk on every evaluation run.
+        try:
+            from sentence_transformers import SentenceTransformer
+            self.semdist_model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
+        except ImportError:
+            logger.warning(
+                "sentence-transformers not installed; SemDist will be skipped for this run."
+            )
+            self.semdist_model = None
+        except Exception as e:
+            # Catches network failures, disk space issues, or other load errors
+            # (relevant on RunPod given documented network/filesystem quirks in
+            # GPU_COMPATIBILITY.md / KNOWN_ISSUES.md) so a missing SemDist score
+            # is visible at evaluation time rather than discovered later.
+            logger.warning(
+                f"Failed to load SemDist model ({type(e).__name__}: {e}); "
+                "SemDist will be skipped for this run."
+            )
+            self.semdist_model = None
+
     def _get_transcription(self, audio_path: Path) -> str:
         """Get transcription from loaded model."""
         if self.model_type == "whisper":
             audio = whisper.load_audio(str(audio_path))
-            # ✅ DETERMINISTIC WHISPER PARAMETERS
+            # Deterministic decoding per locked configuration.
+            # condition_on_prev_tokens=False guards against hallucination loops
+            # (capstone AG dialect case: 469.23% WER hallucination loop).
             result = self.model.transcribe(
-                audio, 
+                audio,
                 language="de",
-                temperature=0.0,      # Deterministic decoding
-                beam_size=5,          # Consistent beam search
-                best_of=5,            # Deterministic candidate selection
-                fp16=False            # UNCONDITIONAL FP32 for reproducibility
+                temperature=0.0,                  # Deterministic decoding
+                beam_size=5,                       # Consistent beam search
+                condition_on_prev_tokens=False,    # Guards against hallucination loops
+                fp16=False                         # Unconditional FP32 for reproducibility
             )
             return result['text']
 
@@ -213,13 +241,8 @@ class ASREvaluator:
         if limit is not None and limit > 0:
             df = df.head(limit)
 
-        # Try to load SentenceTransformer model for SemDist computation (once, for efficiency)
-        semdist_model = None
-        try:
-            from sentence_transformers import SentenceTransformer
-            semdist_model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
-        except ImportError:
-            pass  # sentence-transformers not installed; SemDist will be skipped
+        # SemDist model is loaded once in load_model(), reused across calls
+        semdist_model = self.semdist_model
 
         results = []
         failed_samples = 0
@@ -352,7 +375,7 @@ class ASREvaluator:
         references = [r['reference'] for r in results]
         hypotheses = [r['hypothesis'] for r in results]
         wer_result = metrics.batch_wer(references, hypotheses)
-        overall_wer = wer_result['overall_wer'] 
+        overall_wer = wer_result['overall_wer']
 
         cer_result = metrics.batch_cer(references, hypotheses)
         overall_cer = cer_result['overall_cer']
