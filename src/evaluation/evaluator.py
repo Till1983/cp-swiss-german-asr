@@ -1,12 +1,24 @@
 """
-IMPROVED evaluator.py with SSH-keepalive-friendly progress logging
+IMPROVED evaluator.py with SSH-keepalive-friendly progress logging and micro-aggregate WER
 
-Key changes:
+Updated 16.06.2026:
+- Enforces micro-aggregate WER (total errors / total reference words across all samples)
+  per field standard (jiwer, HuggingFace evaluate, sclite all default to micro).
+  Prior capstone evaluations used macro-average (mean of per-utterance WER rates).
+  See Methodology section of thesis for justification of the switch.
+- Per-dialect WER now also uses micro-aggregation for consistency.
+- Locked Whisper configuration: condition_on_prev_tokens=False to guard against
+  hallucination loops (capstone AG dialect case: 469.23% WER). See capstone error
+  analysis for context.
+- SentenceTransformer (SemDist) now loaded once in load_model(), not per
+  evaluate_dataset() call, to avoid reloading multilingual transformer from disk
+  on repeated evaluations.
+
+Key changes from prior version:
 1. Added tqdm progress bar for visual feedback
-2. Added periodic print statements every N samples (keeps SSH alive)
-3. Added elapsed time tracking
-4. Added ETA estimation
-5. All changes are in evaluate_dataset() method only
+2. Added periodic print statements every N samples (keeps SSH alive during long runs)
+3. Added elapsed time tracking and ETA estimation
+4. All changes are in evaluate_dataset() method only
 
 This prevents SSH timeout during long evaluations by ensuring regular stdout activity.
 """
