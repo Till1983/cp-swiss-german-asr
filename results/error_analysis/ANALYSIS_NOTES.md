@@ -1,7 +1,23 @@
 ```markdown
 # Error Analysis Notes
 
-## Session: 2025-12-03
+> **⚠️ Note on WER figures — added 16 June 2026.** The per-dialect "Mean 
+> WER" figures throughout this document (e.g. BE, ZH, SO tables below) 
+> were computed under a macro-averaging convention — the arithmetic mean 
+> of per-utterance WER rates within each dialect — via `ErrorAnalyzer.
+> analyze_by_dialect()`. As of 16 June 2026, this thesis uses 
+> micro-aggregate WER (total errors / total reference words) throughout, 
+> matching field convention (jiwer, HuggingFace evaluate, sclite defaults).
+>
+> The qualitative patterns documented here — error type taxonomies, 
+> confusion pairs, the universal worst-sample finding, relative dialect 
+> ordering (GL/GR/SZ best, ZG/SH/SO/FR/UR worst) — remain valid, since 
+> these are not sensitive to the averaging convention. The specific 
+> numeric WER percentages per dialect should be treated as approximate 
+> and not cited directly in the thesis; pull current per-dialect figures 
+> from the regenerated `analysis_*.json` files instead.
+
+## Session: 2026-06-16
 
 ### Overview
 
