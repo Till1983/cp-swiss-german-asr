@@ -154,7 +154,7 @@ class ErrorAnalyzer:
         mean_wer/mean_cer/mean_bleu are corpus-level aggregates (total errors /
         total reference words for WER/CER; corpus BLEU with brevity penalty for
         BLEU), NOT the arithmetic mean of per-sample rates. median_wer/std_wer/
-        std_bleu remain descriptive statistics over the per-utterance
+        median_bleu/std_bleu remain descriptive statistics over the per-utterance
         distribution, which is a legitimate complementary view, not the
         headline aggregate.
 
