@@ -1,7 +1,7 @@
 from typing import Any, List, Dict
 import numpy as np
 import jiwer
-from sacrebleu import sentence_bleu
+from sacrebleu import sentence_bleu, corpus_bleu
 from sacrebleu.metrics import CHRF
 from src.evaluation.text_normalization import normalize_text
 
@@ -241,46 +241,48 @@ def batch_cer(references: List[str], hypotheses: List[str]) -> Dict:
 
 def batch_bleu(references: List[str], hypotheses: List[str]) -> Dict:
     """
-    Calculate BLEU score for a batch of reference-hypothesis pairs.
-    
-    BLEU is calculated per-sentence and then averaged (standard for sentence-level BLEU).
-    Empty references or hypotheses receive a score of 0.0.
-    
-    Args:
-        references: List of ground truth texts
-        hypotheses: List of predicted texts
-        
-    Returns:
-        Dictionary containing:
-            - overall_bleu: BLEU score averaged across all samples
-            - per_sample_bleu: List of BLEU scores for each sample  
+    Calculate BLEU for a batch of reference-hypothesis pairs.
+
+    overall_bleu is corpus-level BLEU (sacrebleu corpus_bleu): one set of
+    modified n-gram precisions and a single corpus-wide brevity penalty over
+    all pairs. This is the standard MT/ASR reporting convention, matches the
+    corpus_bleu used in the significance test, and avoids the harsh short-
+    sentence penalty that sentence-averaged BLEU incurs on this corpus
+    (Papineni et al. 2002, §2.2.2).
+
+    per_sample_bleu keeps sentence-level BLEU for per-utterance error analysis
+    only; it is never averaged for the headline figure. Empty references are
+    excluded from the corpus aggregate and marked 0.0 in per_sample_bleu.
     """
     if len(references) != len(hypotheses):
         raise ValueError("References and hypotheses must have the same length")
-    
+
     if not references:
         return {"overall_bleu": 0.0, "per_sample_bleu": []}
-    
-    # Normalize all texts
+
     norm_references = [_normalize_text(ref) for ref in references]
     norm_hypotheses = [_normalize_text(hyp) for hyp in hypotheses]
-    
-    # Calculate per-sample BLEU using sentence_bleu
+
+    # Per-sample sentence BLEU — analysis only, never averaged for the headline.
     per_sample_bleu = []
     for ref, hyp in zip(norm_references, norm_hypotheses):
         if not ref or not hyp:
-            bleu_score = 0.0
+            per_sample_bleu.append(0.0)
         else:
-            bleu_score = sentence_bleu(hyp, [ref]).score
-        per_sample_bleu.append(bleu_score)
-    
-    # Calculate overall BLEU as mean (standard for sentence-level BLEU)
-    # Note: This is different from WER/CER which use aggregate calculation
-    overall_bleu = sum(per_sample_bleu) / len(per_sample_bleu) if per_sample_bleu else 0.0
-    
+            per_sample_bleu.append(sentence_bleu(hyp, [ref]).score)
+
+    # Corpus-level BLEU for the headline figure. Filter empty references for
+    # parity with batch_wer/batch_cer and the significance bootstrap.
+    filtered_refs, filtered_hyps, _ = _filter_empty_references(
+        norm_references, norm_hypotheses
+    )
+    overall_bleu = (
+        corpus_bleu(filtered_hyps, [filtered_refs]).score if filtered_refs else 0.0
+    )
+
     return {
         "overall_bleu": overall_bleu,
-        "per_sample_bleu": per_sample_bleu
+        "per_sample_bleu": per_sample_bleu,
     }
 
 
