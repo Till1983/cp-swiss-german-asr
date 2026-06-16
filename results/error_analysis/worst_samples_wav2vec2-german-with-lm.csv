@@ -1,0 +1,259 @@
+dialect,wer,cer,bleu,reference,hypothesis,substitutions,deletions,insertions,alignment_viz
+SO,180.0,79.06976744186046,4.9323515694897075,Allerdings sind diese Ergebnisse umstritten.,MAN MUSS ABER AUCH SAGEN DASS DIE ERGEBNISSE SEHR UMSTRITTEN SIND,3,0,6,"REF:  ***** ***** ***** ***** allerdings sind diese ergebnisse ***** umstritten *****
+HYP:  man   muss  aber  auch  sagen      dass die   ergebnisse sehr  umstritten sind
+TYPE: I     I     I     I     S          S    S     C          I     C          I"
+ZH,166.66666666666669,50.81967213114754,3.7477767366779213,Landsberg-Velen war promovierter Jurist und Rittergutsbesitzer.,DER LANDSBERG WÄHLEN IST SCHON PROMOVIERTER JURISHT UM DEN RITTER GUES-PSIZIRXIE,5,0,5,"REF:  ***** *****     *****  landsbergvelen war   promovierter *****   ***** jurist und    rittergutsbesitzer
+HYP:  der   landsberg wählen ist            schon promovierter jurisht um    den    ritter guespsizirxie
+TYPE: I     I         I      S              S     C            I       I     S      S      S"
+BE,160.0,52.38095238095239,5.522397783539471,Zu Bioley-Magnoux gehören einige Einzelhöfe.,ZUR BIORE MANU KIRGIN G EIN ZU HALF,5,0,3,"REF:  ***** ***** ***** zu     bioleymagnoux gehören einige einzelhöfe
+HYP:  zur   biore manu  kirgin g             ein     zu     half
+TYPE: I     I     I     S      S             S       S      S"
+BE,153.84615384615387,84.88372093023256,2.159701133933343,Trencavel seiner Besitzungen für verlustig erklärt und begab sich ins Exil nach Aragon.,ES IST ERKLÄRT WURDE DES TALS WO TRENGA WEL KÖRT HET ER VERLOREN HET ODER HÄTTE SICH SEXI AUCH PARAGON BEGANN,12,0,8,"REF:  ***** ***** *****   ***** ***** ***** ***** *****  trencavel seiner besitzungen für verlustig erklärt und  begab sich ins  exil nach    aragon
+HYP:  es    ist   erklärt wurde des   tals  wo    trenga wel       kört   het         er  verloren  het     oder hätte sich sexi auch paragon begann
+TYPE: I     I     I       I     I     I     I     I      S         S      S           S   S         S       S    S     C    S    S    S       S"
+BE,150.0,14.285714285714285,0.0,Mal Etappenort.,MAU ETAPPE ORT,2,0,1,"REF:  ***** mal    etappenort
+HYP:  mau   etappe ort
+TYPE: I     S      S"
+BE,150.0,84.61538461538461,6.567274736060395,Er unterschrieb einen Dreijahresvertrag.,ER HÄTTE DRÜHJOHRES VER TRAGUNG UND SCHRIEBEN,3,0,3,"REF:  er ***** *****      ***** unterschrieb einen dreijahresvertrag
+HYP:  er hätte drühjohres ver   tragung      und   schrieben
+TYPE: C  I     I          I     S            S     S"
+BE,142.85714285714286,64.28571428571429,3.7477767366779213,Fortan verdiente er seinen Lebensunterhalt als Busfahrer.,OB DENN HAT ER SIE LABENSONG UND HAUT AUS BAUSPARER VERDIENT,6,0,4,"REF:  ***** fortan verdiente er ***** *****     ***** seinen lebensunterhalt als       busfahrer
+HYP:  ob    denn   hat       er sie   labensong und   haut   aus             bausparer verdient
+TYPE: I     S      S         C  I     I         I     S      S               S         S"
+SO,140.0,71.66666666666667,3.377156414337854,Warum aber sagen wir das dann nicht in unserer Entschließung?,WORUM SAGT MIR DAS AB BIS NET ÄHWENN MIDI STOYE ZWAR BIS IN SCHLIESS,8,1,5,"REF:  ***** ***** ***** ***** ***** warum aber sagen  wir  das   dann nicht in unserer  entschließung
+HYP:  worum sagt  mir   das   ab    bis   net  ähwenn midi stoye zwar bis   in schliess *****
+TYPE: I     I     I     I     I     S     S    S      S    S     S    S     C  S        D"
+SO,137.5,59.42028985507246,3.673526562988939,"Zunächst wurden gemietete Geschäftsräume in Berlin-Mitte, Potsdamer Str.",TISCHT SIND QMET DIE GESCHAFTS RÜHMEN IN BERLIN MITTE POTSDAMER STRASSE KMIERTET WURDE,6,0,5,"REF:  *****  ***** zunächst wurden gemietete geschäftsräume in *****  berlinmitte potsdamer *****   *****    str
+HYP:  tischt sind  qmet     die    geschafts rühmen         in berlin mitte       potsdamer strasse kmiertet wurde
+TYPE: I      I     S        S      S         S              C  I      S           C         I       I        S"
+SG,133.33333333333331,26.31578947368421,0.0,Gute Überwachung: Ja!,GOTT ÜBER WACHING JO,3,0,1,"REF:  ***** gute überwachung ja
+HYP:  gott  über waching     jo
+TYPE: I     S    S           S"
+BE,133.33333333333331,67.74193548387096,3.3864985683445354,Nebenbei verdiente er sich mit seinem Gitarrenspiel etwas dazu.,NABABY HAT ARTE MIT SIM GITARRE SPO OP IS TE ZUR VERDIENT,9,0,3,"REF:  *****  ***** ***** nebenbei verdiente er      sich mit seinem gitarrenspiel etwas dazu
+HYP:  nababy hat   arte  mit      sim       gitarre spo  op  is     te            zur   verdient
+TYPE: I      I     I     S        S         S       S    S   S      S             S     S"
+ZG,133.33333333333331,27.27272727272727,4.767707020457095,Dort gehörte er zur ursprünglichen Macintosh-Entwicklungsmannschaft.,DET HAT ER ZU DER URSPRÜNGLICHE MACKINTOSH -ENTWICKLUNGSMANNSCHAFT KURT,5,0,3,"REF:  dort gehörte er ***** ***** *****         zur        ursprünglichen         macintoshentwicklungsmannschaft
+HYP:  det  hat     er zu    der   ursprüngliche mackintosh entwicklungsmannschaft kurt
+TYPE: S    S       C  I     I     I             S          S                      S"
+BE,128.57142857142858,57.692307692307686,4.196114906296549,Ebenso gelang die Ansiedlung auf der Taimyr-Halbinsel.,ABER SO IST DA SITTLICH AUF THE TIMER HALBINSEL KLUGE,6,0,3,"REF:  ***** ebenso gelang die ansiedlung auf ***** ***** der       taimyrhalbinsel
+HYP:  aber  so     ist    da  sittlich   auf the   timer halbinsel kluge
+TYPE: I     S      S      S   S          C   I     I     S         S"
+BE,125.0,41.66666666666667,10.682175159905848,Sie fehlen im Mittelmeer.,SEFAHLER IM MIT DU MAYR,4,0,1,"REF:  *****    sie fehlen im mittelmeer
+HYP:  sefahler im  mit    du mayr
+TYPE: I        S   S      S  S"
+LU,122.22222222222223,51.76470588235295,3.3864985683445354,"Fünf Angreifer wurden von Sicherheitskräften getötet, vier Sturmgewehre sichergestellt.",FÜR FAHGRIEFER-SIMFO DER SICHERHEITSKRAFT TÖTET WURDE VIER STONER SIND SICHER GESTELLT WURDE,8,0,3,"REF:  fünf angreifer       wurden von              sicherheitskräften getötet vier *****  ***** *****  sturmgewehre sichergestellt
+HYP:  für  fahgriefersimfo der    sicherheitskraft tötet              wurde   vier stoner sind  sicher gestellt     wurde
+TYPE: S    S               S      S                S                  S       C    I      I     I      S            S"
+BE,120.0,59.375,0.0,Linssen wuchs in Wachtendonk auf.,T LESEN ICH IHR WARTEN DONKUFGUARSE,5,0,1,"REF:  ***** linssen wuchs in  wachtendonk auf
+HYP:  t     lesen   ich   ihr warten      donkufguarse
+TYPE: I     S       S     S   S           S"
+ZH,120.0,17.5,6.567274736060395,Samantha und Kelley schlafen miteinander.,SAMANTA UND KELLY SCHLAFET MIT DEN ANDER,4,0,2,"REF:  samantha und ***** *****    kelley schlafen miteinander
+HYP:  samanta  und kelly schlafet mit    den      ander
+TYPE: S        C   I     I        S      S        S"
+ZH,116.66666666666667,42.5,5.522397783539471,Die Gleise sind teilweise noch vorhanden.,T GLEIS SIND ZUM TEIL NUR VOR HUNDE,5,0,2,"REF:  die gleise sind ***** ***** teilweise noch vorhanden
+HYP:  t   gleis  sind zum   teil  nur       vor  hunde
+TYPE: S   S      C    I     I     S         S    S"
+BE,116.66666666666667,22.448979591836736,5.522397783539471,Seleukia samt einigen umliegenden Burgen erhalten.,SELEUCIA MIT SAMT EINIGER UMLEGEN DER BURGER ERHALTE,5,0,2,"REF:  *****    seleukia samt *****   einigen umliegenden burgen erhalten
+HYP:  seleucia mit      samt einiger umlegen der         burger erhalte
+TYPE: I        S        C    I       S       S           S      S"
+SO,116.66666666666667,57.831325301204814,2.908317710573757,"Pfostenlöcher am Südtor lassen annehmen, dass er mit einer Holzbrücke überspannt war.",AUF GRUND WURDE FORSTELÖCHER AM SÜD DOR HAMME AHNE DAS DETE EIN HOLZBRUCK ÜBERSPANNT XIE ISCH,10,0,4,"REF:  ***** ***** ***** pfostenlöcher am südtor lassen annehmen dass er  mit  einer holzbrücke überspannt ***** war
+HYP:  auf   grund wurde forstelöcher  am süd    dor    hamme    ahne das dete ein   holzbruck  überspannt xie   isch
+TYPE: I     I     I     S             C  S      S      S        S    S   S    S     S          C          I     S"
+SG,114.28571428571428,17.333333333333336,0.0,Abgestufte Inanspruchnahme von Betriebsmitteln regelt die Zugriffskontrolle.,ABE STUFTE INANSPRUCHNAHMEN VOR BETRIEBSMITTEL REGLER ZUR GRIFFSKONTROLLE,7,0,1,"REF:  ***** abgestufte inanspruchnahme  von betriebsmitteln regelt die zugriffskontrolle
+HYP:  abe   stufte     inanspruchnahmen vor betriebsmittel  regler zur griffskontrolle
+TYPE: I     S          S                S   S               S      S   S"
+ZG,114.28571428571428,55.35714285714286,4.990049701936832,Orson Welles verbrachte seine Flitterwochen im Algonquin.,DER ORTHEN WELLES HAT SIE DIE FLITTERWOCHE IN ALGONQUIN VERBRACHT,5,0,3,"REF:  ***** orson  welles ***** verbrachte seine flitterwochen im algonquin *****
+HYP:  der   orthen welles hat   sie        die   flitterwoche  in algonquin verbracht
+TYPE: I     S      C      I     S          S     S             S  C         I"
+SG,114.28571428571428,70.0,5.669791110976001,Aber auch auf diesem herrschten unsaubere Zustände.,ABER AUF DEM HINT UNSER OPERI TORES EIN KERSCHT,6,0,2,"REF:  aber ***** ***** auch auf   diesem herrschten unsaubere zustände
+HYP:  aber auf   dem   hint unser operi  tores      ein       kerscht
+TYPE: C    I     I     S    S     S      S          S         S"
+TG,112.5,52.17391304347826,4.990049701936832,"Zakaria, der in Verbindung mit Ishak Khan steht.",DER ZACHARIE WO IVA BINDIG MIT DEM ISHAC KRAN START,7,0,2,"REF:  ***** zakaria  der in  verbindung mit ***** ishak khan steht
+HYP:  der   zacharie wo  iva bindig     mit dem   ishac kran start
+TYPE: I     S        S   S   S          C   I     S     S    S"
+AG,112.5,46.0,0.0,Diese wachsen zunächst als Säume ins offene Wasser.,DIE WARSITZ NÄHT AUS SIMA IST OFT NIE VARSIN,8,0,1,"REF:  ***** diese   wachsen zunächst als  säume ins offene wasser
+HYP:  die   warsitz näht    aus      sima ist   oft nie    varsin
+TYPE: I     S       S       S        S    S     S   S      S"
+ZG,112.5,36.92307692307693,4.196114906296549,Von anderen Seiten werden noch niedrigere Wachstumsraten erwartet.,VOR DER ANDERE SITTER WAR DER NO TYPER WACHSTUMSRAT ERWARTET,7,0,2,"REF:  ***** ***** von    anderen seiten werden noch niedrigere wachstumsraten erwartet
+HYP:  vor   der   andere sitter  war    der    no   typer      wachstumsrat   erwartet
+TYPE: I     I     S      S       S      S      S    S          S              C"
+AG,111.11111111111111,42.592592592592595,4.990049701936832,In der Hauptphase dreht der Körper um seine Längsachse.,ICH HAB VOR USERDREHTER KÖRBER UM SIE IN DIE LANGSAUCHSE,9,0,1,"REF:  ***** in  der hauptphase  dreht  der körper um seine längsachse
+HYP:  ich   hab vor userdrehter körber um  sie    in die   langsauchse
+TYPE: I     S   S   S           S      S   S      S  S     S"
+ZH,111.11111111111111,58.82352941176471,4.196114906296549,Zu meinem Bericht wurde eine Reihe von Änderungsanträgen eingereicht.,ZUM ENTBRICHT SIND GANZEN HUFEN ANDRIC SAUL TRÄGE GEREICHT WURDE,9,0,1,"REF:  ***** zu        meinem bericht wurde eine   reihe von   änderungsanträgen eingereicht
+HYP:  zum   entbricht sind   ganzen  hufen andric saul  träge gereicht          wurde
+TYPE: I     S         S      S       S     S      S     S     S                 S"
+SZ,111.11111111111111,55.73770491803278,4.065425428798724,Einige der besten Blues-Musiker ihrer Zeit spielten in Atlanta.,ES WAR VOR DER BESTE BLUESMUSIKER VOR IHRE RECITE AND IN ATLANTIC SPIELT,6,0,4,"REF:  ***** ***** einige der besten bluesmusiker ***** ihrer zeit   spielten in *****    atlanta
+HYP:  es    war   vor    der beste  bluesmusiker vor   ihre  recite and      in atlantic spielt
+TYPE: I     I     S      C   S      C            I     S     S      S        C  I        S"
+BE,111.11111111111111,39.6551724137931,3.7477767366779213,In ihre Lungen hatte sich der Krebs ebenfalls ausgebreitet.,JE DIE LUNGE HAT SICH DURCH RABS ABER V SUS BREITET,8,0,2,"REF:  in ihre lungen hatte sich ***** ***** der  krebs ebenfalls ausgebreitet
+HYP:  je die  lunge  hat   sich durch rabs  aber v     sus       breitet
+TYPE: S  S    S      S     C    I     I     S    S     S         S"
+BL,109.09090909090908,40.243902439024396,3.3864985683445354,"Seine Nachfahren kündigten gerichtliche Schritte an, um die Umbettung zu verhindern.",SINE NOCH FAHRE HAND ES CHRISTLICHE SCHRITTE KÜNDET UND UNTÄTIG ZUR HINDERE,9,1,2,"REF:  ***** ***** seine nachfahren kündigten gerichtliche schritte an     um  die     umbettung zu      verhindern
+HYP:  sine  noch  fahre hand       es        christliche  schritte kündet und untätig zur       hindere *****
+TYPE: I     I     S     S          S         S            C        S      S   S       S         S       D"
+BE,109.09090909090908,48.80952380952381,3.716499092256817,"Nina Jäckle verfasste bislang Hörspiele, Theaterstücke, Drehbücher und vor allem Prosa.",NINA JAKLAHED BESITZT VOR AM HÖRSPIEL THEATERSTÜCK O DREI BÜCHER ABER VOR UND PROSA SCHRIEBE,8,0,4,"REF:  nina *****    *****   ***** jäckle verfasste bislang      hörspiele theaterstücke drehbücher und  vor allem prosa *****
+HYP:  nina jaklahed besitzt vor   am     hörspiel  theaterstück o         drei          bücher     aber vor und   prosa schriebe
+TYPE: C    I        I       I     S      S         S            S         S             S          S    C   S     C     I"
+BE,109.09090909090908,29.87012987012987,0.0,"Das Genfer Übereinkommen soll dem sogenannten ""Bananen Krieg"" ein Ende bereiten.",SCAN FÜR ÜBER KOMMEN SO UM SOGENANNTE BANANE KRIEGE SAN DIE BEREITE,11,0,1,"REF:  ***** das genfer übereinkommen soll dem sogenannten bananen krieg  ein ende bereiten
+HYP:  scan  für über   kommen        so   um  sogenannte  banane  kriege san die  bereite
+TYPE: I     S   S      S             S    S   S           S       S      S   S    S"
+GR,108.33333333333333,50.0,3.21858262703621,Nach dem Einbruch der Türken in Siebenbürgen begann der Niedergang der Abtei.,NACH IM IHBRUCH VOR DE TÜRKE IN SIEBERBÜRGER HÄTTE NIE DER GANG FORD RAP TAI BEGONNEN,9,0,4,"REF:  nach ***** dem     einbruch der türken in *****        siebenbürgen begann der ***** ***** niedergang der abtei
+HYP:  nach im    ihbruch vor      de  türke  in sieberbürger hätte        nie    der gang  ford  rap        tai begonnen
+TYPE: C    I     S       S        S   S      C  I            S            S      C   I     I     S          S   S"
+BE,100.0,58.9041095890411,0.0,Gestern habe ich über die Bedenken hinsichtlich der Verfassung gesprochen.,GESTR HAN JOBBE DANKE HEILTE FÜR FASSI GRAT,8,2,0,"REF:  gestern habe ich   über  die    bedenken hinsichtlich der  verfassung gesprochen
+HYP:  gestr   han  jobbe danke heilte für      fassi        grat *****      *****
+TYPE: S       S    S     S     S      S        S            S    D          D"
+AG,100.0,43.83561643835616,6.150343144231885,Diese Supernova vom Typ Ia war eine der am besten beobachteten Supernovae.,SUPER NO WAR VOM TYP I A IST EINE VON DER BESTE BEOBACHTETE SUPPER NOVA ERZIELTE,8,0,4,"REF:  ***** diese supernova vom typ ***** ia war eine ***** der ***** am          besten beobachteten supernovae
+HYP:  super no    war       vom typ i     a  ist eine von   der beste beobachtete supper nova         erzielte
+TYPE: I     S     S         C   C   I     S  S   C    I     C   I     S           S      S            S"
+SG,100.0,55.10204081632652,4.8734989388136185,Ollie kommt als Affe wieder aus dem Becken heraus.,DER OLI RUNT ALS AUF WIE DER RUSAMBAE-KRYUSE,6,2,1,"REF:  ***** ollie kommt als affe wieder aus dem            becken heraus
+HYP:  der   oli   runt  als auf  wie    der rusambaekryuse *****  *****
+TYPE: I     S     S     C   S    S      S   S              D      D"
+BL,100.0,54.054054054054056,0.0,Die Bemühungen in dieser Sache laufen.,BEMÜHIGEIN DERER SUCH SIND UM LAUFE,6,0,0,"REF:  die        bemühungen in   dieser sache laufen
+HYP:  bemühigein derer      such sind   um    laufe
+TYPE: S          S          S    S      S     S"
+BE,100.0,49.01960784313725,0.0,"Wir können so verfahren, wie Sie vorgeschlagen haben.",DIE HORIZORVERFAHREN WIRED VORSCHLAGE,4,4,0,"REF:  wir können           so    verfahren  wie   sie   vorgeschlagen haben
+HYP:  die horizorverfahren wired vorschlage ***** ***** *****         *****
+TYPE: S   S                S     S          D     D     D             D"
+BE,100.0,51.515151515151516,8.116697886877475,Güterverkehr fand kaum noch statt.,GÜTER FERRE HÄT RUM NOCH STADTKUNDE,4,0,1,"REF:  ***** güterverkehr fand kaum noch statt
+HYP:  güter ferre        hät  rum  noch stadtkunde
+TYPE: I     S            S    S    C    S"
+BE,100.0,33.84615384615385,7.495553473355845,"Der Ort ist Sitz des Bistums Ventimiglia-Sanremo, Seebad und Kurort.",DAUERT ES SITZ VOM BISTUM MINT EMILIA SAN REMO SEEBAD UND CODO,8,0,2,"REF:  *****  ***** der  ort ist    sitz des    bistums ventimigliasanremo seebad und kurort
+HYP:  dauert es    sitz vom bistum mint emilia san     remo               seebad und codo
+TYPE: I      I     S    S   S      S    S      S       S                  C      C   S"
+AG,100.0,45.45454545454545,0.0,Aus den nominierten Beiträgen kürt die Jury sodann die Preisträger.,USTER NOMINIERTE PIETRA KÜR JURIDAIN PRIESTERAGER,6,4,0,"REF:  aus   den        nominierten beiträgen kürt     die          jury  sodann die   preisträger
+HYP:  uster nominierte pietra      kür       juridain priesterager ***** *****  ***** *****
+TYPE: S     S          S           S         S        S            D     D      D     D"
+BE,100.0,29.411764705882355,6.772997136689072,"Das Schicksal führt das heimatlose Ex-Bunny ins Haus der ""Zeta-Alpha-Zeta-""Schwesternschaft.",DAS SCHICKSAL FÜRT SHAMATLOSE X-PANY ITS HUS VOR SETA ALFASETTA SCHWITER SCHAFFT,8,0,2,"REF:  das schicksal ***** *****      führt das heimatlose exbunny ins  haus      der      zetaalphazetaschwesternschaft
+HYP:  das schicksal fürt  shamatlose xpany its hus        vor     seta alfasetta schwiter schafft
+TYPE: C   C         I     I          S     S   S          S       S    S         S        S"
+SO,100.0,24.561403508771928,5.522397783539471,Wir müssen alle bestehenden Möglichkeiten effektiv nutzen.,MEHR MIT ALLI BESTEHENDE MÖGLICHKEIT DER EFFEKTIV NUTZE,6,0,1,"REF:  ***** wir müssen alle       bestehenden möglichkeiten effektiv nutzen
+HYP:  mehr  mit alli   bestehende möglichkeit der           effektiv nutze
+TYPE: I     S   S      S          S           S             C        S"
+BE,100.0,60.37735849056604,5.522397783539471,"Als dieser starb, übernahm Jacopo Capece dessen Stelle.",WO DAJENIG IST GESTORBEN HÄTTE JACOPO CAPECESINISTEO BEN,6,1,1,"REF:  ***** als     dieser starb     übernahm jacopo capece         dessen stelle
+HYP:  wo    dajenig ist    gestorben hätte    jacopo capecesinisteo ben    *****
+TYPE: I     S       S      S         S        C      S              S      D"
+TG,100.0,49.01960784313725,7.267884212102741,Ich bin noch mit drei weiteren Dingen einverstanden.,MIT NUR DRÜH WIETERE DINGE BIN ICH VERSTANDEN,8,0,0,"REF:  ich bin noch mit     drei  weiteren dingen einverstanden
+HYP:  mit nur drüh wietere dinge bin      ich    verstanden
+TYPE: S   S   S    S       S     S        S      S"
+AG,100.0,47.61904761904761,4.767707020457095,Dieser Interessengegensatz führte oft zur Erklärung einer Fehde.,DE INTERESSENSGEGENSATZ HAT OFT SO GEKLEGIG FÜR FEDER KLIER,7,0,1,"REF:  dieser interessengegensatz  führte oft ***** zur      erklärung einer fehde
+HYP:  de     interessensgegensatz hat    oft so    geklegig für       feder klier
+TYPE: S      S                    S      C   I     S        S         S     S"
+AG,100.0,38.333333333333336,5.522397783539471,Die Speicherung erfolgt dabei im Shared-Memory des Webservers.,SPICHIGER FOLGTE WIE IM SHIRT MEMORY VOM WEBSERVER,8,0,0,"REF:  die       speicherung erfolgt dabei im    sharedmemory des webservers
+HYP:  spichiger folgte      wie     im    shirt memory       vom webserver
+TYPE: S         S           S       S     S     S            S   S"
+ZH,100.0,47.72727272727273,5.522397783539471,Er war der Sohn des Philosophen Otto Neurath.,ERRICHTE SOHN VOM PHILOSOPH OUT DE NEURAD XIE,8,0,0,"REF:  er       war  der sohn      des philosophen otto   neurath
+HYP:  errichte sohn vom philosoph out de          neurad xie
+TYPE: S        S    S   S         S   S           S      S"
+BL,100.0,47.368421052631575,6.567274736060395,Die Brust ist aufgehellt und gestreift.,DER BROT STICHT OF KÄLTE UND STREIFT,5,0,1,"REF:  ***** die  brust  ist aufgehellt und gestreift
+HYP:  der   brot sticht of  kälte      und streift
+TYPE: I     S    S      S   S          C   S"
+ZH,100.0,71.42857142857143,12.703318703865365,Im Norden liegt die Bandasee.,DER BANDASEE IST IM NORDE,5,0,0,"REF:  im  norden   liegt die bandasee
+HYP:  der bandasee ist   im  norde
+TYPE: S   S        S     S   S"
+ZH,100.0,59.25925925925925,9.980099403873663,Dadurch verformt sich das zu bearbeitende Blech zurück.,DURCH DAS VERFORMT SICH BLECH UND MAN MUSS BEARBEITET RUCK,6,0,2,"REF:  ***** dadurch verformt sich ***** das zu  bearbeitende blech      zurück
+HYP:  durch das     verformt sich blech und man muss         bearbeitet ruck
+TYPE: I     S       C        C    I     S   S   S            S          S"
+SG,100.0,53.01204819277109,7.495553473355845,"Dies war nicht der Fall für die Kontrollgruppen, die keine Fehlinformation erhielten.",DER SICH FÜR DIE KONTROLLGRUPPE WO KAI FILEINFORMATIONEN ÜBER HOHEN NETTE FALXI,12,0,0,"REF:  dies war  nicht der fall           für die kontrollgruppen   die  keine fehlinformation erhielten
+HYP:  der  sich für   die kontrollgruppe wo  kai fileinformationen über hohen nette           falxi
+TYPE: S    S    S     S   S              S   S   S                 S    S     S               S"
+BE,100.0,61.36363636363637,4.085507150363302,Daran wird sich auch mit der Annahme einiger Änderungsanträge nichts Wesentliches ändern.,OH METRANO FÜR EINIGER ANTRIEBSARTRAG WIRD SO NÜDWESENTLOCH STRAN ANDERE,10,2,0,"REF:  daran wird    sich auch    mit            der  annahme einiger       änderungsanträge nichts wesentliches ändern
+HYP:  oh    metrano für  einiger antriebsartrag wird so      nüdwesentloch stran            andere *****        *****
+TYPE: S     S       S    S       S              S    S       S             S                S      D            D"
+BE,100.0,56.666666666666664,0.0,"Ich habe den Eindruck, dass viele der europäischen Agenturen ein gewisses Eigenleben führen.",JADRIDUK DAS FÜR EUROPEIAGENTURES GRÖSSTE SEGELA BEFÜHLTE,7,6,0,"REF:  ich      habe den eindruck         dass    viele  der      europäischen agenturen ein   gewisses eigenleben führen
+HYP:  jadriduk das  für europeiagentures grösste segela befühlte *****        *****     ***** *****    *****      *****
+TYPE: S        S    S   S                S       S      S        D            D         D     D        D          D"
+BE,100.0,36.607142857142854,3.4197980307804725,Er studierte nach Kriegsende Rechtswissenschaften und war daneben Geschäftsführer eines Berliner Bauunternehmens.,ER HAT NACH KRIEG ANDI RECHTSWISSENSCHAFTEN STUDIERT WO ER TANABE GESCHÄFTSFÜHRER VON DER BERLINER BOGEN NAME XIE,7,0,5,"REF:  er studierte nach ***** kriegsende rechtswissenschaften *****    und war daneben geschäftsführer ***** eines berliner ***** ***** bauunternehmens
+HYP:  er hat       nach krieg andi       rechtswissenschaften studiert wo  er  tanabe  geschäftsführer von   der   berliner bogen name  xie
+TYPE: C  S         C    I     S          C                    I        S   S   S       C               I     S     C        I     I     S"
+BE,100.0,30.357142857142854,0.0,Die Prüfung der Verwerflichkeit erfolgt dabei dreistufig.,PRÜFING VOR VERWARFLACHKEIT ERFOLGTE WIE DRÜHSTRUFIG,6,1,0,"REF:  die     prüfung der             verwerflichkeit erfolgt dabei       dreistufig
+HYP:  prüfing vor     verwarflachkeit erfolgte        wie     drühstrufig *****
+TYPE: S       S       S               S               S       S           D"
+GL,100.0,19.047619047619047,11.044795567078939,Eine Alternative dazu ist der Känguru-Start.,EIN ALTERNATIVER DER ZOE IST DER KÄNGURU START,4,0,2,"REF:  ***** eine         alternative dazu ist der *****   kängurustart
+HYP:  ein   alternativer der         zoe  ist der känguru start
+TYPE: I     S            S           S    C   C   I       S"
+ZH,100.0,22.22222222222222,6.754312828675707,Der Turm war Teil der militärischen Verteidigungsanlagen der mittelalterlichen Reichsstadt.,DER TURM IST STEIL VOR DER MILITÄRISCHE VERTEIDIGUNGSANLAGE VOR DER MITTELALTERLICH RICH STADT XI,6,0,4,"REF:  der turm ***** war   teil der *****        militärischen       verteidigungsanlagen der *****           ***** mittelalterlichen reichsstadt
+HYP:  der turm ist   steil vor  der militärische verteidigungsanlage vor                  der mittelalterlich rich  stadt             xi
+TYPE: C   C    I     S     S    C   I            S                   S                    C   I               I     S                 S"
+TG,100.0,36.633663366336634,3.737437943747671,"Gegen Ende des Zweiten Weltkrieges gab es insgesamt drei Bombenangriffe, die der Eisenbahnlinie galten.",GEGÄHNT VOM ZWEITEN WELTKRIEG HETZ INSGESAMT DRÜ BOMBENAGRIFF GE WURDE ISEBAHNLINIE GOLD DER HIND,12,1,1,"REF:  *****   gegen ende    des       zweiten weltkrieges gab es           insgesamt drei  bombenangriffe die  der eisenbahnlinie galten
+HYP:  gegähnt vom   zweiten weltkrieg hetz    insgesamt   drü bombenagriff ge        wurde isebahnlinie   gold der hind           *****
+TYPE: I       S     S       S         S       S           S   S            S         S     S              S    C   S              D"
+BL,100.0,60.526315789473685,9.652434877402245,Es wurde auch ihr erfolgreichstes Buch.,SICHER WIR DAS ERFOLGRICHTE BUCH WURDE,6,0,0,"REF:  es     wurde auch ihr          erfolgreichstes buch
+HYP:  sicher wir   das  erfolgrichte buch            wurde
+TYPE: S      S     S    S            S               S"
+AG,100.0,40.33613445378151,4.100530090638892,Die Samples wurden in der Vergangenheit von verschiedenen Kommentatoren der verschiedenen Sprachversionen eingesprochen.,IHRE VERGANGENHEIT SIND SAMPLES WO VERSCHIEDENE KOMMENTATORE OS VERSCHIEDENE SPRACHVERSIONEN GESPROCHEN WURDE,12,1,0,"REF:  die  samples       wurden in      der vergangenheit von          verschiedenen kommentatoren der             verschiedenen sprachversionen eingesprochen
+HYP:  ihre vergangenheit sind   samples wo  verschiedene  kommentatore os            verschiedene  sprachversionen gesprochen    wurde           *****
+TYPE: S    S             S      S       S   S             S            S             S             S               S             S               D"
+BE,100.0,62.857142857142854,0.0,Dies ist heute jedoch nicht mehr so.,DASSI S HÜT APENYM MESSO,5,2,0,"REF:  dies  ist heute jedoch nicht mehr  so
+HYP:  dassi s   hüt   apenym messo ***** *****
+TYPE: S     S   S     S      S     D     D"
+BE,100.0,48.57142857142857,0.0,"Sie ist eine alte, autochthone Sorte.",SEIS OUTI ATACHONI-SORTE,3,3,0,"REF:  sie  ist  eine          alte  autochthone sorte
+HYP:  seis outi atachonisorte ***** *****       *****
+TYPE: S    S    S             D     D           D"
+BE,100.0,59.183673469387756,8.392229812593097,Das Angebot von Edinburgh war besser und billiger.,ZAGE WARD FOR EDING BRA ICH BESSER UND BERRY GRIGIE,6,0,2,"REF:  ***** das  angebot von   edinburgh war besser und ***** billiger
+HYP:  zage  ward for     eding bra       ich besser und berry grigie
+TYPE: I     S    S       S     S         S   C      C   I     S"
+SG,100.0,21.73913043478261,5.522397783539471,Wir werden die Angelegenheit prüfen und gegebenenfalls richtigstellen.,MIR WERDE TAKLEGERHEIT PRÜFE UND GEGEBENFALLS RICHTIG STELLE,8,0,0,"REF:  wir werden die          angelegenheit prüfen und          gegebenenfalls richtigstellen
+HYP:  mir werde  taklegerheit prüfe         und    gegebenfalls richtig        stelle
+TYPE: S   S      S            S             S      S            S              S"
+SG,100.0,48.214285714285715,4.767707020457095,Die heute U-förmige Anlage entstand in mehreren Bauphasen.,DIE HÜT U-FÖRMIG ERLAG WIE DIE MEHRERE BAUPHASE ENTSTANDEN,7,0,1,"REF:  die ***** heute   uförmige anlage entstand in      mehreren bauphasen
+HYP:  die hüt   uförmig erlag    wie    die      mehrere bauphase entstanden
+TYPE: C   I     S       S        S      S        S       S        S"
+BE,100.0,42.30769230769231,0.0,Die Förderung soll in Kindertagesstätten stattfinden.,FÖRDERIK-SOI RINDEDOKES STATT STATTFINDE,4,2,0,"REF:  die         förderung  soll  in         kindertagesstätten stattfinden
+HYP:  förderiksoi rindedokes statt stattfinde *****              *****
+TYPE: S           S          S     S          D                  D"
+BE,100.0,44.5945945945946,2.8398387225677895,Am Ende des Films kommt es während einer schwarzen Messe zu einem Showdown.,AM AN DIE VOM WEM HUNT WAR DER SCHWARZE MEIST ZUM NA SHOW DOWN,12,0,1,"REF:  am ***** ende des films kommt es  während einer    schwarzen messe zu einem showdown
+HYP:  am an    die  vom wem   hunt  war der     schwarze meist     zum   na show  down
+TYPE: C  I     S    S   S     S     S   S       S        S         S     S  S     S"
+ZG,100.0,38.095238095238095,5.255923420816887,Die kommunistische Geheimpolizei durchsuchte sein Elternhaus und seine Eltern wurden zu Verhören abgeholt.,DER KOMMUNISTISCH GEHEIMDIENST DURCHSUCHT SIE ELTROHUS UND SEINE ALTER SIND ZUM FRÜHER OB KALT WURDE,11,0,2,"REF:  die kommunistische geheimpolizei durchsuchte sein elternhaus und seine ***** ***** eltern wurden zu verhören abgeholt
+HYP:  der kommunistisch  geheimdienst  durchsucht  sie  eltrohus   und seine alter sind  zum    früher ob kalt     wurde
+TYPE: S   S              S             S           S    S          C   C     I     I     S      S      S  S        S"
+ZH,100.0,24.285714285714285,4.767707020457095,Die Diskriminierung ethnischer und religiöser Minderheiten geht weiter.,DISKRIMINIEREN RIG ETHNISCHE UND RELIGIÖSE MINDERHEIT DER GOTT WITTER,7,0,1,"REF:  die            diskriminierung ethnischer und *****     religiöser minderheiten geht weiter
+HYP:  diskriminieren rig             ethnische  und religiöse minderheit der          gott witter
+TYPE: S              S               S          C   I         S          S            S    S"
+BE,100.0,56.92307692307692,4.9323515694897075,Schnell wurde das Haus zu einer beliebten Adresse der Prominenten.,SCHNAUICH ZU ZU DER BELIEBTE ORT RASTER VOR DER PROMINANTE WURDE,9,0,1,"REF:  schnell   wurde das haus zu       einer beliebten adresse der *****      prominenten
+HYP:  schnauich zu    zu  der  beliebte ort   raster    vor     der prominante wurde
+TYPE: S         S     S   S    S        S     S         S       C   I          S"
+TG,100.0,53.70370370370371,5.669791110976001,In Containern können auch keine Treiber geladen werden.,ICH KONNTE EIN NOCH IN DAUKEIT-DRIEH BER GLATTE WERDEN,7,0,1,"REF:  ***** in     containern können auch keine        treiber geladen werden
+HYP:  ich   konnte ein        noch   in   daukeitdrieh ber     glatte  werden
+TYPE: I     S      S          S      S    S            S       S       C"
+BE,100.0,44.5945945945946,4.456882760699063,"Ist der Irrtum vermeidbar, so greift eine obligatorische Strafmilderung ein.",ER STEIERT UND VERMIED BARS ORGRIFF DER OBLIGATORISCHE STRAFMÄNN DER REGIE,9,0,1,"REF:  ist der     irrtum vermeidbar so   greift  eine obligatorische *****     strafmilderung ein
+HYP:  er  steiert und    vermied    bars orgriff der  obligatorische strafmänn der            regie
+TYPE: S   S       S      S          S    S       S    C              I         S              S"
+BE,100.0,40.21739130434783,3.0890553181566975,"Auch seine literarischen Arbeiten, die er in seinem Testament aufgeführt hat, sind verschollen.",OSNI LITERARISCHE ARBEITER WO IM TESTAMENT DUFT FÜHRT SIE SIE SIE FÜR SCHOLLE,13,0,0,"REF:  auch seine        literarischen arbeiten die er        in   seinem testament aufgeführt hat sind verschollen
+HYP:  osni literarische arbeiter      wo       im  testament duft führt  sie       sie        sie für  scholle
+TYPE: S    S            S             S        S   S         S    S      S         S          S   S    S"
+ZH,100.0,41.46341463414634,0.0,Das Projekt endete nach der Ausschreibung.,ASPROJACT AHNDET NOCH DOS SCHRIEBIG,5,1,0,"REF:  das       projekt endete nach der       ausschreibung
+HYP:  asprojact ahndet  noch   dos  schriebig *****
+TYPE: S         S       S      S    S         D"
+BE,100.0,35.1063829787234,3.7477767366779213,Das Leistungsspektrum bestimmen die Sozialpartner des öffentlichen Dienstes durch Tarifvertrag.,S LASTIG SPEKTRUM BESTEHT MIT SOZIALPARTNER VOM ÖFFENTLICHER DIENSTÜTTDARI FÜT TRACK,9,0,1,"REF:  ***** das    leistungsspektrum bestimmen die sozialpartner des öffentlichen dienstes      durch tarifvertrag
+HYP:  s     lastig spektrum          besteht   mit sozialpartner vom öffentlicher dienstüttdari füt   track
+TYPE: I     S      S                 S         S   C             S   S            S             S     S"
+BE,100.0,56.060606060606055,0.0,"Je schwerer ein Zug ist, desto höhere Kräfte können dabei auftreten.",ICH WAR ERZOGICH-TESTO HÖHER DIE KRAFT HEUT BY UF TRAT,10,1,0,"REF:  je  schwerer ein           zug   ist desto höhere kräfte können dabei auftreten
+HYP:  ich war      erzogichtesto höher die kraft heut   by     uf     trat  *****
+TYPE: S   S        S             S     S   S     S      S      S      S     D"
+ZG,100.0,72.27722772277228,13.292417883329383,Trotz dieses Wachstums verlor der Ort seine Selbstständigkeit durch die Eingemeindung nach Den Helder.,DORT IG MENDIG NACH DEN HELDER HÄT DER ORT TROTZEM WACHSTUM SIND SELBSTÄNDIGKEIT VERLOREN,14,0,0,"REF:  trotz dieses wachstums verlor der ort    seine selbstständigkeit durch die     eingemeindung nach den             helder
+HYP:  dort  ig     mendig    nach   den helder hät   der               ort   trotzem wachstum      sind selbständigkeit verloren
+TYPE: S     S      S         S      S   S      S     S                 S     S       S             S    S               S"
+SG,100.0,41.7910447761194,0.0,Hinweise auf eine steinerne Ringmauer konnten nicht gefunden werden.,HIVIS UFER STEINEN RINGMOOR HÄTT NÜCKRÖNEKFUNDE WERDE,7,2,0,"REF:  hinweise auf  eine    steinerne ringmauer konnten        nicht gefunden werden
+HYP:  hivis    ufer steinen ringmoor  hätt      nückrönekfunde werde *****    *****
+TYPE: S        S    S       S         S         S              S     D        D"
+BE,100.0,64.51612903225806,0.0,"Jedenfalls können wir es uns nicht leisten, die nächsten Wochen untätig verstreichen zu lassen.",OFFERTE FAUCHE IM SÜSS NETLEY STEHT JE NACH STONE UND ATIK FÜR STIRITZLA,13,1,0,"REF:  jedenfalls können wir es   uns    nicht leisten die  nächsten wochen untätig verstreichen zu        lassen
+HYP:  offerte    fauche im  süss netley steht je      nach stone    und    atik    für          stiritzla *****
+TYPE: S          S      S   S    S      S     S       S    S        S      S       S            S         D"
+ZH,100.0,48.888888888888886,0.0,In dieser Zeit war intensives Touren angesagt.,IDEREZIT IST INTENSIV STURE ORXIDXY,5,2,0,"REF:  in       dieser zeit     war   intensives touren angesagt
+HYP:  iderezit ist    intensiv sture orxidxy    *****  *****
+TYPE: S        S      S        S     S          D      D"
+GR,100.0,40.0,4.990049701936832,Die Krieger konnten hierdurch dem militärisch überlegenen Gegner ausweichen.,KRIEGER ENT DODORI AM MILITÄRISCHE ÜBERLEGENER GEGNER HÖNER US VIECHER,6,1,2,"REF:  die   krieger konnten hierdurch dem militärisch  überlegenen gegner ***** ***** ausweichen
+HYP:  ***** krieger ent     dodori    am  militärische überlegener gegner höner us    viecher
+TYPE: D     C       S       S         S   S            S           C      I     I     S"
+SG,100.0,21.568627450980394,5.522397783539471,"Herr Herman, wir führen getrennte Abstimmungen durch.",HERR HERMANN MIR FÜHRE GETRENNT DIE ABSTIMMENDE DURRE,6,0,1,"REF:  herr *****   herman wir   führen   getrennte abstimmungen durch
+HYP:  herr hermann mir    führe getrennt die       abstimmende  durre
+TYPE: C    I       S      S     S        S         S            S"
+BE,100.0,74.69879518072288,7.347053125977879,Ein Problem stellte im Fall einer Belagerung nur die Versorgung mit Trinkwasser dar.,IM BAU WORE BELAG RIG HÄTT NOMAD VERSORGE MIT TRINKWASSER ALS PROBLEM DARGESTELLT,13,0,0,"REF:  ein problem stellte im    fall einer belagerung nur      die versorgung  mit trinkwasser dar
+HYP:  im  bau     wore    belag rig  hätt  nomad      versorge mit trinkwasser als problem     dargestellt
+TYPE: S   S       S       S     S    S     S          S        S   S           S   S           S"
+BE,100.0,48.888888888888886,0.0,Durch einen Laser kann Karies entfernt werden.,DÜNNE LEISER HAKORIES EMPFANT WARTE,5,2,0,"REF:  durch einen  laser    kann    karies entfernt werden
+HYP:  dünne leiser hakories empfant warte  *****    *****
+TYPE: S     S      S        S       S      D        D"
