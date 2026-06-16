@@ -4,7 +4,6 @@ Property-based tests for metrics using Hypothesis.
 Tests mathematical properties and invariants that should always hold.
 """
 
-from unittest import result
 
 import pytest
 
@@ -12,10 +11,10 @@ import pytest
 try:
     from hypothesis import given, strategies as st, assume, settings, HealthCheck
     from hypothesis import example
-
     HYPOTHESIS_AVAILABLE = True
 except ImportError:
     HYPOTHESIS_AVAILABLE = False
+    pytest.skip("hypothesis package not installed", allow_module_level=True)
 
     # Create dummy decorators for when hypothesis is not available
     def given(*args, **kwargs):
