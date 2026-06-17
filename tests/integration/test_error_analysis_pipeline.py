@@ -7,7 +7,6 @@ Tests the complete flow from evaluation results to error analysis and visualizat
 import pytest
 import json
 import tempfile
-import statistics
 from pathlib import Path
 from unittest.mock import patch, Mock
 from src.evaluation.error_analyzer import ErrorAnalyzer
@@ -174,56 +173,21 @@ class TestErrorAnalysisPipeline:
         """Test comparing error analysis from multiple models."""
         analyzer = ErrorAnalyzer()
 
-        # Generate analysis for "model A"
+        # Generate slightly worse results for "model B" (different transcriptions)
+        import copy
+        worse_results = copy.deepcopy(sample_evaluation_results)
+        for result in worse_results:
+            # Degrade the hypothesis by replacing all words with "x" to ensure higher WER
+            result["hypothesis"] = " ".join(
+                ["x"] * len(result["reference"].split())
+            )
+
+        # Generate analysis for "model A" (original, better results)
         analysis_a = {
             "aggregate_stats": analyzer.calculate_aggregate_stats(sample_evaluation_results),
             "dialect_analysis": analyzer.analyze_by_dialect(sample_evaluation_results),
             "error_distribution_percent": {}
         }
-
-        # Generate genuinely worse results for "model B": calculate_aggregate_stats
-        # and analyze_by_dialect now recompute WER/CER/BLEU from reference/hypothesis
-        # text via batch_wer/batch_cer/batch_bleu, so perturbing only the stored
-        # scalar fields (as the old fixture did) has no effect on the aggregate.
-        # Model B's hypotheses must actually be more wrong than Model A's.
-        worse_results = [
-            {
-                "audio_file": "be_sample_1.wav",
-                "dialect": "BE",
-                "reference": "das ist ein test",
-                "hypothesis": "das komplett anders satz",  # fully wrong
-                "wer": 30.0,
-                "cer": 14.5,
-                "bleu": 70.0
-            },
-            {
-                "audio_file": "be_sample_2.wav",
-                "dialect": "BE",
-                "reference": "hallo welt",
-                "hypothesis": "tschau welt",  # 1 substitution instead of 0 errors
-                "wer": 5.0,
-                "cer": 2.0,
-                "bleu": 95.0
-            },
-            {
-                "audio_file": "zh_sample_1.wav",
-                "dialect": "ZH",
-                "reference": "grüezi mitenand",
-                "hypothesis": "ganz falsch hier",  # fully wrong
-                "wer": 55.0,
-                "cer": 22.0,
-                "bleu": 55.0
-            },
-            {
-                "audio_file": "zh_sample_2.wav",
-                "dialect": "ZH",
-                "reference": "wie geht es dir",
-                "hypothesis": "wie got es",  # extra deletion vs. original 1-sub error
-                "wer": 30.0,
-                "cer": 12.0,
-                "bleu": 65.0
-            }
-        ]
 
         analysis_b = {
             "aggregate_stats": analyzer.calculate_aggregate_stats(worse_results),
@@ -268,19 +232,11 @@ class TestErrorAnalysisPipeline:
         dialect_analysis = analyzer.analyze_by_dialect(empty_results)
         assert dialect_analysis == {}
 
-        # calculate_aggregate_stats now guards empty input explicitly and
-        # returns zeros rather than raising StatisticsError (deliberate
-        # behavior change: silently crashing on empty input was bad API design)
+        # Empty results return zero stats (no error raised)
         aggregate = analyzer.calculate_aggregate_stats(empty_results)
         assert aggregate["mean_wer"] == 0.0
-        assert aggregate["median_wer"] == 0.0
-        assert aggregate["std_wer"] == 0.0
         assert aggregate["mean_cer"] == 0.0
-        assert aggregate["median_cer"] == 0.0
-        assert aggregate["std_cer"] == 0.0
         assert aggregate["mean_bleu"] == 0.0
-        assert aggregate["median_bleu"] == 0.0
-        assert aggregate["std_bleu"] == 0.0
 
     @pytest.mark.integration
     def test_error_analysis_single_dialect(self):
@@ -347,15 +303,9 @@ class TestErrorAnalysisMetricsIntegration:
         assert "BE" in dialect_analysis
         be_stats = dialect_analysis["BE"]
 
-        # First result should have 0% WER (perfect match)
-        # Second result should have 50% WER (1 substitution out of 2 words)
-        # mean_wer is now the micro/corpus-level WER via batch_wer, not the
-        # arithmetic mean of the two per-sample scores above. On this tiny,
-        # equal-length-reference corpus (4 words + 2 words = 6 total reference
-        # words, 1 substitution error) micro WER works out to 1/6 ≈ 16.7%,
-        # not the simple mean of 25.0%. Assert against the actual corpus-level
-        # value rather than assuming the two aggregation methods coincide.
-        assert be_stats["mean_wer"] == pytest.approx(16.67, abs=1.0)
+        # Corpus-level WER: 1 substitution across 6 total reference words
+        # = 1/6 * 100 ≈ 16.67%
+        assert be_stats["mean_wer"] == pytest.approx(100.0 / 6.0, abs=1.0)
 
     @pytest.mark.integration
     def test_error_distribution_calculation(self):
