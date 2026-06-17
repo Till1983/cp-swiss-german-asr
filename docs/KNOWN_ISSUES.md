@@ -387,6 +387,34 @@ environment. Resolve before EWC-grid runs.
 
 ---
 
+### 15. Aggregation Method Mismatch: Macro WER + Sentence-Mean BLEU (capstone-era), Corrected to Micro/Corpus (16 June 2026)
+
+**Problem:** The capstone evaluation pipeline computed headline WER/CER as the arithmetic mean of per-utterance rates ("macro" aggregation), while `docs/PROJECT_DISCUSSION.md` §3.4 documented the intended method as corpus-level (Σ errors / Σ reference words) — implementation and documentation disagreed. Separately, headline BLEU was computed as the mean of per-sample sentence BLEU, and the documented rationale for this ("BLEU uses per-sample aggregation due to its corpus-level bias in the sacrebleu reference implementation") was itself incorrect: Papineni et al. (2002), §2.2.2, compute BLEU's brevity penalty corpus-wide specifically to avoid the harsh penalty that sentence-level averaging imposes on short utterances, which describes a deliberate design choice, not a bias to engineer around.
+
+**Solution Implemented:**
+- `src/evaluation/evaluator.py` and `src/evaluation/error_analyzer.py` updated to enforce micro-aggregate WER/CER (16 June 2026)
+- `src/evaluation/metrics.py` `batch_bleu()` updated to report corpus-level BLEU via sacrebleu `corpus_bleu` as the headline figure; per-sample BLEU retained only for descriptive analysis (`error_analyzer.py`'s WER/BLEU correlation analysis, which is explicitly documented as a legitimate use of per-sample values, separate from the headline computation)
+- New evaluation run (16 June 2026) provides micro-WER + corpus-BLEU results for all seven models
+- `docs/PROJECT_DISCUSSION.md` (a graded capstone deliverable, not editable) annotated with a dated erratum rather than rewritten; `docs/MODEL_SELECTION.md` and `results/error_analysis/ANALYSIS_NOTES.md` updated in place since both are living documents
+
+**Result:** WER moved by −0.3 to −1.4pp across all seven models (consistent direction with the March 2026 normalisation fix, smaller magnitude). BLEU moved **upward** for Whisper and SeamlessM4T (+0.5 to +1.4) and **downward** for both Wav2Vec2 models (−2.0 to −2.7) — corpus pooling removes sentence-level smoothing that previously inflated BLEU for weak outputs. Model ranking by WER is unchanged. Full breakdown in [docs/MODEL_SELECTION.md](MODEL_SELECTION.md).
+
+**Lessons Learned:**
+- A documented intended method and the implemented method can silently diverge; periodically check that evaluation code actually does what its own docstrings and adjacent documentation claim
+- A plausible-sounding rationale for a methodological choice is not evidence that the choice or the rationale is correct — verify against the cited primary source (here, Papineni et al. directly contradicted the documented rationale)
+- BLEU and WER/CER aggregation are independent axes from normalisation mode; a fix to one does not imply the other is also correct, and figures should be checked separately on each axis
+- When a metric's value is unexpectedly stable across an unrelated pipeline change, that stability is itself worth investigating — it can indicate the change didn't reach that metric's computation path, not that the metric was already correct
+
+**Related Files:**
+- `src/evaluation/evaluator.py` (micro-aggregate WER/CER enforcement, 16.06.2026 header)
+- `src/evaluation/metrics.py` (`batch_bleu`, corpus-level BLEU via sacrebleu)
+- `src/evaluation/error_analyzer.py` (`calculate_aggregate_stats`, micro-aggregate WER/CER; `analyze_wer_bleu_correlation`, documented as per-sample and unaffected by this change)
+- `docs/MODEL_SELECTION.md` (Aggregation Modes section; March 2026 and June 2026 results tiers)
+- `docs/PROJECT_DISCUSSION.md` (erratum, added 17 June 2026)
+- `results/error_analysis/ANALYSIS_NOTES.md` (aggregation note, added 17 June 2026)
+
+---
+
 ## Best Practices Derived
 
 ### Data Pipeline
