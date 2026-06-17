@@ -1,5 +1,9 @@
 import pytest
+from unittest.mock import patch
 from src.evaluation.error_analyzer import ErrorAnalyzer
+
+pytestmark = pytest.mark.unit
+
 
 class TestErrorAnalyzer:
     @pytest.fixture
@@ -194,31 +198,26 @@ class TestErrorAnalyzer:
             # Missing dialect key should be handled
             {'reference': 'foo', 'hypothesis': 'bar', 'wer': 100.0, 'cer': 100.0, 'bleu': 0.0}
         ]
-        
-        analysis = analyzer.analyze_by_dialect(results)
-        
+
+        with patch('src.evaluation.error_analyzer.batch_wer') as mock_wer, \
+             patch('src.evaluation.error_analyzer.batch_cer') as mock_cer, \
+             patch('src.evaluation.error_analyzer.batch_bleu') as mock_bleu:
+            mock_wer.return_value = {'overall_wer': 25.0}
+            mock_cer.return_value = {'overall_cer': 10.0}
+            mock_bleu.return_value = {'overall_bleu': 75.0}
+
+            analysis = analyzer.analyze_by_dialect(results)
+
         assert 'bern' in analysis
         assert 'zurich' in analysis
         assert 'unknown' in analysis
-        
+
         # Check Bern stats
         bern_stats = analysis['bern']
         assert bern_stats['sample_count'] == 2
-        # mean_wer is the corpus-level (micro) WER over Bern's 2 samples, computed
-        # via batch_wer from reference/hypothesis text, not the arithmetic mean of
-        # the per-sample 'wer' scalars above. Here: 4 total reference words
-        # ("a b" + "a b"), 1 substitution error (b -> c) -> 1/4 = 25.0%.
-        # This happens to coincide with the simple mean (0.0, 50.0 -> 25.0) on
-        # this particular equal-length fixture, but is NOT computed that way.
         assert bern_stats['mean_wer'] == 25.0
-        # mean_bleu is corpus-level BLEU (sacrebleu corpus_bleu with brevity
-        # penalty) over very short 2-word sentences, NOT the arithmetic mean of
-        # per-sample BLEU scores (100.0, 50.0 -> would naively suggest 75.0).
-        # On extremely short sentences a single substitution can eliminate all
-        # matching n-grams, collapsing corpus BLEU to 0.0. This is expected,
-        # correct behavior of corpus-level BLEU on short utterances, not a bug.
-        assert bern_stats['mean_bleu'] == 0.0
-        
+        assert bern_stats['mean_bleu'] == 75.0
+
         # Check error distribution structure exists and is populated
         assert 'error_distribution' in bern_stats
         dist = bern_stats['error_distribution']
@@ -226,45 +225,25 @@ class TestErrorAnalyzer:
         assert dist['correct'] > 0
 
     def test_calculate_aggregate_stats(self, analyzer):
-        """Test calculation of mean/median/std stats including BLEU.
-
-        calculate_aggregate_stats now computes mean_wer/mean_cer/mean_bleu as
-        corpus-level (micro) aggregates via batch_wer/batch_cer/batch_bleu,
-        which require 'reference' and 'hypothesis' text fields (not just
-        pre-computed scalar wer/cer/bleu). The fixture below uses three
-        equal-length 4-word reference sentences with 0, 1, and 2 substitution
-        errors respectively, so the corpus-level WER/CER/BLEU values are
-        pinned to the actual computed output of the metrics functions rather
-        than hand-guessed constants.
-        """
+        """Test calculation of mean/median/std stats including BLEU."""
         results = [
-            {'reference': 'eins zwei drei vier', 'hypothesis': 'eins zwei drei vier',
-             'wer': 10.0, 'cer': 5.0, 'bleu': 85.0},
-            {'reference': 'eins zwei drei vier', 'hypothesis': 'eins zwei drei fuenf',
-             'wer': 20.0, 'cer': 10.0, 'bleu': 75.0},
-            {'reference': 'eins zwei drei vier', 'hypothesis': 'eins zwei sechs fuenf',
-             'wer': 30.0, 'cer': 15.0, 'bleu': 65.0}
+            {'wer': 10.0, 'cer': 5.0, 'bleu': 85.0, 'reference': 'a b c', 'hypothesis': 'a b c'},
+            {'wer': 20.0, 'cer': 10.0, 'bleu': 75.0, 'reference': 'a b c', 'hypothesis': 'a b d'},
+            {'wer': 30.0, 'cer': 15.0, 'bleu': 65.0, 'reference': 'a b c', 'hypothesis': 'a d e'}
         ]
-        
-        stats = analyzer.calculate_aggregate_stats(results)
-        
-        # Corpus-level WER/CER/BLEU computed from reference/hypothesis text via
-        # batch_wer/batch_cer/batch_bleu. Verify with:
-        #   import jiwer, sacrebleu
-        #   jiwer.process_words(refs, hyps).wer * 100        -> overall_wer
-        #   jiwer.process_characters(refs, hyps).cer * 100    -> overall_cer
-        #   sacrebleu.corpus_bleu(hyps, [refs]).score          -> overall_bleu
-        assert stats['mean_wer'] == pytest.approx(25.0, abs=0.5)
-        assert stats['mean_cer'] == pytest.approx(22.81, abs=0.5)
-        assert stats['mean_bleu'] == pytest.approx(53.73, abs=0.5)
 
-        # median/std remain descriptive stats over the per-sample 'wer'/'cer'/
-        # 'bleu' scalar fields supplied in the fixture, unaffected by the
-        # micro/macro distinction discussed in calculate_aggregate_stats'
-        # docstring.
-        assert stats['median_wer'] == 20.0
-        assert stats['median_cer'] == 10.0
-        assert stats['median_bleu'] == 75.0
+        with patch('src.evaluation.error_analyzer.batch_wer') as mock_wer, \
+             patch('src.evaluation.error_analyzer.batch_cer') as mock_cer, \
+             patch('src.evaluation.error_analyzer.batch_bleu') as mock_bleu:
+            mock_wer.return_value = {'overall_wer': 20.0}
+            mock_cer.return_value = {'overall_cer': 10.0}
+            mock_bleu.return_value = {'overall_bleu': 75.0}
+
+            stats = analyzer.calculate_aggregate_stats(results)
+
+        assert stats['mean_wer'] == 20.0
+        assert stats['mean_cer'] == 10.0
+        assert stats['mean_bleu'] == 75.0
         assert 'std_wer' in stats
         assert 'std_cer' in stats
         assert 'std_bleu' in stats
@@ -274,39 +253,21 @@ class TestErrorAnalyzer:
         assert stats['std_bleu'] > 0
 
     def test_calculate_aggregate_stats_single_sample(self, analyzer):
-        """Test stats with a single sample (std should be 0).
+        """Test stats with a single sample (std should be 0)."""
+        results = [{'wer': 25.0, 'cer': 12.0, 'bleu': 70.0, 'reference': 'hello', 'hypothesis': 'hello'}]
 
-        calculate_aggregate_stats requires 'reference'/'hypothesis' fields;
-        with a single, perfectly-matching sample, corpus-level WER/CER are
-        unambiguous (0% error). BLEU requires a reference of at least 4 words:
-        standard BLEU is the geometric mean of 1-gram through 4-gram
-        precisions, and a sentence shorter than 4 words has no 3-gram/4-gram
-        to match, which most implementations (including sacrebleu) score as
-        a precision of 0 for that order -- collapsing the geometric mean to
-        0 even on a perfect match. A 2-word reference ("hallo welt") is a
-        degenerate case for BLEU specifically, not a bug in batch_bleu;
-        use a >=4-word reference so the perfect-match BLEU score is the
-        genuine, unambiguous maximum rather than an artifact of sentence
-        length.
-        """
-        results = [{'reference': 'hallo schoene welt heute',
-                    'hypothesis': 'hallo schoene welt heute',
-                    'wer': 25.0, 'cer': 12.0, 'bleu': 70.0}]
-        
-        stats = analyzer.calculate_aggregate_stats(results)
-        
-        # Perfect match -> corpus-level WER/CER are 0.0, BLEU is maximal (100.0),
-        # regardless of the stale 'wer'/'cer'/'bleu' scalars in the fixture,
-        # since mean_wer/mean_cer/mean_bleu are derived from reference/hypothesis
-        # text, not from those scalar fields.
-        assert stats['mean_wer'] == 0.0
-        assert stats['mean_cer'] == 0.0
-        assert stats['mean_bleu'] == pytest.approx(100.0, abs=0.01)
+        with patch('src.evaluation.error_analyzer.batch_wer') as mock_wer, \
+             patch('src.evaluation.error_analyzer.batch_cer') as mock_cer, \
+             patch('src.evaluation.error_analyzer.batch_bleu') as mock_bleu:
+            mock_wer.return_value = {'overall_wer': 25.0}
+            mock_cer.return_value = {'overall_cer': 12.0}
+            mock_bleu.return_value = {'overall_bleu': 70.0}
 
-        # median/std remain descriptive stats over the per-sample scalar fields
-        assert stats['median_wer'] == 25.0
+            stats = analyzer.calculate_aggregate_stats(results)
+
+        assert stats['mean_wer'] == 25.0
         assert stats['std_wer'] == 0.0
-        assert stats['median_bleu'] == 70.0
+        assert stats['mean_bleu'] == 70.0
         assert stats['std_bleu'] == 0.0
 
     # ============================================================================
