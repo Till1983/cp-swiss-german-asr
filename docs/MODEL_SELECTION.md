@@ -45,7 +45,7 @@ A second, independent dimension affects WER and BLEU figures: how per-utterance 
 
 Micro/corpus aggregation is the field-standard convention (jiwer, HuggingFace `evaluate`, and sclite all default to micro WER; Papineni et al. 2002, §2.2.2, compute BLEU's brevity penalty corpus-wide specifically to avoid the harsh short-sentence penalty that sentence-mean averaging incurs on a corpus with utterances as short as 2–3 words). The switch changes WER by roughly −0.3 to −1.4pp across all seven models and moves BLEU **upward** for Whisper and SeamlessM4T (+0.5 to +1.4) while moving it **downward** for both Wav2Vec2 models (−2.0 to −2.7), since corpus pooling no longer lets sentence-level smoothing prop up poor outputs. Full per-model figures are in [Results – Current](#results--current-asr-fair-normalisation--micro-aggregation-june-2026) below.
 
-> **Reading "March 2026" results:** Any table or figure labelled "March 2026" uses ASR-Fair Normalisation but **macro/sentence-mean aggregation** — itself superseded by the June 2026 results below for WER and BLEU. CER moved negligibly (≤0.01pp) for five of six models under the aggregation switch, but moved by −0.96pp for whisper-medium — check the per-model table below rather than assuming CER is unaffected.
+> **Reading "March 2026" results:** Any table or figure labelled "March 2026" uses ASR-Fair Normalisation but **macro/sentence-mean aggregation** — itself superseded by the June 2026 results below for WER and BLEU. CER remained stable for most models (changes ≤|0.01|pp), except whisper-medium (−0.96pp) — check the per-model table below rather than assuming CER is unaffected.
 
 ---
 
@@ -188,7 +188,7 @@ Negative Δ WER/CER = improvement (error rate lower under ASR-Fair). Positive Δ
 
 ## Results – Current (ASR-Fair Normalisation + micro aggregation, June 2026)
 
-**These are the authoritative figures for model comparison.** All results below use ASR-Fair Normalisation, **micro/corpus-level WER and CER**, and **corpus-level BLEU** (sacrebleu `corpus_bleu`) — see [Aggregation Modes](#aggregation-modes) for why this superseded the March 2026 macro/sentence-mean figures. chrF and SemDist are corpus-level and per-sample-mean respectively and were not affected by the aggregation switch; figures are carried over from the March 2026 run.
+**These are the authoritative figures for model comparison.** All results below use ASR-Fair Normalisation, **micro/corpus-level WER and CER**, and **corpus-level BLEU** (sacrebleu `corpus_bleu`) — see [Aggregation Modes](#aggregation-modes) for why this superseded the March 2026 macro/sentence-mean figures. chrF and SemDist are corpus-level and per-sample-mean respectively; while they use the same computation logic as March 2026, all metrics were recomputed in the June 2026 evaluation batch and may differ slightly due to rounding or batch processing differences.
 
 Results directory: `results/error_analysis/20260616_215923/` and underlying `results/metrics/` batch of 16 June 2026.
 
