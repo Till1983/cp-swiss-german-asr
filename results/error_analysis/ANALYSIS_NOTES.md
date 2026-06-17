@@ -1,4 +1,3 @@
-```markdown
 # Error Analysis Notes
 
 ## Session: 2025-12-03
@@ -10,6 +9,20 @@ This document contains qualitative observations and patterns from the ASR error 
 > **Normalisation note (added April 2026):** All data recorded in sessions 2025-12-03 and 2025-12-04 was produced under **Standard Normalisation** (lowercase only, punctuation preserved). From January 2026 onward the project switched to **ASR-Fair Normalisation** (lowercase + punctuation removal), which removes systematic bias caused by punctuation differences between model outputs (see `docs/MODEL_SELECTION.md` and `docs/KNOWN_ISSUES.md` issue #12 for details). Updated quantitative results are provided inline and in new tables, clearly marked as **"ASR-Fair (March 2026)"**. Original values are preserved and labelled **"Standard Normalisation (legacy)"**. Qualitative observations about error patterns (e.g., perfect tense restructuring, word order changes) are independent of normalisation mode and are not relabelled unless the resulting conclusion changes.
 >
 > **Critical finding:** Under Standard Normalisation, `wav2vec2-german-with-lm` appeared to perform *worse* than `wav2vec2-1b-german-cv11` (75.3% vs 72.4% WER), leading to the conclusion that the language model hurts performance. Under ASR-Fair Normalisation this ranking **reverses**: 70.05% vs 70.97% WER. The Standard Normalisation conclusion that "the LM hurts performance" is incorrect; updated conclusions are provided in those sections.
+
+> **Aggregation note (added 17 June 2026):** "Mean WER" in the per-dialect and
+> per-model tables throughout this document is a **descriptive statistic** —
+> the arithmetic mean of per-utterance WER within that subset. This is
+> distinct from **micro/corpus-level WER** (Σ errors / Σ reference words),
+> which is the headline metric used for model comparison and reported in
+> `docs/MODEL_SELECTION.md` and the thesis. The two will diverge, typically
+> by a few tenths of a percentage point, more on small-n dialects (e.g. NW,
+> SH, GL, FR, SZ). Per-dialect micro WER, where needed for thesis claims, is
+> read directly from `per_dialect_wer` in the `results/error_analysis/`
+> analysis JSONs rather than recomputed here. These tables were not
+> re-tiered for the June 2026 micro/corpus-BLEU switch; see PROJECT_DISCUSSION.md
+> erratum for the full methodology timeline. Revisit post-submission if a
+> fully micro-consistent error-analysis pass becomes useful.
 
 ---
 
@@ -34,7 +47,7 @@ This document contains qualitative observations and patterns from the ASR error 
 | GR | 17.2% | 12 | Lowest WER, minimal insertions |
 | GL | 10.7% | 6 | Best performance, no insertions |
 
-**Dialect Performance *(ASR-Fair Normalisation — March 2026)*:**
+**Dialect Performance *(ASR-Fair Normalisation — March 2026 — descriptive mean-WER, see aggregation note)*:**
 | Dialect | Mean WER | Sample Count | Notable Pattern |
 |---------|----------|--------------|-----------------||
 | ZG | 42.7% | 30 | Highest WER, many restructuring errors |
@@ -90,7 +103,7 @@ This document contains qualitative observations and patterns from the ASR error 
 | SO | 36.0% | 36 | 22.7% | Highest variance (std: 38.4) |
 | ZG | 41.6% | 30 | 16.7% | Worst WER, heavy restructuring |
 
-**Dialect Performance *(ASR-Fair Normalisation — March 2026)*:**
+**Dialect Performance *(ASR-Fair Normalisation — March 2026 — descriptive mean-WER, see aggregation note)*:**
 | Dialect | Mean WER | Sample Count | Insertion Rate | Notable Pattern |
 |---------|----------|--------------|----------------|-----------------||
 | GL | 2.1% | 6 | 0.0% | Best performance, no insertions — large drop vs legacy due to punctuation removal |
@@ -159,7 +172,7 @@ This document contains qualitative observations and patterns from the ASR error 
 | FR | 37.0% | 7 | 16.7% | Limited samples |
 | ZG | 39.7% | 30 | 17.8% | Highest WER, heavy restructuring |
 
-**Dialect Performance *(ASR-Fair Normalisation — March 2026)*:**
+**Dialect Performance *(ASR-Fair Normalisation — March 2026 — descriptive mean-WER, see aggregation note)*:**
 | Dialect | Mean WER | Sample Count | Insertion Rate | Notable Pattern |
 |---------|----------|--------------|----------------|-----------------||
 | GL | 0.0% | 6 | 0.0% | Best performance, no errors and no insertions |
@@ -221,7 +234,7 @@ This document contains qualitative observations and patterns from the ASR error 
 - **Higher variance than larger models *(Standard Normalisation — legacy)*:** std_wer 30.1% vs v2: 25.1%, v3: 25.7%
   - *ASR-Fair (March 2026):* std_wer 28.9% vs v2: 23.5%, v3: 23.9% — Medium still shows highest variance among Whisper models
 
-**Dialect Performance:**
+**Dialect Performance *(ASR-Fair Normalisation — descriptive mean-WER, see aggregation note)*:**
 | Dialect | Mean WER | Sample Count | Insertion Rate | Notable Pattern |
 |---------|----------|--------------|----------------|-----------------|
 | GL | 15.0% | 6 | 42.9% | Best performance but high insertion rate |
@@ -311,7 +324,7 @@ This document contains qualitative observations and patterns from the ASR error 
 | UR | 84.4% | 15 | 80.8% | 13.3% | 5.8% | Worst major dialect |
 | BE | 84.0% | 203 | 78.9% | 11.0% | 10.1% | Most samples, worst performance |
 
-**Dialect Performance *(ASR-Fair Normalisation — March 2026)*:**
+**Dialect Performance *(ASR-Fair Normalisation — March 2026 — descriptive mean-WER, see aggregation note)*:**
 | Dialect | Mean WER | Sample Count | Sub Rate | Del Rate | Ins Rate | Notable Pattern |
 |---------|----------|--------------|----------|----------|----------|-----------------|
 | NW | 50.0% | 1 | 50.0% | 0.0% | 50.0% | Single sample, unreliable |
@@ -417,7 +430,7 @@ This document contains qualitative observations and patterns from the ASR error 
 | UR | 84.4% | 15 | 80.8% | 13.3% | 5.8% | Worst major dialect |
 | BE | 84.0% | 203 | 78.9% | 11.0% | 10.1% | Most samples, worst performance |
 
-**Dialect Performance *(ASR-Fair Normalisation — March 2026, correct data for wav2vec2-1b-german-cv11)*:**
+**Dialect Performance *(ASR-Fair Normalisation — March 2026, correct data for wav2vec2-1b-german-cv11 — descriptive mean-WER, see aggregation note)*:**
 | Dialect | Mean WER | Sample Count | Sub Rate | Del Rate | Ins Rate | Notable Pattern |
 |---------|----------|--------------|----------|----------|----------|-----------------|
 | NW | 75.0% | 1 | 66.7% | 0.0% | 33.3% | Single sample, unreliable |

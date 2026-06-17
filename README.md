@@ -71,7 +71,11 @@ The dashboard displays **pre-computed evaluation results** from multiple ASR mod
 - **chrF** (Character F-score): Higher is better (0-100), measures character n-gram overlap — more robust than word-level metrics for morphologically rich languages
 - **SemDist** (Semantic Distance): Lower is better (0–1), cosine distance between sentence embeddings — captures meaning preservation beyond surface form
 
-> **⚠️ Normalisation Note:** Results prior to March 2026 were computed using **Standard Normalisation** (lowercase only, punctuation preserved), which artificially inflated WER and CER and deflated BLEU for models whose output punctuation differed from the reference. Current results use **ASR-Fair Normalisation** (lowercase + punctuation removal) for a fair cross-model comparison. See [docs/MODEL_SELECTION.md](docs/MODEL_SELECTION.md) for the full breakdown including legacy and current results.
+> **⚠️ Normalisation Note:** Results prior to March 2026 were computed using **Standard Normalisation** (lowercase only, punctuation preserved), which artificially inflated WER and CER and deflated BLEU for models whose output punctuation differed from the reference. Current results use **ASR-Fair Normalisation** (lowercase + punctuation removal) for a fair cross-model comparison.
+>
+> **⚠️ Aggregation Note:** Results prior to 16 June 2026 also used macro (mean of per-utterance) WER/CER and sentence-mean BLEU. Current results use micro/corpus-level aggregation for both — the field-standard convention. The effect is smaller than the normalisation change but moves BLEU in *opposite directions* for strong and weak models: up to +1.4 for Whisper, down to −2.7 for the Wav2Vec2 models.
+>
+> See [docs/MODEL_SELECTION.md](docs/MODEL_SELECTION.md) for the full breakdown across both changes.
 
 ### Visualisations
 1. **Model Comparison:** Side-by-side WER/CER/BLEU across all models
