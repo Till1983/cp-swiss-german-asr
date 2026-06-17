@@ -2,6 +2,37 @@
 **Swiss German ASR Evaluation Platform**
 Till Ermold | CODE University of Applied Sciences Berlin | December 2025
 
+> **ERRATUM / SUPERSEDING NOTE — added 17 June 2026**
+>
+> This document was submitted and graded as a capstone deliverable; the body below
+> is preserved verbatim as the assessed artifact. The corrections below apply to all
+> quantitative content and to one methodological claim. **Cite the thesis evaluation
+> pipeline, not this document, for current figures.**
+>
+> 1. **Normalisation.** All metrics below use Standard Normalisation (lowercase only,
+>    punctuation kept), which inflates WER/CER and deflates BLEU. The project moved to
+>    ASR-Fair Normalisation (lowercase + punctuation removal) in January 2026. See
+>    `docs/KNOWN_ISSUES.md` #12 and `docs/MODEL_SELECTION.md`.
+> 2. **WER/CER aggregation.** Headline WER/CER here are macro (mean of per-utterance
+>    rates), despite §3.4 describing them as corpus-level — the implementation averaged
+>    per utterance. The thesis pipeline uses micro aggregation (Σ errors / Σ reference
+>    words), the field standard (jiwer, HuggingFace `evaluate`, sclite).
+> 3. **BLEU aggregation and its stated rationale.** Headline BLEU here is the mean of
+>    per-sample sentence BLEU. The §3.4 rationale — that corpus-level BLEU carries a
+>    "bias" in the sacrebleu reference implementation — is incorrect: Papineni et al.
+>    (2002), §2.2.2 compute the brevity penalty corpus-wide precisely to avoid the harsh
+>    short-sentence penalty that per-sample averaging incurs. The thesis pipeline reports
+>    corpus-level BLEU; per-sample BLEU is retained only for descriptive analysis.
+> 4. **Authoritative figures.** FHNW test set (N=863), ASR-Fair + micro WER + corpus
+>    BLEU, run `results/error_analysis/20260616_215923/` and the underlying
+>    `results/metrics/` batch of 16 June 2026. whisper-large-v2: WER 24.98, CER 12.18,
+>    BLEU 59.81. Model ranking is unchanged from this document.
+>
+> The §5.1/§5.3 tables and the §5.3 prevalence narrative (165 high-WER samples, 12
+> paraphrases; the "Danach" example at WER 71.4 / BLEU 41.1) are Standard-Normalisation
+> figures and are superseded. The ASR-Fair + micro equivalents differ — whisper-large-v2:
+> 134 high-WER, 6 paraphrases; the "Danach" sample (8d889bf5) at WER 57.1 / BLEU 44.6.
+
 ## Table of Contents
 1. [Project Summary](#1-project-summary)
 2. [Software Architecture & Technology Choices](#2-software-architecture--technology-choices)
@@ -300,7 +331,7 @@ This approach follows standard practice in ASR evaluation (Kaldi toolkit, LibriS
 
 **Per-dialect WER** is computed separately for each of the 17 dialects using the same corpus-level approach within dialect subsets, revealing systematic performance patterns correlated with linguistic distance from Standard German.
 
-**Important Distinction—Headline Metrics vs. Descriptive Statistics:**
+**Important Distinction—Headline Metrics vs. Descriptive Statistics:** *[§3.4 — see erratum point 3 at top of document: the BLEU rationale below is incorrect]*
 
 | Context | WER/CER Aggregation | BLEU Aggregation |
 |---------|---------------------|------------------|
