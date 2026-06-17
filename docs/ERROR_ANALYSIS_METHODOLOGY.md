@@ -154,7 +154,7 @@ From actual results (FHNW corpus, 863 samples):
 | wav2vec2-german-with-lm | 75.28% | Substitution (55.18%) | Recognition |
 | wav2vec2-1b-german-cv11 | 72.42% | Substitution (54.46%) | Recognition |
 
-**Current ASR-Fair WER (March 2026):** whisper-large-v2: 25.63%, whisper-large-v3: 26.93%, wav2vec2-german-with-lm: 70.05%, wav2vec2-1b-german-cv11: 70.97%. chrF and SemDist further confirm Whisper's semantic advantage (SemDist ~0.055–0.057 vs. ~0.286).
+**Current ASR-Fair WER (June 2026, micro aggregation):** whisper-large-v2: 24.98%, whisper-large-v3: 26.23%, wav2vec2-german-with-lm: 69.66%, wav2vec2-1b-german-cv11: 70.67%. chrF and SemDist further confirm Whisper's semantic advantage (SemDist ~0.055–0.057 vs. ~0.286). *(March 2026 macro-aggregation figures, superseded: 25.63% / 26.93% / 70.05% / 70.97% — see `docs/MODEL_SELECTION.md`, Aggregation Modes.)*
 
 **Key Observation:** Wav2Vec2 models show 2.5-3x higher WER because:
 1. They were not explicitly trained for Swiss German dialects
