@@ -43,15 +43,19 @@ logger = setup_logger("evaluator", "logs/evaluator.log")
 
 
 class ASREvaluator:
-    def __init__(self, model_type: str = "whisper", model_name: str = "base", device: str = None, lm_path: str = None):
+    def __init__(self, model_type: str = "whisper", model_name: str = "base", device: str = None, lm_path: str = None, processor_name: str = None):
         """
         Initialize the ASR Evaluator.
-        
+
         Args:
             model_type: 'whisper', 'whisper-hf', 'wav2vec2', or 'mms'
-            model_name: Model identifier
+            model_name: Model identifier (weights path or HF hub id)
             device: Device string
             lm_path: Optional path to KenLM file
+            processor_name: Optional separate HF id / path for the processor.
+                            Used when a fine-tuned checkpoint was saved without
+                            tokenizer files (weights only), so the processor must
+                            be loaded from the base model instead.
         """
         if model_type not in ["whisper", "whisper-hf", "wav2vec2", "mms", "seamless-m4t"]:
             raise ValueError(f"model_type must be 'whisper', 'whisper-hf', 'wav2vec2', 'mms', or 'seamless-m4t', got: {model_type}")
@@ -59,6 +63,7 @@ class ASREvaluator:
         self.model_type = model_type
         self.model_name = model_name
         self.lm_path = lm_path
+        self.processor_name = processor_name
         self.device = device if device else (
             "cuda" if torch.cuda.is_available()
             else ("mps" if torch.backends.mps.is_available() else "cpu")
@@ -80,7 +85,10 @@ class ASREvaluator:
         elif self.model_type == "whisper-hf":
             print(f"Loading Hugging Face Whisper model '{self.model_name}' on {self.device}...")
             try:
-                self.processor = WhisperProcessor.from_pretrained(self.model_name)
+                processor_source = self.processor_name if self.processor_name else self.model_name
+                if self.processor_name:
+                    print(f"Loading processor from base model '{processor_source}'...")
+                self.processor = WhisperProcessor.from_pretrained(processor_source)
                 self.model = WhisperForConditionalGeneration.from_pretrained(self.model_name)
                 self.model.to(self.device)
                 self.model.eval()

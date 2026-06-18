@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-06-18T18:51:42.676651",
+  "models": {
+    "whisper-large-v2-swiss-german-baseline": {
+      "mean_wer": 20.803949224259522,
+      "mean_cer": 9.128748620908695,
+      "mean_bleu": 64.96493573681077,
+      "total_samples": 863,
+      "semantic_preservation_rate": 0.9269988412514484
+    }
+  }
+}
