@@ -27,7 +27,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 import yaml  # noqa: E402
-from transformers import TrainerCallback  # noqa: E402
+from transformers import EarlyStoppingCallback, TrainerCallback  # noqa: E402
 
 import src.config as config  # noqa: E402
 from src.training.whisper_setup import build_whisper_model, resolve_path  # noqa: E402
@@ -285,6 +285,39 @@ def build_training_arguments(cfg, args, output_dir, gradient_checkpointing, max_
 
 
 # ---------------------------------------------------------------------------
+# Callbacks
+# ---------------------------------------------------------------------------
+def build_callbacks(cfg, args, vram_callback, step_counter_callback):
+    """Assemble the trainer callback list.
+
+    Early stopping is read from ``cfg["early_stopping"]`` (enabled/patience)
+    but is unconditionally suppressed during smoke tests: a 500-step smoke
+    test with eval_steps=250 only ever produces two eval passes, so
+    patience>=3 can never fire anyway, and gating here means a future flip
+    of `early_stopping.enabled` in the YAML can't silently leak into the
+    smoke-test path the way the ewc_lambda placeholder bug once did.
+
+    Also gated off for the no-EWC/EWC-grid baseline comparison: differential
+    early stopping across lambda conditions would let each run terminate at
+    a different step, confounding the RQ2 comparison (the very thing the
+    grid is designed to isolate). Re-enable deliberately, not by default,
+    once that risk has been reasoned through for the specific runs at hand.
+    """
+    callbacks = [vram_callback, step_counter_callback]
+    es_cfg = cfg.get("early_stopping", {})
+    if es_cfg.get("enabled", False) and not args.smoke_test:
+        patience = es_cfg.get("patience", 3)
+        callbacks.append(EarlyStoppingCallback(early_stopping_patience=patience))
+        logger.info("Early stopping ENABLED (patience=%d).", patience)
+    else:
+        logger.info(
+            "Early stopping disabled (enabled=%s, smoke_test=%s).",
+            es_cfg.get("enabled", False), args.smoke_test,
+        )
+    return callbacks
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 def main(argv=None):
@@ -402,6 +435,8 @@ def main(argv=None):
         cfg, args, output_dir, gradient_checkpointing, max_steps, eval_steps
     )
 
+    callbacks = build_callbacks(cfg, args, vram_callback, step_counter_callback)
+
     trainer = Seq2SeqEWCTrainer(
         model=model,
         args=training_args,
@@ -417,7 +452,7 @@ def main(argv=None):
         ewc_lambda=ewc_lambda,
         apply_half_factor=cfg["ewc"].get("apply_half_factor", True),
         ewc_log_path=ewc_log_path,
-        callbacks=[vram_callback, step_counter_callback],
+        callbacks=callbacks,
     )
 
     # --- profiling lifecycle around training ---
