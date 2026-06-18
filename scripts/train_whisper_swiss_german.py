@@ -300,9 +300,17 @@ def main(argv=None):
     max_steps = args.max_steps if args.max_steps is not None else (
         smoke.get("max_steps") if args.smoke_test else None
     )
-    ewc_lambda = args.ewc_lambda if args.ewc_lambda is not None else smoke.get(
-        "ewc_lambda_placeholder", 1.0
-    )
+    if args.ewc_lambda is not None:
+        ewc_lambda = args.ewc_lambda
+    elif args.smoke_test:
+        ewc_lambda = smoke.get("ewc_lambda_placeholder", 1.0)
+    else:
+        raise ValueError(
+            "--ewc_lambda is required when --smoke_test=false (no safe default "
+            "exists for real runs -- the smoke-test placeholder is not a valid "
+            f"grid point). Pick one value from ewc.lambda_grid in {args.config}: "
+            f"{cfg['ewc'].get('lambda_grid')}"
+        )
     eval_subset_size = (
         args.eval_subset_size
         if args.eval_subset_size is not None
