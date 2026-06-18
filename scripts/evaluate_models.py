@@ -8,7 +8,7 @@ from datetime import datetime
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_root)
 
-from src.config import FHNW_SWISS_GERMAN_ROOT, MODELS_DIR, DATA_DIR, RESULTS_DIR
+from src.config import FHNW_SWISS_GERMAN_ROOT, MODELS_DIR, DATA_DIR, RESULTS_DIR, ENVIRONMENT
 from src.evaluation.evaluator import ASREvaluator
 from src.utils.file_utils import save_results_json, save_results_csv
 from src.utils.logging_config import setup_logger
@@ -67,6 +67,21 @@ MODEL_REGISTRY = {
 
     # SeamlessM4T models
     "seamless-m4t-v2-large": {"type": "seamless-m4t", "name": "facebook/seamless-m4t-v2-large"},
+
+    # Fine-tuned models
+    # Local path:  results/runs/baseline/20260618_071457/final_model  → /app/results/runs/baseline/...
+    # RunPod path: /workspace/results/baseline/20260618_071457/final_model (no "runs/" prefix)
+    "whisper-large-v2-swiss-german-baseline": {
+        "type": "whisper-hf",
+        "name": str(
+            RESULTS_DIR / "runs" / "baseline" / "20260618_071457" / "final_model"
+            if ENVIRONMENT == "local"
+            else RESULTS_DIR / "baseline" / "20260618_071457" / "final_model"
+        ),
+        # Fine-tuned checkpoints only save model weights; processor must be
+        # loaded from the base model that the tokenizer/feature-extractor belong to.
+        "processor_name": "openai/whisper-large-v2",
+    },
 }
 
 def main():
@@ -161,7 +176,8 @@ def main():
                 # ✅ RESOLVE LM PATH: Prioritize CLI arg > Registry arg > None
                 registry_lm_path = config.get("lm_path")
                 final_lm_path = args.lm_path if args.lm_path else registry_lm_path
-                
+                processor_name = config.get("processor_name")
+
             else:
                 logger.warning(f"Unknown model: {model_spec}")
                 print(f"⚠️  Warning: Unknown model: {model_spec}, skipping...")
@@ -171,7 +187,8 @@ def main():
             evaluator = ASREvaluator(
                 model_type=model_type,
                 model_name=model_name,
-                lm_path=final_lm_path  # ✅ Pass resolved path
+                lm_path=final_lm_path,
+                processor_name=processor_name,
             )
             
             # Load model
