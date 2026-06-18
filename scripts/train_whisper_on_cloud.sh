@@ -155,7 +155,7 @@ ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
     TRAIN_CMD="python scripts/train_whisper_swiss_german.py --config configs/training/whisper_swiss_german.yml${REMOTE_ARGS_ESCAPED}"
     TMUX_CMD="cd /workspace/cp-swiss-german-asr && export ENVIRONMENT=runpod && export PYTHONPATH=/workspace/cp-swiss-german-asr && \${TRAIN_CMD} 2>&1 | tee \"\${LOG_FILE}\""
 
-    tmux new-session -d -s ${SESSION_NAME} "bash -lc \$(printf '%q' \"\${TMUX_CMD}\")"
+    tmux new-session -d -s ${SESSION_NAME} "bash -c \$(printf '%q' \"\${TMUX_CMD}\")"
 
     echo "✅ Training launched in detached tmux session '${SESSION_NAME}'."
     echo "📄 Log file: \${LOG_FILE}"
