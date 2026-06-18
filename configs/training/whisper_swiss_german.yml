@@ -12,7 +12,6 @@
 # PENDING ITEMS — resolve before using this config for the baseline or EWC
 # grid runs. The smoke test populates these:
 #   
-#   [PENDING-3] training.adam_epsilon        — 1e-9 vs 1e-8 sanity check
 # =============================================================================
 
 model:
@@ -43,7 +42,7 @@ training:
   adam_beta1: 0.9
   adam_beta2: 0.98
   weight_decay: 0.1
-  adam_epsilon: 1e-9          # [PENDING-3] vs 1e-8 — cite Timmel et al. p.4 if retained
+  adam_epsilon: 1e-9          # cite Timmel et al. p.4
   lr_scheduler_type: "linear" # linear warmup -> linear decay
   learning_rate: 1e-5         
   warmup_steps: 50            
