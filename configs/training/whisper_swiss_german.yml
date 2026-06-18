@@ -92,7 +92,7 @@ evaluation:
   per_utterance_wer_persistence: true  # writes to results["samples"][i]["wer"]
 
 early_stopping:
-  enabled: true
+  enabled: false
   patience: 3
 
 logging:
