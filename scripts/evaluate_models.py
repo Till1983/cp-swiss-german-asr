@@ -127,6 +127,13 @@ def main():
         default=None,
         help="Optional path to KenLM file (overrides registry)"
     )
+    parser.add_argument(
+        "--audio-base-path",
+        type=str,
+        default=None,
+        help="Optional base path for audio clips (overrides FHNW default in evaluator.py). "
+        "Required for non-FHNW datasets, e.g. German Common Voice."
+    )
     
     args = parser.parse_args()
     
@@ -198,6 +205,7 @@ def main():
             logger.info(f"Running evaluation on test set...")
             results = evaluator.evaluate_dataset(
                 metadata_path=str(test_path),
+                audio_base_path=args.audio_base_path,
                 limit=args.limit
             )
             
