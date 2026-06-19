@@ -51,6 +51,14 @@ def main():
     input_path = Path(args.input)
     output_path = Path(args.output)
 
+    if not input_path.exists():
+        raise FileNotFoundError(
+            f"Input TSV not found: {input_path}. "
+            f"Check this points at the German CV test.tsv, not FHNW or a different locale."
+    )
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
     df = pd.read_csv(input_path, sep="\t", low_memory=False,
                       encoding="utf-8", quoting=3)
 
