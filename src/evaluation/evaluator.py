@@ -14,6 +14,14 @@ Updated 16.06.2026:
   evaluate_dataset() call, to avoid reloading multilingual transformer from disk
   on repeated evaluations.
 
+Updated 19.06.2026:
+- Added diagnostic logging on the audio-path resolution failure branches in
+  evaluate_dataset() (relative_to() ValueError and missing-file cases). Both
+  previously incremented failed_samples silently with no way to distinguish
+  a misconfigured audio_base_path from genuinely missing clips on disk.
+  Logged only for the first 3 occurrences per run to avoid flooding the log
+  on a systemic failure while still surfacing sparse missing-file cases.
+
 Key changes from prior version:
 1. Added tqdm progress bar for visual feedback
 2. Added periodic print statements every N samples (keeps SSH alive during long runs)
@@ -292,12 +300,17 @@ class ASREvaluator:
             reference = row['sentence']
             accent = row['accent']
             
-            # Audio path resolution logic (unchanged)
+            # Audio path resolution logic
             if 'audio_path' in df.columns and pd.notna(row.get('audio_path')) and row.get('audio_path'):
                 audio_path = Path(row['audio_path']).resolve()
                 try:
                     audio_path.relative_to(audio_base_path.resolve())
                 except ValueError:
+                    if failed_samples < 3:
+                        logger.warning(
+                            f"Path mismatch: {audio_path} is not under audio_base_path "
+                            f"{audio_base_path.resolve()}. Check --audio-base-path."
+                        )
                     failed_samples += 1
                     continue
             else:
@@ -306,10 +319,17 @@ class ASREvaluator:
                 try:
                     audio_path.relative_to(audio_base_path.resolve())
                 except ValueError:
+                    if failed_samples < 3:
+                        logger.warning(
+                            f"Path mismatch: {audio_path} is not under audio_base_path "
+                            f"{audio_base_path.resolve()}. Check --audio-base-path."
+                        )
                     failed_samples += 1
                     continue
 
             if not audio_path.exists():
+                if failed_samples < 3:
+                    logger.warning(f"Audio file not found on disk: {audio_path}")
                 failed_samples += 1
                 continue
 
