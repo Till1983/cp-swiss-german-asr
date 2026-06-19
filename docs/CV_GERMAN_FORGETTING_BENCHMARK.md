@@ -29,8 +29,8 @@ transcriptions) before trusting the aggregate WER; see
 ## Prerequisites
 
 - One-time data setup completed: see
-  [German Common Voice Forgetting Benchmark — One-Time Setup](RUNPOD_WORKFLOW.md#german-common-voice-forgetting-benchmark--one-time-setup)
-  in `RUNPOD_WORKFLOW.md`. In particular, `data/metadata/german/test_1000_seed42.tsv` must
+  [German Common Voice Forgetting Benchmark — One-Time Setup](RUNPOD_WORKFLOW_addition.md#german-common-voice-forgetting-benchmark--one-time-setup)
+  in `RUNPOD_WORKFLOW_addition.md`. In particular, `data/metadata/german/test_1000_seed42.tsv` must
   exist on the RunPod volume.
 - Any fine-tuned checkpoint you want to benchmark must already have a `MODEL_REGISTRY`
   entry in `scripts/evaluate_models.py`.

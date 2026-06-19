@@ -1,7 +1,7 @@
 ## German Common Voice Forgetting Benchmark — One-Time Setup
 
 This section covers the one-time data preparation for the RQ2 catastrophic-forgetting
-benchmark on German Common Voice 22.0. It assumes [Prepare Datasets](#prepare-datasets-first-time-only)
+benchmark on German Common Voice 22.0. It assumes a dataset preparation step
 has already been run, so `data/metadata/german/test.tsv` exists.
 
 These steps are run **once per RunPod data volume**. The resulting seeded holdout file
