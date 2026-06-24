@@ -267,6 +267,7 @@ def build_training_arguments(cfg, args, output_dir, gradient_checkpointing, max_
         save_steps=cfg["checkpointing"].get("save_steps", 125),
         save_total_limit=cfg["checkpointing"].get("save_total_limit", 3),
         save_only_model=True,
+        load_best_model_at_end=cfg["checkpointing"].get("load_best_model_at_end", True),
         logging_strategy="steps",
         logging_steps=cfg["logging"].get("logging_steps", 25),
         logging_dir=str(resolve_path(config.RESULTS_DIR, cfg["logging"]["logging_dir"])),
@@ -354,9 +355,18 @@ def main(argv=None):
         if args.smoke_test else cfg["evaluation"].get("eval_steps", 125)
 
     timestamp = time.strftime("%Y%m%d_%H%M%S")
-    output_subdir = smoke.get("output_subdir", "smoke_test") if args.smoke_test else "baseline"
-    output_dir = resolve_path(config.RESULTS_DIR, output_subdir) / timestamp
+    if args.smoke_test:
+        output_subdir = smoke.get("output_subdir", "smoke_test")
+        run_dir_name = timestamp
+    elif ewc_lambda == 0.0:
+        output_subdir = "baseline"
+        run_dir_name = timestamp
+    else:
+        output_subdir = "ewc"
+        run_dir_name = f"{timestamp}_lambda{int(ewc_lambda)}"
+    output_dir = resolve_path(config.RESULTS_DIR, output_subdir) / run_dir_name
     output_dir.mkdir(parents=True, exist_ok=True)
+
     logger.info("Output dir: %s", output_dir)
     logger.info(
         "gradient_checkpointing=%s  max_steps=%s  ewc_lambda=%s  eval_subset_size=%s",
@@ -411,8 +421,9 @@ def main(argv=None):
     logger.info("Loading theta*: %s", theta_path)
     fisher_dict, old_params = load_fisher_and_theta(fisher_path, theta_path)
 
-    # Calibration log lives in the timestamped output dir so Part 2's checklist
-    # finds it alongside the other smoke-test artifacts.
+    # Calibration log lives in the timestamped output dir so it is
+    # co-located with all other run artifacts and unambiguously tied
+    # to this lambda condition.
     ewc_log_path = output_dir / "ewc_calibration.csv"
 
     # --- callbacks / profiling ---
@@ -531,14 +542,21 @@ def write_outputs(output_dir, trainer, train_result, throughput, cfg, args,
         except Exception:
             pass
 
+    if args.smoke_test:
+        run_label = "smoke test"
+    elif ewc_lambda == 0.0:
+        run_label = "baseline (no EWC, lambda=0.0)"
+    else:
+        run_label = f"grid run (lambda={ewc_lambda})"
+
     summary = [
-        "# Whisper Large-v2 + EWC smoke test — summary",
+        f"# Whisper Large-v2 + EWC {run_label} — summary",
         "",
         f"- attention: {cfg['model'].get('attn_implementation')} (FA2 unavailable on Blackwell)",
         f"- gradient_checkpointing: {gradient_checkpointing}",
         f"- per_device_train_batch_size: {cfg['training']['per_device_train_batch_size']}",
         f"- max_steps: {max_steps}",
-        f"- ewc_lambda (placeholder): {ewc_lambda}",
+        f"- ewc_lambda: {ewc_lambda}",
         (
             f"- EWC half-factor applied: {cfg['ewc'].get('apply_half_factor', True)} "
             "(Requirement A: fisher_diagonal.pt has NO 1/2 baked in)"
@@ -570,13 +588,12 @@ def write_outputs(output_dir, trainer, train_result, throughput, cfg, args,
         if train_result is not None:
             summary.append(f"- final metrics: {train_result.metrics}")
         summary.append(
-            "- go/no-go on LR=1e-5/warmup=50: inspect loss_curve.csv for a sane "
-            "decrease through warmup (no spike/flatline) and ewc_calibration.csv "
-            "for the raw EWC term scale used to centre the lambda grid."
+            "- go/no-go: inspect loss_curve.csv for a sane decrease through warmup "
+            "(no spike/flatline) and ewc_calibration.csv for the raw EWC term scale."
         )
 
     (output_dir / "summary.md").write_text("\n".join(summary) + "\n")
-    logger.info("Wrote smoke-test artifacts to %s", output_dir)
+    logger.info("Wrote run artifacts to %s", output_dir)
 
 
 if __name__ == "__main__":

@@ -31,6 +31,31 @@ MODEL_REGISTRY = {
         "name": "jempf/whisper-large-swiss",
     },
 
+    # Fine-tuned models
+    # Local path:  results/runs/baseline/20260618_071457/final_model  → /app/results/runs/baseline/...
+    # RunPod path: /workspace/results/baseline/20260618_071457/final_model (no "runs/" prefix)
+    "whisper-large-v2-swiss-german-baseline": {
+        "type": "whisper-hf",
+        "name": str(
+            RESULTS_DIR / "runs" / "baseline" / "20260618_071457" / "final_model"
+            if ENVIRONMENT == "local"
+            else RESULTS_DIR / "baseline" / "20260618_071457" / "final_model"
+        ),
+        # Fine-tuned checkpoints only save model weights; processor must be
+        # loaded from the base model that the tokenizer/feature-extractor belong to.
+        "processor_name": "openai/whisper-large-v2",
+    },
+
+    "whisper-large-v2-swiss-german-ewc-lambda-3000": {
+        "type": "whisper-hf",
+        "name": str(
+            RESULTS_DIR / "runs" / "ewc" / "20260624_095939_lambda3000" / "checkpoint-1250"
+            if ENVIRONMENT == "local"
+            else RESULTS_DIR / "ewc" / "20260624_095939_lambda3000" / "checkpoint-1250"
+        ),
+        "processor_name": "openai/whisper-large-v2",
+    },
+
     # Wav2Vec2 models
     ## German models
     "wav2vec2-german": {"type": "wav2vec2", "name": "jonatasgrosman/wav2vec2-large-xlsr-53-german"},
@@ -68,20 +93,6 @@ MODEL_REGISTRY = {
     # SeamlessM4T models
     "seamless-m4t-v2-large": {"type": "seamless-m4t", "name": "facebook/seamless-m4t-v2-large"},
 
-    # Fine-tuned models
-    # Local path:  results/runs/baseline/20260618_071457/final_model  → /app/results/runs/baseline/...
-    # RunPod path: /workspace/results/baseline/20260618_071457/final_model (no "runs/" prefix)
-    "whisper-large-v2-swiss-german-baseline": {
-        "type": "whisper-hf",
-        "name": str(
-            RESULTS_DIR / "runs" / "baseline" / "20260618_071457" / "final_model"
-            if ENVIRONMENT == "local"
-            else RESULTS_DIR / "baseline" / "20260618_071457" / "final_model"
-        ),
-        # Fine-tuned checkpoints only save model weights; processor must be
-        # loaded from the base model that the tokenizer/feature-extractor belong to.
-        "processor_name": "openai/whisper-large-v2",
-    },
 }
 
 def main():
