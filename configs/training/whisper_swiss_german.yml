@@ -78,7 +78,7 @@ checkpointing:
   output_dir: "fine_tuned/whisper-large-v2-swiss-german"
   save_strategy: "steps"
   save_steps: 125             
-  save_total_limit: 3
+  save_total_limit: null        # no limit; smoke test overrides this
   load_best_model_at_end: true
   metric_for_best_model: "wer"
   greater_is_better: false
