@@ -354,14 +354,17 @@ def main(argv=None):
         if args.smoke_test else cfg["evaluation"].get("eval_steps", 125)
 
     timestamp = time.strftime("%Y%m%d_%H%M%S")
-    output_subdir = smoke.get("output_subdir", "smoke_test") if args.smoke_test else "baseline"
-    output_dir = resolve_path(config.RESULTS_DIR, output_subdir) / timestamp
+    if args.smoke_test:
+        output_subdir = smoke.get("output_subdir", "smoke_test")
+        run_dir_name = timestamp
+    elif ewc_lambda == 0.0:
+        output_subdir = "baseline"
+        run_dir_name = timestamp
+    else:
+        output_subdir = "ewc"
+        run_dir_name = f"{timestamp}_lambda{int(ewc_lambda)}"
+    output_dir = resolve_path(config.RESULTS_DIR, output_subdir) / run_dir_name
     output_dir.mkdir(parents=True, exist_ok=True)
-    logger.info("Output dir: %s", output_dir)
-    logger.info(
-        "gradient_checkpointing=%s  max_steps=%s  ewc_lambda=%s  eval_subset_size=%s",
-        gradient_checkpointing, max_steps, ewc_lambda, eval_subset_size,
-    )
 
     check_fisher_metadata(cfg)
 
