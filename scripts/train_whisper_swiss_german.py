@@ -366,6 +366,12 @@ def main(argv=None):
     output_dir = resolve_path(config.RESULTS_DIR, output_subdir) / run_dir_name
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    logger.info("Output dir: %s", output_dir)
+    logger.info(
+        "gradient_checkpointing=%s  max_steps=%s  ewc_lambda=%s  eval_subset_size=%s",
+        gradient_checkpointing, max_steps, ewc_lambda, eval_subset_size,
+    )
+
     check_fisher_metadata(cfg)
 
     # --- model + processor ---
@@ -414,8 +420,9 @@ def main(argv=None):
     logger.info("Loading theta*: %s", theta_path)
     fisher_dict, old_params = load_fisher_and_theta(fisher_path, theta_path)
 
-    # Calibration log lives in the timestamped output dir so Part 2's checklist
-    # finds it alongside the other smoke-test artifacts.
+    # Calibration log lives in the timestamped output dir so it is
+    # co-located with all other run artifacts and unambiguously tied
+    # to this lambda condition.
     ewc_log_path = output_dir / "ewc_calibration.csv"
 
     # --- callbacks / profiling ---
@@ -534,14 +541,21 @@ def write_outputs(output_dir, trainer, train_result, throughput, cfg, args,
         except Exception:
             pass
 
+    if args.smoke_test:
+        run_label = "smoke test"
+    elif ewc_lambda == 0.0:
+        run_label = "baseline (no EWC, lambda=0.0)"
+    else:
+        run_label = f"EWC grid run (lambda={ewc_lambda})"
+
     summary = [
-        "# Whisper Large-v2 + EWC smoke test — summary",
+        f"# Whisper Large-v2 + EWC {run_label} — summary",
         "",
         f"- attention: {cfg['model'].get('attn_implementation')} (FA2 unavailable on Blackwell)",
         f"- gradient_checkpointing: {gradient_checkpointing}",
         f"- per_device_train_batch_size: {cfg['training']['per_device_train_batch_size']}",
         f"- max_steps: {max_steps}",
-        f"- ewc_lambda (placeholder): {ewc_lambda}",
+        f"- ewc_lambda: {ewc_lambda}",
         (
             f"- EWC half-factor applied: {cfg['ewc'].get('apply_half_factor', True)} "
             "(Requirement A: fisher_diagonal.pt has NO 1/2 baked in)"
@@ -573,13 +587,12 @@ def write_outputs(output_dir, trainer, train_result, throughput, cfg, args,
         if train_result is not None:
             summary.append(f"- final metrics: {train_result.metrics}")
         summary.append(
-            "- go/no-go on LR=1e-5/warmup=50: inspect loss_curve.csv for a sane "
-            "decrease through warmup (no spike/flatline) and ewc_calibration.csv "
-            "for the raw EWC term scale used to centre the lambda grid."
+            "- go/no-go: inspect loss_curve.csv for a sane decrease through warmup "
+            "(no spike/flatline) and ewc_calibration.csv for the raw EWC term scale."
         )
 
     (output_dir / "summary.md").write_text("\n".join(summary) + "\n")
-    logger.info("Wrote smoke-test artifacts to %s", output_dir)
+    logger.info("Wrote run artifacts to %s", output_dir)
 
 
 if __name__ == "__main__":
