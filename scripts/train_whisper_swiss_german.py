@@ -267,6 +267,7 @@ def build_training_arguments(cfg, args, output_dir, gradient_checkpointing, max_
         save_steps=cfg["checkpointing"].get("save_steps", 125),
         save_total_limit=cfg["checkpointing"].get("save_total_limit", 3),
         save_only_model=True,
+        load_best_model_at_end=cfg["checkpointing"].get("load_best_model_at_end", True),
         logging_strategy="steps",
         logging_steps=cfg["logging"].get("logging_steps", 25),
         logging_dir=str(resolve_path(config.RESULTS_DIR, cfg["logging"]["logging_dir"])),
