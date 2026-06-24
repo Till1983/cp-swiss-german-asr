@@ -546,7 +546,7 @@ def write_outputs(output_dir, trainer, train_result, throughput, cfg, args,
     elif ewc_lambda == 0.0:
         run_label = "baseline (no EWC, lambda=0.0)"
     else:
-        run_label = f"EWC grid run (lambda={ewc_lambda})"
+        run_label = f"grid run (lambda={ewc_lambda})"
 
     summary = [
         f"# Whisper Large-v2 + EWC {run_label} — summary",
