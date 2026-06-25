@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-06-25T10:17:34.280164",
+  "models": {
+    "whisper-large-v2-swiss-german-ewc-lambda-30000-step1260": {
+      "mean_wer": 20.48660084626234,
+      "mean_cer": 9.224031292835413,
+      "mean_bleu": 65.31284815328125,
+      "total_samples": 863,
+      "semantic_preservation_rate": 1.1587485515643106
+    },
+    "whisper-large-v2-swiss-german-ewc-lambda-30000": {
+      "mean_wer": 20.48660084626234,
+      "mean_cer": 9.224031292835413,
+      "mean_bleu": 65.31284815328125,
+      "total_samples": 863,
+      "semantic_preservation_rate": 1.1587485515643106
+    },
+    "whisper-large-v2-swiss-german-ewc-lambda-3000-step1260": {
+      "mean_wer": 20.510108133521392,
+      "mean_cer": 9.005048309986293,
+      "mean_bleu": 65.43572892977228,
+      "total_samples": 863,
+      "semantic_preservation_rate": 1.1587485515643106
+    },
+    "whisper-large-v2-swiss-german-baseline": {
+      "mean_wer": 20.768688293370946,
+      "mean_cer": 9.120390491792318,
+      "mean_bleu": 64.97424912799045,
+      "total_samples": 863,
+      "semantic_preservation_rate": 0.9269988412514484
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-06-25T10:52:37.557105",
+  "models": {
+    "whisper-large-v2-swiss-german-ewc-lambda-30000-step1260": {
+      "mean_wer": 20.48660084626234,
+      "mean_cer": 9.215673163719034,
+      "mean_bleu": 65.29507889084688,
+      "total_samples": 863,
+      "semantic_preservation_rate": 1.1587485515643106
+    }
+  }
+}
