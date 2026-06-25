@@ -37,6 +37,18 @@ MODEL_REGISTRY = {
     "whisper-large-v2-swiss-german-baseline": {
         "type": "whisper-hf",
         "name": str(
+            RESULTS_DIR / "runs" / "baseline" / "20260618_071457" / "checkpoint-1250"
+            if ENVIRONMENT == "local"
+            else RESULTS_DIR / "baseline" / "20260618_071457" / "checkpoint-1250"
+        ),
+        # Fine-tuned checkpoints only save model weights; processor must be
+        # loaded from the base model that the tokenizer/feature-extractor belong to.
+        "processor_name": "openai/whisper-large-v2",
+    },
+
+    "whisper-large-v2-swiss-german-baseline-step1260": {
+        "type": "whisper-hf",
+        "name": str(
             RESULTS_DIR / "runs" / "baseline" / "20260618_071457" / "final_model"
             if ENVIRONMENT == "local"
             else RESULTS_DIR / "baseline" / "20260618_071457" / "final_model"
@@ -55,7 +67,57 @@ MODEL_REGISTRY = {
         ),
         "processor_name": "openai/whisper-large-v2",
     },
+   
+     "whisper-large-v2-swiss-german-ewc-lambda-3000-step1260": {
+         "type": "whisper-hf",
+         "name": str(
+             RESULTS_DIR / "runs" / "ewc" / "20260624_095939_lambda3000" / "final_model"
+             if ENVIRONMENT == "local"
+             else RESULTS_DIR / "ewc" / "20260624_095939_lambda3000" / "final_model"
+         ),
+         "processor_name": "openai/whisper-large-v2",
+    },
 
+    # "whisper-large-v2-swiss-german-ewc-lambda-30000": {
+    #     "type": "whisper-hf",
+    #     "name": str(
+    #         RESULTS_DIR / "runs" / "ewc" / "20260624_095939_lambda30000" / "checkpoint-1250"
+    #         if ENVIRONMENT == "local"
+    #         else RESULTS_DIR / "ewc" / "20260624_095939_lambda30000" / "checkpoint-1250"
+    #     ),
+    #     "processor_name": "openai/whisper-large-v2",
+    # },
+
+    # "whisper-large-v2-swiss-german-ewc-lambda-30000-step1260": {
+    #     "type": "whisper-hf",
+    #     "name": str(
+    #         RESULTS_DIR / "runs" / "ewc" / "20260624_095939_lambda30000" / "final_model"
+    #         if ENVIRONMENT == "local"
+    #         else RESULTS_DIR / "ewc" / "20260624_095939_lambda30000" / "final_model"
+    #     ),
+    #     "processor_name": "openai/whisper-large-v2",
+    # },
+
+    # "whisper-large-v2-swiss-german-ewc-lambda-300000": {
+    #     "type": "whisper-hf",
+    #     "name": str(
+    #         RESULTS_DIR / "runs" / "ewc" / "20260624_095939_lambda300000" / "checkpoint-1250"
+    #         if ENVIRONMENT == "local"
+    #         else RESULTS_DIR / "ewc" / "20260624_095939_lambda300000" / "checkpoint-1250"
+    #     ),
+    #     "processor_name": "openai/whisper-large-v2",
+    # },
+
+    "whisper-large-v2-swiss-german-ewc-lambda-300000-step1260": {
+        "type": "whisper-hf",
+        "name": str(    
+            RESULTS_DIR / "runs" / "ewc" / "20260624_095939_lambda300000" / "final_model"
+            if ENVIRONMENT == "local"
+            else RESULTS_DIR / "ewc" / "20260624_095939_lambda300000" / "final_model"
+        ),
+        "processor_name": "openai/whisper-large-v2",
+    },
+    
     # Wav2Vec2 models
     ## German models
     "wav2vec2-german": {"type": "wav2vec2", "name": "jonatasgrosman/wav2vec2-large-xlsr-53-german"},
