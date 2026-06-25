@@ -49,9 +49,9 @@ MODEL_REGISTRY = {
     "whisper-large-v2-swiss-german-baseline-step1260": {
         "type": "whisper-hf",
         "name": str(
-            RESULTS_DIR / "runs" / "baseline" / "20260618_071457" / "final_model"
+            RESULTS_DIR / "runs" / "baseline" / "20260618_071457" / "checkpoint-1260"
             if ENVIRONMENT == "local"
-            else RESULTS_DIR / "baseline" / "20260618_071457" / "final_model"
+            else RESULTS_DIR / "baseline" / "20260618_071457" / "checkpoint-1260"
         ),
         # Fine-tuned checkpoints only save model weights; processor must be
         # loaded from the base model that the tokenizer/feature-extractor belong to.
@@ -71,9 +71,9 @@ MODEL_REGISTRY = {
      "whisper-large-v2-swiss-german-ewc-lambda-3000-step1260": {
          "type": "whisper-hf",
          "name": str(
-             RESULTS_DIR / "runs" / "ewc" / "20260624_095939_lambda3000" / "final_model"
+             RESULTS_DIR / "runs" / "ewc" / "20260624_095939_lambda3000" / "checkpoint-1260"
              if ENVIRONMENT == "local"
-             else RESULTS_DIR / "ewc" / "20260624_095939_lambda3000" / "final_model"
+             else RESULTS_DIR / "ewc" / "20260624_095939_lambda3000" / "checkpoint-1260"
          ),
          "processor_name": "openai/whisper-large-v2",
     },
