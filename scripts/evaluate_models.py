@@ -111,9 +111,9 @@ MODEL_REGISTRY = {
     #"whisper-large-v2-swiss-german-ewc-lambda-300000-step1260": {
      #   "type": "whisper-hf",
       #  "name": str(    
-       #     RESULTS_DIR / "runs" / "ewc" / "20260624_095939_lambda300000" / "final_model"
+       #     RESULTS_DIR / "runs" / "ewc" / "20260624_095939_lambda300000" / "checkpoint-1260"
         #    if ENVIRONMENT == "local"
-         #   else RESULTS_DIR / "ewc" / "20260624_095939_lambda300000" / "final_model"
+         #   else RESULTS_DIR / "ewc" / "20260624_095939_lambda300000" / "checkpoint-1260"
         #),
         #"processor_name": "openai/whisper-large-v2",
     #},
