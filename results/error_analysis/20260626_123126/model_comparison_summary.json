@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-06-26T12:31:28.634786",
+  "models": {
+    "whisper-large-v2-swiss-german-ewc-lambda-300000-step1260": {
+      "mean_wer": 21.215326751292903,
+      "mean_cer": 9.631907993714687,
+      "mean_bleu": 64.9731393617435,
+      "total_samples": 863,
+      "semantic_preservation_rate": 0.9269988412514484
+    },
+    "whisper-large-v2-swiss-german-ewc-lambda-300000": {
+      "mean_wer": 20.992007522331924,
+      "mean_cer": 9.611848483835377,
+      "mean_bleu": 65.0545839420891,
+      "total_samples": 863,
+      "semantic_preservation_rate": 0.8111239860950173
+    }
+  }
+}
