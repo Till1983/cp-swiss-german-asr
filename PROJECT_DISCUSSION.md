@@ -33,6 +33,11 @@ Till Ermold | CODE University of Applied Sciences Berlin | December 2025
 > figures and are superseded. The ASR-Fair + micro equivalents differ — whisper-large-v2:
 > 134 high-WER, 6 paraphrases; the "Danach" sample (8d889bf5) at WER 57.1 / BLEU 44.6.
 
+> **UPDATE REMARK — added 3 July 2026**
+>
+> Section 3.3 has been updated to list **chrF** and **SemDist** under Primary Metrics.
+> Accordingly, chrF has been removed from the Alternatives Considered list.
+
 ## Table of Contents
 1. [Project Summary](#1-project-summary)
 2. [Software Architecture & Technology Choices](#2-software-architecture--technology-choices)
@@ -280,7 +285,7 @@ Six state-of-the-art ASR models were selected to represent diversity across thre
 
 ### 3.3 Evaluation Metrics
 
-Three complementary metrics assess model performance across accuracy and semantic dimensions, chosen for their established use in ASR and machine translation research whilst addressing the specific requirements of the Swiss German→Standard German translation task.
+Five complementary metrics assess model performance across accuracy and semantic dimensions, chosen for their established use in ASR and machine translation research whilst addressing the specific requirements of the Swiss German→Standard German translation task.
 
 **Primary Metrics:**
 
@@ -290,16 +295,19 @@ Three complementary metrics assess model performance across accuracy and semanti
 
 3. **BLEU Score** (Bilingual Evaluation Understudy): N-gram overlap metric (1-gram through 4-gram) with brevity penalty, computed using sacrebleu reference implementation. BLEU assesses semantic similarity by measuring phrase-level overlap rather than exact word matches, addressing the hypothesis that high WER might result from semantically equivalent paraphrases rather than genuine errors. BLEU is particularly relevant for translation tasks where multiple valid Standard German renderings exist for Swiss German utterances.
 
+4. **chrF** (Character n-gram F-score): Character-level precision/recall F-score metric that evaluates overlap of character n-grams between hypothesis and reference. chrF is robust to tokenisation and word-boundary variation, making it useful for morphologically rich and orthographically variable outputs.
+
+5. **SemDist** (Semantic Distance): Embedding-based semantic distance metric that quantifies meaning divergence between hypothesis and reference beyond exact lexical overlap. SemDist complements WER/CER/BLEU by capturing paraphrastic equivalence and semantic drift.
+
 **Metric Validation:**
 
 Post-evaluation integration of BLEU scores validated the appropriateness of WER as the primary metric for this task. Analysis of high-WER samples (WER ≥50%, representing 19.1% of the test set) revealed that only 1.4–2.1% achieved BLEU ≥40% (threshold for semantic preservation in MT literature). This finding demonstrates that high WER predominantly reflects genuine transcription errors rather than semantically valid paraphrases, confirming WER's suitability for measuring translation quality on the Swiss German→Standard German task. Detailed BLEU integration results are presented in Section 5.3.
 
 **Alternatives Considered:**
 
-- **chrF** (character n-gram F-score): Excludes word boundaries, potentially more robust to segmentation errors. Not adopted due to limited interpretability compared to CER and lack of established thresholds for "good" performance.
 - **BERTScore**: Contextual embedding similarity using pre-trained language models. Excluded due to (1) absence of Swiss German BERT models, (2) computational cost (~10× slower than BLEU), and (3) lack of established benchmarks for ASR evaluation.
 
-The selected three-metric combination balances comprehensiveness (word-level, character-level, semantic-level) with computational feasibility and result interpretability.
+The selected five-metric combination balances comprehensiveness (word-level, character-level, lexical overlap, and semantic-level) with computational feasibility and result interpretability.
 
 ### 3.4 Statistical Validity & Aggregation Methodology
 
