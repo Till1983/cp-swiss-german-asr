@@ -1,0 +1,529 @@
+{
+  "samples": [
+    {
+      "index": 0,
+      "reference": "Uns wurde eine bessere Economic Governance in Europa versprochen.",
+      "hypothesis": "Uns wurde eine bessere Economic Governance in Europa versprochen.",
+      "wer": 0.0,
+      "dialect": "ZH"
+    },
+    {
+      "index": 1,
+      "reference": "Aufgrund der Giftigkeit der Verbindung findet es als Halbleitermaterial in der Elektronik kaum Verwendung.",
+      "hypothesis": "Aufgrund der Giftigkeit der Verbindung findet es ein halbgelegtes Material in der Elektronik kaum Verwendung.",
+      "wer": 0.21428571428571427,
+      "dialect": "SG"
+    },
+    {
+      "index": 2,
+      "reference": "Bereits w\u00e4hrend seiner Ausbildung spielte er erste Solo-Rollen am Theater.",
+      "hypothesis": "Bereits w\u00e4hrend seiner Ausbildung spielte er erste Solorolle am Theater.",
+      "wer": 0.1,
+      "dialect": "BE"
+    },
+    {
+      "index": 3,
+      "reference": "Anschlie\u00dfend wurde \u00fcber den Originaltext abgestimmt.",
+      "hypothesis": "Danach wurde \u00fcber den Originaltext abgestimmt.",
+      "wer": 0.16666666666666666,
+      "dialect": "ZH"
+    },
+    {
+      "index": 4,
+      "reference": "Studien haben ergeben, dass diese Hebung in zwei zeitlichen Phasen ablief.",
+      "hypothesis": "Studien ergeben, dass diese Erhebung in zwei zeitlichen Phasen abgelaufen ist.",
+      "wer": 0.36363636363636365,
+      "dialect": "BE"
+    },
+    {
+      "index": 5,
+      "reference": "Das ist nicht nur meine Ansicht und die meiner Delegation.",
+      "hypothesis": "Das ist nicht nur meine Ansicht und die meiner Delegation.",
+      "wer": 0.0,
+      "dialect": "ZH"
+    },
+    {
+      "index": 6,
+      "reference": "Junge Individuen erbeuten h\u00e4ufig kleine V\u00f6gel und M\u00e4use, selten auch Eidechsen und Fr\u00f6sche.",
+      "hypothesis": "Junge Individuen erbieten h\u00e4ufig kleine V\u00f6gel und M\u00e4use, selten auch Eind\u00e4chse und Fr\u00f6sche.",
+      "wer": 0.15384615384615385,
+      "dialect": "BE"
+    },
+    {
+      "index": 7,
+      "reference": "Sie bedankt sich bei den Freunden, weil diese sie \u00fcberwunden, aber nicht get\u00f6tet haben.",
+      "hypothesis": "Sie bedankt sich bei den Freunden, weil diese sie \u00fcberwunden, aber nicht get\u00f6tet haben.",
+      "wer": 0.0,
+      "dialect": "ZH"
+    },
+    {
+      "index": 8,
+      "reference": "Beh\u00f6rden mussten parit\u00e4tisch besetzt sein, also je zur H\u00e4lfte aus Katholiken und Reformierten bestehen.",
+      "hypothesis": "Die Beh\u00f6rden mussten parit\u00e4tisch besetzt sein, sie bestanden also je zur H\u00e4lfte aus Katholiken und Reformierten.",
+      "wer": 0.35714285714285715,
+      "dialect": "SO"
+    },
+    {
+      "index": 9,
+      "reference": "Ebenso wie die sp\u00e4teren Ver\u00f6ffentlichungen kam sie auf Necropolis Records heraus.",
+      "hypothesis": "Ebenso wie die sp\u00e4teren Ver\u00f6ffentlichungen kam sie auf Necropolis Records heraus.",
+      "wer": 0.0,
+      "dialect": "BE"
+    },
+    {
+      "index": 10,
+      "reference": "\"Daraufhin unterschrieb die Band bei der Plattenfirma \"\"Portrait Records\"\" einen neuen Vertrag.\"",
+      "hypothesis": "Daraufhin schrieb die Band bei der Plattenfirma Portrait Records einen neuen Vertrag um.",
+      "wer": 0.5,
+      "dialect": "ZH"
+    },
+    {
+      "index": 11,
+      "reference": "Kenyon war ein Kenner alter Sprachen und widmete sich insbesondere der biblischen Textkritik.",
+      "hypothesis": "Canyon war ein Kennen alter Sprache und widmete sich insbesondere den biblischen Textkritik.",
+      "wer": 0.3076923076923077,
+      "dialect": "SG"
+    },
+    {
+      "index": 12,
+      "reference": "Handel ist nat\u00fcrlich der beste Weg, um L\u00e4ndern zu helfen.",
+      "hypothesis": "Handel ist nat\u00fcrlich der beste Weg, um L\u00e4ndern zu helfen.",
+      "wer": 0.0,
+      "dialect": "ZH"
+    },
+    {
+      "index": 13,
+      "reference": "Insbesondere Genauigkeit, ein Gef\u00fchl f\u00fcr Proportionen und Geometrie wurden geschult.",
+      "hypothesis": "Insbesondere die Genauigkeit, ein Gewissen f\u00fcr Proportionen und Geometrie, ist geschult.",
+      "wer": 0.4,
+      "dialect": "LU"
+    },
+    {
+      "index": 14,
+      "reference": "Die Preiserh\u00f6hungen w\u00e4ren folglich erfasst.",
+      "hypothesis": "Preiserh\u00f6hungen werden folglich erfasst.",
+      "wer": 0.4,
+      "dialect": "AG"
+    },
+    {
+      "index": 15,
+      "reference": "Andererseits hat die Kommission letzte Woche ein Dokument zur besseren Regelung beschlossen.",
+      "hypothesis": "Andererseits beschloss die Kommission letzte Woche ein Dokument zur Verbesserung der Regeln.",
+      "wer": 0.3333333333333333,
+      "dialect": "ZG"
+    },
+    {
+      "index": 16,
+      "reference": "Die beiden Abbildungen in diesem zweiten Band erscheinen zweifelhaft.",
+      "hypothesis": "Die beiden Abbildungen sind in seinem zweiten Band erscheinend zweifelhaft.",
+      "wer": 0.3333333333333333,
+      "dialect": "VS"
+    },
+    {
+      "index": 17,
+      "reference": "Das Urinieren findet durch den Trichter statt.",
+      "hypothesis": "Das Urinieren findet durch den Strich der Stadt.",
+      "wer": 0.42857142857142855,
+      "dialect": "AG"
+    },
+    {
+      "index": 18,
+      "reference": "Zweitens sollte hervorgehoben werden, dass die Richtlinie inzwischen zehn Jahre alt ist.",
+      "hypothesis": "Zweitens sollte hervorgehoben werden, dass die Richtlinie inzwischen zehn Jahre alt ist.",
+      "wer": 0.0,
+      "dialect": "ZG"
+    },
+    {
+      "index": 19,
+      "reference": "J\u00e4hrlich werden von Antenne Niedersachsen diverse Events veranstaltet.",
+      "hypothesis": "J\u00e4hrlich werden voran und dann in Niedersachsen diverse Events veranstaltet.",
+      "wer": 0.5,
+      "dialect": "BE"
+    },
+    {
+      "index": 20,
+      "reference": "Fischer war an diesem Tag bereits zuvor durch mehrere Zwischenrufe bei anderen Abgeordneten aufgefallen.",
+      "hypothesis": "Fischer fiel an diesem Tag schon zuvor durch mehrere Zwischenrufe bei anderen Abgeordneten auf.",
+      "wer": 0.21428571428571427,
+      "dialect": "BE"
+    },
+    {
+      "index": 21,
+      "reference": "Seine Bilder stellen in erster Linie Landschaften, Blumen, Tiere und H\u00e4fen dar.",
+      "hypothesis": "Seine Bilder zeigen in erster Linie Landschaften, Blumen, Tiere und Hafen.",
+      "wer": 0.25,
+      "dialect": "LU"
+    },
+    {
+      "index": 22,
+      "reference": "Der Boom der historischen Frauenforschung hatte aber auch eine Kehrseite.",
+      "hypothesis": "Der Baum der historischen Frauenforschung hatte aber auch andere Kehrseite.",
+      "wer": 0.2,
+      "dialect": "AG"
+    },
+    {
+      "index": 23,
+      "reference": "Schweinsberg ist verheiratet und hat vier Kinder.",
+      "hypothesis": "Schweinsberg ist verheiratet und hat vier Kinder.",
+      "wer": 0.0,
+      "dialect": "BE"
+    },
+    {
+      "index": 24,
+      "reference": "Aber es gibt keinen direkten Zusammenhang mit dem Vorfall gestern.",
+      "hypothesis": "Aber es gibt keinen direkten Zusammenhang mit dem Vorfall von G\u00e4sten.",
+      "wer": 0.2,
+      "dialect": "SG"
+    },
+    {
+      "index": 25,
+      "reference": "Sie bilden zusammen die Gemeinde Thiersee.",
+      "hypothesis": "Sie bilden zusammen die Gemeinde Tiersee.",
+      "wer": 0.16666666666666666,
+      "dialect": "LU"
+    },
+    {
+      "index": 26,
+      "reference": "Schwab hat schon fr\u00fch als Abgeordneter \u00fcber neue Medien kommuniziert.",
+      "hypothesis": "Schwab kommunizierte schon fr\u00fch als Abgeordneter \u00fcber neue Medien.",
+      "wer": 0.3,
+      "dialect": "VS"
+    },
+    {
+      "index": 27,
+      "reference": "Aus diesem Grunde muss es den Aufnahmegesellschaften Anlass zu Stolz und Genugtuung sein.",
+      "hypothesis": "Aus diesem Grund muss die Aufnahmegesellschaft ein Anlass zur Stolz und Genugtuung sein.",
+      "wer": 0.38461538461538464,
+      "dialect": "SG"
+    },
+    {
+      "index": 28,
+      "reference": "Wir sollten uns in diesem Punkt doch nichts weismachen!",
+      "hypothesis": "Wir sollten uns in diesem Punkt doch nichts Wei\u00dfes machen.",
+      "wer": 0.2222222222222222,
+      "dialect": "SZ"
+    },
+    {
+      "index": 29,
+      "reference": "Ich bin Herrn Wiebenga dankbar, dass er die Richtlinie in diesem Sinne angepasst hat.",
+      "hypothesis": "Ich bin Herrn Wiebinger dankbar, dass er die Richtlinie in diesem Sinne angepasst hat.",
+      "wer": 0.07142857142857142,
+      "dialect": "GL"
+    },
+    {
+      "index": 30,
+      "reference": "Diese Entscheidung wird gleiche Auswirkungen auf Serben und Kosovo-Albaner haben.",
+      "hypothesis": "Die Entscheidung wird gleiche Auswirkungen auf Serben und Kosovo-Albanern haben.",
+      "wer": 0.2,
+      "dialect": "BE"
+    },
+    {
+      "index": 31,
+      "reference": "Lorenz von Brunne war adeliger Herkunft und wurde in Grimming in der Steiermark geboren.",
+      "hypothesis": "Lorenz von Brunnen ist Adelide Herkunft und wurde in Grimming in der Steiermark geboren.",
+      "wer": 0.21428571428571427,
+      "dialect": "LU"
+    },
+    {
+      "index": 32,
+      "reference": "Es gibt, denke ich, schon einige konkrete Ergebnisse, \u00fcber die wir diskutieren k\u00f6nnen.",
+      "hypothesis": "Ich denke, es gibt schon einige konkrete Ergebnisse, \u00fcber die wir diskutieren k\u00f6nnten.",
+      "wer": 0.38461538461538464,
+      "dialect": "SO"
+    },
+    {
+      "index": 33,
+      "reference": "Es ist makaber aber wahr.",
+      "hypothesis": "Es ist Makaber, aber wahr.",
+      "wer": 0.2,
+      "dialect": "BE"
+    },
+    {
+      "index": 34,
+      "reference": "Ich m\u00f6chte nur zwei zus\u00e4tzliche Aspekte erw\u00e4hnen.",
+      "hypothesis": "Ich m\u00f6chte nur zwei zus\u00e4tzliche Aspekte erw\u00e4hnen.",
+      "wer": 0.0,
+      "dialect": "AG"
+    },
+    {
+      "index": 35,
+      "reference": "Das bereits erw\u00e4hnte H\u00fcgelgr\u00e4berfeld belegt die fr\u00fche Besiedlung der Landschaft.",
+      "hypothesis": "Das bereits erw\u00e4hnte H\u00fcgelgr\u00e4berfeld belegt die fr\u00fche Besiedlung der Landschaft.",
+      "wer": 0.0,
+      "dialect": "BL"
+    },
+    {
+      "index": 36,
+      "reference": "Eine nach dem Ingenieur benannte Stra\u00dfe befand sich auch noch im Industrie-Stadtteil Berlin-Obersch\u00f6neweide.",
+      "hypothesis": "Eine nach dem Ingenieur benannte Stra\u00dfe befindet sich auch noch im Industriestadtteil Berlin-Obersch\u00f6ne-Weide.",
+      "wer": 0.23076923076923078,
+      "dialect": "SO"
+    },
+    {
+      "index": 37,
+      "reference": "Er verschlie\u00dft sich aber dem Flehen seiner Frau, sich nichts anzutun.",
+      "hypothesis": "Er verschlie\u00dft sich jedoch dem Flehen seiner Frau, sich nichts anzutun.",
+      "wer": 0.09090909090909091,
+      "dialect": "BE"
+    },
+    {
+      "index": 38,
+      "reference": "Miles verheiratet, mit der er f\u00fcnf Kinder hatte.",
+      "hypothesis": "Miles verheiratet, mit der er f\u00fcnf Kinder hat.",
+      "wer": 0.125,
+      "dialect": "TG"
+    },
+    {
+      "index": 39,
+      "reference": "Der Ort geh\u00f6rte zun\u00e4chst zum hennebergischen, sp\u00e4ter s\u00e4chsischen Amt Ma\u00dffeld.",
+      "hypothesis": "Dieser Ort geh\u00f6rt zun\u00e4chst zum hennenbergischen sp\u00e4ter s\u00e4chsischen Amt Maasfeld.",
+      "wer": 0.4,
+      "dialect": "BE"
+    },
+    {
+      "index": 40,
+      "reference": "Sein Nachlass der amerikanischen Schaffensperiode befindet sich im Getty Center, Santa Monica, Kalifornien.",
+      "hypothesis": "Sein Nachlass der amerikanischen Schaffensperiode befindet sich im Getty Center, St. Monica, Kalifornien.",
+      "wer": 0.07692307692307693,
+      "dialect": "AG"
+    },
+    {
+      "index": 41,
+      "reference": "Die Mauer, die in Berlin gefallen ist, sollte doch die letzte gewesen sein.",
+      "hypothesis": "Die Mauer, die in Berlin gefallen ist, sollte doch der letzte gewesen sein.",
+      "wer": 0.07692307692307693,
+      "dialect": "ZG"
+    },
+    {
+      "index": 42,
+      "reference": "Silvio Gazzaniga studierte an der Accademia di Belle Arti di Brera.",
+      "hypothesis": "Silvio Garzaniga studierte an der Academia di Bele Ardi di Brera.",
+      "wer": 0.36363636363636365,
+      "dialect": "SG"
+    },
+    {
+      "index": 43,
+      "reference": "Zur pr\u00e4operativen Diagnose eignet sich die Sonographie, die Computertomographie oder die Magnetresonanztomographie.",
+      "hypothesis": "Zur pr\u00e4operativen Diagnose eignen sich die Sonographie, die Computertomographie oder die Magnetresonanz-Tomographie.",
+      "wer": 0.16666666666666666,
+      "dialect": "AG"
+    },
+    {
+      "index": 44,
+      "reference": "Es ist eine Felsformation, welche von ihrer Form her an einen Tisch erinnert.",
+      "hypothesis": "Dies ist eine Felsformation, welche in ihrer Form an einen Tisch erinnert.",
+      "wer": 0.23076923076923078,
+      "dialect": "BL"
+    },
+    {
+      "index": 45,
+      "reference": "Warum in dieser Form und in diesen Zusammenh\u00e4ngen?",
+      "hypothesis": "Warum in dieser Form und in diesen Zusammenh\u00e4ngen?",
+      "wer": 0.0,
+      "dialect": "SG"
+    },
+    {
+      "index": 46,
+      "reference": "In der Deutschen Meisterschaft fuhr er auf den siebten Rang.",
+      "hypothesis": "In der Deutschen Meisterschaft fuhr er auf den siebten Rang.",
+      "wer": 0.0,
+      "dialect": "LU"
+    },
+    {
+      "index": 47,
+      "reference": "Garve war Mitglied der Preu\u00dfischen Akademie der Wissenschaften.",
+      "hypothesis": "Garth war Mitglied der Br\u00f6stischen Akademie der Wissenschaften.",
+      "wer": 0.25,
+      "dialect": "BE"
+    },
+    {
+      "index": 48,
+      "reference": "Angegeben wird das als \u201evia:\u201c mit einer Reihe von Buchstabenk\u00fcrzeln f\u00fcr die St\u00e4dte.",
+      "hypothesis": "Angegeben wird das als Via mit einer Reihe von Buchstaben-K\u00fcrzlern f\u00fcr die St\u00e4dte.",
+      "wer": 0.15384615384615385,
+      "dialect": "BE"
+    },
+    {
+      "index": 49,
+      "reference": "Er war \u201eShepard Professor of History Emeritus\u201c an der University of California, Berkeley.",
+      "hypothesis": "Er war Shepherd Professor of History Emeritus an der University of California in Berkeley.",
+      "wer": 0.3076923076923077,
+      "dialect": "BE"
+    },
+    {
+      "index": 50,
+      "reference": "Gleichzeitig r\u00e4umen wir ein, dass auf diesem Gebiet eine gewisse Bewegung eingesetzt hat.",
+      "hypothesis": "Gleichzeitig r\u00e4umen wir ein, dass auf dem Gebiet eine gewisse Bewegung eingesetzt hat.",
+      "wer": 0.07692307692307693,
+      "dialect": "AG"
+    },
+    {
+      "index": 51,
+      "reference": "Marcus Caecilius Metellus war einer der vier S\u00f6hne des Quintus Caecilius Metellus Macedonicus.",
+      "hypothesis": "Markus C\u00e4cilius Metellus war einer der vier S\u00f6hne Quintus C\u00e4cilius Metellus Magadenikos.",
+      "wer": 0.38461538461538464,
+      "dialect": "ZH"
+    },
+    {
+      "index": 52,
+      "reference": "Diese Kosten werden als gemischte Aufwendungen bezeichnet.",
+      "hypothesis": "Diese Kosten werden als gemischte Aufwendungen bezeichnet.",
+      "wer": 0.0,
+      "dialect": "LU"
+    },
+    {
+      "index": 53,
+      "reference": "Dadurch verfehlte Favre mit der Borussia den erneuten Einzug in einen europ\u00e4ischen Wettbewerb.",
+      "hypothesis": "Durchdessen verfiel Fafner mit Borussia den erneuten Einzug in den europ\u00e4ischen Wettbewerb.",
+      "wer": 0.38461538461538464,
+      "dialect": "BE"
+    },
+    {
+      "index": 54,
+      "reference": "Eingesetzt wurde sie im Bereich der Andamanen und Nikobaren.",
+      "hypothesis": "Eingesetzt wurde sie im Bereich der Andamen und Nikobaren.",
+      "wer": 0.1111111111111111,
+      "dialect": "AG"
+    },
+    {
+      "index": 55,
+      "reference": "Larissa besuchte Schulen in Frankreich und Deutschland.",
+      "hypothesis": "Rissen besuchte die Schulen in Frankreich und Deutschland.",
+      "wer": 0.2857142857142857,
+      "dialect": "ZH"
+    },
+    {
+      "index": 56,
+      "reference": "Um diese Zeit entstand auch eine Freundschaft mit Alfred Kubin.",
+      "hypothesis": "Um diese Zeit entsteht eine Freundschaft mit Alfred Kubin.",
+      "wer": 0.2,
+      "dialect": "BL"
+    },
+    {
+      "index": 57,
+      "reference": "Die Erzlagerst\u00e4tten am Schafberg sind in den Zechstein des Perm eingelagert.",
+      "hypothesis": "Die Erzlagerst\u00e4tte am Schaufberg sind in den Zechsteinen der Perm eingelagert.",
+      "wer": 0.36363636363636365,
+      "dialect": "SO"
+    },
+    {
+      "index": 58,
+      "reference": "Die Fassaden sind mit hellem Sandstein verblendet.",
+      "hypothesis": "Die Fassaden sind mit hellem Sandstein verblendet.",
+      "wer": 0.0,
+      "dialect": "SO"
+    },
+    {
+      "index": 59,
+      "reference": "Die Kommission ver\u00f6ffentlicht ihre Fortschrittsanzeiger zweimal j\u00e4hrlich.",
+      "hypothesis": "Die Kommission ver\u00f6ffentlichte ihre Fortschritte an die Zeit zweimal j\u00e4hrlich.",
+      "wer": 0.7142857142857143,
+      "dialect": "AG"
+    },
+    {
+      "index": 60,
+      "reference": "N\u00f6rdlich des Dorfes flie\u00dft die Pfatter vorbei.",
+      "hypothesis": "N\u00f6rdlich des Dorfes flie\u00dft Pfatter vorbei.",
+      "wer": 0.14285714285714285,
+      "dialect": "SO"
+    },
+    {
+      "index": 61,
+      "reference": "Diese von Zimmermann gegr\u00fcndeten Einrichtungen waren in bildungspolitischer Hinsicht zukunftsweisend und hatten Modellcharakter.",
+      "hypothesis": "Die vom Zimmermarkt gegr\u00fcndeten Einrichtungen waren in bildungspolitischer Hinsicht zukunftsweisend und hatten Modellcharakter.",
+      "wer": 0.23076923076923078,
+      "dialect": "ZH"
+    },
+    {
+      "index": 62,
+      "reference": "Hinter der Palme sieht man auf dem Wasser eine fliegende Proa.",
+      "hypothesis": "Hinter den Palmen sieht man auf dem Wasser eine fliegende Proa.",
+      "wer": 0.18181818181818182,
+      "dialect": "ZH"
+    },
+    {
+      "index": 63,
+      "reference": "Es liegt in einem engen, langen Tal.",
+      "hypothesis": "Es liegt in einem engen, langen Tal.",
+      "wer": 0.0,
+      "dialect": "LU"
+    },
+    {
+      "index": 64,
+      "reference": "In den so genannten Frankfurter Leits\u00e4tzen hat August Heyn \u00fcbergeordnete Ziele formuliert.",
+      "hypothesis": "In den sogenannten Frankfurter Leits\u00e4tzen formulierte August Hain \u00fcbergeordnete Ziele.",
+      "wer": 0.5,
+      "dialect": "AG"
+    },
+    {
+      "index": 65,
+      "reference": "Die Itter ist der gr\u00f6\u00dfte Fluss in der Gemarkung.",
+      "hypothesis": "Die Eiter ist der gr\u00f6\u00dfte Fluss in der Gewarchung.",
+      "wer": 0.2222222222222222,
+      "dialect": "BE"
+    },
+    {
+      "index": 66,
+      "reference": "Die Spatha der Bl\u00fctenst\u00e4nde ist stachelig, unabh\u00e4ngig vom Alter des bl\u00fchenden Baumes.",
+      "hypothesis": "Die Sparter der Bl\u00fcme stehen stachelig unabh\u00e4ngig vom Alter des bl\u00fchenden Baumes.",
+      "wer": 0.3333333333333333,
+      "dialect": "SG"
+    },
+    {
+      "index": 67,
+      "reference": "Insbesondere die zahlreichen Vogelarten sind bemerkenswert.",
+      "hypothesis": "Insbesondere die zahlreichen Vogelarten sind bemerkenswert.",
+      "wer": 0.0,
+      "dialect": "BE"
+    },
+    {
+      "index": 68,
+      "reference": "Inhaltlich definierte sich Max als ein Foto-, Popkultur und Lifestyle-Magazin.",
+      "hypothesis": "Inhaltlich definiert sich Max als Foto-, Popkultur- und Lifestyle-Magazin.",
+      "wer": 0.3,
+      "dialect": "LU"
+    },
+    {
+      "index": 69,
+      "reference": "Denn die Wunde schlie\u00dfe nur derjenige Speer, der sie geschlagen habe.",
+      "hypothesis": "Die Entwunde wird nur von demjenigen Speer geschlossen, der sie geschlagen hat.",
+      "wer": 0.8181818181818182,
+      "dialect": "BE"
+    },
+    {
+      "index": 70,
+      "reference": "Er arbeitete auch mit Chet Baker, Don Ellis, Stan Tracey und Buddy Rich.",
+      "hypothesis": "Er arbeitete auch mit Cat Parker, Don Ellis, Stan Tracy und Buddy Rick.",
+      "wer": 0.3076923076923077,
+      "dialect": "BE"
+    },
+    {
+      "index": 71,
+      "reference": "Sie ist seitdem nicht mehr \u00f6ffentlich in Erscheinung getreten.",
+      "hypothesis": "Sie trat seitdem nicht mehr \u00f6ffentlich in Erscheinung.",
+      "wer": 0.3333333333333333,
+      "dialect": "TG"
+    },
+    {
+      "index": 72,
+      "reference": "In ihrer weiterf\u00fchrenden Karriere erhielt sie weitere vier Oscar-Nominierungen.",
+      "hypothesis": "Sie wurde in ihrer sp\u00e4teren Karriere f\u00fcr weitere vier Oscars nominiert.",
+      "wer": 0.8888888888888888,
+      "dialect": "ZH"
+    },
+    {
+      "index": 73,
+      "reference": "Bald danach wurde er durch die Vermittlung seines Vaters Regieassistent bei mehreren Filmproduktionen.",
+      "hypothesis": "Bald danach wurde er durch die Vermittlung seines Vaters Regieassistent bei mehreren Filmproduktionen.",
+      "wer": 0.0,
+      "dialect": "SG"
+    },
+    {
+      "index": 74,
+      "reference": "Der Kreuzstab gilt als Symbol des heiligen Johannes des T\u00e4ufers.",
+      "hypothesis": "Der Kriegstag gilt als Symbol des heiligen Johannes der T\u00e4fer.",
+      "wer": 0.3,
+      "dialect": "BE"
+    }
+  ]
+}
