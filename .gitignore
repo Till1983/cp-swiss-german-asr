@@ -229,6 +229,6 @@ early-experiments/
 # Streamlit secrets file
 .streamlit/secrets.toml
 
-smoke_test/
+
 logs/
 results/runs/
