@@ -232,3 +232,4 @@ early-experiments/
 
 logs/
 results/runs/
+check_mystery_file.sh
