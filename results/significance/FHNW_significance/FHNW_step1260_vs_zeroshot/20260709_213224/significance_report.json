@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-07-09T21:32:24",
+  "system_a": "whisper-large-v2",
+  "system_b": "whisper-large-v2-swiss-german-baseline-step1260",
+  "results_a_path": "results/metrics/20260616_204244/whisper-large-v2_results.json",
+  "results_b_path": "results/metrics/20260708_193259/whisper-large-v2-swiss-german-baseline-step1260_results.json",
+  "sign_convention": "d = a - b",
+  "interpretation": "For lower-is-better metrics (WER), A improves when mean_diff < 0",
+  "alpha": 0.05,
+  "bootstrap_metric": "wer",
+  "n_bootstrap": 10000,
+  "seed": 42,
+  "paired_samples_total": 863,
+  "paired_samples_used": 863,
+  "paired_samples_dropped": 0,
+  "mapsswe": {
+    "test_name": "mapsswe",
+    "p_value": 4.063416270128073e-14,
+    "statistic": 7.5591406019148994,
+    "is_significant": true,
+    "alpha": 0.05,
+    "n_samples": 863,
+    "mean_diff": 0.41135573580533025,
+    "ci_lower": null,
+    "ci_upper": null
+  },
+  "bootstrap": {
+    "test_name": "paired_bootstrap",
+    "p_value": 9.999000099990002e-05,
+    "statistic": 0.04172543488481428,
+    "is_significant": true,
+    "alpha": 0.05,
+    "n_samples": 863,
+    "mean_diff": 0.04172543488481428,
+    "ci_lower": 0.030842438515927086,
+    "ci_upper": 0.05232246669614583
+  },
+  "wer_reconciliation": {
+    "bootstrap_observed_diff": 0.04172543488481428,
+    "direct_aggregate_diff": 0.04172543488481428,
+    "abs_delta": 0.0,
+    "reported_overall_wer_diff_pct_points": 4.172543488481427,
+    "direct_aggregate_diff_pct_points": 4.172543488481429
+  }
+}
