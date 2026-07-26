@@ -231,5 +231,11 @@ early-experiments/
 
 
 logs/
-results/runs/
+
+# In runs/, ignore only model artifact contents for baseline and ewc.
+# Keep CSV/JSON/MD and other run metadata files trackable.
+results/runs/baseline/**/checkpoint-*/**
+results/runs/baseline/**/final_model/**
+results/runs/ewc/**/checkpoint-*/**
+results/runs/ewc/**/final_model/**
 check_mystery_file.sh
