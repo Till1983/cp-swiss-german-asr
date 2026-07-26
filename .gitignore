@@ -209,6 +209,15 @@ __marimo__/
 # Data folder
 /data/
 
+# Keep only this metadata split file in german metadata tracked
+!/data/
+/data/*
+!/data/metadata/
+/data/metadata/*
+!/data/metadata/german/
+/data/metadata/german/*
+!/data/metadata/german/test_1000_seed42.tsv
+
 # Personal notes
 personal-notes/
 
