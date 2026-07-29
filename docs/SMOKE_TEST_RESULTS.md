@@ -159,5 +159,3 @@ Steady-state throughput from step 10 onwards: **~1.17 steps/second**. Extrapolat
 | Per-utterance WER | `results/smoke_test/20260614_105322/per_utterance_wer.json` |
 | nvidia-smi log | `results/smoke_test/20260614_105322/nvidia_smi.csv` |
 | Console log | `results/logs/whisper_swiss_german/run_smoke_500.log` |
-
-All artefact directories are gitignored. The run ID is recorded here as the durable reference.
