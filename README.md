@@ -31,6 +31,12 @@
 - **10GB** free disk space
 - **8GB** RAM available
 
+For native Apple Silicon evaluation with MPS, Docker is not used for the
+evaluation process. Install Python 3.11, create a virtual environment, and
+install `ffmpeg` as a macOS system executable. Python 3.10 or newer is
+required by the pinned SciPy version; Python 3.11 matches the Docker image
+and is the recommended native version.
+
 ### One-Command Setup (2 minutes)
 
 ```bash
@@ -200,6 +206,42 @@ docker compose run --rm api python scripts/evaluate_models.py \
 # Quick test with sample limit
 docker compose run --rm api python scripts/evaluate_models.py --limit 10
 ```
+
+### Native Apple Silicon Evaluation (MPS)
+
+Docker containers run Linux and cannot expose Apple's Metal/MPS backend. Use a
+native macOS virtual environment when you want to evaluate with MPS. The
+native environment must use the regular PyTorch packages, without the `+cpu`
+suffix or the PyTorch CPU-only index.
+
+```bash
+python3.11 -m venv venv
+source venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements_local.txt
+brew install ffmpeg
+```
+
+Use the native path configuration before starting Python. The project folder
+may contain spaces, so quote path values in `.env.mps`:
+
+```bash
+set -a
+source .env.mps
+set +a
+```
+
+Verify the backend and run the evaluation:
+
+```bash
+python -c 'import platform, torch; print(platform.machine()); print(torch.backends.mps.is_built()); print(torch.backends.mps.is_available())'
+python scripts/evaluate_models.py --models whisper-large-v2 --limit 10
+```
+
+The expected model-loading message is `Loading Whisper model 'large-v2' on
+mps...`. Native and Docker model caches are separate. Native Whisper files
+normally live under `~/.cache/whisper`, while Hugging Face and
+SentenceTransformers files normally live under `~/.cache/huggingface`.
 
 ### Available Models
 
@@ -371,6 +413,53 @@ Then access at http://localhost:8502
 - Dataset processing
 
 **Solution:** Wait for completion. Subsequent starts are <30 seconds (cached).
+
+### Native Evaluation Reports `ffmpeg` Not Found
+
+**Issue:** Native Whisper evaluation fails with:
+
+```text
+[Errno 2] No such file or directory: 'ffmpeg'
+```
+
+Whisper calls the `ffmpeg` command-line executable to decode FLAC and other
+audio formats. It is installed by the Dockerfile inside the container, but
+that installation is not available to native macOS Python. Install it on the
+Mac and confirm it is on `PATH`:
+
+```bash
+brew install ffmpeg
+which ffmpeg
+ffmpeg -version
+```
+
+Installing a Python package named `ffmpeg` does not generally provide the
+executable that Whisper expects.
+
+### Native Evaluation Reports an MPS Sparse-Tensor Error
+
+**Issue:** Whisper fails while loading with an error mentioning
+`SparseMPS` or `aten::_sparse_coo_tensor_with_dims_and_tensors`.
+
+The Whisper package creates a small sparse `alignment_heads` buffer that the
+MPS backend cannot transfer. The evaluator converts that buffer to dense form
+when loading Whisper for MPS. This error indicates an incompatible or stale
+installation if it reappears; verify that the current source tree is being
+used and that the native virtual environment is active.
+
+### Native Evaluation Shows Tokenizer or Deprecation Warnings
+
+Warnings about tokenizer parallelism after a process fork and the deprecated
+`encoder_attention_mask` argument do not mean that evaluation failed. To
+silence the tokenizer warning, set this before running Python:
+
+```bash
+export TOKENIZERS_PARALLELISM=false
+```
+
+The evaluator's summary should be checked for `Samples` and
+`failed_samples`; zero-valued metrics with zero successful samples do not
+represent a perfect evaluation.
 
 ### No Data in Dashboard
 
