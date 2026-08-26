@@ -110,6 +110,32 @@ class TestASREvaluatorLoadModel:
         assert evaluator.model is not None
 
     @pytest.mark.unit
+    @patch('src.evaluation.evaluator.torch.cuda.is_available', return_value=False)
+    @patch('src.evaluation.evaluator.torch.backends.mps.is_available', return_value=True)
+    @patch('whisper.load_model')
+    def test_load_whisper_model_mps_densifies_alignment_heads(
+        self, mock_load, mock_mps_available, mock_cuda_available
+    ):
+        """Test the sparse alignment buffer workaround for MPS."""
+        sparse_alignment_heads = Mock(is_sparse=True)
+        dense_alignment_heads = object()
+        sparse_alignment_heads.to_dense.return_value = dense_alignment_heads
+        mock_model = Mock()
+        mock_model.alignment_heads = sparse_alignment_heads
+        mock_model.to.return_value = mock_model
+        mock_load.return_value = mock_model
+
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.load_model()
+
+        mock_load.assert_called_once_with("tiny", device="cpu")
+        sparse_alignment_heads.to_dense.assert_called_once_with()
+        mock_model.to.assert_called_once_with("mps")
+        assert evaluator.model is mock_model
+        assert evaluator.model.alignment_heads is dense_alignment_heads
+
+    @pytest.mark.unit
     @patch('src.evaluation.evaluator.Wav2Vec2Model')
     def test_load_wav2vec2_model(self, mock_wav2vec2_class):
         """Test loading Wav2Vec2 model."""
