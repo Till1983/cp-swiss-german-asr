@@ -10,16 +10,15 @@ streamlit==1.40.0
 plotly==5.24.0
 kaleido>=0.2.1
 
-# Data & ML - CPU-ONLY versions (much faster to install)
+# Data & ML
 numpy>=1.26.0,<2.0.0
 scipy==1.14.1
 pandas>=2.0.0
 
-# PyTorch CPU-only (70% smaller and faster to install)
---extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.6.0+cpu
-torchaudio==2.6.0+cpu
-torchvision==0.21.0+cpu
+# PyTorch
+torch==2.6.0
+torchaudio==2.6.0
+torchvision==0.21.0
 
 # Transformers (same version, but benefits from CPU-only PyTorch)
 transformers==4.54.1

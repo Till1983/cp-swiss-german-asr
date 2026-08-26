@@ -110,6 +110,32 @@ class TestASREvaluatorLoadModel:
         assert evaluator.model is not None
 
     @pytest.mark.unit
+    @patch('src.evaluation.evaluator.torch.cuda.is_available', return_value=False)
+    @patch('src.evaluation.evaluator.torch.backends.mps.is_available', return_value=True)
+    @patch('whisper.load_model')
+    def test_load_whisper_model_mps_densifies_alignment_heads(
+        self, mock_load, mock_mps_available, mock_cuda_available
+    ):
+        """Test the sparse alignment buffer workaround for MPS."""
+        sparse_alignment_heads = Mock(is_sparse=True)
+        dense_alignment_heads = object()
+        sparse_alignment_heads.to_dense.return_value = dense_alignment_heads
+        mock_model = Mock()
+        mock_model.alignment_heads = sparse_alignment_heads
+        mock_model.to.return_value = mock_model
+        mock_load.return_value = mock_model
+
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.load_model()
+
+        mock_load.assert_called_once_with("tiny", device="cpu")
+        sparse_alignment_heads.to_dense.assert_called_once_with()
+        mock_model.to.assert_called_once_with("mps")
+        assert evaluator.model is mock_model
+        assert evaluator.model.alignment_heads is dense_alignment_heads
+
+    @pytest.mark.unit
     @patch('src.evaluation.evaluator.Wav2Vec2Model')
     def test_load_wav2vec2_model(self, mock_wav2vec2_class):
         """Test loading Wav2Vec2 model."""
@@ -498,6 +524,40 @@ class TestASREvaluatorEvaluateDataset:
 
         assert result['failed_samples'] == 1
         assert result['total_samples'] == 0  # results list empty
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.tqdm')
+    def test_evaluate_dataset_falls_back_from_stale_absolute_audio_path(self, mock_tqdm, temp_dir):
+        """A stale Docker audio path should resolve via the portable filename."""
+        class DummyTQDM:
+            def __init__(self, iterable, **kwargs):
+                self.iterable = list(iterable)
+            def __iter__(self):
+                return iter(self.iterable)
+            def close(self):
+                pass
+        mock_tqdm.side_effect = lambda iterable, **kwargs: DummyTQDM(iterable, **kwargs)
+
+        clips_dir = temp_dir / "clips"
+        clips_dir.mkdir()
+        (clips_dir / "file.wav").touch()
+        metadata = temp_dir / "meta.tsv"
+        metadata.write_text(
+            "path\taudio_path\tsentence\taccent\n"
+            "/app/data/raw/fhnw-swiss-german-corpus/clips/file.wav\t"
+            "/app/data/raw/fhnw-swiss-german-corpus/clips/file.wav\tHello\tBE\n"
+        )
+
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.model = Mock()
+        evaluator._get_transcription = Mock(return_value="Hello")
+
+        result = evaluator.evaluate_dataset(str(metadata), audio_base_path=clips_dir)
+
+        assert result['failed_samples'] == 0
+        assert result['total_samples'] == 1
+        evaluator._get_transcription.assert_called_once_with(clips_dir / "file.wav")
 
     @pytest.mark.unit
     @patch('src.evaluation.evaluator.tqdm')

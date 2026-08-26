@@ -5,6 +5,8 @@ __pycache__
 .git
 .gitignore
 .env
+.env.docker
+.env.mps
 data/
 checkpoints/
 *.ipynb_checkpoints

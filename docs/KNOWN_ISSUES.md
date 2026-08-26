@@ -413,6 +413,71 @@ environment. Resolve before EWC-grid runs.
 - `PROJECT_DISCUSSION.md` (erratum, added 17 June 2026)
 - `results/error_analysis/ANALYSIS_NOTES.md` (aggregation note, added 17 June 2026)
 
+### 16. Native macOS MPS Setup and Audio Dependencies
+
+**Context:** Native Apple Silicon evaluation is supported as an alternative to
+the Docker CPU workflow. Docker Desktop containers run Linux and cannot expose
+the Mac's Metal/MPS backend.
+
+**Requirements:** Use Python 3.11 or newer, install the regular macOS PyTorch
+packages without the `+cpu` suffix, and install the `ffmpeg` command-line
+executable separately on macOS. Python 3.11 is recommended because it matches
+the Docker image and the pinned dependency set.
+
+**Common failure:**
+
+```text
+[Errno 2] No such file or directory: 'ffmpeg'
+```
+
+This means Whisper reached audio decoding but could not find the system
+executable. Install it with Homebrew and confirm that it is on `PATH`:
+
+```bash
+brew install ffmpeg
+which ffmpeg
+```
+
+The Dockerfile installs `ffmpeg` only inside the container; that does not install
+it on the host Mac.
+
+### 17. Whisper Sparse Alignment Buffer on MPS
+
+**Problem:** Whisper fails while moving the model to MPS with an error about
+`SparseMPS` or `aten::_sparse_coo_tensor_with_dims_and_tensors`.
+
+**Root cause:** OpenAI Whisper registers its `alignment_heads` buffer as a
+sparse tensor. The MPS backend cannot perform the required sparse transfer.
+
+**Solution Implemented:** For MPS only, the evaluator loads Whisper on CPU,
+converts `alignment_heads` to a dense tensor, and then transfers the model to
+MPS. CPU and CUDA loading paths remain unchanged.
+
+### 18. Docker Absolute Paths in Native Metadata
+
+**Problem:** Metadata generated in Docker can contain absolute paths beginning
+with `/app/data/...`. Native macOS execution cannot resolve those paths, even
+when the same audio files exist in the project checkout.
+
+**Solution Implemented:** When a recorded absolute `audio_path` does not
+exist, the evaluator resolves the filename from the portable `path` column
+under the configured `audio_base_path`. Existing valid paths are preserved,
+and paths outside the configured base remain rejected.
+
+### 19. Native Evaluation Warnings
+
+Tokenizer warnings about forking after tokenizer parallelism has been used and
+the Transformers `encoder_attention_mask` deprecation warning are non-fatal.
+The tokenizer warning can be suppressed with:
+
+```bash
+export TOKENIZERS_PARALLELISM=false
+```
+
+Always check the successful sample count. A run with zero successful samples
+can produce zero-valued summary metrics without representing a successful
+evaluation.
+
 ---
 
 ## Best Practices Derived
@@ -454,4 +519,4 @@ environment. Resolve before EWC-grid runs.
 
 ---
 
-**Last Updated:** 2026-03-03 (Added issues #12 and #13: Normalisation Legacy Results, chrF/SemDist Metrics Integration)
+**Last Updated:** 2026-08-26 (Added native Apple Silicon, MPS, path, and ffmpeg guidance)
