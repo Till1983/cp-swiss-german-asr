@@ -530,5 +530,5 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Last Updated:** March 3, 2026  
+**Last Updated:** August 26, 2026  
 **Version:** 4.0 (Add chrF and SemDist Metrics; ASR-Fair Normalisation)

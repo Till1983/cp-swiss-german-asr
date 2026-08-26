@@ -504,6 +504,6 @@ Error: TorchCodec is required for load_with_torchcodec
 
 ---
 
-**Last Updated:** 2026-01-05 
+**Last Updated:** 2026-08-26
 **Tested Configurations:** RTX 3090 + PyTorch 2.6.0 + GPU EWC (recommended for batch evaluation)
 **Documented Configurations:** RTX 5090 + PyTorch 2.8.0 + GPU EWC (recommended for model training)
