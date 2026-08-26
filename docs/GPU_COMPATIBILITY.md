@@ -3,6 +3,7 @@
 ## Table of Contents
 - [Overview](#overview)
 - [Supported GPU Configurations](#supported-gpu-configurations)
+- [Apple Silicon MPS](#apple-silicon-mps)
 - [Dependency Files Overview](#dependency-files-overview)
 - [RTX 5090 Specific Requirements](#rtx-5090-specific-requirements)
 - [Memory Requirements by Configuration](#memory-requirements-by-configuration)
@@ -15,13 +16,42 @@
 - [Backward Compatibility](#backward-compatibility)
 - [References](#references)
 
-**Last Updated:** November 26, 2025
+**Last Updated:** August 26, 2026
 
 ---
 
 ## Overview
 
 This document outlines GPU compatibility requirements for the Swiss German ASR project, specifically focusing on PyTorch version requirements for different NVIDIA GPU architectures.
+
+### Apple Silicon MPS
+
+Native macOS execution on Apple Silicon can use PyTorch's MPS backend. This
+requires a native Python environment with a regular macOS PyTorch build. Use
+Python 3.11 and the unqualified PyTorch packages in `requirements_local.txt`:
+
+```text
+torch==2.6.0
+torchaudio==2.6.0
+torchvision==0.21.0
+```
+
+Do not use the Linux CPU-only packages with the `+cpu` suffix for native
+macOS. Verify the installation with:
+
+```bash
+python -c 'import torch; print(torch.backends.mps.is_built()); print(torch.backends.mps.is_available())'
+```
+
+Docker Desktop runs the project in a Linux VM. Even on an Apple Silicon Mac,
+an ARM64 Linux container cannot use Apple's Metal/MPS backend. The Docker
+image therefore runs PyTorch on CPU, while native macOS execution can use
+MPS.
+
+The OpenAI Whisper loader creates a sparse alignment-head buffer that current
+MPS support cannot transfer. The evaluator loads Whisper on CPU, converts
+that small buffer to dense form, and then moves the model to MPS. This is a
+model compatibility workaround, not a hardware-detection workaround.
 
 ---
 
