@@ -85,7 +85,15 @@ class ASREvaluator:
         if self.model_type == "whisper":
             print(f"Loading Whisper model '{self.model_name}' on {self.device}...")
             try:
-                self.model = whisper.load_model(self.model_name, device=self.device)
+                if self.device == "mps":
+                    # MPS cannot transfer Whisper's sparse alignment buffer.
+                    self.model = whisper.load_model(self.model_name, device="cpu")
+                    alignment_heads = getattr(self.model, "alignment_heads", None)
+                    if alignment_heads is not None and alignment_heads.is_sparse:
+                        self.model.alignment_heads = alignment_heads.to_dense()
+                    self.model = self.model.to(self.device)
+                else:
+                    self.model = whisper.load_model(self.model_name, device=self.device)
                 print("Model loaded successfully.")
             except Exception as e:
                 raise RuntimeError(f"Failed to load Whisper model: {e}") from e
