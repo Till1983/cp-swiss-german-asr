@@ -527,6 +527,40 @@ class TestASREvaluatorEvaluateDataset:
 
     @pytest.mark.unit
     @patch('src.evaluation.evaluator.tqdm')
+    def test_evaluate_dataset_falls_back_from_stale_absolute_audio_path(self, mock_tqdm, temp_dir):
+        """A stale Docker audio path should resolve via the portable filename."""
+        class DummyTQDM:
+            def __init__(self, iterable, **kwargs):
+                self.iterable = list(iterable)
+            def __iter__(self):
+                return iter(self.iterable)
+            def close(self):
+                pass
+        mock_tqdm.side_effect = lambda iterable, **kwargs: DummyTQDM(iterable, **kwargs)
+
+        clips_dir = temp_dir / "clips"
+        clips_dir.mkdir()
+        (clips_dir / "file.wav").touch()
+        metadata = temp_dir / "meta.tsv"
+        metadata.write_text(
+            "path\taudio_path\tsentence\taccent\n"
+            "/app/data/raw/fhnw-swiss-german-corpus/clips/file.wav\t"
+            "/app/data/raw/fhnw-swiss-german-corpus/clips/file.wav\tHello\tBE\n"
+        )
+
+        from src.evaluation.evaluator import ASREvaluator
+        evaluator = ASREvaluator(model_type="whisper", model_name="tiny")
+        evaluator.model = Mock()
+        evaluator._get_transcription = Mock(return_value="Hello")
+
+        result = evaluator.evaluate_dataset(str(metadata), audio_base_path=clips_dir)
+
+        assert result['failed_samples'] == 0
+        assert result['total_samples'] == 1
+        evaluator._get_transcription.assert_called_once_with(clips_dir / "file.wav")
+
+    @pytest.mark.unit
+    @patch('src.evaluation.evaluator.tqdm')
     def test_evaluate_dataset_missing_audio_file_under_base(self, mock_tqdm, temp_dir):
         """Missing audio file in base path should increment failed_samples."""
         class DummyTQDM:
