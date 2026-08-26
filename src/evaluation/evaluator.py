@@ -311,6 +311,12 @@ class ASREvaluator:
             # Audio path resolution logic
             if 'audio_path' in df.columns and pd.notna(row.get('audio_path')) and row.get('audio_path'):
                 audio_path = Path(row['audio_path']).resolve()
+                # Metadata may have been generated inside Docker, where the
+                # absolute /app path is not valid during native execution.
+                if not audio_path.exists():
+                    portable_audio_path = (audio_base_path / Path(row['path']).name).resolve()
+                    if portable_audio_path.exists():
+                        audio_path = portable_audio_path
                 try:
                     audio_path.relative_to(audio_base_path.resolve())
                 except ValueError:
