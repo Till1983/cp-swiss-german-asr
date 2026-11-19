@@ -243,6 +243,59 @@ class TestWav2Vec2ModelTranscribe:
         assert mock_wav2vec2_model.processor.batch_decode.called
         assert result["text"] == "transcribed text"
 
+    @pytest.mark.unit
+    @patch('torchaudio.load')
+    def test_transcribe_switches_language_and_adapter(
+        self, mock_load, mock_wav2vec2_model, temp_dir
+    ):
+        audio_file = temp_dir / 'audio.wav'
+        audio_file.touch()
+        mock_load.return_value = (torch.ones(1, 10), 16000)
+        model = mock_wav2vec2_model
+        model._can_set_tokenizer_lang = True
+        model._has_model_adapter = True
+
+        assert model.transcribe(audio_file, language='de') == {'text': 'transcribed text'}
+        model.processor.tokenizer.set_target_lang.assert_called_once_with('de')
+        model.model.load_adapter.assert_called_once_with('de')
+
+    @pytest.mark.unit
+    @patch('torchaudio.load')
+    def test_language_and_adapter_failures_warn_once_and_decode(
+        self, mock_load, mock_wav2vec2_model, temp_dir, capsys
+    ):
+        audio_file = temp_dir / 'audio.wav'
+        audio_file.touch()
+        mock_load.return_value = (torch.ones(1, 10), 16000)
+        model = mock_wav2vec2_model
+        model._can_set_tokenizer_lang = True
+        model._has_model_adapter = True
+        model.processor.tokenizer.set_target_lang.side_effect = ValueError('bad language')
+        model.model.load_adapter.side_effect = ValueError('bad adapter')
+        capsys.readouterr()
+
+        assert model.transcribe(audio_file, language='de')['text'] == 'transcribed text'
+        assert model.transcribe(audio_file, language='de')['text'] == 'transcribed text'
+        output = capsys.readouterr().out
+        assert output.count('Could not set tokenizer language') == 1
+        assert output.count('Could not load adapter') == 1
+
+    @pytest.mark.unit
+    @patch('torchaudio.load')
+    def test_monolingual_tokenizer_ignores_language_once(
+        self, mock_load, mock_wav2vec2_model, temp_dir, capsys
+    ):
+        audio_file = temp_dir / 'audio.wav'
+        audio_file.touch()
+        mock_load.return_value = (torch.ones(1, 10), 16000)
+        model = mock_wav2vec2_model
+        model._can_set_tokenizer_lang = False
+        model._has_model_adapter = False
+        capsys.readouterr()
+        model.transcribe(audio_file, language='de')
+        model.transcribe(audio_file, language='de')
+        assert capsys.readouterr().out.count('Language parameter ignored') == 1
+
 class TestWav2Vec2ModelDecoderInit:
     """Test Wav2Vec2Model decoder initialization."""
 

@@ -192,3 +192,53 @@ def test_calibration_log_records_unscaled_values(tmp_path, tiny_model):
     # Raw EWC term is logged un-halved and unscaled (NOT multiplied by lambda).
     assert float(rows[0]["ewc_term_raw"]) == pytest.approx(9.0)
     assert float(rows[0]["ewc_lambda"]) == pytest.approx(100.0)
+
+
+@pytest.mark.unit
+def test_compute_loss_adds_penalty_only_during_training(tmp_path, tiny_model, monkeypatch):
+    from transformers import Seq2SeqTrainer
+
+    outputs = {"logits": "example"}
+    calls = []
+
+    def task_loss(self, model, inputs, **kwargs):
+        calls.append(kwargs)
+        return torch.tensor(2.0), outputs
+
+    monkeypatch.setattr(Seq2SeqTrainer, 'compute_loss', task_loss)
+    trainer = _make_trainer(tmp_path, tiny_model, ewc_lambda=4.0)
+    tiny_model.train()
+    raw = trainer.compute_raw_ewc_term(tiny_model).item()
+    loss, actual_outputs = trainer.compute_loss(tiny_model, {}, return_outputs=True)
+    assert loss.item() == pytest.approx(2.0 + 2.0 * raw)
+    assert actual_outputs is outputs
+    assert trainer._ewc_on_device is True
+
+    tiny_model.eval()
+    assert trainer.compute_loss(tiny_model, {}, num_items_in_batch=3).item() == 2.0
+    assert calls[-1]['num_items_in_batch'] == 3
+
+
+@pytest.mark.unit
+def test_load_fisher_and_theta_converts_saved_tensors_to_fp32(tmp_path):
+    from src.training.ewc_trainer import load_fisher_and_theta
+
+    fisher_path = tmp_path / 'fisher.pt'
+    theta_path = tmp_path / 'theta.pt'
+    torch.save({'weight': torch.tensor([2.0], dtype=torch.float16)}, fisher_path)
+    torch.save({'weight': torch.tensor([3.0], dtype=torch.float16)}, theta_path)
+    fisher, theta = load_fisher_and_theta(fisher_path, theta_path)
+    assert fisher['weight'].dtype == torch.float32
+    assert theta['weight'].dtype == torch.float32
+    assert fisher['weight'].tolist() == [2.0]
+    assert theta['weight'].tolist() == [3.0]
+
+
+@pytest.mark.unit
+def test_key_coverage_warning_and_uncovered_parameters(caplog):
+    with caplog.at_level('WARNING'):
+        message = assert_key_coverage(['weight'], {}, {}, strict=False)
+    assert 'weight' in message
+    assert 'weight' in caplog.text
+    raw = ewc_raw_term([('weight', torch.nn.Parameter(torch.ones(1)))], {}, {})
+    assert raw.item() == 0.0

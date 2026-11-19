@@ -97,6 +97,35 @@ class TestAudioDataCollatorCTCCall:
         # Verify processor would be called with correct inputs
         assert collator.processor == mock_processor
 
+    @pytest.mark.unit
+    def test_call_pads_inputs_and_masks_label_padding(self):
+        from transformers import BatchEncoding
+
+        processor = MagicMock()
+        audio_batch = {'input_values': torch.tensor([[0.1, 0.2], [0.3, 0.0]])}
+        labels_batch = BatchEncoding({
+            'input_ids': torch.tensor([[1, 2], [3, 0]]),
+            'attention_mask': torch.tensor([[1, 1], [1, 0]]),
+        })
+        processor.pad.side_effect = [audio_batch, labels_batch]
+        collator = AudioDataCollatorCTC(
+            processor, padding='longest', max_length=8, pad_to_multiple_of=4
+        )
+        features = [
+            {'input_values': [0.1, 0.2], 'labels': [1, 2]},
+            {'input_values': [0.3], 'labels': [3]},
+        ]
+
+        batch = collator(features)
+
+        assert batch['labels'].tolist() == [[1, 2], [3, -100]]
+        assert batch['input_values'].tolist() == audio_batch['input_values'].tolist()
+        options = dict(padding='longest', max_length=8, pad_to_multiple_of=4, return_tensors='pt')
+        assert processor.pad.call_args_list[0].args[0] == {'input_values': [[0.1, 0.2], [0.3]]}
+        assert processor.pad.call_args_list[1].args[0] == {'input_ids': [[1, 2], [3]]}
+        assert all(call.kwargs == options for call in processor.pad.call_args_list)
+        processor.as_target_processor.assert_called_once()
+
 
 class TestGetProcessorForModel:
     """Test get_processor_for_model function."""

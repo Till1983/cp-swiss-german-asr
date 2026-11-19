@@ -128,6 +128,27 @@ def test_memory_history_recorder_noops_without_cuda(tmp_path, monkeypatch):
     assert not (tmp_path / "snap.pickle").exists()
 
 
+@pytest.mark.unit
+def test_memory_history_recorder_records_and_stops(tmp_path, monkeypatch):
+    from unittest.mock import Mock, call
+
+    monkeypatch.setattr(torch.cuda, 'is_available', lambda: True)
+    record = Mock()
+    dump = Mock()
+    monkeypatch.setattr(torch.cuda.memory, '_record_memory_history', record)
+    monkeypatch.setattr(torch.cuda.memory, '_dump_snapshot', dump)
+    path = tmp_path / 'nested' / 'snap.pickle'
+    recorder = CudaMemoryHistoryRecorder(path, max_entries=42)
+    assert recorder.dump() is None
+    assert recorder.start() is True
+    assert recorder.dump() == path
+    dump.assert_called_once_with(str(path))
+    recorder.stop()
+    recorder.stop()
+    assert record.call_args_list == [call(enabled='all', max_entries=42), call(enabled=None)]
+    assert recorder.dump() is None
+
+
 # ---------------------------------------------------------------------------
 # ThroughputTracker
 # ---------------------------------------------------------------------------
