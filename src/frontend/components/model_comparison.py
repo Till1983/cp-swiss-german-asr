@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import Literal, Dict, List, Optional
+from typing import Literal, Dict, List, Mapping, Optional
 import plotly.graph_objects as go
 
 from .plotly_charts import (
@@ -150,6 +150,7 @@ def create_model_comparison_chart(
     dialects: Optional[List[str]] = None,
     height: int = 500,
     show_legend: bool = True,
+    model_colors: Optional[Mapping[str, str]] = None,
 ) -> go.Figure:
     """
     Create interactive Plotly chart comparing models across dialects.
@@ -160,6 +161,7 @@ def create_model_comparison_chart(
         dialects: Optional list of dialects to include
         height: Chart height in pixels
         show_legend: Whether to show legend
+        model_colors: Optional color mapping allocated from the full model inventory.
         
     Returns:
         Plotly Figure with grouped bar chart
@@ -182,6 +184,7 @@ def create_model_comparison_chart(
         title=title,
         height=height,
         show_legend=show_legend,
+        model_colors=model_colors,
     )
 
 
@@ -189,6 +192,7 @@ def create_multi_metric_comparison(
     df: pd.DataFrame,
     metrics: List[Literal['wer', 'cer', 'bleu', 'chrf', 'semdist']] = None,
     height: int = 400,
+    model_colors: Optional[Mapping[str, str]] = None,
 ) -> Dict[str, go.Figure]:
     """
     Create multiple comparison charts for different metrics.
@@ -197,6 +201,7 @@ def create_multi_metric_comparison(
         df: DataFrame with columns ['model', 'dialect', 'wer', 'cer', 'bleu']
         metrics: List of metrics to visualize. Defaults to available metrics.
         height: Chart height in pixels
+        model_colors: Optional color mapping allocated from the full model inventory.
         
     Returns:
         Dictionary mapping metric names to Plotly Figures
@@ -211,6 +216,7 @@ def create_multi_metric_comparison(
             df=df,
             selected_metric=metric,
             height=height,
+            model_colors=model_colors,
         )
     
     return figures
@@ -221,6 +227,7 @@ def create_model_ranking_chart(
     selected_metric: Literal['wer', 'cer', 'bleu', 'chrf', 'semdist'] = 'wer',
     top_n: Optional[int] = None,
     height: int = 400,
+    model_colors: Optional[Mapping[str, str]] = None,
 ) -> go.Figure:
     """
     Create horizontal bar chart ranking models by overall performance.
@@ -230,6 +237,7 @@ def create_model_ranking_chart(
         selected_metric: Metric to rank by
         top_n: Number of top models to show. None shows all.
         height: Chart height in pixels
+        model_colors: Optional color mapping allocated from the full model inventory.
         
     Returns:
         Plotly Figure with horizontal bar chart
@@ -247,8 +255,9 @@ def create_model_ranking_chart(
     if top_n:
         model_avg = model_avg.head(top_n)
     
-    # Get colors for models
-    model_colors = get_model_colors(model_avg['model'])
+    # Allocate before top_n filtering when no shared inventory is provided.
+    if model_colors is None:
+        model_colors = get_model_colors(df['model'])
     colors = [model_colors[m] for m in model_avg['model']]
     
     # Create horizontal bar chart

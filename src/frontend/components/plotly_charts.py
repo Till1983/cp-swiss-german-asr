@@ -6,7 +6,7 @@ using Plotly for interactive charts.
 """
 
 from hashlib import sha256
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Mapping, Optional
 import plotly.graph_objects as go
 
 
@@ -47,7 +47,7 @@ MODEL_COLORS = {
 
 
 def get_model_colors(models: Iterable[str]) -> Dict[str, str]:
-    """Return consistent, distinct colors for the supplied model names."""
+    """Allocate distinct colors for an entire model inventory."""
     names = sorted(set(models))
     colors = {name: MODEL_COLORS[name] for name in names if name in MODEL_COLORS}
     used = set(MODEL_COLORS.values())
@@ -150,6 +150,7 @@ def create_wer_by_dialect_chart(
     metric_name: str = "WER",
     height: int = 500,
     show_legend: bool = True,
+    model_colors: Optional[Mapping[str, str]] = None,
 ) -> go.Figure:
     """
     Create a grouped bar chart showing WER by dialect for multiple models.
@@ -163,6 +164,7 @@ def create_wer_by_dialect_chart(
         metric_name: Name of the metric for hover template (e.g., "WER", "CER", "BLEU")
         height: Chart height in pixels
         show_legend: Whether to show the legend
+        model_colors: Optional color mapping allocated from the full model inventory.
         
     Returns:
         Plotly Figure object with grouped bar chart
@@ -198,7 +200,8 @@ def create_wer_by_dialect_chart(
     
     # Create traces for each model
     traces = []
-    model_colors = get_model_colors(data)
+    if model_colors is None:
+        model_colors = get_model_colors(data)
     for model_name, model_data in data.items():
         wer_values = [model_data.get(dialect, None) for dialect in dialects]
         
@@ -262,6 +265,7 @@ def create_metric_comparison_chart(
     height: int = 500,
     show_legend: bool = True,
     use_performance_colors: bool = False,
+    model_colors: Optional[Mapping[str, str]] = None,
 ) -> go.Figure:
     """
     Create a grouped bar chart for any metric by dialect for multiple models.
@@ -278,6 +282,7 @@ def create_metric_comparison_chart(
         show_legend: Whether to show the legend
         use_performance_colors: If True, colors bars by performance (excellent/good/poor)
                                 instead of by model. Only works for single-model data.
+        model_colors: Optional color mapping allocated from the full model inventory.
         
     Returns:
         Plotly Figure object with grouped bar chart
@@ -351,6 +356,7 @@ def create_metric_comparison_chart(
         metric_name=metric_name,  # Pass metric_name to fix hover template
         height=height,
         show_legend=show_legend,
+        model_colors=model_colors,
     )
     
     # Update y-axis title
