@@ -386,7 +386,7 @@ The dashboard consists of a sidebar for filtering and four main tabs:
   - 🟢 Green: WER/CER < 25% or BLEU > 60 (Excellent)
   - 🟡 Yellow: WER/CER 25-40% or BLEU 40-60 (Good)
   - 🔴 Red/White: WER/CER > 40% or BLEU < 40 (Poor)
-- **Model comparison views:** Consistent model-specific colours, including fine-tuned models; new model names receive deterministic colours
+- **Model comparison views:** Model-specific colours are assigned from the available model inventory, so filtering preserves colours even when generated colours collide. Changes to the inventory can change generated colours.
 
 **Chart Types:**
 - **Grouped Bar Charts:** Compare models across dialects (multi-model mode)
