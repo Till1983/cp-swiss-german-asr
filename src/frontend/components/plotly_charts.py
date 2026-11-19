@@ -5,7 +5,8 @@ This module provides visualization functions for ASR evaluation metrics
 using Plotly for interactive charts.
 """
 
-from typing import Dict, List, Optional
+from hashlib import sha256
+from typing import Dict, Iterable, List, Optional
 import plotly.graph_objects as go
 
 
@@ -13,6 +14,14 @@ import plotly.graph_objects as go
 MODEL_COLORS = {
     'whisper-large-v3': '#1f77b4',
     'whisper-large-v2': '#ff7f0e',
+    'whisper-large-v2-swiss-german-baseline': '#7b3294',
+    'whisper-large-v2-swiss-german-baseline-step1260': '#c2a5cf',
+    'whisper-large-v2-swiss-german-ewc-lambda-3000': '#008837',
+    'whisper-large-v2-swiss-german-ewc-lambda-3000-step1260': '#a6dba0',
+    'whisper-large-v2-swiss-german-ewc-lambda-30000': '#c51b7d',
+    'whisper-large-v2-swiss-german-ewc-lambda-30000-step1260': '#f1b6da',
+    'whisper-large-v2-swiss-german-ewc-lambda-300000': '#b35806',
+    'whisper-large-v2-swiss-german-ewc-lambda-300000-step1260': '#fdb863',
     'whisper-large': '#17becf',
     'whisper-large-v3-turbo': '#aec7e8',
     'whisper-medium': '#2ca02c',
@@ -29,12 +38,34 @@ MODEL_COLORS = {
     'wav2vec2-1b-german-cv11': '#c49c94',
     'wav2vec2-german-300m': '#fbc15e',
     'wav2vec2-ger-nl-adapted': '#8c6d31',
-    'wav2vec2-multi-56': '#e377c2',
-    'wav2vec2-european-1b': '#7f7f7f',
-    'wav2vec2-european-300m': '#17becf',
+    'wav2vec2-multi-56': '#a55194',
+    'wav2vec2-european-1b': '#636363',
+    'wav2vec2-european-300m': '#3182bd',
     'wav2vec2-german-with-lm': '#b5bd61',
-    'seamless-m4t': '#bcbd22',
+    'seamless-m4t': '#6b6ecf',
 }
+
+
+def get_model_colors(models: Iterable[str]) -> Dict[str, str]:
+    """Return consistent, distinct colors for the supplied model names."""
+    names = sorted(set(models))
+    colors = {name: MODEL_COLORS[name] for name in names if name in MODEL_COLORS}
+    used = set(MODEL_COLORS.values())
+    for name in names:
+        if name in colors:
+            continue
+        attempt = 0
+        while True:
+            digest = sha256(f'{name}:{attempt}'.encode('utf-8')).digest()
+            color = '#{:02x}{:02x}{:02x}'.format(
+                *(48 + channel % 160 for channel in digest[:3])
+            )
+            if color not in used:
+                colors[name] = color
+                used.add(color)
+                break
+            attempt += 1
+    return colors
 
 
 # Performance-based color thresholds
@@ -167,17 +198,15 @@ def create_wer_by_dialect_chart(
     
     # Create traces for each model
     traces = []
+    model_colors = get_model_colors(data)
     for model_name, model_data in data.items():
         wer_values = [model_data.get(dialect, None) for dialect in dialects]
-        
-        # Get color from palette, default to gray if not found
-        color = MODEL_COLORS.get(model_name, '#7f7f7f')
         
         trace = go.Bar(
             name=model_name,
             x=dialects,
             y=wer_values,
-            marker_color=color,
+            marker_color=model_colors[model_name],
             hovertemplate=(
                 "Model: %{fullData.name}<br>"
                 "Dialect: %{x}<br>"

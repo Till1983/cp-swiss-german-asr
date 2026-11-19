@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 
 from .plotly_charts import (
     create_metric_comparison_chart,
-    MODEL_COLORS,
+    get_model_colors,
 )
 
 
@@ -248,7 +248,8 @@ def create_model_ranking_chart(
         model_avg = model_avg.head(top_n)
     
     # Get colors for models
-    colors = [MODEL_COLORS.get(m, '#7f7f7f') for m in model_avg['model']]
+    model_colors = get_model_colors(model_avg['model'])
+    colors = [model_colors[m] for m in model_avg['model']]
     
     # Create horizontal bar chart
     fig = go.Figure(data=[

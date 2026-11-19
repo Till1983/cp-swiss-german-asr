@@ -13,6 +13,8 @@ from typing import Literal, Optional, List, Dict, Any
 import plotly.graph_objects as go
 import streamlit as st
 
+from .plotly_charts import get_model_colors
+
 # Import data loading utilities
 from utils.error_data_loader import (
     load_all_error_analyses,
@@ -58,6 +60,7 @@ def create_dialect_comparison(
     # Get unique models and dialects
     unique_models = df_filtered['model'].unique()
     unique_dialects = sorted(df_filtered['dialect'].unique())
+    model_colors = get_model_colors(unique_models)
     
     # Create traces for each model
     traces = []
@@ -75,6 +78,7 @@ def create_dialect_comparison(
             name=model,
             x=unique_dialects,
             y=y_values,
+            marker_color=model_colors[model],
             hovertemplate=(
                 f"<b>{model}</b><br>" +
                 "Dialect: %{x}<br>" +
@@ -144,12 +148,14 @@ def create_aggregate_comparison(
     sort_ascending = selected_metric not in ('bleu', 'chrf')
     df_agg = df_agg.sort_values(selected_metric, ascending=sort_ascending)
     
+    model_colors = get_model_colors(df_agg['model'])
+
     # Create bar chart
     fig = go.Figure(data=[
         go.Bar(
             x=df_agg['model'],
             y=df_agg[selected_metric],
-            marker_color='#1f77b4',
+            marker_color=[model_colors[model] for model in df_agg['model']],
             hovertemplate=(
                 "Model: %{x}<br>" +
                 f"{metric_labels[selected_metric]}: %{{y:.2f}}<br>" +
