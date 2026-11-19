@@ -9,9 +9,11 @@ to utils.error_data_loader.
 """
 
 import pandas as pd
-from typing import Literal, Optional, List, Dict, Any
+from typing import Literal, Optional, List, Dict, Any, Mapping
 import plotly.graph_objects as go
 import streamlit as st
+
+from .plotly_charts import get_model_colors
 
 # Import data loading utilities
 from utils.error_data_loader import (
@@ -28,7 +30,8 @@ from utils.error_data_loader import (
 def create_dialect_comparison(
     df: pd.DataFrame,
     selected_metric: Literal['wer', 'cer', 'bleu', 'chrf', 'semdist'] = 'wer',
-    models: Optional[List[str]] = None
+    models: Optional[List[str]] = None,
+    model_colors: Optional[Mapping[str, str]] = None,
 ) -> go.Figure:
     """
     Create grouped bar chart comparing models across dialects.
@@ -37,6 +40,7 @@ def create_dialect_comparison(
         df: DataFrame with columns ['model', 'dialect', 'wer', 'cer', 'bleu']
         selected_metric: Metric to display
         models: List of model names to include (None for all)
+        model_colors: Optional color mapping allocated from the full model inventory.
         
     Returns:
         Plotly figure object
@@ -58,6 +62,8 @@ def create_dialect_comparison(
     # Get unique models and dialects
     unique_models = df_filtered['model'].unique()
     unique_dialects = sorted(df_filtered['dialect'].unique())
+    if model_colors is None:
+        model_colors = get_model_colors(df['model'])
     
     # Create traces for each model
     traces = []
@@ -75,6 +81,7 @@ def create_dialect_comparison(
             name=model,
             x=unique_dialects,
             y=y_values,
+            marker_color=model_colors[model],
             hovertemplate=(
                 f"<b>{model}</b><br>" +
                 "Dialect: %{x}<br>" +
@@ -108,7 +115,8 @@ def create_dialect_comparison(
 def create_aggregate_comparison(
     df: pd.DataFrame,
     selected_metric: Literal['wer', 'cer', 'bleu', 'chrf', 'semdist'] = 'wer',
-    models: Optional[List[str]] = None
+    models: Optional[List[str]] = None,
+    model_colors: Optional[Mapping[str, str]] = None,
 ) -> go.Figure:
     """
     Create bar chart showing per-model aggregate metrics.
@@ -117,6 +125,7 @@ def create_aggregate_comparison(
         df: DataFrame with columns ['model', 'dialect', 'wer', 'cer', 'bleu']
         selected_metric: Metric to display
         models: List of model names to include (None for all)
+        model_colors: Optional color mapping allocated from the full model inventory.
         
     Returns:
         Plotly figure object
@@ -144,12 +153,15 @@ def create_aggregate_comparison(
     sort_ascending = selected_metric not in ('bleu', 'chrf')
     df_agg = df_agg.sort_values(selected_metric, ascending=sort_ascending)
     
+    if model_colors is None:
+        model_colors = get_model_colors(df['model'])
+
     # Create bar chart
     fig = go.Figure(data=[
         go.Bar(
             x=df_agg['model'],
             y=df_agg[selected_metric],
-            marker_color='#1f77b4',
+            marker_color=[model_colors[model] for model in df_agg['model']],
             hovertemplate=(
                 "Model: %{x}<br>" +
                 f"{metric_labels[selected_metric]}: %{{y:.2f}}<br>" +

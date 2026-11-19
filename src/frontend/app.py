@@ -11,7 +11,7 @@ from components.dialect_breakdown import create_aggregate_comparison, render_per
 from components.data_table import display_data_table, display_summary_statistics, download_filtered_data
 from components.statistics_panel import render_metrics_definitions
 from components.terminology_panel import render_terminology_definitions
-from components.plotly_charts import create_wer_by_dialect_chart, create_metric_comparison_chart
+from components.plotly_charts import create_wer_by_dialect_chart, create_metric_comparison_chart, get_model_colors
 
 # Configure Plotly theme to match Streamlit
 pio.templates["streamlit"] = go.layout.Template(
@@ -66,6 +66,7 @@ if not available_models:
 # Model selection - Multi-select for comparison
 st.sidebar.header("Model Selection")
 model_names = list(available_models.keys())
+model_colors = get_model_colors([*model_names, 'Unknown Model'])
 DEFAULT_MODEL = "whisper-large-v2"
 MODEL_SELECTION_KEY = "selected_models_ui"
 MODEL_SELECTION_PREV_KEY = "selected_models_ui_prev"
@@ -230,7 +231,8 @@ with tab1:  # Overview
         st.subheader("Model Comparison")
         fig_agg = create_aggregate_comparison(
             filtered_df,
-            selected_metric=selected_metric
+            selected_metric=selected_metric,
+            model_colors=model_colors,
         )
         st.plotly_chart(fig_agg, use_container_width=True)
     
@@ -304,7 +306,8 @@ with tab2:  # Dialect Analysis
                 metric_name=selected_metric.upper(),
                 title=f"{selected_metric.upper()} by Dialect and Model",
                 height=500,
-                show_legend=True
+                show_legend=True,
+                model_colors=model_colors,
             )
             st.plotly_chart(fig_dialect, use_container_width=True)
             
@@ -344,7 +347,8 @@ with tab2:  # Dialect Analysis
             title=f"{selected_metric.upper()} by Dialect",
             height=500,
             show_legend=not is_single_model,
-            use_performance_colors=is_single_model
+            use_performance_colors=is_single_model,
+            model_colors=model_colors,
         )
         
         st.plotly_chart(fig_distribution, use_container_width=True)
@@ -399,7 +403,8 @@ with tab3:  # Detailed Metrics
             data=wer_chart_data,
             title="Word Error Rate by Dialect",
             height=450,
-            show_legend=True
+            show_legend=True,
+            model_colors=model_colors,
         )
         st.plotly_chart(fig_wer, use_container_width=True)
     
@@ -412,7 +417,8 @@ with tab3:  # Detailed Metrics
             metric_name="CER",
             title="Character Error Rate by Dialect",
             height=450,
-            show_legend=True
+            show_legend=True,
+            model_colors=model_colors,
         )
         st.plotly_chart(fig_cer, use_container_width=True)
 
@@ -425,7 +431,8 @@ with tab3:  # Detailed Metrics
             metric_name="BLEU",
             title="BLEU Score by Dialect",
             height=450,
-            show_legend=True
+            show_legend=True,
+            model_colors=model_colors,
         )
         st.plotly_chart(fig_bleu, use_container_width=True)
 
@@ -438,7 +445,8 @@ with tab3:  # Detailed Metrics
             metric_name="CHRF",
             title="chrF Score by Dialect",
             height=450,
-            show_legend=True
+            show_legend=True,
+            model_colors=model_colors,
         )
         st.plotly_chart(fig_chrf, use_container_width=True)
 
@@ -451,7 +459,8 @@ with tab3:  # Detailed Metrics
             metric_name="SEMDIST",
             title="Semantic Distance by Dialect",
             height=450,
-            show_legend=True
+            show_legend=True,
+            model_colors=model_colors,
         )
         st.plotly_chart(fig_semdist, use_container_width=True)
 

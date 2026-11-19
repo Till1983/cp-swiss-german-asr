@@ -94,3 +94,42 @@ def test_set_decoding_config_forces_language_and_disables_prev_tokens():
     assert model.config.forced_decoder_ids == [(1, 50259), (2, 50359), (3, 50363)]
     assert model.config.condition_on_prev_tokens is False
     assert model.generation_config.condition_on_prev_tokens is False
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize("spec_augment,checkpointing", [(True, True), (False, False)])
+def test_build_whisper_model_applies_training_configuration(
+    monkeypatch, spec_augment, checkpointing
+):
+    from unittest.mock import Mock
+    from src.training import whisper_setup
+
+    model = tiny_model()
+    model.gradient_checkpointing_enable = Mock()
+    processor = _StubProcessor()
+    load_processor = Mock(return_value=processor)
+    load_model = Mock(return_value=model)
+    monkeypatch.setattr(whisper_setup.WhisperProcessor, 'from_pretrained', load_processor)
+    monkeypatch.setattr(whisper_setup.WhisperForConditionalGeneration, 'from_pretrained', load_model)
+
+    actual_model, actual_processor = whisper_setup.build_whisper_model(
+        {'name': 'test-model', 'torch_dtype': 'bf16', 'attn_implementation': 'eager',
+         'language': 'fr', 'task': 'translate', 'condition_on_prev_tokens': True},
+        {'spec_augment': spec_augment},
+        gradient_checkpointing=checkpointing,
+    )
+
+    assert actual_model is model and actual_processor is processor
+    load_processor.assert_called_once_with('test-model')
+    load_model.assert_called_once_with(
+        'test-model', attn_implementation='eager', torch_dtype=torch.bfloat16
+    )
+    assert processor.tokenizer.prefix == ('fr', 'translate')
+    assert model.config.use_cache is not checkpointing
+    assert model.generation_config.use_cache is True
+    assert model.generation_config.condition_on_prev_tokens is True
+    assert model.gradient_checkpointing_enable.call_count == int(checkpointing)
+    if spec_augment:
+        assert model.config.apply_spec_augment is True
+        assert model.config.mask_time_length == 50
+        assert model.config.mask_feature_length == 14
