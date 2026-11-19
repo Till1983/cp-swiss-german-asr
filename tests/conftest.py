@@ -344,7 +344,7 @@ if 'plotly' not in sys.modules:
     class DummyBar:
         def __init__(self, x=None, y=None, name=None, marker=None, marker_color=None, text=None, hovertemplate=None, texttemplate=None, customdata=None, **kwargs):
             self.x = tuple(x) if x is not None else []
-            self.y = y or []
+            self.y = y if y is not None else []
             self.name = name
             color = marker_color
             if color is None and marker is not None:

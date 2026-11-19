@@ -5,6 +5,7 @@ Tests chart generation and performance categorization logic.
 """
 
 import pytest
+import pandas as pd
 from src.frontend.components.plotly_charts import (
     get_performance_category,
     get_performance_color,
@@ -318,6 +319,70 @@ class TestCreateWerByDialectChart:
         # Check that the color matches the defined constant
         expected_color = MODEL_COLORS['whisper-large-v3']
         assert fig.data[0].marker.color == expected_color
+
+
+@pytest.mark.parametrize('overall_rows', [False, True])
+def test_model_colors_are_distinct_and_consistent_across_bar_charts(
+    monkeypatch, overall_rows
+):
+    from pathlib import Path
+
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[3] / 'src' / 'frontend'))
+    from src.frontend.components.dialect_breakdown import (
+        create_aggregate_comparison,
+        create_dialect_comparison,
+    )
+    from src.frontend.components.model_comparison import create_model_ranking_chart
+
+    models = [
+        'whisper-large-v2-swiss-german-baseline',
+        'whisper-large-v2-swiss-german-baseline-step1260',
+        'whisper-large-v2-swiss-german-ewc-lambda-3000',
+        'whisper-large-v2-swiss-german-ewc-lambda-3000-step1260',
+        'whisper-large-v2-swiss-german-ewc-lambda-30000',
+        'whisper-large-v2-swiss-german-ewc-lambda-30000-step1260',
+        'whisper-large-v2-swiss-german-ewc-lambda-300000',
+        'whisper-large-v2-swiss-german-ewc-lambda-300000-step1260',
+        'whisper-large-v2',
+        'whisper-large-v3',
+        'whisper-large-v3-turbo',
+        'whisper-medium',
+        'new-model-a',
+        'new-model-b',
+    ]
+    data = {model: {'BE': 10 + i, 'ZH': 20 + i} for i, model in enumerate(models)}
+    rows = [
+        {'model': model, 'dialect': dialect, 'wer': value}
+        for model, dialects in data.items()
+        for dialect, value in dialects.items()
+    ]
+    if overall_rows:
+        rows.extend(
+            {'model': model, 'dialect': 'OVERALL', 'wer': 15 + i}
+            for i, model in enumerate(models)
+        )
+    df = pd.DataFrame(rows)
+
+    grouped = create_wer_by_dialect_chart(data)
+    colors = {trace.name: trace.marker.color for trace in grouped.data}
+    assert len(set(colors.values())) == len(models)
+    assert colors['whisper-large-v3'] == MODEL_COLORS['whisper-large-v3']
+
+    reordered = create_metric_comparison_chart(dict(reversed(list(data.items()))))
+    assert {trace.name: trace.marker.color for trace in reordered.data} == colors
+    subset = create_wer_by_dialect_chart({model: data[model] for model in models[::2]})
+    assert {trace.name: trace.marker.color for trace in subset.data} == {
+        model: colors[model] for model in models[::2]
+    }
+
+    dialect = create_dialect_comparison(df)
+    assert {trace.name: trace.marker.color for trace in dialect.data} == colors
+
+    aggregate = create_aggregate_comparison(df).data[0]
+    assert dict(zip(aggregate.x, aggregate.marker.color)) == colors
+
+    ranking = create_model_ranking_chart(df).data[0]
+    assert dict(zip(ranking.y, ranking.marker.color)) == colors
 
 
 
