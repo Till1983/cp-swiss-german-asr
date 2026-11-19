@@ -157,7 +157,7 @@ The Overview tab provides aggregate performance metrics at a glance:
   - Average WER: 30.65%
   - Average CER: 13.79%
   - Average BLEU: 54.70
-- **Colour-coded bars:** Simple blue bars for clear visual comparison
+- **Colour-coded bars:** Each model has its own colour, consistent with model-coloured charts elsewhere in the dashboard
 
 **How to Access:** Sidebar → "Choose models to compare" → Select 2-4 models
 
@@ -386,7 +386,7 @@ The dashboard consists of a sidebar for filtering and four main tabs:
   - 🟢 Green: WER/CER < 25% or BLEU > 60 (Excellent)
   - 🟡 Yellow: WER/CER 25-40% or BLEU 40-60 (Good)
   - 🔴 Red/White: WER/CER > 40% or BLEU < 40 (Poor)
-- **Multi-Model Views:** Model-specific colours (green, orange, blue, light blue)
+- **Model comparison views:** Consistent model-specific colours, including fine-tuned models; new model names receive deterministic colours
 
 **Chart Types:**
 - **Grouped Bar Charts:** Compare models across dialects (multi-model mode)
